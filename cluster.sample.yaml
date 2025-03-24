@@ -1,7 +1,7 @@
 ---
 # -- The network CIDR for the nodes.
 # (REQUIRED) / (e.g. 192.168.1.0/24)
-node_cidr: ""
+node_cidr: "192.168.5.0/24"
 
 # -- DNS servers to use for the cluster.
 #    (OPTIONAL) / (DEFAULT: ["1.1.1.1", "1.0.0.1"]) / (Cloudflare DNS)
@@ -13,7 +13,7 @@ node_cidr: ""
 
 # -- The default gateway for the nodes.
 #    (OPTIONAL) / (DEFAULT: the first IP in the node_cidr)
-# node_default_gateway: ""
+node_default_gateway: "192.168.5.1"
 
 # -- Attach a vlan tag to the Talos nodes. Not needed if ports on your switch are tagged.
 #    (OPTIONAL) / (REF: https://www.talos.dev/latest/advanced/advanced-networking/#vlans)
@@ -21,7 +21,7 @@ node_cidr: ""
 
 # -- The IP address of the Kube API.
 #    (REQUIRED) / (NOTE: Choose an unused IP in node_cidr)
-cluster_api_addr: ""
+cluster_api_addr: "192.168.5.200"
 
 # -- Additional SANs to add to the Kube API cert. This is useful if you want to call the Kube API by hostname rather than IP
 #    (OPTIONAL) / (e.g. ["mycluster.example.com"])
@@ -41,11 +41,11 @@ cluster_dns_gateway_addr: ""
 
 # -- The Load balancer IP for the internal ingress-nginx controller
 #    (REQUIRED) / (NOTE: Choose an unused IP in node_cidr)
-cluster_ingress_addr: ""
+cluster_ingress_addr: "192.168.5.230"
 
 # -- GitHub repository
 #    (REQUIRED) / (e.g. "onedr0p/cluster-template")
-repository_name: ""
+repository_name: "tscibilia/home-ops"
 
 # -- GitHub repository branch
 #    (OPTIONAL) / (DEFAULT: "main")
@@ -57,7 +57,7 @@ repository_name: ""
 
 # -- Domain you wish to use from your Cloudflare account
 #    (REQUIRED) / (e.g. "example.com")
-cloudflare_domain: ""
+cloudflare_domain: "nycarch.xyz"
 
 # -- API Token for Cloudflare with the 'Zone:DNS:Edit' and 'Account:Cloudflare Tunnel:Read' permissions
 #    (REQUIRED) (NOTE: See the README for information on creating this)
@@ -65,7 +65,7 @@ cloudflare_token: ""
 
 # -- The Load balancer IP for the external ingress-nginx controller
 #    (REQUIRED) / (NOTE: Choose an unused IP in node_cidr)
-cloudflare_ingress_addr: ""
+cloudflare_ingress_addr: "192.168.5.240"
 
 # -- The load balancer mode for cilium.
 #    (OPTIONAL) / (DEFAULT: "dsr") / (NOTE: accepted values are 'dsr' or 'snat') / (REF: https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/)
