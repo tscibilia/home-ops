@@ -15,6 +15,7 @@
     "prEditedNotification",
     "prIgnoreNotification",
   ],
+  timezone: ["America/New_York"],
   schedule: ["every weekend"],
   ignorePaths: ["**/*.sops.*"],
   flux: {
