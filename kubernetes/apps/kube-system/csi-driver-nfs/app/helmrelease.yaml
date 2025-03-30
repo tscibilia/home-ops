@@ -43,7 +43,7 @@ spec:
       name: nfs-media
       parameters:
         server: 192.168.5.10
-        share: /mnt/media
+        share: /volume1/Media
       mountOptions:
         - nfsvers=4.2
         - nconnect=16
