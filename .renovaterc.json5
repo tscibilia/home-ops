@@ -8,6 +8,7 @@
     ":dependencyDashboard",
     ":disableRateLimiting",
     ":semanticCommits",
+    ":timezone(America/New_York)",
   ],
   dependencyDashboard: true,
   dependencyDashboardTitle: "Renovate Dashboard 🤖",
@@ -15,9 +16,11 @@
     "prEditedNotification",
     "prIgnoreNotification",
   ],
-  timezone: ["America/New_York"],
   schedule: ["every weekend"],
-  ignorePaths: ["**/*.sops.*"],
+  ignorePaths: [
+    "**/*.sops.*",
+    "**/resources/**",
+  ],
   flux: {
     fileMatch: ["(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$"],
   },
@@ -33,12 +36,40 @@
   kustomize: {
     fileMatch: ["(^|/)kustomization\\.ya?ml(?:\\.j2)?$"],
   },
+  // groups
   packageRules: [
+    {
+      description: "Cert-Manager Group",
+      groupName: "Cert-Manager",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/cert-manager/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
+    {
+      description: "Cilium Group",
+      groupName: "Cilium",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/cilium/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
     {
       description: "CoreDNS Group",
       groupName: "CoreDNS",
       matchDatasources: ["docker"],
       matchPackageNames: ["/coredns/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
+    {
+      description: "External Secrets Operator Group",
+      groupName: "External Secrets Operator",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/external-secrets/"],
       group: {
         commitMessageTopic: "{{{groupName}}} group",
       },
@@ -52,6 +83,15 @@
         commitMessageTopic: "{{{groupName}}} group",
       },
     },
+    // {
+    //   description: "Rook-Ceph Group",
+    //   groupName: "Rook-Ceph",
+    //   matchDatasources: ["docker"],
+    //   matchPackageNames: ["/rook-ceph/", "/rook-ceph-cluster/"],
+    //   group: {
+    //     commitMessageTopic: "{{{groupName}}} group",
+    //   },
+    // },
     {
       description: "Spegel Group",
       groupName: "Spegel",
@@ -60,6 +100,25 @@
       group: {
         commitMessageTopic: "{{{groupName}}} group",
       },
+    },
+    // autoMerge
+    // {
+    //   description: "Auto-merge trusted container digests",
+    //   matchDatasources: ["docker"],
+    //   automerge: true,
+    //   automergeType: "pr",
+    //   matchUpdateTypes: ["digest"],
+    //   matchPackageNames: ["/home-operations/"],
+    //   ignoreTests: false,
+    // },
+    {
+      description: "Auto-merge OCI Charts",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      matchPackageNames: ["/kube-prometheus-stack/"],
+      ignoreTests: false,
     },
     {
       description: "Auto-merge GitHub Actions",
@@ -70,6 +129,7 @@
       minimumReleaseAge: "3 days",
       ignoreTests: true,
     },
+    // semanticCommits
     {
       matchUpdateTypes: ["major"],
       semanticCommitType: "feat",
@@ -112,6 +172,7 @@
       semanticCommitScope: "github-release",
       commitMessageTopic: "release {{depName}}",
     },
+    // labels
     {
       matchUpdateTypes: ["major"],
       labels: ["type/major"],
@@ -141,6 +202,7 @@
       addLabels: ["renovate/github-release"],
     },
   ],
+  // customManagers
   customManagers: [
     {
       description: "Process annotated dependencies",
