@@ -8,3 +8,8 @@
 ### Code
 - https://github.com/external-secrets/bitwarden-sdk-server
 - https://github.com/external-secrets/external-secrets/blob/main/docs/snippets/bitwarden-secrets-manager-secret-store.yaml
+
+# How to use Doppler SecretOps Platform
+
+### Manual
+- https://external-secrets.io/latest/provider/doppler/
