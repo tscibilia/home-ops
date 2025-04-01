@@ -42,7 +42,7 @@ spec:
       create: true
       name: nfs-media
       parameters:
-        server: 192.168.5.10
+        server: "${SECRET_NFS_HOST}"
         share: /volume1/Media
       mountOptions:
         - nfsvers=4.2
