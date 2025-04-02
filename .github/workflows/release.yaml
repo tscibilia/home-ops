@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: "0 0 1 * *" # 1st of every month at midnight
 
+permissions:
+  contents: write
+
 jobs:
   release:
     name: Release
@@ -52,4 +55,4 @@ jobs:
         with:
           generateReleaseNotes: true
           tag: "${{ steps.determine-next-tag.outputs.result }}"
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ secrets.PAT_WORKFLOW }}"
