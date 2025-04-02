@@ -6,4 +6,5 @@ namespace: external-secrets
 components:
   - ../../components/common
 resources:
+  - https://raw.githubusercontent.com/external-secrets/external-secrets/v0.15.1/deploy/crds/bundle.yaml
   - ./external-secrets/ks.yaml
