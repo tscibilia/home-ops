@@ -53,7 +53,24 @@ spec:
           # Requires kernel 5.11
           encryption:
             enabled: false
-
+    # -- Settings for the block pool snapshot class
+    cephBlockPoolsVolumeSnapshotClass:
+      enabled: true
+      name: ceph-rbd-snapshot
+      isDefault: true
+      deletionPolicy: Delete
+      # see https://rook.io/docs/rook/latest/Storage-Configuration/Ceph-CSI/ceph-csi-snapshot/#rbd-snapshots for available configuration
+      parameters: # Only pool needs to be specified as snapshotter secret and clusterID are already pre-selected
+        pool: ceph-vm
+    cephFileSystemVolumeSnapshotClass:
+      enabled: true
+      name: cephfs-snapshot
+      isDefault: false
+      deletionPolicy: Delete
+      # see https://rook.io/docs/rook/latest/Storage-Configuration/Ceph-CSI/ceph-csi-snapshot/#cephfs-snapshots for available configuration
+      parameters:
+        pool: ceph-fs_data
+        fsName: ceph-fs
     cephBlockPools: {}
     cephFileSystems: {}
     cephObjectStores: {}

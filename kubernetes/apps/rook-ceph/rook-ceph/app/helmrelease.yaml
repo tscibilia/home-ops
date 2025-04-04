@@ -35,7 +35,11 @@ spec:
     crds:
       enabled: true
     csi:
-      cephFSKernelMountOptions: ms_mode=prefer-crc
+      csiAddons:
+        enabled: false
+      enableCSIEncryption: false
+      enableVolumeGroupSnapshot: false
+      cephFSKernelMountOptions: ms_mode=secure # Set to "ms_mode=secure" when connections.encrypted is enabled in CephCluster CR
       enableRbdDriver: true
       # NOTE: Enable the driver and shapshotter if you want to use CephFS
       enableCephfsDriver: true
@@ -43,6 +47,10 @@ spec:
       enableLiveness: true
       serviceMonitor:
         enabled: true
+      pluginTolerations:
+        - key: special
+          operator: Exists
+          effect: NoSchedule
     enableDiscoveryDaemon: true
     image:
       repository: ghcr.io/rook/ceph
