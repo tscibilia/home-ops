@@ -47,12 +47,12 @@ spec:
           mon:
             disabled: false
             interval: 45s
-      network:
-        provider: host
-        connections:
-          # Requires kernel 5.11
-          encryption:
-            enabled: false
+      # network:
+      #   provider: host
+      #   connections:
+      #     # Requires kernel 5.11
+      #     encryption:
+      #       enabled: false
     # -- Settings for the block pool snapshot class
     cephBlockPoolsVolumeSnapshotClass:
       enabled: true
