@@ -35,6 +35,11 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
+      externalMgrEndpoints:
+        - ip: 10.10.10.1
+        - ip: 10.10.10.2
+        - ip: 10.10.10.3
+      externalMgrPrometheusPort: 9283
     toolbox:
       enabled: false
     cephClusterSpec:
