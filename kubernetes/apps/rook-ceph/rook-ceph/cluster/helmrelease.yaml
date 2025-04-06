@@ -35,7 +35,7 @@ spec:
       retries: 3
   dependsOn:
   - name: snapshot-controller
-    namespace: storage
+    namespace: kube-system
   uninstall:
     keepHistory: false
   values:
