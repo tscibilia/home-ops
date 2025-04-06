@@ -38,6 +38,11 @@ nodes:
         mtu: 1500
         vip:
           ip: "192.168.5.200"
+      - deviceSelector:
+          hardwareAddr: "bc:24:11:10:d2:28"
+        dhcp: false
+        addresses:
+          - "10.10.10.8/28"
   - hostname: "talos-m02"
     ipAddress: "192.168.5.202"
     installDisk: "/dev/sda"
@@ -57,6 +62,11 @@ nodes:
         mtu: 1500
         vip:
           ip: "192.168.5.200"
+      - deviceSelector:
+          hardwareAddr: "bc:24:11:48:24:3c"
+        dhcp: false
+        addresses:
+          - "10.10.10.9/28"
   - hostname: "talos-m03"
     ipAddress: "192.168.5.203"
     installDisk: "/dev/sda"
@@ -76,6 +86,11 @@ nodes:
         mtu: 1500
         vip:
           ip: "192.168.5.200"
+      - deviceSelector:
+          hardwareAddr: "bc:24:11:ff:bf:0a"
+        dhcp: false
+        addresses:
+          - "10.10.10.10/28"
 
 # Global patches
 patches:
