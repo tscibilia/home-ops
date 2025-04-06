@@ -16,7 +16,7 @@ parameters:
   csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
   imageFeatures: layering,fast-diff,object-map,deep-flatten,exclusive-lock
   imageFormat: "2"
-  pool: talos-maxi-rbd
+  pool: ceph-vm
 reclaimPolicy: Delete
 ---
 apiVersion: storage.k8s.io/v1
@@ -32,7 +32,7 @@ parameters:
   csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
   csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
   csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
-  fsName: talos-maxi-fs
-  pool: talos-maxi-fs_data
+  fsName: ceph-fs
+  pool: ceph-fs_data
 allowVolumeExpansion: true
 reclaimPolicy: Delete
