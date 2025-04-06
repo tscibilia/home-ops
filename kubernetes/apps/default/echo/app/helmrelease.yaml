@@ -88,6 +88,3 @@ spec:
                 service:
                   identifier: app
                   port: http
-    persistence:
-      config:
-        existingClaim: echo-test
