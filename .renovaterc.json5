@@ -83,15 +83,15 @@
         commitMessageTopic: "{{{groupName}}} group",
       },
     },
-    // {
-    //   description: "Rook-Ceph Group",
-    //   groupName: "Rook-Ceph",
-    //   matchDatasources: ["docker"],
-    //   matchPackageNames: ["/rook-ceph/", "/rook-ceph-cluster/"],
-    //   group: {
-    //     commitMessageTopic: "{{{groupName}}} group",
-    //   },
-    // },
+    {
+      description: "Rook-Ceph Group",
+      groupName: "Rook-Ceph",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/rook-ceph/", "/rook-ceph-cluster/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
     {
       description: "Spegel Group",
       groupName: "Spegel",
@@ -102,15 +102,15 @@
       },
     },
     // autoMerge
-    // {
-    //   description: "Auto-merge trusted container digests",
-    //   matchDatasources: ["docker"],
-    //   automerge: true,
-    //   automergeType: "pr",
-    //   matchUpdateTypes: ["digest"],
-    //   matchPackageNames: ["/home-operations/"],
-    //   ignoreTests: false,
-    // },
+    {
+      description: "Auto-merge trusted container digests",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["digest"],
+      matchPackageNames: ["/home-operations/"],
+      ignoreTests: false,
+    },
     {
       description: "Auto-merge OCI Charts",
       matchDatasources: ["docker"],
@@ -184,6 +184,10 @@
     {
       matchUpdateTypes: ["patch"],
       labels: ["type/patch"],
+    },
+    {
+      matchUpdateTypes: ["digest"],
+      labels: ["type/digest"],
     },
     {
       matchDatasources: ["docker"],
