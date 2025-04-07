@@ -7,4 +7,3 @@ resources:
   - ./cluster-settings.yaml
   - ./namespace.yaml
   - ./sops-age.sops.yaml
-  - ./app-template
