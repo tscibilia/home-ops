@@ -103,18 +103,30 @@ spec:
         serviceName: *app
         endpoints:
           - port: http
-    route:
+    # route:
+    #   app:
+    #     hostnames:
+    #       - "${GATUS_SUBDOMAIN}.nycarch.xyz"
+    #     parentRefs:
+    #       - name: external
+    #         namespace: kube-system
+    #         sectionName: https
+    #     rules:
+    #       - backendRefs:
+    #           - name: *app
+    #             port: *port
+    ingress:
       app:
-        hostnames:
-          - "${GATUS_SUBDOMAIN}.nycarch.xyz"
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - name: *app
-                port: *port
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
     serviceAccount:
       create: true
       name: *app
