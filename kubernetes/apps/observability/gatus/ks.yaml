@@ -6,21 +6,12 @@ metadata:
   name: &app gatus
   namespace: &namespace observability
 spec:
-  # components:
-  #   - ../../../../components/postgres
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: rook-ceph-cluster
       namespace: rook-ceph
-  #   - name: crunchy-postgres-operator
-  #     namespace: database
-  # healthCheckExprs:
-  #   - apiVersion: postgres-operator.crunchydata.com/v1beta1
-  #     kind: PostgresCluster
-  #     failed: status.conditions.filter(e, e.type == 'ProxyAvailable').all(e, e.status == 'False')
-  #     current: status.conditions.filter(e, e.type == 'ProxyAvailable').all(e, e.status == 'True')
   interval: 30m
   path: ./kubernetes/apps/observability/gatus/app
   postBuild:
