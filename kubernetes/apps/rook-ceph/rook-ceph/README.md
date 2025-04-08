@@ -1,5 +1,5 @@
 # Rook Ceph
-I took it as a challenge to materialize [onedr0p's idea](https://onedr0p.github.io/home-ops/notes/proxmox-considerations.html) to have an external Ceph cluster for my virtualized cluster to consume. It's was by no means a simple endeavor. In my reasearch phase, I found more who started but abanonded external rook-ceph in favor of bare-metal. I must credit [Frantathefranta](https://github.com/frantathefranta/home-ops/) for most of their configurations, I couldn't have done it without that repo (and chatGPT).
+I took it as a challenge to materialize [onedr0p's idea](https://onedr0p.github.io/home-ops/archive/proxmox-considerations.html) to have an external Ceph cluster for my virtualized cluster to consume. It's was by no means a simple endeavor. In my reasearch phase, I found more who started but abanonded external rook-ceph in favor of bare-metal. I must credit [Frantathefranta](https://github.com/frantathefranta/home-ops/) for most of their configurations, I couldn't have done it without that repo (and chatGPT).
 
 ## External cluster
 ### Specifications
