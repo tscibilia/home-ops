@@ -119,7 +119,7 @@ spec:
       app:
         className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
           - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
