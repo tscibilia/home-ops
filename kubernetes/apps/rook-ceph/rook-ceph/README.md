@@ -42,7 +42,7 @@ kubectl -n rook-ceph get sc
 - I added the env variable `SUBVOLUME_GROUP=csi` to the import script and re-ran it.
 
 ### Incorrect provisioner permissions
-- It seems I could create PVCs for `ceph-rdb` but not `ceph-fs`, after some chatgpt troubleshooting the logs I found this error: `rados: ret=-1, Operation not permitted.
+- It seems I could create PVCs for `ceph-rdb` but not `ceph-fs`, after some chatgpt troubleshooting the logs I found this error: `rados: ret=-1, Operation not permitted`.
 - I was told to fix the permissions in Proxmox with this command:
 ```bash
 ceph auth caps client.csi-cephfs-provisioner \
@@ -75,3 +75,10 @@ I might try setting up the following yamls so I don't need to run `import-extern
  - `cephfs-secrets.yaml`
  - `storageclass.yaml`
  - `monitor-config.yaml`
+
+### Resources
+ - [#external-rook-ceph discord](https://discord.com/channels/673534664354430999/1023423088563597322)
+ - [frantathefranta/home-ops](https://github.com/frantathefranta/home-ops/tree/main/kubernetes/apps/rook-ceph-external/rook-ceph) using external ceph, biggest resource for me
+ - [billm/moria-ops](https://github.com/billm/moria-ops/blob/main/kubernetes/moria/apps/storage/rook-ceph/cluster/helmrelease.yaml) using external ceph, good configs
+ - [dcplaya/home-ops](https://github.com/dcplaya/home-ops/tree/main/kubernetes/apps/rook-ceph/rook-ceph) no longer using external ceph, but referenced from discord
+ - [Official Docs](https://rook.io/docs/rook/latest-release/CRDs/Cluster/external-cluster/external-cluster/)
