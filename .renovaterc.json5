@@ -16,7 +16,7 @@
     "prEditedNotification",
     "prIgnoreNotification",
   ],
-  schedule: ["every weekend"],
+  // schedule: ["every weekend"],
   ignorePaths: [
     "**/*.sops.*",
     "**/resources/**",
@@ -112,16 +112,7 @@
       ignoreTests: false,
     },
     {
-      description: "Auto-merge OCI Charts",
-      matchDatasources: ["docker"],
-      automerge: true,
-      automergeType: "pr",
-      matchUpdateTypes: ["minor", "patch"],
-      matchPackageNames: ["/kube-prometheus-stack/"],
-      ignoreTests: false,
-    },
-    {
-      description: "Auto-merge GitHub Actions",
+      description: "Auto-merge GitHub Actions for minor & patch",
       matchManagers: ["github-actions"],
       automerge: true,
       automergeType: "branch",
