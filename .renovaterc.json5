@@ -12,6 +12,10 @@
   ],
   dependencyDashboard: true,
   dependencyDashboardTitle: "Renovate Dashboard 🤖",
+  dependencyDashboardApproval: false,
+  platformAutomerge: true,
+  prConcurrentLimit: 5,
+  prHourlyLimit: 10,
   suppressNotifications: [
     "prEditedNotification",
     "prIgnoreNotification",
