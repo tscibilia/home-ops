@@ -64,3 +64,4 @@ jobs:
         with:
           token: "${{ steps.app-token.outputs.token }}"
           renovate-version: "${{ inputs.version || 'latest' }}"
+          args: --recreate-closed
