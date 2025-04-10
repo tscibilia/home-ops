@@ -37,9 +37,6 @@
   kubernetes: {
     fileMatch: ["(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$"],
   },
-  kustomize: {
-    fileMatch: ["(^|/)kustomization\\.ya?ml(?:\\.j2)?$"],
-  },
   // groups
   packageRules: [
     {
