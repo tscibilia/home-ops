@@ -10,6 +10,7 @@
     ":semanticCommits",
     ":timezone(America/New_York)",
   ],
+  recreateClosed: true,
   dependencyDashboard: true,
   dependencyDashboardTitle: "Renovate Dashboard 🤖",
   dependencyDashboardApproval: false,
