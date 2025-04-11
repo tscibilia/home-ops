@@ -17,7 +17,7 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyDeployment:
-        replicas: 2
+        replicas: 1
         container:
           resources:
             requests:
