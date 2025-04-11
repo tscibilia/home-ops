@@ -6,4 +6,3 @@ resources:
   - ./external-dns.yaml
   - ./ingress-nginx.yaml
   - ./envoy-proxy.yaml
-  - ./gateway-proxy.yaml
