@@ -3,23 +3,65 @@
 apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: pool
+  name: default
 spec:
   allowFirstLastIPs: "No"
   blocks:
-    - cidr: "192.168.5.0/24"
+    - cidr: 192.168.5.0/24
 ---
-# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliuml2announcementpolicy_v2alpha1.json
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumbgppeerconfig_v2alpha1.json
 apiVersion: cilium.io/v2alpha1
-kind: CiliumL2AnnouncementPolicy
+kind: CiliumBGPPeerConfig
 metadata:
-  name: l2-policy
+  name: cilium-peer
 spec:
-  loadBalancerIPs: true
-  # NOTE: interfaces might need to be set if you have more than one active NIC on your hosts
-  # interfaces:
-  #   - ^eno[0-9]+
-  #   - ^eth[0-9]+
+  timers:
+    holdTimeSeconds: 90
+    keepAliveTimeSeconds: 30
+    connectRetryTimeSeconds: 120
+  families:
+    - afi: ipv4
+      safi: unicast
+      advertisements:
+        matchLabels:
+          advertise: bgp
+  ebgpMultihop: 10
+  gracefulRestart:
+    enabled: true
+    restartTimeSeconds: 15
+---
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumbgpclusterconfig_v2alpha1.json
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPClusterConfig
+metadata:
+  name: cilium-bgp
+spec:
   nodeSelector:
     matchLabels:
-      kubernetes.io/os: linux
+      kubernetes.io/os: "linux"
+  bgpInstances:
+    - name: cluster
+      localASN: 65444
+      peers:
+        - name: gateway
+          peerASN: 65401
+          peerAddress: 192.168.5.250
+          peerConfigRef:
+            name: cilium-peer
+---
+# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumbgpadvertisement_v2alpha1.json
+apiVersion: cilium.io/v2alpha1
+kind: CiliumBGPAdvertisement
+metadata:
+  name: bgp-advertisements
+  labels:
+    advertise: bgp
+spec:
+  advertisements:
+    - advertisementType: "Service"
+      service:
+        addresses:
+          - LoadBalancerIP
+      selector:
+        matchExpressions:
+          - { key: somekey, operator: NotIn, values: ["never-used-value"] }

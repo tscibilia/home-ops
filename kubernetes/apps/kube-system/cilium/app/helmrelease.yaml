@@ -25,15 +25,15 @@ spec:
         name: cilium
         namespace: kube-system
   install:
+    crds: CreateReplace
+    createNamespace: true
     remediation:
       retries: 3
   upgrade:
+    crds: CreateReplace
     cleanupOnFail: true
     remediation:
       retries: 3
   valuesFrom:
     - kind: ConfigMap
       name: cilium-values
-  values:
-    operator:
-      tolerations: []

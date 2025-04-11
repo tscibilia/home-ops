@@ -1,58 +1,89 @@
 ---
-autoDirectNodeRoutes: true
+bandwidthManager:
+  enabled: true
+  bbr: true
+bgpControlPlane:
+  enabled: true
 bpf:
   masquerade: true
-  # Ref: https://github.com/siderolabs/talos/issues/10002
-  hostLegacyRouting: true
-cni:
-  # Required for pairing with Multus CNI
-  exclusive: false
+cluster:
+  name: main
+ciliumEndpointSlice:
+  enabled: true
 cgroup:
-  automount:
-    enabled: false
   hostRoot: /sys/fs/cgroup
-# NOTE: devices might need to be set if you have more than one active NIC on your hosts
-# devices: eno+ eth+
+  autoMount:
+    enabled: false
+cni:
+  exclusive: false
+enableIPv4BIGTCP: true
 endpointRoutes:
   enabled: true
-envoy:
-  enabled: false
-dashboards:
+gatewayAPI:
   enabled: true
+  enableAlpn: true
+  enableAppProtocol: true
 hubble:
+  enabled: true
+  metrics:
+    enabled:
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - port-distribution
+      - icmp
+      - http
+  relay:
+    enabled: true
+    rollOutPods: true
+  dashboards:
+    enabled: true
+    annotations:
+      grafana_folder: Cilium
+  ui:
+    enabled: true
+    ingress:
+      enabled: true
+      className: internal
+      hosts:
+        - &host hubble.${SECRET_DOMAIN}
+      tls:
+        - hosts:
+            - *host
+          secretName: "${SECRET_DOMAIN/./-}-production"
+    rollOutPods: true
+ingressController:
   enabled: false
+l7Proxy: true
+loadBalancer:
+  algorithm: maglev
+  mode: dsr
+  l7:
+    backend: envoy
 ipam:
   mode: kubernetes
-ipv4NativeRoutingCIDR: "10.42.0.0/16"
+autoDirectNodeRoutes: true
+routingMode: native
+ipv4NativeRoutingCIDR: 10.42.0.0/16
+k8s:
+  requireIPv4PodCIDR: true
 k8sServiceHost: 127.0.0.1
 k8sServicePort: 7445
 kubeProxyReplacement: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
-l2announcements:
-  enabled: true
-loadBalancer:
-  algorithm: maglev
-  mode: "dsr"
 localRedirectPolicy: true
 operator:
-  dashboards:
-    enabled: true
-  prometheus:
-    enabled: true
-    serviceMonitor:
-      enabled: true
-  replicas: 1
   rollOutPods: true
 prometheus:
   enabled: true
-  serviceMonitor:
-    enabled: true
-    trustCRDsExist: true
 rollOutCiliumPods: true
-routingMode: native
 securityContext:
+  privileged: true
   capabilities:
     ciliumAgent:
+      - PERFMON
+      - BPF
       - CHOWN
       - KILL
       - NET_ADMIN
@@ -60,8 +91,6 @@ securityContext:
       - IPC_LOCK
       - SYS_ADMIN
       - SYS_RESOURCE
-      - PERFMON
-      - BPF
       - DAC_OVERRIDE
       - FOWNER
       - SETGID
@@ -70,5 +99,6 @@ securityContext:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE
-socketLB:
-  hostNamespaceOnly: true
+tls:
+  secretsNamespace:
+    create: false
