@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   interval: 1h
-  path: ./kubernetes/main/apps/networking/gateway/envoy/app
+  path: ./kubernetes/apps/network/gateway/envoy/app
   prune: true
   retryInterval: 2m
   sourceRef:
@@ -32,7 +32,7 @@ spec:
   dependsOn:
     - name: envoy
   interval: 1h
-  path: ./kubernetes/main/apps/networking/gateway/envoy/manifests
+  path: ./kubernetes/apps/network/gateway/envoy/manifests
   prune: true
   retryInterval: 2m
   sourceRef:
