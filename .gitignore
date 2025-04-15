@@ -20,3 +20,5 @@ talosconfig
 .venv/
 .DS_Store
 Thumbs.db
+# Local overrides
+values.override.sh
