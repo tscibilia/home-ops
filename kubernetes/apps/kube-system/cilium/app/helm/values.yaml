@@ -7,7 +7,6 @@ bpf:
   datapathMode: netkit
   masquerade: true
   # Ref: https://github.com/siderolabs/talos/issues/10002
-  hostLegacyRouting: true
   preallocateMaps: true
   # tproxy: true
 bpfClockProbe: true
