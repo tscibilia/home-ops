@@ -24,7 +24,6 @@ cni:
   exclusive: false
 dashboards:
   enabled: true
-# NOTE: devices might need to be set if you have more than one active NIC on your hosts
 devices: ens+
 enableIPv4BIGTCP: true
 endpointRoutes:
@@ -39,7 +38,7 @@ hubble:
   enabled: false
 ipam:
   mode: kubernetes
-ipv4NativeRoutingCIDR: "10.42.0.0/16"
+ipv4NativeRoutingCIDR: 10.42.0.0/16
 k8sServiceHost: 127.0.0.1
 k8sServicePort: 7445
 kubeProxyReplacement: true
@@ -48,7 +47,7 @@ l2announcements:
   enabled: true
 loadBalancer:
   algorithm: maglev
-  mode: "dsr"
+  mode: dsr
 localRedirectPolicy: true
 operator:
   dashboards:
@@ -86,5 +85,3 @@ securityContext:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE
-socketLB:
-  hostNamespaceOnly: true
