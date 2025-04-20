@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: *name
+  name: proxy-nas
 subsets:
   - addresses:
       - ip: 192.168.1.10
