@@ -20,7 +20,6 @@
     "prEditedNotification",
     "prIgnoreNotification",
   ],
-  // schedule: ["every weekend"],
   ignorePaths: [
     "**/*.sops.*",
     "**/resources/**",
@@ -110,6 +109,13 @@
       group: {
         commitMessageTopic: "{{{groupName}}} group",
       },
+    },
+    // allowedVersions
+    {
+      description: "Allow postgres versions <17",
+      matchDatasources: ["docker"],
+      matchPackagePatterns: ["postgresql", "postgres-backup-local"],
+      allowedVersions: "<17"
     },
     // autoMerge
     {
