@@ -1,0 +1,53 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/cronjob.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: &name ${APP}-pg-backups
+spec:
+  schedule: 5 */4 * * *
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 30
+      template:
+        spec:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            runAsNonRoot: true
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups:
+              - 65539
+          containers:
+            - name: *name
+              # https://github.com/prodrigestivill/docker-postgres-backup-local/discussions/109
+              image: docker.io/prodrigestivill/postgres-backup-local:16
+              imagePullPolicy: IfNotPresent
+              command:
+                - /backup.sh
+              env:
+                - name: POSTGRES_HOST
+                  value: ${CNPG_NAME:=postgres16}-rw.database.svc.cluster.local
+                - name: POSTGRES_DB
+                  value: ${APP}
+                - name: POSTGRES_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: user
+                      name: ${APP}-pguser-secret
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: ${APP}-pguser-secret
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+          restartPolicy: OnFailure
+          volumes:
+            - name: backups
+              nfs:
+                path: /mnt/user/backup/kubernetes/postgres
+                server: "192.168.1.190"
