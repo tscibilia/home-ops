@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: akeyless-secret-store
+    - name: external-secrets
       namespace: external-secrets
   interval: 30m
   path: ./kubernetes/apps/database/cnpg/app
@@ -31,7 +31,7 @@ metadata:
   namespace: &namespace database
 spec:
   dependsOn:
-    - name: cnpg
+    - name: cnpg-operator
       namespace: *namespace
     - name: openebs
       namespace: openebs-system
