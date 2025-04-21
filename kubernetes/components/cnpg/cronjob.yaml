@@ -23,7 +23,7 @@ spec:
           containers:
             - name: *name
               # https://github.com/prodrigestivill/docker-postgres-backup-local/discussions/109
-              image: docker.io/prodrigestivill/postgres-backup-local:16
+              image: docker.io/prodrigestivill/postgres-backup-local:17
               imagePullPolicy: IfNotPresent
               command:
                 - /backup.sh
