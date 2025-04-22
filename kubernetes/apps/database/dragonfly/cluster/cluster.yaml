@@ -11,7 +11,7 @@ spec:
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
     - --s3_endpoint=$(AWS_REDIS_BUCKET).s3.us-east-1.amazonaws.com
-    - --dir=s3://$(AWS_REDIS_BUCKET)/dragonfly
+    # - --dir=s3://$(AWS_REDIS_BUCKET)/dragonfly
   env:
     - name: MAX_MEMORY
       valueFrom:
