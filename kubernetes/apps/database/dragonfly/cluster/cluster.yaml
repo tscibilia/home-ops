@@ -10,7 +10,7 @@ spec:
     - --proactor_threads=2
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
-    - --s3_endpoint=${AWS_REDIS_BUCKET}.s3.us-east-1.amazonaws.com
+    - --s3_endpoint=$(AWS_REDIS_BUCKET).s3.us-east-1.amazonaws.com
   env:
     - name: MAX_MEMORY
       valueFrom:
@@ -20,12 +20,12 @@ spec:
     - name: AWS_ACCESS_KEY_ID
       valueFrom:
         secretKeyRef:
-          key: aws-access-key-id
+          key: AWS_ACCESS_KEY_ID
           name: dragonfly-secret
     - name: AWS_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
-          key: aws-secret-access-key
+          key: AWS_SECRET_ACCESS_KEY
           name: dragonfly-secret
     - name: AWS_REDIS_BUCKET
       valueFrom:
@@ -42,7 +42,7 @@ spec:
     limits:
       memory: 512Mi
   snapshot:
-    dir: "s3://${AWS_REDIS_BUCKET}.s3.us-east-1.amazonaws.com/"
+    dir: "s3://dragonfly"
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: "kubernetes.io/hostname"
