@@ -10,6 +10,9 @@
     ':semanticCommits',
     ':timezone(America/New_York)',
   ],
+  enabledManagers: [
+    'github-actions'
+  ],
   dependencyDashboard: true,
   dependencyDashboardTitle: 'Renovate Dashboard 🤖',
   dependencyDashboardApproval: false,
