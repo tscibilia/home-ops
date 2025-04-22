@@ -11,6 +11,7 @@ spec:
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
     - --s3_endpoint=$(AWS_REDIS_BUCKET).s3.us-east-1.amazonaws.com
+    - --dir=s3://$(AWS_REDIS_BUCKET)/dragonfly
   env:
     - name: MAX_MEMORY
       valueFrom:
@@ -41,8 +42,6 @@ spec:
       cpu: 100m
     limits:
       memory: 512Mi
-  snapshot:
-    dir: "s3://dragonfly"
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: "kubernetes.io/hostname"
