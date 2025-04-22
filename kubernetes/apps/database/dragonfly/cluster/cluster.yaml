@@ -27,6 +27,11 @@ spec:
         secretKeyRef:
           key: aws-secret-access-key
           name: dragonfly-secret
+    - name: AWS_REDIS_BUCKET
+      valueFrom:
+        secretKeyRef:
+          key: AWS_REDIS_BUCKET
+          name: dragonfly-secret
   image: ghcr.io/dragonflydb/dragonfly:v1.29.0
   labels:
     dragonflydb.io/cluster: *app
@@ -37,7 +42,7 @@ spec:
     limits:
       memory: 512Mi
   snapshot:
-    dir: "s3://${AWS_REDIS_BUCKET}/"
+    dir: "s3://${AWS_REDIS_BUCKET}.s3.us-east-1.amazonaws.com/"
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: "kubernetes.io/hostname"
