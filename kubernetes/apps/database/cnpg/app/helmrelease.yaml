@@ -21,7 +21,7 @@ metadata:
 spec:
   chartRef:
     kind: OCIRepository
-    name: cloudnative-pg
+    name: cnpg-operator
   maxHistory: 2
   interval: 30m
   install:
