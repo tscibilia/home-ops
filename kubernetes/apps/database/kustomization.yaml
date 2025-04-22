@@ -7,4 +7,4 @@ components:
 namespace: database
 resources:
   - ./cnpg/ks.yaml
-  # - ./dragonfly/ks.yaml
+  - ./dragonfly/ks.yaml
