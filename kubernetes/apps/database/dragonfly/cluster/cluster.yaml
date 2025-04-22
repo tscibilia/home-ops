@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://crd.movishell.pl/dragonflydb.io/dragonfly_v1alpha1.json
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: &app dragonfly-cluster
+spec:
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=2
+    - --cluster_mode=emulated
+    - --default_lua_flags=allow-undeclared-keys
+    - --s3_endpoint=${AWS_REDIS_BUCKET}.s3.us-east-1.amazonaws.com
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1Mi
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          key: aws-access-key-id
+          name: dragonfly-secret
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          key: aws-secret-access-key
+          name: dragonfly-secret
+  image: ghcr.io/dragonflydb/dragonfly:v1.29.0
+  labels:
+    dragonflydb.io/cluster: *app
+  replicas: 3
+  resources:
+    requests:
+      cpu: 100m
+    limits:
+      memory: 512Mi
+  snapshot:
+    dir: "s3://${AWS_REDIS_BUCKET}/"
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "DoNotSchedule"
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: *app

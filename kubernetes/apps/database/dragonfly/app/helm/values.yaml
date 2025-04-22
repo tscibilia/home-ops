@@ -1,0 +1,23 @@
+---
+grafanaDashboard:
+  enabled: true
+serviceMonitor:
+  enabled: true
+prometheusRule:
+  enabled: true
+  spec:
+    - alert: DragonflyMissing
+      expr: absent(dragonfly_uptime_in_seconds) == 1
+      for: 0m
+      labels:
+        severity: critical
+      annotations:
+        summary: Dragonfly is missing
+        description: "Dragonfly is missing"
+podSecurityContext:
+  fsGroup: 2000
+securityContext:
+  capabilities: { drop: ["ALL"] }
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
