@@ -10,8 +10,8 @@ spec:
     - --proactor_threads=2
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
-    - --s3_endpoint=$(AWS_REDIS_BUCKET).s3.us-east-1.amazonaws.com
-    # - --dir=s3://$(AWS_REDIS_BUCKET)/dragonfly
+    - --s3_endpoint=$(AWS_ENDPOINT)
+    - --dir=s3://dragonfly
   env:
     - name: MAX_MEMORY
       valueFrom:
@@ -31,7 +31,7 @@ spec:
     - name: AWS_REDIS_BUCKET
       valueFrom:
         secretKeyRef:
-          key: AWS_REDIS_BUCKET
+          key: AWS_ENDPOINT
           name: dragonfly-secret
   image: ghcr.io/dragonflydb/dragonfly:v1.29.0
   labels:
