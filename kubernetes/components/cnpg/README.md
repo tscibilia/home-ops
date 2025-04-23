@@ -4,7 +4,7 @@
 
 ```
 export APP=mealie
-PASSWORD=$(openssl rand -base64 15)
+PASSWORD=$(openssl rand -base64 30 | tr -dc 'A-Za-z0-9' | head -c 20 )
 akeyless update-secret-val \
   --name cnpg-users \
   --custom-field "${APP}_postgres_username=${APP}" \
