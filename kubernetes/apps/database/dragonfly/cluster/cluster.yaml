@@ -10,10 +10,10 @@ spec:
     - --proactor_threads=2
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
-    - --s3_endpoint=https://$(AWS_ENDPOINT)
-    - --dir=s3://dragonfly
-    - --dbfilename=''
-    - --snapshot_cron=5 */2 * * *
+    # - --s3_endpoint=https://$(AWS_ENDPOINT)
+    # - --dir=s3://dragonfly
+    # - --dbfilename=''
+    # - --snapshot_cron=5 */2 * * *
   env:
     - name: MAX_MEMORY
       valueFrom:
