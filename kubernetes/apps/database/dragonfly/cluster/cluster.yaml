@@ -13,7 +13,7 @@ spec:
     - --s3_endpoint=https://$(AWS_ENDPOINT)
     - --dir=s3://dragonfly
     - --dbfilename=''
-    - --snapshot_cron="5 /2 * * *"
+    - --snapshot_cron=5 /2 * * *
   env:
     - name: MAX_MEMORY
       valueFrom:
