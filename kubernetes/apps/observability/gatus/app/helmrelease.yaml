@@ -64,9 +64,9 @@ spec:
                   secretKeyRef:
                     name: gatus-pguser-secret
                     key: uri
-            envFrom:
-              - secretRef:
-                  name: gatus-secret
+            # envFrom:
+            #   - secretRef:
+            #       name: gatus-secret
             probes:
               liveness: &probes
                 enabled: true
