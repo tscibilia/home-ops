@@ -12,7 +12,6 @@ spec:
     - --default_lua_flags=allow-undeclared-keys
     - --s3_endpoint=https://$(AWS_ENDPOINT)
     - --dir=s3://dragonfly
-    - --region=$(AWS_REGION)
   env:
     - name: MAX_MEMORY
       valueFrom:
