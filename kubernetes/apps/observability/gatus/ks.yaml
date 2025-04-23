@@ -9,9 +9,13 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/cnpg
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+    - name: external-secrets
+      namespace: external-secrets
+    - name: cnpg-cluster
+      namespace: database
   interval: 30m
   path: ./kubernetes/apps/observability/gatus/app
   postBuild:
