@@ -22,6 +22,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: status
+      CNPG_NAME: postgres16
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
