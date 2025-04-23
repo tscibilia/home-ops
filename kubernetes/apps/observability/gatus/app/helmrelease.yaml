@@ -103,18 +103,6 @@ spec:
         serviceName: *app
         endpoints:
           - port: http
-    # route:
-    #   app:
-    #     hostnames:
-    #       - "${GATUS_SUBDOMAIN}.nycarch.xyz"
-    #     parentRefs:
-    #       - name: external
-    #         namespace: kube-system
-    #         sectionName: https
-    #     rules:
-    #       - backendRefs:
-    #           - name: *app
-    #             port: *port
     ingress:
       app:
         className: external
