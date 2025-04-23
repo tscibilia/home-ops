@@ -10,8 +10,9 @@ spec:
     - --proactor_threads=2
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
-    - --s3_endpoint=$(AWS_ENDPOINT)
+    - --s3_endpoint=https://$(AWS_ENDPOINT)
     - --dir=s3://dragonfly
+    - --region=$(AWS_REGION)
   env:
     - name: MAX_MEMORY
       valueFrom:
@@ -32,6 +33,11 @@ spec:
       valueFrom:
         secretKeyRef:
           key: AWS_ENDPOINT
+          name: dragonfly-secret
+    - name: AWS_REGION
+      valueFrom:
+        secretKeyRef:
+          key: AWS_REGION
           name: dragonfly-secret
   image: ghcr.io/dragonflydb/dragonfly:v1.29.0
   labels:
