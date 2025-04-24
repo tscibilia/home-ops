@@ -1,6 +1,7 @@
 [env]
 _.python.venv = { path = "{{config_root}}/.venv", create = true }
 KUBECONFIG = "{{config_root}}/kubeconfig"
+MINIJINJA_CONFIG_FILE = "{{config_root}}/.minijinja.toml"
 SOPS_AGE_KEY_FILE = "{{config_root}}/age.key"
 TALOSCONFIG = "{{config_root}}/talos/clusterconfig/talosconfig"
 BOOTSTRAP_DIR = "{{config_root}}/bootstrap"
