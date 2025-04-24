@@ -5,7 +5,8 @@ version: '3'
 # Taskfile used to manage certain VolSync tasks for a given application, limitations are as followed.
 #   1. Fluxtomization, HelmRelease, PVC, ReplicationSource all have the same name (e.g. plex)
 #   2. ReplicationSource and ReplicationDestination are a Restic repository
-#   3. Each application only has one PVC that is being replicated
+#   3. Applications are deployed as either a Kubernetes Deployment or StatefulSet
+#   4. Each application only has one PVC that is being replicated
 
 vars:
   VOLSYNC_RESOURCES_DIR: '{{.ROOT_DIR}}/.taskfiles/volsync/resources'
@@ -24,17 +25,34 @@ tasks:
       - '[[ "{{.STATE}}" == "suspend" || "{{.STATE}}" == "resume" ]]'
       - which flux kubectl
 
-  unlock:
-    desc: Unlock all restic source repos
+  list:
+    desc: List all snapshots (task volsync:list APP=zigbee2mqtt)
+    summary: |
+      Args:
+        cluster: Cluster to run command against (required)
+        ns: Namespace the PVC is in (default: default)
+        app: Application to list snapshots for (required)
     cmds:
-      - for: { var: SOURCES, split: "\n" }
-        cmd: kubectl --namespace {{splitList "," .ITEM | first}} patch --field-manager=flux-client-side-apply replicationsources {{splitList "," .ITEM | last}} --type merge --patch "{\"spec\":{\"restic\":{\"unlock\":\"{{now | unixEpoch}}\"}}}"
+      - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/list.yaml.j2 | kubectl apply --server-side --filename -
+      - until kubectl --namespace {{.NS}} get job/{{.JOB}} &>/dev/null; do sleep 5; done
+      - kubectl --namespace {{.NS}} wait job/{{.JOB}} --for condition=complete --timeout=1m
+      - kubectl --namespace {{.NS}} logs job/{{.JOB}} --container list
+      - kubectl --namespace {{.NS}} delete job {{.JOB}}
     vars:
-      SOURCES:
-        sh: kubectl get replicationsources --all-namespaces --no-headers --output=jsonpath='{range .items[*]}{.metadata.namespace},{.metadata.name}{"\n"}{end}'
+      NS: '{{.ns | default "default"}}'
+      JOB: '{{.APP}}-list-snapshots'
+    env:
+      APP: '{{.APP}}'
+      NS: '{{.NS}}'
     preconditions:
-      - which kubectl
+      - test -f {{.VOLSYNC_RESOURCES_DIR}}/list.yaml.j2
+      - which flux kubectl minijinja-cli
+    requires:
+      vars: [APP]
+    silent: true
 
+  # To run backup jobs in parallel for all replicationsources:
+  #  - kubectl get replicationsources --all-namespaces --no-headers | awk '{print $2, $1}' | xargs -l bash -c 'task volsync:snapshot APP=$0 NS=$1'
   snapshot:
     desc: Snapshot an app [NS=default] [APP=required]
     cmds:
@@ -50,6 +68,8 @@ tasks:
       - kubectl --namespace {{.NS}} get replicationsources {{.APP}}
       - which kubectl
 
+  # To run restore jobs in parallel for all replicationdestinations:
+  #   - kubectl get replicationsources --all-namespaces --no-headers | awk '{print $2, $1}' | xargs -l bash -c 'task volsync:restore app=$0 ns=$1'
   restore:
     desc: Restore an app [NS=default] [APP=required] [PREVIOUS=required]
     cmds:
@@ -91,6 +111,17 @@ tasks:
     preconditions:
       - test -f {{.VOLSYNC_RESOURCES_DIR}}/replicationdestination.yaml.j2
       - which flux kubectl minijinja-cli
+
+  unlock:
+    desc: Unlock all restic source repos
+    cmds:
+      - for: { var: SOURCES, split: "\n" }
+        cmd: kubectl --namespace {{splitList "," .ITEM | first}} patch --field-manager=flux-client-side-apply replicationsources {{splitList "," .ITEM | last}} --type merge --patch "{\"spec\":{\"restic\":{\"unlock\":\"{{now | unixEpoch}}\"}}}"
+    vars:
+      SOURCES:
+        sh: kubectl get replicationsources --all-namespaces --no-headers --output=jsonpath='{range .items[*]}{.metadata.namespace},{.metadata.name}{"\n"}{end}'
+    preconditions:
+      - which kubectl
 
   unlock-local:
     desc: Unlock a restic source repo from local machine [NS=default] [APP=required]
