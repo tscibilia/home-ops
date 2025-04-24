@@ -9,3 +9,5 @@ configMapGenerator:
   - name: servers-json
     files:
       - ./config/servers.json
+generatorOptions:
+  disableNameSuffixHash: true
