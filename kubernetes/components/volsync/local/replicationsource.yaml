@@ -10,9 +10,8 @@ spec:
     schedule: "0 */6 * * *"
   restic:
     copyMethod: "${VOLSYNC_COPYMETHOD:=Clone}"
-    pruneIntervalDays: 14
     repository: "${APP}-volsync-secret"
-    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=2Gi}"
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=ceph-rbd}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-rbd}"
@@ -21,6 +20,7 @@ spec:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=1000}
       fsGroup: ${VOLSYNC_PGID:=1000}
+    pruneIntervalDays: 14
     retain:
       hourly: 24
       daily: 7
