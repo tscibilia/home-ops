@@ -27,6 +27,7 @@
         "kube-system": "kubernetes",
         "network": "connection",
         "observability": "event",
+        "openebs-system": "base",
         "rook-ceph": "data",
         "system-upgrade": "update",
         "volsync-system": "b2"
