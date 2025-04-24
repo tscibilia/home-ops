@@ -20,7 +20,8 @@ spec:
   values:
     controllers:
       pgadmin:
-        strategy: Recreate
+        type: statefulset
+        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -76,11 +77,11 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: "${VOLSYNC_CLAIM}"
-        advancedMounts:
-          pgadmin:
-            app:
-              - path: /var/lib/pgadmin
+        storageClass: ceph-rbd
+        size: 1Gi
+        accessMode: "ReadWriteOnce"
+        globalMounts:
+          - path: /var/lib/pgadmin
       server-json:
         enabled: true
         type: configMap
