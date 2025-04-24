@@ -5,9 +5,9 @@ kind: ReplicationSource
 metadata:
   name: "${APP}"
 spec:
-  sourcePVC: "${APP}"
+  sourcePVC: "${VOLSYNC_CLAIM:-${APP}}"
   trigger:
-    schedule: "0 * * * *"
+    schedule: "0 */6 * * *"
   restic:
     copyMethod: "${VOLSYNC_COPYMETHOD:=Clone}"
     pruneIntervalDays: 14
