@@ -28,9 +28,9 @@
         "network": "connection",
         "observability": "event",
         "openebs-system": "base",
-        "rook-ceph": "data",
+        "rook-ceph": "dump",
         "system-upgrade": "update",
-        "volsync-system": "b2"
+        "volsync-system": "aws"
       },
     "sops.defaults.ageKeyFile": "age.key",
     "vs-kubernetes": {
