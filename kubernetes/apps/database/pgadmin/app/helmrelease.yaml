@@ -76,10 +76,7 @@ spec:
                   port: http
     persistence:
       config:
-        enabled: true
-        storageClass: ceph-rbd
-        size: 1Gi
-        accessMode: "ReadWriteOnce"
+        existingClaim: *app
         globalMounts:
           - path: /var/lib/pgadmin
       server-json:
