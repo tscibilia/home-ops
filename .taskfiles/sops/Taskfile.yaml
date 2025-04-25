@@ -4,11 +4,6 @@ version: "3"
 
 tasks:
 
-  age-keygen:
-    desc: Initialize Age Key for Sops
-    cmd: age-keygen --output {{.AGE_FILE}}
-    status: ["test -f {{.AGE_FILE}}"]
-
   encrypt:
     desc: Encrypt all Kubernetes SOPS secrets
     cmds:
@@ -22,7 +17,6 @@ tasks:
 
   encrypt-file:
     desc: Encrypt a single SOPS secret [FILE=required]
-    internal: true
     cmd: sops --encrypt --in-place {{.FILE}}
     requires:
       vars: ["FILE"]
@@ -34,7 +28,6 @@ tasks:
 
   decrypt-file:
     desc: Decrypt a single SOPS secret [FILE=required]
-    internal: true
     cmd: sops --decrypt --in-place {{.FILE}}
     requires:
       vars: ["FILE"]
