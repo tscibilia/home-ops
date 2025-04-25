@@ -26,7 +26,7 @@ tasks:
       - which flux kubectl
 
   list:
-    desc: List all snapshots (task volsync:list APP=zigbee2mqtt)
+    desc: List all snapshots (task volsync:list APP=echo NS=default)
     summary: |
       Args:
         cluster: Cluster to run command against (required)
