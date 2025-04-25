@@ -39,7 +39,7 @@ tasks:
       - kubectl --namespace {{.NS}} logs job/{{.JOB}} --container list
       - kubectl --namespace {{.NS}} delete job {{.JOB}}
     vars:
-      NS: '{{.ns | default "default"}}'
+      NS: '{{.NS | default "default"}}'
       JOB: '{{.APP}}-list-snapshots'
     env:
       APP: '{{.APP}}'
