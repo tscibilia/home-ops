@@ -20,7 +20,7 @@ metadata:
   name: proxy-nas
 subsets:
   - addresses:
-      - ip: 192.168.1.10
+      - ip: "${NAS_IP}"
     ports:
       - port: 4000
         protocol: TCP
