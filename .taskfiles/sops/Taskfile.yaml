@@ -1,0 +1,45 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+
+  age-keygen:
+    desc: Initialize Age Key for Sops
+    cmd: age-keygen --output {{.AGE_FILE}}
+    status: ["test -f {{.AGE_FILE}}"]
+
+  encrypt:
+    desc: Encrypt all Kubernetes SOPS secrets
+    cmds:
+      - for: { var: file }
+        task: .encrypt-file
+        vars:
+          file: "{{.ITEM}}"
+    vars:
+      file:
+        sh: find "{{.KUBERNETES_DIR}}" -type f -name "*.sops.*" -exec grep -L "ENC\[AES256_GCM" {} \;
+
+  encrypt-file:
+    desc: Encrypt a single SOPS secret [FILE=required]
+    internal: true
+    cmd: sops --encrypt --in-place {{.FILE}}
+    requires:
+      vars: ["FILE"]
+    preconditions:
+      - msg: Missing Sops config FILE
+        sh: test -f {{.SOPS_CONFIG_FILE}}
+      - msg: Missing Sops Age key FILE
+        sh: test -f {{.AGE_FILE}}
+
+  decrypt-file:
+    desc: Decrypt a single SOPS secret [FILE=required]
+    internal: true
+    cmd: sops --decrypt --in-place {{.FILE}}
+    requires:
+      vars: ["FILE"]
+    preconditions:
+      - msg: Missing Sops config FILE
+        sh: test -f {{.SOPS_CONFIG_FILE}}
+      - msg: Missing Sops Age key FILE
+        sh: test -f {{.AGE_FILE}}
