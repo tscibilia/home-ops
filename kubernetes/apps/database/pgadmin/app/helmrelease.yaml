@@ -26,18 +26,36 @@ spec:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
-            runAsUser: 5050 # ${APP_UID}
-            runAsGroup: 5050 # ${APP_GID}
-            fsGroup: 5050 # ${APP_GID}
+            runAsUser: 5050
+            runAsGroup: 5050
+            fsGroup: 5050
             fsGroupChangePolicy: OnRootMismatch
         containers:
           app:
             image:
               repository: docker.io/dpage/pgadmin4
               tag: "9.2@sha256:52cb72a9e3da275324ca0b9bb3891021366d501aad375db34584a7bca8ce02ff"
-            envFrom:
-              - secretRef:
-                  name: pgadmin-secret
+            # envFrom:
+            #   - secretRef:
+            #       name: pgadmin-secret
+
+            # env:
+            #   - name: PGADMIN_DEFAULT_EMAIL
+            #     valueFrom:
+            #       secretKeyRef:
+            #         name: pgadmin-secret
+            #         key: PGADMIN_DEFAULT_EMAIL
+            #   - name: PGADMIN_DEFAULT_PASSWORD
+            #     valueFrom:
+            #       secretKeyRef:
+            #         name: pgadmin-secret
+            #         key: PGADMIN_DEFAULT_PASSWORD
+
+            env:
+              - name: PGADMIN_DEFAULT_EMAIL
+                value: tom@scibilia.co
+              - name: PGADMIN_DEFAULT_PASSWORD
+                value: temporary-password-test
             probes:
               liveness: &probes
                 enabled: false
