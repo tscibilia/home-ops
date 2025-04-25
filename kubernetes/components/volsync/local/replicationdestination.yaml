@@ -12,7 +12,8 @@ spec:
   restic:
     repository: "${APP}-volsync-secret"
     copyMethod: Snapshot
-    cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=ceph-vm-snapshot}"
+    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=ceph-rbd-snapshot}"
+    cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=ceph-rbd}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-rbd}"
