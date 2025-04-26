@@ -11,7 +11,7 @@ spec:
     - --cluster_mode=emulated
     - --default_lua_flags=allow-undeclared-keys
     # - --s3_endpoint=https://$(AWS_ENDPOINT)
-    # - --dir=s3://dragonfly
+    # - --dir=s3://$(AWS_REDIS_BUCKET)
     # - --dbfilename=''
     # - --snapshot_cron=5 */2 * * *
   env:

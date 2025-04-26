@@ -41,8 +41,6 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
-      - kind: Secret
-        name: cnpg-secret
   prune: true
   retryInterval: 2m
   sourceRef:
