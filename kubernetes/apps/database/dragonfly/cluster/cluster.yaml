@@ -35,10 +35,10 @@ spec:
         secretKeyRef:
           key: AWS_ENDPOINT
           name: dragonfly-secret
-    - name: AWS_REGION
+    - name: AWS_REDIS_BUCKET
       valueFrom:
         secretKeyRef:
-          key: AWS_REGION
+          key: AWS_REDIS_BUCKET
           name: dragonfly-secret
   image: ghcr.io/dragonflydb/dragonfly:v1.29.0
   labels:
