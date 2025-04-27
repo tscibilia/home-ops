@@ -42,6 +42,10 @@ spec:
       current: status.phase == 'ready'
   interval: 30m
   path: ./kubernetes/apps/database/dragonfly/cluster
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: dragonfly-secret
   prune: true
   retryInterval: 2m
   sourceRef:
