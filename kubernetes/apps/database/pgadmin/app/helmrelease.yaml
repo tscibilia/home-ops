@@ -20,8 +20,7 @@ spec:
   values:
     controllers:
       pgadmin:
-        type: statefulset
-        strategy: RollingUpdate
+        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         pod:
@@ -35,27 +34,17 @@ spec:
             image:
               repository: docker.io/dpage/pgadmin4
               tag: "9.2@sha256:52cb72a9e3da275324ca0b9bb3891021366d501aad375db34584a7bca8ce02ff"
-            # envFrom:
-            #   - secretRef:
-            #       name: pgadmin-secret
-
-            # env:
-            #   - name: PGADMIN_DEFAULT_EMAIL
-            #     valueFrom:
-            #       secretKeyRef:
-            #         name: pgadmin-secret
-            #         key: PGADMIN_DEFAULT_EMAIL
-            #   - name: PGADMIN_DEFAULT_PASSWORD
-            #     valueFrom:
-            #       secretKeyRef:
-            #         name: pgadmin-secret
-            #         key: PGADMIN_DEFAULT_PASSWORD
-
             env:
-              - name: PGADMIN_DEFAULT_EMAIL
-                value: tom@scibilia.co
-              - name: PGADMIN_DEFAULT_PASSWORD
-                value: temporary-password-test
+              PGADMIN_DEFAULT_EMAIL:
+                valueFrom:
+                  secretKeyRef:
+                    name: pgadmin-secret
+                    key: PGADMIN_DEFAULT_EMAIL
+              PGADMIN_DEFAULT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: pgadmin-secret
+                    key: PGADMIN_DEFAULT_PASSWORD
             probes:
               liveness: &probes
                 enabled: false
@@ -97,7 +86,6 @@ spec:
         globalMounts:
           - path: /var/lib/pgadmin
       server-json:
-        enabled: true
         type: configMap
         name: servers-json
         globalMounts:
