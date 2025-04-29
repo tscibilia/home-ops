@@ -7,3 +7,8 @@ components:
   - ../../components/common
 resources:
   - ./gatus/ks.yaml
+  - ./fluent-bit/ks.yaml
+  - ./kromgo/ks.yaml
+  - ./silence-operator/ks.yaml
+  - ./victoria-logs/ks.yaml
+  - ./victoria-metrics/ks.yaml
