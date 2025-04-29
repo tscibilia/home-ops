@@ -18,3 +18,6 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ ENV.APP }}-volsync-secret
+          volumeMounts:
+            - name: repository
+              mountPath: /repository
