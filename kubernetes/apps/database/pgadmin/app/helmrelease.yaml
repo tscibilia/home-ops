@@ -29,13 +29,13 @@ spec:
             runAsGroup: 5050
             fsGroup: 5050
             fsGroupChangePolicy: OnRootMismatch
-        initContainers:
-          remove-old-db:
-            image:
-              repository: docker.io/library/busybox
-              tag: latest
-              pullPolicy: IfNotPresent
-            command: ["sh","-c","rm -f /var/lib/pgadmin/pgadmin4.db"]
+        # initContainers:
+        #   remove-old-db:
+        #     image:
+        #       repository: docker.io/library/busybox
+        #       tag: latest
+        #       pullPolicy: IfNotPresent
+        #     command: ["sh","-c","rm -f /var/lib/pgadmin/pgadmin4.db"]
         containers:
           app:
             image:
