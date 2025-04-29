@@ -11,6 +11,9 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
+  dependsOn:
+    - name: victoria-metrics
+      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/observability/kromgo/app
   postBuild:
