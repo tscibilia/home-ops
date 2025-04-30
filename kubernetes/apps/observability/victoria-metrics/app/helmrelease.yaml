@@ -73,7 +73,7 @@ spec:
           resources:
             requests:
               storage: 20Gi
-          storageClassName: ceph-fs
+          storageClassName: cephfs
         resources:
           limits:
             memory: 1Gi
