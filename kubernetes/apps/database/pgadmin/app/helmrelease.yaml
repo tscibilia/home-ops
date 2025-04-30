@@ -54,7 +54,7 @@ spec:
                     key: PGADMIN_DEFAULT_PASSWORD
             probes:
               liveness: &probes
-                enabled: true
+                enabled: false
                 custom: true
                 spec:
                   httpGet:
