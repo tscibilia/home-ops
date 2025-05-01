@@ -3,13 +3,13 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &name proxy-nas
+  name: &name proxy-plex
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "external.${SECRET_DOMAIN}"
 spec:
   ingressClassName: external
   rules:
-    - host: "nas.${SECRET_DOMAIN}"
+    - host: "plex.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /

@@ -3,13 +3,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: &name proxy-nas
+  name: &name proxy-plex
   labels:
     app: *name
 spec:
   ports:
     - port: 80
-      targetPort: 4000
+      targetPort: 32400
       protocol: TCP
   selector: {} # No pods
 ---
@@ -17,10 +17,10 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: proxy-nas
+  name: proxy-plex
 subsets:
   - addresses:
-      - ip: "${SYNO_IP}"
+      - ip: "${PLEX_IP}"
     ports:
-      - port: 4000
+      - port: 32400
         protocol: TCP
