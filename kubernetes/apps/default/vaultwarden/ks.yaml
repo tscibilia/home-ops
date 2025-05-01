@@ -12,6 +12,11 @@ spec:
   components:
     - ../../../../components/gatus/external
     - ../../../../components/volsync
+  dependsOn:
+    - name: external-secrets
+      namespace: external-secrets
+    - name: volsync
+      namespace: volsync-system
   interval: 1h
   path: ./kubernetes/apps/default/vaultwarden/app
   postBuild:
