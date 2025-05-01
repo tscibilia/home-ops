@@ -14,6 +14,8 @@ spec:
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
+    - name: volsync
+      namespace: volsync-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
   interval: 30m
