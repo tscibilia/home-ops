@@ -17,6 +17,8 @@ spec:
       namespace: external-secrets
     - name: volsync
       namespace: volsync-system
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   interval: 1h
   path: ./kubernetes/apps/default/vaultwarden/app
   postBuild:
