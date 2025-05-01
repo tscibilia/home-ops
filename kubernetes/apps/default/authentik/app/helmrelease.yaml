@@ -43,6 +43,8 @@ spec:
           value: *app
         - name: AUTHENTIK_HOST
           value: "https://auth.${SECRET_DOMAIN}"
+        - name: AUTHENTIK_STORAGE__MEDIA__BACKEND
+          value: file
       envFrom:
         - secretRef:
             name: authentik-secret
