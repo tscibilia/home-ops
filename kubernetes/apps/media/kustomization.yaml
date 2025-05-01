@@ -5,5 +5,3 @@ kind: Kustomization
 namespace: media
 components:
   - ../../components/common
-resources:
-  - ./qbittorrent/ks.yaml
