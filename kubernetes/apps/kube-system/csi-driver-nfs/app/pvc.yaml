@@ -4,9 +4,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pvc-nfs-media
+  namespace: default
 spec:
   accessModes: ["ReadWriteMany"]
   resources:
     requests:
-      storage: 100Gi
+      storage: 50Gi
   storageClassName: nfs-media

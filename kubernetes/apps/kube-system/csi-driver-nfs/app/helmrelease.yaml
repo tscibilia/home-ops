@@ -40,9 +40,11 @@ spec:
         server: 192.168.5.10
         share: /volume1/Media
       mountOptions:
-        - nfsvers=4.2
-        - nconnect=16
-        - hard
-        - noatime
+        - nfsvers=4    # or vers=3 if your server supports NFSv3
+        - nconnect=16  # sets the number of TCP connections between the client and server
+        - hard         # forces the mount but needs addt'l flags to not cause commmands to hang
+        - noatime      # speeds up access times by eliminating access time updates
+        - timeo=600    # Wait 60 seconds before retrying.
+        - retrans=5    # Retry 5 times before reporting a failure.
       reclaimPolicy: Delete
       volumeBindingMode: Immediate
