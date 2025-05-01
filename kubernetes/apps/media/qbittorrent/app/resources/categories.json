@@ -1,0 +1,17 @@
+{
+    "audiobooks": {
+        "save_path": "/downloads/completed/AudioBooks"
+    },
+    "movies": {
+        "save_path": "/downloads/completed/Movies"
+    },
+    "music": {
+        "save_path": "/downloads/completed/Music"
+    },
+    "other": {
+        "save_path": "/downloads/completed/Other"
+    },
+    "tv": {
+        "save_path": "/downloads/completed/TV"
+    }
+}
