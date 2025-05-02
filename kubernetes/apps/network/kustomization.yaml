@@ -9,4 +9,3 @@ resources:
   - ./externalsecret.yaml
   - ./external/ks.yaml
   - ./internal/ks.yaml
-  - ./proxy/ks.yaml
