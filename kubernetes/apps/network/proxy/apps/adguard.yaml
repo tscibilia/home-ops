@@ -8,10 +8,10 @@ metadata:
     app: *name
 spec:
   ports:
-    - port: 80
+    - name: "http"
+      port: 80
       targetPort: 80
       protocol: TCP
-  selector: {} # No pods
 ---
 # yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/endpoints-v1.json
 apiVersion: v1
@@ -23,4 +23,23 @@ subsets:
       - ip: "${ADGUARD_IP}"
     ports:
       - port: 80
-        protocol: TCP
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/ingress.json
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &name proxy-adguard
+spec:
+  ingressClassName: internal
+  rules:
+    - host: "ag.local.${SECRET_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *name
+                port:
+                  name: http
+

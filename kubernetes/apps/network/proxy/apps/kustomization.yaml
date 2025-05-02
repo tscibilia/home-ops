@@ -3,12 +3,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./3dp
-  - ./adguard
-  - ./dad
-  - ./grey
-  - ./hassio
-  - ./nas
-  - ./plex
+  - ./3dp.yaml
+  - ./adguard.yaml
+  # - ./dad.yaml
+  - ./grey.yaml
+  - ./hassio.yaml
+  - ./nas.yaml
+  - ./plex.yaml
 generatorOptions:
   disableNameSuffixHash: true
