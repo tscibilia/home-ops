@@ -20,7 +20,7 @@ metadata:
   name: proxy-3dp
 subsets:
   - addresses:
-      - ip: "${3DP_IP}"
+      - ip: "${PI_3DP_IP}"
     ports:
       - port: 80
         protocol: TCP
