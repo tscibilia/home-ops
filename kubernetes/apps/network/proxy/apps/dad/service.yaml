@@ -7,20 +7,9 @@ metadata:
   labels:
     app: *name
 spec:
+  type: ExternalName
+  externalName: "${DADNAS_IP}"
   ports:
     - port: 80
       targetPort: 5000
       protocol: TCP
-  selector: {} # No pods
----
-# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/endpoints-v1.json
-apiVersion: v1
-kind: Endpoints
-metadata:
-  name: proxy-dadnas
-subsets:
-  - addresses:
-      - ip: "${DADNAS_IP}"
-    ports:
-      - port: 5000
-        protocol: TCP
