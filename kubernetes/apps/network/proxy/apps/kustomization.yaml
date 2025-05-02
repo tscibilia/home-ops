@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./externalsecret.yaml
+  - ./3dp/kustomization.yaml
+  - ./adguard/kustomization.yaml
+  - ./dad/kustomization.yaml
+  - ./grey/kustomization.yaml
+  - ./hassio/kustomization.yaml
+  - ./nas/kustomization.yaml
+  - ./plex/kustomization.yaml
+generatorOptions:
+  disableNameSuffixHash: true

@@ -15,7 +15,7 @@ spec:
       namespace: cert-manager
     - name: external-secrets
       namespace: external-secrets
-  path: ./kubernetes/apps/network/proxy
+  path: ./kubernetes/apps/network/proxy/apps
   postBuild:
     substituteFrom:
       - kind: Secret
