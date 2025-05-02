@@ -24,7 +24,7 @@ env:
 includes:
   bootstrap: .taskfiles/bootstrap
   github: .taskfiles/github
-  kubernetes: .taskfiles/kubernetes
+  k8s: .taskfiles/kubernetes
   sops: .taskfiles/sops
   talos: .taskfiles/talos
   volsync: .taskfiles/volsync
