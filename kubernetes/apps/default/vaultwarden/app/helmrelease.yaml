@@ -40,7 +40,7 @@ spec:
               SHOW_PASSWORD_HINT: "true"
               ICON_SERVICE: "duckduckgo"
             envFrom:
-              - configMapRef:
+              - secretRef:
                   name: vaultwarden-secrets
             probes:
               liveness: &probes
