@@ -31,7 +31,7 @@ metadata:
   name: &name hassio
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "ha.t0m.co"
-    external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    # external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
     external-dns.alpha.kubernetes.io/target: "external.t0m.co"
 spec:
   ingressClassName: external
