@@ -20,6 +20,7 @@ spec:
   path: ./kubernetes/apps/network/proxy/hassio
   postBuild:
     substitute:
+      APP: *app
       GATUS_SUBDOMAIN: ha
     substituteFrom:
       - kind: Secret
