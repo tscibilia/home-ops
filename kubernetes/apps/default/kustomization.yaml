@@ -6,6 +6,7 @@ namespace: default
 components:
   - ../../components/common
 resources:
+  - ./authentik/ks.yaml
   - ./echo/ks.yaml
   - ./vaultwarden/ks.yaml
   - ./pvc.yaml
