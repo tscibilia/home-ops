@@ -3,25 +3,26 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app proxy
-  namespace: &namespace network
+  name: &app authentik
+  namespace: &namespace default
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  interval: 1h
+  components:
+    - ../../../../components/gatus/external
+    - ../../../../components/cnpg
   dependsOn:
-    - name: cert-manager-tls
-      namespace: cert-manager
     - name: external-secrets
       namespace: external-secrets
-  path: ./kubernetes/apps/network/proxy/apps
+    - name: cnpg-cluster
+      namespace: database
+  interval: 1h
+  path: ./kubernetes/apps/default/authentik/app
   postBuild:
     substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
-      - kind: Secret
-        name: proxy-secrets
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:
