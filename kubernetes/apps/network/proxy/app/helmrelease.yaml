@@ -1,25 +1,34 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: angelnu-helm-charts
+  namespace: network
+spec:
+  interval: 1h
+  url: https://angelnu.github.io/helm-charts
+---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: reverse-proxy
 spec:
-  interval: 5m
+  interval: 1h
   chart:
     spec:
       chart: reverse-proxy
       version: 3.0.0
-      interval: 15m
       sourceRef:
         kind: HelmRepository
         name: angelnu-helm-charts
-        namespace: flux-system
+        namespace: network
   # See https://github.com/angelnu/helm-charts/blob/main/charts/apps/reverse-proxy/values.yaml
   values:
     instances:
     - name: hassio
-      externalName: "${HASSIO_IP}"
+      externalName: homeassistant.local
       port: 8123
       ingress:
         annotations:
@@ -27,3 +36,12 @@ spec:
         ingressClassName: external
         hosts:
         - host: ha.${SECRET_DOMAIN}
+    - name: grey
+      ip: ${GREY_IP}
+      port: 5000
+      ingress:
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: "external.${SECRET_DOMAIN}"
+        ingressClassName: external
+        hosts:
+        - host: grey.${SECRET_DOMAIN}
