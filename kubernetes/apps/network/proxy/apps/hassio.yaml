@@ -20,7 +20,7 @@ metadata:
   name: hassio
 subsets:
   - addresses:
-      - ip: 192.168.5.50
+      - ip: ${HASSIO_IP}
     ports:
       - port: 8123
 ---
