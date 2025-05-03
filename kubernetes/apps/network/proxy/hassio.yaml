@@ -30,11 +30,11 @@ kind: Ingress
 metadata:
   name: &name hassio
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "ha.$(SECRET_DOMAIND)"
+    external-dns.alpha.kubernetes.io/hostname: "ha.t0m.co"
 spec:
   ingressClassName: external
   rules:
-    - host: "ha.$(SECRET_DOMAIN)"
+    - host: "ha.t0m.co"
       http:
         paths:
           - path: /
