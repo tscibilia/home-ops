@@ -4,3 +4,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ./hassio.yaml
+vars:
+  - name: SECRET_DOMAIN
+    objref:
+      apiVersion: v1
+      kind: Secret
+      name: cluster-secret
+    fieldref:
+      fieldpath: data.SECRET_DOMAIN
