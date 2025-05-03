@@ -19,6 +19,9 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/default/authentik/app
   postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: auth
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
