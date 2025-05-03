@@ -30,7 +30,7 @@ spec:
               tag: "3.5.0@sha256:05b1acc1b467c8b8601819e54fb00358fde177dc22ccb956117105382c85b886"
             env:
               TZ: ${TIMEZONE}
-              RADICALE_CONFIG_FILE: /config/config.cfg
+              RADICALE_CONFIG_FILE: /config/config
             resources:
               requests:
                 cpu: 15m
@@ -81,10 +81,10 @@ spec:
         name: radicale-config
         globalMounts:
           - path: /config
-            subPath: config.cfg
+            subPath: config
       auth:
         type: secret
         name: radicale-secret
         globalMounts:
-          - path: /config/users
+          - path: /config
             subPath: users
