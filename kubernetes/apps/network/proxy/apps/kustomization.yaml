@@ -5,7 +5,6 @@ kind: Kustomization
 resources:
   - ./adguard.yaml
   - ./dadnas.yaml
-  - ./externalsecret.yaml
   - ./grey.yaml
   - ./hassio.yaml
   - ./nas.yaml
