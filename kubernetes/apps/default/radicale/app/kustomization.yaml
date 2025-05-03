@@ -10,7 +10,7 @@ commonLabels:
   app.kubernetes.io/name: radicale
 configMapGenerator:
   - files:
-      - resources/config.cfg
+      - ./resources/config.cfg
     name: radicale-config
 generatorOptions:
   disableNameSuffixHash: true
