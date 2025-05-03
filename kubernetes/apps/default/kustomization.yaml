@@ -8,5 +8,6 @@ components:
 resources:
   # - ./authentik/ks.yaml
   - ./echo/ks.yaml
+  - ./radicale/ks.yaml
   - ./vaultwarden/ks.yaml
   - ./pvc.yaml
