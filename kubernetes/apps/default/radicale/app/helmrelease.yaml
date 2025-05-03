@@ -60,7 +60,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: &port 5232
+            port: 5232
     ingress:
       app:
         className: external
