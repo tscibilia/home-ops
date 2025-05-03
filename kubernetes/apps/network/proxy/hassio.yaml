@@ -30,7 +30,7 @@ kind: Ingress
 metadata:
   name: &name hassio
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "ha.t0m.co"
+    external-dns.alpha.kubernetes.io/hostname: "external.t0m.co"
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
 spec:
   ingressClassName: external
