@@ -24,5 +24,6 @@ spec:
       ingress:
         annotations:
           external-dns.alpha.kubernetes.io/hostname: "external.${SECRET_DOMAIN}"
+        ingressClassName: external
         hosts:
         - host: ha.${SECRET_DOMAIN}
