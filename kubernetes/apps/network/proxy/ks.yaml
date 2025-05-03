@@ -12,16 +12,12 @@ spec:
   dependsOn:
     - name: cert-manager-tls
       namespace: cert-manager
-    - name: external-secrets
-      namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/network/proxy/app
   postBuild:
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
-      - kind: Secret
-        name: proxy-secrets
   prune: true
   retryInterval: 2m
   sourceRef:

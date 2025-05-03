@@ -37,7 +37,7 @@ spec:
         hosts:
         - host: ha.${SECRET_DOMAIN}
     - name: grey
-      ip: ${GREY_IP}
+      ip: 192.168.5.147
       port: 5000
       ingress:
         annotations:
