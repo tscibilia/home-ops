@@ -30,12 +30,12 @@ kind: Ingress
 metadata:
   name: &name nas
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "nas.${SERCET_DOMAIN}"
-    external-dns.alpha.kubernetes.io/target: "external.${SERCET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/hostname: "nas.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
 spec:
   ingressClassName: external
   rules:
-    - host: "nas.${SERCET_DOMAIN}"
+    - host: "nas.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /

@@ -30,12 +30,12 @@ kind: Ingress
 metadata:
   name: &name grey
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "grey.${SERCET_DOMAIN}"
-    external-dns.alpha.kubernetes.io/target: "external.${SERCET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/hostname: "grey.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
 spec:
   ingressClassName: external
   rules:
-    - host: "grey.${SERCET_DOMAIN}"
+    - host: "grey.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /

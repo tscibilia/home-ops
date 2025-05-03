@@ -30,11 +30,11 @@ kind: Ingress
 metadata:
   name: &name adguard
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "ag.${SERCET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/hostname: "ag.${SECRET_DOMAIN}"
 spec:
   ingressClassName: internal
   rules:
-    - host: "ag.${SERCET_DOMAIN}"
+    - host: "ag.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /
