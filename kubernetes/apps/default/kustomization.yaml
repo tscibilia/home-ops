@@ -7,3 +7,5 @@ components:
   - ../../components/common
 resources:
   - ./echo/ks.yaml
+  - ./vaultwarden/ks.yaml
+  - ./pvc.yaml

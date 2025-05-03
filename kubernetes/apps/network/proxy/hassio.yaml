@@ -1,0 +1,48 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: &name hassio
+  labels:
+    app: *name
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8123
+      protocol: TCP
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/endpoints-v1.json
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: hassio
+subsets:
+  - addresses:
+      - ip: 192.168.5.50
+    ports:
+      - port: 8123
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/ingress.json
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &name hassio
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "ha.t0m.co"
+    # external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    external-dns.alpha.kubernetes.io/target: "external.t0m.co"
+spec:
+  ingressClassName: external
+  rules:
+    - host: "ha.t0m.co"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *name
+                port:
+                  name: http

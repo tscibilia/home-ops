@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: &name grey
+  labels:
+    app: *name
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+      protocol: TCP
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/endpoints-v1.json
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: grey
+subsets:
+  - addresses:
+      - ip: 192.168.5.147
+    ports:
+      - port: 5000
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/ingress.json
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &name grey
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "grey.t0m.co"
+    external-dns.alpha.kubernetes.io/target: "external.t0m.co"
+spec:
+  ingressClassName: external
+  rules:
+    - host: "grey.t0m.co"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *name
+                port:
+                  name: http
