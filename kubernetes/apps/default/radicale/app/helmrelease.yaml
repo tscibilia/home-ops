@@ -84,7 +84,7 @@ spec:
             subPath: config.cfg
       auth:
         type: secret
-        name: radicale
+        name: radicale-secret
         globalMounts:
           - path: /config/users
             subPath: users
