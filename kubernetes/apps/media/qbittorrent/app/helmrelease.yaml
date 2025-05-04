@@ -158,14 +158,13 @@ spec:
         ports:
           http:
             port: *port
-      # Enable this to expose the gluetun proxy to local network
-      # gluetun:
-      #   controller: *app
-      #   type: LoadBalancer
-      #   ports:
-      #     proxy:
-      #       port: 8888
-      #       targetPort: 8888
+      gluetun:
+        controller: *app
+        type: LoadBalancer
+        ports:
+          proxy:
+            port: 8888
+            targetPort: 8888
     ingress:
       app:
         className: internal
