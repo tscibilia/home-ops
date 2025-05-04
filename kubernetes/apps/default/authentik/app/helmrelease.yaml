@@ -68,9 +68,7 @@ spec:
       error_reporting:
         enabled: false
     server:
-      autoscaling:
-        enabled: true
-        minReplicas: 1
+      replicas: 1
       ingress:
         enabled: true
         ingressClassName: external
@@ -87,13 +85,11 @@ spec:
         limits:
           memory: 1Gi
       metrics:
-        prometheus:
-          serviceMonitor:
-            enabled: true
-    worker:
-      autoscaling:
         enabled: true
-        minReplicas: 1
+        serviceMonitor:
+          enabled: true
+    worker:
+      replicas: 1
       resources:
         requests:
           cpu: 50m
