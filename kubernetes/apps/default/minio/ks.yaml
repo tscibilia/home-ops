@@ -19,7 +19,8 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: s3
+      GATUS_SUBDOMAIN: minio
+      S3_SUBDOMAIN: s3
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

@@ -29,16 +29,16 @@ spec:
               tag: RELEASE.2025-03-12T18-04-18Z
             env:
               TZ: ${TIMEZONE}
-              MINIO_API_CORS_ALLOW_ORIGIN: "https://{{ .Release.Name }}.${SECRET_DOMAIN},https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-              MINIO_BROWSER_REDIRECT_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+              MINIO_API_CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},https://${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
+              MINIO_BROWSER_REDIRECT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               # MINIO_PROMETHEUS_JOB_ID: minio
               # MINIO_PROMETHEUS_URL: https://prometheus.franta.us
               # MINIO_PROMETHEUS_AUTH_TYPE: public
-              MINIO_SERVER_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+              MINIO_SERVER_URL: "https://${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
               MINIO_STORAGE_CLASS_RRS: EC:0
               MINIO_STORAGE_CLASS_STANDARD: EC:0
               MINIO_UPDATE: "off"
-              MINIO_IDENTITY_OPENID_REDIRECT_URI: "https://{{ .Release.Name }}.${SECRET_DOMAIN}/oauth_callback"
+              MINIO_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth_callback"
               MINIO_IDENTITY_OPENID_CONFIG_URL: "https://auth.${SECRET_DOMAIN}/application/o/minio/.well-known/openid-configuration"
               MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,minio
               MINIO_IDENTITY_OPENID_DISPLAY_NAME: "Login with Authentik"
@@ -103,7 +103,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
-          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -114,7 +114,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
-          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+          - host: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
