@@ -1,0 +1,41 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/persistentvolumeclaim-v1.json
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs-media
+  namespace: default
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: nfs-media
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/persistentvolume-v1.json
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: nfs.csi.k8s.io
+  name: pv-nfs-media
+  labels:
+    type: nfs
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-media
+  mountOptions:
+    - nfsvers=4    # or vers=3 if your server supports NFSv3
+    - nconnect=16  # sets the number of TCP connections between the client and server
+    - hard         # forces the mount but needs addt'l flags to not cause commmands to hang
+    - noatime      # speeds up access times by eliminating access time updates
+    - timeo=600    # Wait 60 seconds before retrying.
+    - retrans=5    # Retry 5 times before reporting a failure.
+  nfs:
+    path: /volume1/Media
+    server: 192.168.5.10
+    readOnly: false
