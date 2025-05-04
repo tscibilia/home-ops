@@ -166,12 +166,16 @@ spec:
       #     proxy:
       #       port: 8888
       #       targetPort: 8888
-      gluecontrol:
-        controller: *app
-        type: ClusterIP
-        ports:
-          ctrl:
-            port: 8000
+    ingress:
+      app:
+        className: internal
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: qbittorrent
+                  port: http
     persistence:
       config:
         existingClaim: *app
