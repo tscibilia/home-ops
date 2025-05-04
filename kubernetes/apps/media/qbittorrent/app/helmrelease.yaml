@@ -23,10 +23,6 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
-        pod: # Configure the pod-specific securityContext
-          securityContext:
-            fsGroup: 100
-            fsGroupChangePolicy: "OnRootMismatch"
         containers:
           gluetun:
             image:
@@ -39,12 +35,12 @@ spec:
               OPENVPN_USER:
                 valueFrom:
                   secretKeyRef:
-                    name: qbittorrent-secrets
+                    name: &secret qbittorrent-secrets
                     key: OPENVPN_USER
               OPENVPN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: qbittorrent-secrets
+                    name: *secret
                     key: OPENVPN_PASSWORD
               SERVER_REGIONS: CA Toronto
               PRIVATE_INTERNET_ACCESS_OPENVPN_ENCRYPTION_PRESET: strong
@@ -78,12 +74,12 @@ spec:
               QBT_Preferences__WebUI__Username:
                 valueFrom:
                   secretKeyRef:
-                    name: qbittorrent-secrets
+                    name: *secret
                     key: QBT_USERNAME
               QBT_Preferences__WebUI__Password_PBKDF2:
                 valueFrom:
                   secretKeyRef:
-                    name: qbittorrent-secrets
+                    name: *secret
                     key: QBT_PASSWORD
               QBT_Preferences__WebUI__AlternativeUIEnabled: true
               QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
@@ -146,15 +142,18 @@ spec:
               QBITTORRENT_USER:
                 valueFrom:
                   secretKeyRef:
-                    name: qbittorrent-secrets
+                    name: *secret
                     key: QBT_USERNAME
               QBITTORRENT_PASS:
                 valueFrom:
                   secretKeyRef:
-                    name: qbittorrent-secrets
+                    name: *secret
                     key: QBT_PASSWORD_PLAIN
               PORT_FORWARDED: /tmp/gluetun/forwarded_port
-
+        pod:
+          securityContext:
+            fsGroup: 100
+            fsGroupChangePolicy: OnRootMismatch
     service:
       qbittorrent:
         controller: *app
@@ -162,20 +161,20 @@ spec:
         ports:
           http:
             port: *port
-      gluetun:
-        controller: *app
-        type: LoadBalancer
-        ports:
-          proxy:
-            port: 8888
-            targetPort: 8888
+      # Enable this to expose the gluetun proxy to local network
+      # gluetun:
+      #   controller: *app
+      #   type: LoadBalancer
+      #   ports:
+      #     proxy:
+      #       port: 8888
+      #       targetPort: 8888
       gluecontrol:
         controller: *app
         type: ClusterIP
         ports:
           ctrl:
             port: 8000
-
     persistence:
       config:
         existingClaim: *app
@@ -210,9 +209,8 @@ spec:
         globalMounts:
           - path: /add-ons
       downloads:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
         globalMounts:
           - path: /downloads
             subPath: Torrents
