@@ -93,7 +93,7 @@ spec:
           - path: /scripts
       plex:
         type: persistentVolumeClaim
-        existingClaim: pvc-nfs-media
+        existingClaim: pvc-media-nfs
         globalMounts:
           - path: /logs
             subPath: Plex/Logs
