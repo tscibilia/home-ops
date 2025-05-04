@@ -27,7 +27,7 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: nfs
+  storageClassName: nfs-media
   mountOptions:
     - nfsvers=4    # or vers=3 if your server supports NFSv3
     - nconnect=16  # sets the number of TCP connections between the client and server

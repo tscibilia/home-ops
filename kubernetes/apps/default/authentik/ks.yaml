@@ -16,6 +16,8 @@ spec:
       namespace: external-secrets
     - name: cnpg-cluster
       namespace: database
+    - name: dragonfly-cluster
+      namespace: database
   interval: 1h
   path: ./kubernetes/apps/default/authentik/app
   postBuild:

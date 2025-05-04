@@ -32,9 +32,9 @@ spec:
       retries: 3
   values:
     global:
-      fullnameOverride: authentik
+      fullnameOverride: *app
       podAnnotations:
-        secret.reloader.stakater.com/reload: authentik-secret
+        secret.reloader.stakater.com/reload: &secret authentik-secret
       deploymentStrategy:
         type: RollingUpdate
       env:
@@ -43,12 +43,12 @@ spec:
         - name: AUTHENTIK_POSTGRESQL__USER
           value: *app
         - name: AUTHENTIK_HOST
-          value: "https://auth.${SECRET_DOMAIN}"
+          value: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
         - name: AUTHENTIK_STORAGE__MEDIA__BACKEND
           value: file
       envFrom:
         - secretRef:
-            name: authentik-secret
+            name: *secret
       volumes:
         - name: custom-css
           configMap:
@@ -74,7 +74,7 @@ spec:
         ingressClassName: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-        hosts: ["auth.${SECRET_DOMAIN}"]
+        hosts: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
       resources:
         requests:
           cpu: 100m
