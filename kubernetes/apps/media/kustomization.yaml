@@ -6,5 +6,6 @@ namespace: media
 components:
   - ../../components/common
 resources:
+  - ./qbittorrent/ks.yaml
   - ./tautulli/ks.yaml
   - ./pvc.yaml
