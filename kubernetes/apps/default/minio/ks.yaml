@@ -3,25 +3,27 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app proxy
-  namespace: &namespace network
+  name: &app minio
+  namespace: &namespace default
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  interval: 1h
+  components:
+    - ../../../../components/gatus/external
   dependsOn:
-    - name: cert-manager-tls
-      namespace: cert-manager
     - name: external-secrets
       namespace: external-secrets
-  path: ./kubernetes/apps/network/proxy/apps
+  interval: 1h
+  path: ./kubernetes/apps/default/minio/app
   postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: minio
+      S3_SUBDOMAIN: s3
     substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
-      - kind: Secret
-        name: proxy-secrets
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:

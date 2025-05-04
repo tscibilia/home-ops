@@ -1,27 +1,32 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app proxy
-  namespace: &namespace network
+  name: &app radicale
+  namespace: &namespace default
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  interval: 1h
+  components:
+    - ../../../../components/gatus/external
+    - ../../../../components/volsync
   dependsOn:
-    - name: cert-manager-tls
-      namespace: cert-manager
     - name: external-secrets
       namespace: external-secrets
-  path: ./kubernetes/apps/network/proxy/apps
+    - name: volsync
+      namespace: volsync-system
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  interval: 30m
+  path: ./kubernetes/apps/default/radicale/app
   postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: dav
     substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
-      - kind: Secret
-        name: proxy-secrets
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:

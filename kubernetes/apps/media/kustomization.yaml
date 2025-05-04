@@ -5,3 +5,6 @@ kind: Kustomization
 namespace: media
 components:
   - ../../components/common
+resources:
+  - ./tautulli/ks.yaml
+  - ./pvc.yaml
