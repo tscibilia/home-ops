@@ -54,6 +54,24 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+          jbops:
+            image:
+              repository: registry.k8s.io/git-sync/git-sync # -- image repository
+              tag: v4.4.0 # -- image tag, be sure to use the latest image
+              pullPolicy: IfNotPresent # -- image pull policy
+            env:
+              GITSYNC_REPO: https://github.com/blacktwin/JBOPS
+              GITSYNC_REF: master
+              GITSYNC_PERIOD: 24h
+              GITSYNC_ROOT: /scripts
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 128Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -97,3 +115,4 @@ spec:
         globalMounts:
           - path: /logs
             subPath: Plex/Logs
+            readOnly: true
