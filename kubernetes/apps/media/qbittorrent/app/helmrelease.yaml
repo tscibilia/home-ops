@@ -46,10 +46,11 @@ spec:
               PRIVATE_INTERNET_ACCESS_OPENVPN_ENCRYPTION_PRESET: strong
               VPN_PORT_FORWARDING: on
               VPN_PORT_FORWARDING_PROVIDER: private internet access
-              FIREWALL_INPUT_PORTS: &port 8080
+              FIREWALL_INPUT_PORTS: 8080,8888
               FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
               HTTPPROXY: on
               HTTPPROXY_LOG: on
+              HTTPPROXY_LISTENING_ADDRESS: &proxyport 8888
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /gluetun/auth/config.toml
             securityContext:
               capabilities: { add: ["NET_ADMIN"] }
@@ -133,7 +134,7 @@ spec:
               tag: 1.3
             env:
               QBITTORRENT_SERVER: localhost
-              QBITTORRENT_PORT: *port
+              QBITTORRENT_PORT: &port 8080
               QBITTORRENT_USER:
                 valueFrom:
                   secretKeyRef:
@@ -158,13 +159,13 @@ spec:
         ports:
           http:
             port: *port
-      # gluetun:
-      #   controller: *app
-      #   type: LoadBalancer
-      #   ports:
-      #     proxy:
-      #       port: 8888
-      #       targetPort: 8888
+      gluetun:
+        controller: *app
+        type: LoadBalancer
+        ports:
+          proxy:
+            port: *proxyport
+            targetPort: *proxyport
     ingress:
       app:
         className: internal
