@@ -74,10 +74,7 @@ spec:
         ingressClassName: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-        hosts:
-          - host: "auth.${SECRET_DOMAIN}"
-            paths:
-              - path: /
+        hosts: ["auth.${SECRET_DOMAIN}"]
       resources:
         requests:
           cpu: 100m
