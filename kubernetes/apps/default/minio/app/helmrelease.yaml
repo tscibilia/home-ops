@@ -122,10 +122,8 @@ spec:
                   port: s3
     persistence:
       data:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media
+        type: persistentVolumeClaim
+        existingClaim: pvc-nfs-media
         globalMounts:
           - path: /data
             subPath: Minio
-            readOnly: true
