@@ -9,5 +9,6 @@ configMapGenerator:
   - name: qbittorrent-config
     files:
       - ./resources/categories.json
+      - ./resources/config.toml
 generatorOptions:
   disableNameSuffixHash: true
