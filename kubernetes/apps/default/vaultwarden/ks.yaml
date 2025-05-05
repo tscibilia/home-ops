@@ -23,7 +23,7 @@ spec:
   path: ./kubernetes/apps/default/vaultwarden/app
   postBuild:
     substitute:
-      APP: bitwarden
+      APP: *app
       GATUS_SUBDOMAIN: pw
       VOLSYNC_CAPACITY: 2Gi
     substituteFrom:
