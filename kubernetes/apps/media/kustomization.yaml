@@ -8,6 +8,6 @@ components:
 resources:
   - ./flaresolverr/ks.yaml
   - ./prowlarr/ks.yaml
-  - ./qbittorrent/ks.yaml
+  # - ./qbittorrent/ks.yaml
   - ./tautulli/ks.yaml
   - ./pvc.yaml
