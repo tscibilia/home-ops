@@ -166,10 +166,12 @@ spec:
               repository: registry.k8s.io/git-sync/git-sync
               tag: v4.4.0
             args:
-              - --repo=https://github.com/VueTorrent/VueTorrent
-              - --ref=latest-release
-              - --period=86400s
-              - --root=/addons
+              - "--repo=https://github.com/VueTorrent/VueTorrent"
+              - "--ref=latest-release"
+              - "--period=86400s"
+              - "--root=/addons"
+              - "--group-write"
+              - "--add-user"
             resources:
               requests:
                 cpu: 10m
