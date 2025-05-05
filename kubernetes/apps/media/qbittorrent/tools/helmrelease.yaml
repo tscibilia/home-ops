@@ -11,6 +11,9 @@ spec:
     name: app-template
   driftDetection:
     mode: enabled
+  dependsOn:
+    - name: qbittorrent
+      namespace: media
   values:
     controllers:
       prune:
