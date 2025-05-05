@@ -17,4 +17,4 @@ spec:
             - snapshots
           envFrom:
             - secretRef:
-                name: {{ ENV.APP }}-volsync-secret
+                name: {{ ENV.APP }}-volsync{{ ENV.LOC }}-secret

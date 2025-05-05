@@ -26,12 +26,13 @@ tasks:
       - which flux kubectl
 
   list:
-    desc: List all snapshots (task volsync:list APP=echo NS=default)
+    desc: List all snapshots (task volsync:list APP=echo NS=default LOC=-b2)
     summary: |
       Args:
         cluster: Cluster to run command against (required)
         ns: Namespace the PVC is in (default: default)
         app: Application to list snapshots for (required)
+        loc: Location of the restic repository (default: blank for local)
     cmds:
       - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/list.yaml.j2 | kubectl apply --server-side --filename -
       - until kubectl --namespace {{.NS}} get job/{{.JOB}} &>/dev/null; do sleep 5; done
@@ -41,9 +42,11 @@ tasks:
     vars:
       NS: '{{.NS | default "default"}}'
       JOB: '{{.APP}}-list-snapshots'
+      LOC: '{{.LOC | default ""}}'
     env:
       APP: '{{.APP}}'
       NS: '{{.NS}}'
+      LOC: '{{.LOC}}'
     preconditions:
       - test -f {{.VOLSYNC_RESOURCES_DIR}}/list.yaml.j2
       - which flux kubectl minijinja-cli
