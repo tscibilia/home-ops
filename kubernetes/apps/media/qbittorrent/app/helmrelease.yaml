@@ -123,10 +123,18 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.1.0@sha256:3e7c969139da1eaf8d3ccdebd473eefb4e2550d610b88f5a3c866bc34662d89a
+              tag: 5.0.4@sha256:60ae2127a4ebf9550a355c49f221f2ebc247bec8da98f6064e86c57cae1105ab
             env:
-              UMASK: '022'
               TZ: ${TIMEZONE}
+              QBT_BitTorrent__Session__DefaultSavePath: /downloads/completed
+              QBT_BitTorrent__Session__TempPath: /downloads/incomplete
+              QBT_BitTorrent__Session__TempPathEnabled: true
+              QBT_Preferences__WebUI__LocalHostAuth: false
+              QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
+              QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
+                10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
+              QBT_Preferences__WebUI__AlternativeUIEnabled: true
+              QBT_Preferences__WebUI__RootFolder: /add-ons/VueTorrent
               QBT_WEBUI_PORT: &port 8080
             envFrom:
               - secretRef:
