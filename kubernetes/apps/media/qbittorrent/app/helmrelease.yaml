@@ -130,12 +130,12 @@ spec:
               QBT_BitTorrent__Session__DefaultSavePath: /downloads/completed
               QBT_BitTorrent__Session__TempPath: /downloads/incomplete
               QBT_BitTorrent__Session__TempPathEnabled: true
-              QBT_Preferences__WebUI__AlternativeUIEnabled: true
               QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
               QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
                 10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
               QBT_Preferences__WebUI__LocalHostAuth: false
-              QBT_Preferences__WebUI__RootFolder: /add-ons/VueTorrent
+              # QBT_Preferences__WebUI__AlternativeUIEnabled: true
+              # QBT_Preferences__WebUI__RootFolder: /add-ons/VueTorrent
               QBT_Preferences__WebUI__Port: &port 8080
             envFrom:
               - secretRef:
