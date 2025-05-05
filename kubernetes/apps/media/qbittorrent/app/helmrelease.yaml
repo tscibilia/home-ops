@@ -106,7 +106,6 @@ spec:
               FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16
               HTTPPROXY: on
               HTTPPROXY_LOG: on
-              HTTPPROXY_LISTENING_ADDRESS: &proxyport 8888
               HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /gluetun/auth/config.toml
             securityContext:
               capabilities: { add: ["NET_ADMIN"] }
@@ -165,8 +164,8 @@ spec:
         type: LoadBalancer
         ports:
           proxy:
-            port: *proxyport
-            targetPort: *proxyport
+            port: 8888
+            targetPort: 8888
     ingress:
       qbittorrent:
         className: internal
