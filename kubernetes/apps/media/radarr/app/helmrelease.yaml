@@ -49,7 +49,7 @@ spec:
                   httpGet:
                     path: /ping
                     port: &port 7878
-                  initialDelaySeconds: 0
+                  initialDelaySeconds: 600
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
