@@ -92,7 +92,6 @@ spec:
         globalMounts:
           - path: /usr/local/sma/config/autoProcess.ini
             subPath: autoProcess.ini
-            readOnly: true
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
