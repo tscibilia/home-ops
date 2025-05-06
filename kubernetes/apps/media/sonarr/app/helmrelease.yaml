@@ -35,6 +35,7 @@ spec:
                 cp /tmp/autoProcess.ini /usr/local/sma/config/autoProcess.ini
                 chown -R 1044:100 /usr/local/sma/config
                 chmod -R 775 /usr/local/sma/config/*
+                rm /tmp/autoProcess.ini
         containers:
           app:
             image:
