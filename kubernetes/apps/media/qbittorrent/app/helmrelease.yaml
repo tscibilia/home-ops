@@ -210,7 +210,10 @@ spec:
                   port: http
     persistence:
       config:
-        existingClaim: *app
+        storageClass: ceph-rbd
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        retain: true
         advancedMounts:
           qbittorrent:
             app:
