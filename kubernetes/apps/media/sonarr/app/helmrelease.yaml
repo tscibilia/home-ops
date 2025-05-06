@@ -91,9 +91,8 @@ spec:
             subPath: autoProcess.ini
             readOnly: true
       media:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
         globalMounts:
           - path: /tv
             subPath: TV Shows

@@ -17,6 +17,9 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+  dependsOn:
+    - name: sonarr
+      namespace: media
   values:
     controllers:
       radarr:
@@ -68,7 +71,7 @@ spec:
       app:
         className: internal
         hosts:
-          - host: "{{ .Release.Name }}.local.${SECRET_DOMAIN}"
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -84,16 +87,15 @@ spec:
         globalMounts:
           - path: /config/logs
       config-file:
-        type: configMap
-        name: sma-configmap
+        type: secret
+        name: sma-configmap-secret
         globalMounts:
           - path: /usr/local/sma/config/autoProcess.ini
             subPath: autoProcess.ini
             readOnly: true
       media:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
         globalMounts:
           - path: /movies
             subPath: Movies
