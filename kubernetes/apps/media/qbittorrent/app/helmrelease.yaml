@@ -145,8 +145,8 @@ spec:
               limits:
                 memory: 2Gi
             securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              # allowPrivilegeEscalation: false
+              # readOnlyRootFilesystem: true
               capabilities: { drop: ['ALL'] }
               seccompProfile: { type: RuntimeDefault }
           # port-forward:
@@ -178,7 +178,7 @@ spec:
     defaultPodOptions:
       automountServiceAccountToken: false
       securityContext:
-        runAsNonRoot: true
+        # runAsNonRoot: true
         runAsUser: 1044
         runAsGroup: 100
         fsGroup: 100
