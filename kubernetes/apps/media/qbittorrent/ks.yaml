@@ -11,7 +11,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/guarded
-    # - ../../../../components/volsync
+    - ../../../../components/volsync
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
@@ -25,7 +25,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: qb
-      # VOLSYNC_CAPACITY: 1Gi
+      VOLSYNC_CAPACITY: 1Gi
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
@@ -54,8 +54,6 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/media/qbittorrent/vuetorrent
   postBuild:
-    substitute:
-      APP: *app
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
