@@ -23,6 +23,18 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          remove-old-db:
+            image:
+              repository: ghcr.io/ghcr-library/busybox
+              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
+            command:
+              - sh
+              - -c
+              - |
+                cp /tmp/autoProcess.ini /usr/local/sma/config/autoProcess.ini
+                chown -R abc:abc /usr/local/sma/config
+                chmod -R 775 /usr/local/sma/config/*.sh
         containers:
           app:
             image:
@@ -83,12 +95,22 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/logs
-      config-file:
+      config-empty:
+        type: emptyDir
+        globalMounts:
+          - path: /usr/local/sma/config
+      config-temp:
         type: secret
         name: sma-configmap-secret
         globalMounts:
-          - path: /usr/local/sma/config/autoProcess.ini
+          - path: /tmp/autoProcess.ini
             subPath: autoProcess.ini
+      # config-file:
+      #   type: secret
+      #   name: sma-configmap-secret
+      #   globalMounts:
+      #     - path: /usr/local/sma/config/autoProcess.ini
+      #       subPath: autoProcess.ini
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
