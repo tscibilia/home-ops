@@ -93,11 +93,13 @@ tasks:
       - kubectl --namespace {{.NS}} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{.APP}}" --timeout=5m
     vars:
       NS: '{{.NS | default "default"}}'
+      LOC: '{{.LOC | default ""}}'
       CONTROLLER:
         sh: kubectl --namespace {{.NS}} get deployment {{.APP}} &>/dev/null && echo deployment || echo statefulset
     env:
       NS: '{{.NS}}'
       APP: '{{.APP}}'
+      LOC: '{{.LOC}}'
       PREVIOUS: '{{.PREVIOUS}}'
       CLAIM:
         sh: kubectl --namespace {{.NS}} get replicationsources/{{.APP}} --output=jsonpath='{.spec.sourcePVC}'
