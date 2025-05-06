@@ -24,7 +24,7 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          remove-old-db:
+          init-config:
             image:
               repository: ghcr.io/ghcr-library/busybox
               tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
@@ -33,8 +33,8 @@ spec:
               - -c
               - |
                 cp /tmp/autoProcess.ini /usr/local/sma/config/autoProcess.ini
-                chown -R abc:abc /usr/local/sma/config
-                chmod -R 775 /usr/local/sma/config/*.sh
+                chown -R 1044:100 /usr/local/sma/config
+                chmod -R 775 /usr/local/sma/config/*
         containers:
           app:
             image:
