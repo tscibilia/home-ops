@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/bjw-s-labs/radicale
-              tag: "3.5.0@sha256:05b1acc1b467c8b8601819e54fb00358fde177dc22ccb956117105382c85b886"
+              tag: "3.5.0@sha256:405fba35722b3eac8e2d922ba5bc8a6cbb76bf459d6978a519120434da341b58"
             env:
               TZ: ${TIMEZONE}
               # RADICALE_CONFIG_FILE: /config/config
