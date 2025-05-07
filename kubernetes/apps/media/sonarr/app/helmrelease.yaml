@@ -44,7 +44,7 @@ spec:
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              allowPrivilegeEscalation: false
+              fsGroup: 0
           sma-init:
             image:
               repository: docker.io/library/python
@@ -69,7 +69,7 @@ spec:
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              allowPrivilegeEscalation: false
+              fsGroup: 0
           extras-init:
             image:
               repository: ghcr.io/ghcr-library/alpine
@@ -88,7 +88,7 @@ spec:
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              allowPrivilegeEscalation: false
+              fsGroup: 0
         containers:
           app:
             image:
@@ -129,15 +129,17 @@ spec:
               startup:
                 enabled: false
             securityContext:
-              runAsNonRoot: true
-              runAsUser: 1044
-              runAsGroup: 100
-              fsGroup: 100
-              fsGroupChangePolicy: OnRootMismatch
               seccompProfile: { type: RuntimeDefault }
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ['ALL'] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
     service:
       app:
         controller: *app
