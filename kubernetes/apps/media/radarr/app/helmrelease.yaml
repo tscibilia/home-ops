@@ -167,7 +167,7 @@ spec:
         type: secret
         name: sma-configmap-secret
         advancedMounts:
-          sonarr:
+          radarrarr:
             app:
               - path: /usr/local/sma/config/autoProcess.ini
                 subPath: autoProcess.ini
