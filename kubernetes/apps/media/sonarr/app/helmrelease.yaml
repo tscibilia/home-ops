@@ -38,7 +38,8 @@ spec:
                 && mkdir -p /usr/local/sma/bin \
                 && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg /usr/local/sma/bin/ \
                 && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe /usr/local/sma/bin/ \
-                && chmod +x /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe
+                && chmod +x /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe \
+                && chown 1044:100 /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
