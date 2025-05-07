@@ -20,34 +20,82 @@ spec:
   values:
     controllers:
       sonarr:
-        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          init-config:
+          ffmpeg-init:
             image:
-              repository: ghcr.io/ghcr-library/busybox
-              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
             command:
               - sh
               - -c
               - |
-                cp /tmp/autoProcess.ini /usr/local/sma/config/autoProcess.ini
-                chown -R 1044:100 /usr/local/sma/config
-                chmod -R 775 /usr/local/sma/config/*
-                rm /tmp/autoProcess.ini
+                wget -qO- "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                  | tar xJ --strip-components=1 \
+                      -C /usr/local/sma/bin \
+                      ffmpeg-*/ffmpeg ffmpeg-*/ffprobe
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+          sma-init:
+            image:
+              repository: ghcr.io/ghcr-library/python
+              tag: "3.9-alpine@sha256:b1ee675c13ecb66558ef9aad48a5c0497c44682da2a0af4fe249dc9cefaa2e22"
+            command:
+              - sh
+              - -c
+              - |
+                apk add --no-cache git \
+                && git clone https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma \
+                && python3 -m venv /usr/local/sma/venv \
+                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
+                      -r /usr/local/sma/setup/requirements.txt
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+          extras-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                for file in postSonarr.sh manual.py update.py; do
+                  wget -qO /usr/local/sma/$file \
+                    https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/$file
+                done && chmod +x /usr/local/sma/*.sh
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
         containers:
           app:
             image:
-              repository: ghcr.io/mdhiggins/sonarr-sma
-              tag: "latest@sha256:7f72e000aafee9a2ddc2aea754636dbcbb1fe24da4f782b36372fb010d2a38c6"
+              repository: ghcr.io/home-operations/sonarr
+              tag: "4.0.14.2938@sha256:acd5416ab9c36d017687820a32f09d09a4e25a5754aa5ebeae2e7c63d7609c13"
             env:
               TZ: ${TIMEZONE}
-              PUID: 1044
-              PGID: 100
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__APP__THEME: dark
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: 'False'
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: &port 8989
+              SONARR__UPDATE__BRANCH: develop
+            envFrom:
+              - secretRef:
+                  name: sonarr-secret
             resources:
               requests:
-                cpu: 50m
+                cpu: 100m
                 memory: 512Mi
               limits:
                 memory: 2Gi
@@ -58,19 +106,24 @@ spec:
                 spec:
                   httpGet:
                     path: /ping
-                    port: &port 8989
-                  initialDelaySeconds: 600
+                    port: *port
+                  initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
               startup:
                 enabled: false
-    defaultPodOptions:
-      securityContext:
-        fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1044
+              runAsGroup: 100
+              fsGroup: 100
+              fsGroupChangePolicy: OnRootMismatch
+              seccompProfile: { type: RuntimeDefault }
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
     service:
       app:
         controller: *app
@@ -81,7 +134,7 @@ spec:
       app:
         className: internal
         hosts:
-          - host: "{{ .Release.Name }}.local.${SECRET_DOMAIN}"
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -90,28 +143,22 @@ spec:
     persistence:
       config:
         existingClaim: *app
+      config-cache:
+        existingClaim: sonarr-cache
         globalMounts:
-          - path: /config
-      logs:
+          - path: /config/MediaCover
+      config-sma:
         type: emptyDir
         globalMounts:
-          - path: /config/logs
-      config-empty:
-        type: emptyDir
-        globalMounts:
-          - path: /usr/local/sma/config
-      config-temp:
+          - path: /usr/local/sma
+      config-file:
         type: secret
         name: sma-configmap-secret
-        globalMounts:
-          - path: /tmp/autoProcess.ini
-            subPath: autoProcess.ini
-      # config-file:
-      #   type: secret
-      #   name: sma-configmap-secret
-      #   globalMounts:
-      #     - path: /usr/local/sma/config/autoProcess.ini
-      #       subPath: autoProcess.ini
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /usr/local/sma/config/autoProcess.ini
+                subPath: autoProcess.ini
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
@@ -124,3 +171,5 @@ spec:
             subPath: Ecchi
           - path: /downloads
             subPath: Torrents
+      tmp:
+        type: emptyDir
