@@ -31,7 +31,8 @@ spec:
               - sh
               - -c
               - |
-                wget -qO- "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                mkdir -p /usr/local/sma/bin \
+                && wget -qO- "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
                   | tar xJ --strip-components=1 \
                       -C /usr/local/sma/bin \
                       ffmpeg-*/ffmpeg ffmpeg-*/ffprobe
@@ -66,7 +67,8 @@ spec:
               - sh
               - -c
               - |
-                for file in postSonarr.sh manual.py update.py; do
+                  mkdir -p /usr/local/sma \
+                  && for file in postSonarr.sh manual.py update.py; do
                   wget -qO /usr/local/sma/$file \
                     https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/$file
                 done && chmod +x /usr/local/sma/*.sh
