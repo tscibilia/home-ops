@@ -70,8 +70,9 @@ spec:
                   mkdir -p /usr/local/sma \
                   && for file in postSonarr.sh manual.py update.py; do
                   wget -qO /usr/local/sma/$file \
-                    https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/$file
-                done && chmod +x /usr/local/sma/*.sh
+                    https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/$file\
+                  || echo "Warning: $file not found";
+                  done && chmod +x /usr/local/sma/*.sh
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
