@@ -26,7 +26,7 @@ tasks:
       - which flux kubectl
 
   list:
-    desc: List all snapshots (task volsync:list APP=echo NS=default LOC=-b2)
+    desc: List all snapshots [NS=default] [APP=required] [LOC=-b2]
     summary: |
       Args:
         cluster: Cluster to run command against (required)
@@ -74,7 +74,7 @@ tasks:
   # To run restore jobs in parallel for all replicationdestinations:
   #   - kubectl get replicationsources --all-namespaces --no-headers | awk '{print $2, $1}' | xargs -l bash -c 'task volsync:restore app=$0 ns=$1'
   restore:
-    desc: Restore an app [NS=default] [APP=required] [PREVIOUS=required]
+    desc: Restore an app [NS=default] [APP=required] [LOC=-b2] [PREVIOUS=required]
     cmds:
       # Suspend
       - flux --namespace {{.NS}} suspend kustomization {{.APP}}
