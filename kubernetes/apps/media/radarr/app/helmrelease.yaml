@@ -81,7 +81,8 @@ spec:
                 mkdir -p /usr/local/sma \
                 && wget -qO /usr/local/sma/postRadarr.sh \
                   https://raw.githubusercontent.com/mdhiggins/radarr-sma/master/extras/postRadarr.sh \
-                && chmod +x /usr/local/sma/postRadarr.sh
+                && chmod +x /usr/local/sma/postRadarr.sh \
+                && chown 1044:100 /usr/local/sma/postRadarr.sh
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -167,7 +168,7 @@ spec:
         type: secret
         name: sma-configmap-secret
         advancedMounts:
-          radarrarr:
+          radarr:
             app:
               - path: /usr/local/sma/config/autoProcess.ini
                 subPath: autoProcess.ini
