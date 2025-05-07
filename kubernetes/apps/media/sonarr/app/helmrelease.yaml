@@ -31,11 +31,13 @@ spec:
               - sh
               - -c
               - |
-                mkdir -p /usr/local/sma/bin \
-                && wget -qO- "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
-                  | tar xJ --wildcards --strip-components=1 \
-                      -C /usr/local/sma/bin \
-                      '*/ffmpeg' '*/ffprobe'
+                wget -qO /tmp/ffmpeg.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                && mkdir -p /usr/local/sma/bin \
+                && for bin in ffmpeg ffprobe; do \
+                    tar -xJ -O -f /tmp/ffmpeg.tar.xz "ffmpeg-*/$bin" \
+                      > /usr/local/sma/bin/$bin \
+                    && chmod +x /usr/local/sma/bin/$bin ; \
+                  done
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
