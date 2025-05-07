@@ -151,6 +151,14 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /usr/local/sma
+      config-file:
+        type: secret
+        name: sma-configmap-secret
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /usr/local/sma/config/autoProcess.ini
+                subPath: autoProcess.ini
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
