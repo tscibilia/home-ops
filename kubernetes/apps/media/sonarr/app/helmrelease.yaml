@@ -46,14 +46,15 @@ spec:
               allowPrivilegeEscalation: false
           sma-init:
             image:
-              repository: ghcr.io/ghcr-library/python
-              tag: "3.9-alpine@sha256:b1ee675c13ecb66558ef9aad48a5c0497c44682da2a0af4fe249dc9cefaa2e22"
+              repository: docker.io/library/python
+              tag: "3.11-slim"
             command:
               - sh
               - -c
               - |
                 set -eux
-                apk update && apk add --no-cache git rust cargo build-base musl-dev \
+                apk update && apt-get install -y --no-install-recommends git \
+                && rm -rf /var/lib/apt/lists/* \
                 && mkdir -p /usr/local/sma \
                 && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/sonarr-sma \
                 && cp -a /tmp/sonarr-sma/* /usr/local/sma/ \
