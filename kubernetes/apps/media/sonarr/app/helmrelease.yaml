@@ -31,13 +31,14 @@ spec:
               - sh
               - -c
               - |
+                set -eux
                 wget -qO /tmp/ffmpeg.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                && mkdir -p /tmp/ffmpeg-extract \
+                && tar -xJ -f /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-extract \
                 && mkdir -p /usr/local/sma/bin \
-                && for bin in ffmpeg ffprobe; do \
-                    tar -xJ -O -f /tmp/ffmpeg.tar.xz "ffmpeg-*/$bin" \
-                      > /usr/local/sma/bin/$bin \
-                    && chmod +x /usr/local/sma/bin/$bin ; \
-                  done
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg /usr/local/sma/bin/ \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe /usr/local/sma/bin/ \
+                && chmod +x /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -69,10 +70,11 @@ spec:
               - sh
               - -c
               - |
-                  mkdir -p /usr/local/sma \
-                  && wget -qO /usr/local/sma/postSonarr.sh \
-                    https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/postSonarr.sh \
-                  && chmod +x /usr/local/sma/postSonarr.sh
+                set -eux
+                mkdir -p /usr/local/sma \
+                && wget -qO /usr/local/sma/postSonarr.sh \
+                  https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/postSonarr.sh \
+                && chmod +x /usr/local/sma/postSonarr.sh
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
