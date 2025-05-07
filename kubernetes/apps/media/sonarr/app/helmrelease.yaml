@@ -52,11 +52,14 @@ spec:
               - sh
               - -c
               - |
-                apk add --no-cache git \
-                && git clone https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma \
-                && python3 -m venv /usr/local/sma/venv \
-                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
-                      -r /usr/local/sma/setup/requirements.txt
+                set -eux
+                mkdir -p /usr/local/sma
+                git clone --depth=1 https://github.com/mdhiggins/sonarr-sma.git /tmp/sonarr-sma
+                cp -a /tmp/sonarr-sma/* /usr/local/sma/
+                rm -rf /tmp/sonarr-sma
+                python3 -m venv /usr/local/sma/venv
+                /usr/local/sma/venv/bin/pip install --no-cache-dir \
+                  -r /usr/local/sma/setup/requirements.txt
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
