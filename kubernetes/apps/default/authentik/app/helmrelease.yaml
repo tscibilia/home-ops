@@ -87,6 +87,18 @@ spec:
           enabled: true
     worker:
       replicas: 1
+      livenessProbe: &probes
+        enabled: true
+        custom: true
+        exec:
+          command: ["ak", "healthcheck"]
+        initialDelaySeconds: 30
+        timeoutSeconds: 5
+        periodSeconds: 30
+        failureThreshold: 5
+      readinessProbe: *probes
+      startupProbe:
+        enabled: false
       resources:
         requests:
           cpu: 50m
