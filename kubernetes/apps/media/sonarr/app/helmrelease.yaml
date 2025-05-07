@@ -22,6 +22,59 @@ spec:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          ffmpeg-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                wget -qO- "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                  | tar xJ --strip-components=1 \
+                      -C /usr/local/sma/bin \
+                      ffmpeg-*/ffmpeg ffmpeg-*/ffprobe
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+          sma-init:
+            image:
+              repository: ghcr.io/ghcr-library/python
+              tag: "3.9-alpine@sha256:b1ee675c13ecb66558ef9aad48a5c0497c44682da2a0af4fe249dc9cefaa2e22"
+            command:
+              - sh
+              - -c
+              - |
+                apk add --no-cache git \
+                && git clone https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma \
+                && python3 -m venv /usr/local/sma/venv \
+                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
+                      -r /usr/local/sma/setup/requirements.txt
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+          extras-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                for file in postSonarr.sh manual.py update.py; do
+                  wget -qO /usr/local/sma/$file \
+                    https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/$file
+                done && chmod +x /usr/local/sma/*.sh
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
         containers:
           app:
             image:
@@ -62,17 +115,15 @@ spec:
               startup:
                 enabled: false
             securityContext:
+              runAsNonRoot: true
+              runAsUser: 1044
+              runAsGroup: 100
+              fsGroup: 100
+              fsGroupChangePolicy: OnRootMismatch
+              seccompProfile: { type: RuntimeDefault }
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ['ALL'] }
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
     service:
       app:
         controller: *app
@@ -96,6 +147,10 @@ spec:
         existingClaim: sonarr-cache
         globalMounts:
           - path: /config/MediaCover
+      config-sma:
+        type: emptyDir
+        globalMounts:
+          - path: /usr/local/sma
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
