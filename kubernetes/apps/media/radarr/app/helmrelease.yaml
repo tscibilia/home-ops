@@ -22,6 +22,71 @@ spec:
       radarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          ffmpeg-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                set -eux
+                wget -qO /tmp/ffmpeg.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                && mkdir -p /tmp/ffmpeg-extract \
+                && tar -xJ -f /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-extract \
+                && mkdir -p /usr/local/sma/bin \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg /usr/local/sma/bin/ \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe /usr/local/sma/bin/ \
+                && chmod +x /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe \
+                && chown 1044:100 /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+          sma-init:
+            image:
+              repository: docker.io/library/python
+              tag: "3.11-slim@sha256:75a17dd6f00b277975715fc094c4a1570d512708de6bb4c5dc130814813ebfe4"
+            command:
+              - sh
+              - -c
+              - |
+                set -eux
+                apt-get update && apt-get install -y --no-install-recommends git \
+                && rm -rf /var/lib/apt/lists/* \
+                && mkdir -p /usr/local/sma \
+                && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/sonarr-sma \
+                && cp -a /tmp/sonarr-sma/* /usr/local/sma/ \
+                && rm -rf /tmp/sonarr-sma \
+                && python3 -m venv /usr/local/sma/venv \
+                && /usr/local/sma/venv/bin/pip install --upgrade pip \
+                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
+                  -r /usr/local/sma/setup/requirements.txt
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
+          extras-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                set -eux
+                mkdir -p /usr/local/sma \
+                && wget -qO /usr/local/sma/postRadarr.sh \
+                  https://raw.githubusercontent.com/mdhiggins/radarr-sma/master/extras/postRadarr.sh \
+                && chmod +x /usr/local/sma/postRadarr.sh
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
         containers:
           app:
             image:
@@ -35,7 +100,7 @@ spec:
               RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
               RADARR__LOG__DBENABLED: 'False'
               RADARR__LOG__LEVEL: info
-              RADARR__SERVER__PORT: &port 8989
+              RADARR__SERVER__PORT: &port 7878
               RADARR__UPDATE__BRANCH: develop
             envFrom:
               - secretRef:
@@ -62,17 +127,15 @@ spec:
               startup:
                 enabled: false
             securityContext:
+              runAsNonRoot: true
+              runAsUser: 1044
+              runAsGroup: 100
+              fsGroup: 100
+              fsGroupChangePolicy: OnRootMismatch
+              seccompProfile: { type: RuntimeDefault }
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ['ALL'] }
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
     service:
       app:
         controller: *app
@@ -96,16 +159,24 @@ spec:
         existingClaim: radarr-cache
         globalMounts:
           - path: /config/MediaCover
+      config-sma:
+        type: emptyDir
+        globalMounts:
+          - path: /usr/local/sma
+      config-file:
+        type: secret
+        name: sma-configmap-secret
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /usr/local/sma/config/autoProcess.ini
+                subPath: autoProcess.ini
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
         globalMounts:
-          - path: /tv
-            subPath: TV Shows
-          - path: /anime
-            subPath: Anime
-          - path: /ecchi
-            subPath: Ecchi
+          - path: /movies
+            subPath: Movies
           - path: /downloads
             subPath: Torrents
       tmp:
