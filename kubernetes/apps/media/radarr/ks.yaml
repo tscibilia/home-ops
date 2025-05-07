@@ -13,6 +13,8 @@ spec:
     - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
+    - name: external-secrets
+      namespace: external-secrets
     - name: volsync
       namespace: volsync-system
     - name: rook-ceph-cluster
@@ -22,7 +24,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 6Gi
+      VOLSYNC_CAPACITY: 5Gi
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

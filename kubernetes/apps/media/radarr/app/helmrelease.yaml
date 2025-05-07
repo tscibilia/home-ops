@@ -17,40 +17,32 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-  dependsOn:
-    - name: sonarr
-      namespace: media
   values:
     controllers:
       radarr:
-        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-config:
-            image:
-              repository: ghcr.io/ghcr-library/busybox
-              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
-            command:
-              - sh
-              - -c
-              - |
-                cp /tmp/autoProcess.ini /usr/local/sma/config/autoProcess.ini
-                chown -R 1044:100 /usr/local/sma/config
-                chmod -R 775 /usr/local/sma/config/*
-                rm /tmp/autoProcess.ini
         containers:
           app:
             image:
-              repository: ghcr.io/mdhiggins/radarr-sma
-              tag: "develop@sha256:ecde06b25582cf9dc74cf83b3e6a3bbe27d064a9fd104b080460f00533f00713"
+              repository: ghcr.io/home-operations/radarr
+              tag: "5.23.1.9914@sha256:9e7c9a048d63b0b9d8e4266561cf336ceecaec047fbc2508dcfe417e0f326cef"
             env:
               TZ: ${TIMEZONE}
-              PUID: 1044
-              PGID: 100
+              RADARR__APP__INSTANCENAME: Radarr
+              RADARR__APP__THEME: dark
+              RADARR__AUTH__METHOD: External
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              RADARR__LOG__DBENABLED: 'False'
+              RADARR__LOG__LEVEL: info
+              RADARR__SERVER__PORT: &port 8989
+              RADARR__UPDATE__BRANCH: develop
+            envFrom:
+              - secretRef:
+                  name: radarr-secret
             resources:
               requests:
-                cpu: 50m
+                cpu: 100m
                 memory: 512Mi
               limits:
                 memory: 2Gi
@@ -61,16 +53,23 @@ spec:
                 spec:
                   httpGet:
                     path: /ping
-                    port: &port 7878
-                  initialDelaySeconds: 600
+                    port: *port
+                  initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
               startup:
                 enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
     defaultPodOptions:
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
@@ -93,33 +92,21 @@ spec:
     persistence:
       config:
         existingClaim: *app
+      config-cache:
+        existingClaim: radarr-cache
         globalMounts:
-          - path: /config
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /config/logs
-      config-empty:
-        type: emptyDir
-        globalMounts:
-          - path: /usr/local/sma/config
-      config-temp:
-        type: secret
-        name: sma-configmap-secret
-        globalMounts:
-          - path: /tmp/autoProcess.ini
-            subPath: autoProcess.ini
-      # config-file:
-      #   type: secret
-      #   name: sma-configmap-secret
-      #   globalMounts:
-      #     - path: /usr/local/sma/config/autoProcess.ini
-      #       subPath: autoProcess.ini
+          - path: /config/MediaCover
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
         globalMounts:
-          - path: /movies
-            subPath: Movies
+          - path: /tv
+            subPath: TV Shows
+          - path: /anime
+            subPath: Anime
+          - path: /ecchi
+            subPath: Ecchi
           - path: /downloads
             subPath: Torrents
+      tmp:
+        type: emptyDir

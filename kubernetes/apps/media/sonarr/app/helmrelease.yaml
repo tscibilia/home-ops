@@ -20,34 +20,29 @@ spec:
   values:
     controllers:
       sonarr:
-        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-config:
-            image:
-              repository: ghcr.io/ghcr-library/busybox
-              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
-            command:
-              - sh
-              - -c
-              - |
-                cp /tmp/autoProcess.ini /usr/local/sma/config/autoProcess.ini
-                chown -R 1044:100 /usr/local/sma/config
-                chmod -R 775 /usr/local/sma/config/*
-                rm /tmp/autoProcess.ini
         containers:
           app:
             image:
-              repository: ghcr.io/mdhiggins/sonarr-sma
-              tag: "latest@sha256:7f72e000aafee9a2ddc2aea754636dbcbb1fe24da4f782b36372fb010d2a38c6"
+              repository: ghcr.io/home-operations/sonarr
+              tag: "4.0.14.2938@sha256:acd5416ab9c36d017687820a32f09d09a4e25a5754aa5ebeae2e7c63d7609c13"
             env:
               TZ: ${TIMEZONE}
-              PUID: 1044
-              PGID: 100
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__APP__THEME: dark
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: 'False'
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: &port 8989
+              SONARR__UPDATE__BRANCH: develop
+            envFrom:
+              - secretRef:
+                  name: sonarr-secret
             resources:
               requests:
-                cpu: 50m
+                cpu: 100m
                 memory: 512Mi
               limits:
                 memory: 2Gi
@@ -58,16 +53,23 @@ spec:
                 spec:
                   httpGet:
                     path: /ping
-                    port: &port 8989
-                  initialDelaySeconds: 600
+                    port: *port
+                  initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
               startup:
                 enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
     defaultPodOptions:
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
@@ -81,7 +83,7 @@ spec:
       app:
         className: internal
         hosts:
-          - host: "{{ .Release.Name }}.local.${SECRET_DOMAIN}"
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -90,28 +92,10 @@ spec:
     persistence:
       config:
         existingClaim: *app
+      config-cache:
+        existingClaim: sonarr-cache
         globalMounts:
-          - path: /config
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /config/logs
-      config-empty:
-        type: emptyDir
-        globalMounts:
-          - path: /usr/local/sma/config
-      config-temp:
-        type: secret
-        name: sma-configmap-secret
-        globalMounts:
-          - path: /tmp/autoProcess.ini
-            subPath: autoProcess.ini
-      # config-file:
-      #   type: secret
-      #   name: sma-configmap-secret
-      #   globalMounts:
-      #     - path: /usr/local/sma/config/autoProcess.ini
-      #       subPath: autoProcess.ini
+          - path: /config/MediaCover
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
@@ -124,3 +108,5 @@ spec:
             subPath: Ecchi
           - path: /downloads
             subPath: Torrents
+      tmp:
+        type: emptyDir
