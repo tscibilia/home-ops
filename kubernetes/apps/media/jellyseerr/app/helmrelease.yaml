@@ -29,9 +29,9 @@ spec:
             env:
               LOG_LEVEL: 'info'
               PORT: &port 80
-            # envFrom:
-            #   - secretRef:
-            #       name: jellyseerr-secret
+            envFrom:
+              - secretRef:
+                  name: jellyseerr-secret
             probes:
               liveness: &probes
                 enabled: true
@@ -95,3 +95,11 @@ spec:
           - path: /app/config/logs
       tmp:
         type: emptyDir
+      custom-logo:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
+        globalMounts:
+          - path: /app/public
+            subPath: Torrents/overseerr/public
+            readOnly: true
