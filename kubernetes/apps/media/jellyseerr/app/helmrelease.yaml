@@ -38,7 +38,7 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /api/v1/status
+                    path: ${GATUS_PATH}
                     port: *port
                   initialDelaySeconds: 0
                   periodSeconds: 10
