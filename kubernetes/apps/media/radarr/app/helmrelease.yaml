@@ -48,7 +48,7 @@ spec:
           sma-init:
             image:
               repository: docker.io/library/python
-              tag: "3.11-slim@sha256:75a17dd6f00b277975715fc094c4a1570d512708de6bb4c5dc130814813ebfe4"
+              tag: "3.13-slim@sha256:60248ff36cf701fcb6729c085a879d81e4603f7f507345742dc82d4b38d16784"
             command:
               - sh
               - -c
