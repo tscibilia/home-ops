@@ -27,8 +27,6 @@ spec:
             image:
               repository: ghcr.io/ghcr-library/alpine
               tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
-            env:
-              SMA_PATH: &sma "/usr/local/sma"
             command:
               - sh
               - -c
@@ -37,11 +35,11 @@ spec:
                 wget -qO /tmp/ffmpeg.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
                 && mkdir -p /tmp/ffmpeg-extract \
                 && tar -xJ -f /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-extract \
-                && mkdir -p "${SMA_PATH}/bin" \
-                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg "${SMA_PATH}/bin/" \
-                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe "${SMA_PATH}/bin/" \
-                && chmod +x "${SMA_PATH}/bin/"* \
-                && chown 1044:100 "${SMA_PATH}/bin/"*
+                && mkdir -p /usr/local/sma/bin \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg /usr/local/sma/bin/ \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe /usr/local/sma/bin/ \
+                && chmod +x /usr/local/sma/bin/* \
+                && chown 1044:100 /usr/local/sma/bin/*
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -51,8 +49,6 @@ spec:
             image:
               repository: docker.io/library/python
               tag: "3.13-slim@sha256:60248ff36cf701fcb6729c085a879d81e4603f7f507345742dc82d4b38d16784"
-            env:
-              SMA_PATH: *sma
             command:
               - sh
               - -c
@@ -60,17 +56,17 @@ spec:
                 set -eux
                 apt-get update && apt-get install -y --no-install-recommends git \
                 && rm -rf /var/lib/apt/lists/* \
-                && mkdir -p "${SMA_PATH}" \
+                && mkdir -p /usr/local/sma \
                 && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/radarr-sma \
-                && cp -a /tmp/radarr-sma/* "${SMA_PATH}/" && rm -rf /tmp/radarr-sma \
-                && python3 -m venv "${SMA_PATH}/venv" \
-                && rm "${SMA_PATH}/venv/bin/python3" \
-                && cp "$(which python3)" "${SMA_PATH}/venv/bin/python3" \
-                && chmod +x "${SMA_PATH}/venv/bin/python3" \
-                && "${SMA_PATH}/venv/bin/pip" install --upgrade pip \
-                && "${SMA_PATH}/venv/bin/pip" install --no-cache-dir \
-                  -r "${SMA_PATH}/setup/requirements.txt" \
-                && chown -R 1044:100 "${SMA_PATH}"
+                && cp -a /tmp/radarr-sma/* /usr/local/sma/ && rm -rf /tmp/radarr-sma \
+                && python3 -m venv /usr/local/sma/venv \
+                && rm /usr/local/sma/venv/bin/python3 \
+                && cp $(which python3) /usr/local/sma/venv/bin/python3 \
+                && chmod +x /usr/local/sma/venv/bin/python3 \
+                && /usr/local/sma/venv/bin/pip install --upgrade pip \
+                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
+                  -r /usr/local/sma/setup/requirements.txt \
+                && chown -R 1044:100 /usr/local/sma
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -80,18 +76,16 @@ spec:
             image:
               repository: ghcr.io/ghcr-library/alpine
               tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
-            env:
-              SMA_PATH: *sma
             command:
               - sh
               - -c
               - |
                 set -eux
-                mkdir -p "${SMA_PATH}" \
-                && wget -qO "${SMA_PATH}/postRadarr.sh" \
+                mkdir -p /usr/local/sma \
+                && wget -qO /usr/local/sma/postRadarr.sh \
                   https://raw.githubusercontent.com/mdhiggins/radarr-sma/master/extras/postRadarr.sh \
-                && chmod +x "${SMA_PATH}/postRadarr.sh" \
-                && chown 1044:100 "${SMA_PATH}/postRadarr.sh"
+                && chmod +x /usr/local/sma/postRadarr.sh \
+                && chown 1044:100 /usr/local/sma/postRadarr.sh
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -104,7 +98,7 @@ spec:
               tag: "5.23.1.9914@sha256:794fb31c2773491429cdf50906443c301c61298b1e53f1e95ccf723c30c73d3f"
             env:
               TZ: ${TIMEZONE}
-              SMA_PATH: *sma
+              SMA_PATH: /usr/local/sma
               RADARR__APP__INSTANCENAME: Radarr
               RADARR__APP__THEME: dark
               RADARR__AUTH__METHOD: External
