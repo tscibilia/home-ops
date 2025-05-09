@@ -71,6 +71,12 @@ spec:
         enabled: false
     server:
       replicas: 1
+      # initContainers:
+      #   - name: init-db
+      #     image: ghcr.io/onedr0p/postgres-init:16
+      #     envFrom:
+      #       - secretRef:
+      #           name: *secret
       ingress:
         enabled: true
         ingressClassName: external
