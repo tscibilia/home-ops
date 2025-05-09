@@ -151,7 +151,7 @@ spec:
                 /usr/local/sma/venv/bin/pip install --no-cache-dir fastapi uvicorn
                 cat << 'EOF' > /usr/local/sma/hook.py
                 from fastapi import FastAPI, Request
-                import subprocess, os
+                import subprocess, json, os
                 app = FastAPI()
                 @app.post("/hook")
                 async def hook(req: Request):
