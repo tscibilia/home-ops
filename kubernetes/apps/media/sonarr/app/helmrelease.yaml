@@ -147,7 +147,8 @@ spec:
               - sh
               - -c
               - |
-                pip install fastapi uvicorn
+                set -eux
+                /usr/local/sma/venv/bin/pip install --no-cache-dir fastapi uvicorn
                 cat << 'EOF' > /usr/local/sma/hook.py
                 from fastapi import FastAPI, Request
                 import subprocess, os
@@ -155,15 +156,14 @@ spec:
                 @app.post("/hook")
                 async def hook(req: Request):
                   data = await req.json()
-                  cmd = [
+                  subprocess.run([
                     "/usr/local/sma/venv/bin/python3",
                     "/usr/local/sma/postSonarr.py",
-                    str(data)
-                  ]
-                  subprocess.run(cmd, check=False)
-                  return {"ok":True}
+                    json.dumps(payload)
+                  ], check=False)
+                  return {"ok": True}
                 EOF
-                uvicorn hook:app --host 0.0.0.0 --port 9000
+                exec /usr/local/sma/venv/bin/uvicorn hook:app --host 0.0.0.0 --port 9000
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
