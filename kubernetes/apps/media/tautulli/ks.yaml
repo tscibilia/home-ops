@@ -55,6 +55,9 @@ spec:
   postBuild:
     substitute:
       AUTHENTIK_PROXY_HOST: tautulli
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:
