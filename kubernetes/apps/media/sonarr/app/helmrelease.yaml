@@ -163,7 +163,9 @@ spec:
                   ], check=False)
                   return {"ok": True}
                 EOF
-                exec /usr/local/sma/venv/bin/uvicorn hook:app --host 0.0.0.0 --port 9000
+                exec /usr/local/sma/venv/bin/uvicorn hook:app \
+                  --host 0.0.0.0 --port 9000 \
+                  --app-dir /usr/local/sma
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
