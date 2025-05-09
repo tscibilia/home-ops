@@ -60,7 +60,7 @@ spec:
                 && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/sonarr-sma \
                 && cp -a /tmp/sonarr-sma/* /usr/local/sma/ \
                 && rm -rf /tmp/sonarr-sma \
-                && python3 -m venv /usr/local/sma/venv \
+                && python3 -m venv --copies /usr/local/sma/venv \
                 && /usr/local/sma/venv/bin/pip install --upgrade pip \
                 && /usr/local/sma/venv/bin/pip install --no-cache-dir \
                   -r /usr/local/sma/setup/requirements.txt
