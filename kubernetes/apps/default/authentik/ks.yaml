@@ -52,7 +52,7 @@ spec:
     - name: authentik
       namespace: *namespace
   interval: 1h
-  path: ./kubernetes/apps/default/fwd-auth/app
+  path: ./kubernetes/apps/default/authentik/fwd-auth
   postBuild:
     substituteFrom:
       - name: cluster-secrets
