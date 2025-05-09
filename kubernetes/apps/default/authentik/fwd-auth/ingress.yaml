@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/ingress.json
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${AUTHENTIK_PROXY_HOST//./-}-authentik-outpost
+spec:
+  ingressClassName: "${INGRESS_CLASS:=external}"
+  annotations:
+    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+    # Need to add to the Ingress you want to protect
+    # https://docs.goauthentik.io/docs/add-secure-apps/providers/proxy/server_nginx
+  rules:
+    - host: &host "${AUTHENTIK_PROXY_HOST:=authentik}"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/outpost.goauthentik.io"
+            backend:
+              # Or, to use an external Outpost, create an ExternalName service and reference that here.
+              # See https://kubernetes.io/docs/concepts/services-networking/service/#externalname
+              service:
+                name: authentik-outpost
+                port:
+                  name: http
