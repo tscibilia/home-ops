@@ -26,9 +26,9 @@ spec:
       APP: *app
       GATUS_PATH: /health
       VOLSYNC_CAPACITY: 1Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+    # substituteFrom:
+    #   - name: cluster-secrets
+    #     kind: Secret
   prune: true
   retryInterval: 5m
   sourceRef:
