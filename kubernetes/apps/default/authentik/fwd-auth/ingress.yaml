@@ -11,10 +11,10 @@ spec:
     # Need to add to the Ingress you want to protect
     # https://docs.goauthentik.io/docs/add-secure-apps/providers/proxy/server_nginx
   rules:
-    - host: "${AUTHENTIK_PROXY_HOST:=authentik}"
+    - host: "${AUTHENTIK_PROXY_HOST:=auth}.${SECRET_DOMAIN}"
       http:
         paths:
-          - pathType: Prefix
+          - pathType: ImplementationSpecific
             path: "/outpost.goauthentik.io"
             backend:
               # Or, to use an external Outpost, create an ExternalName service and reference that here.
@@ -22,4 +22,4 @@ spec:
               service:
                 name: authentik-outpost
                 port:
-                  name: http
+                  number: 9000
