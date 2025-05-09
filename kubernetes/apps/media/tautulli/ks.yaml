@@ -54,7 +54,7 @@ spec:
   path: ./kubernetes/apps/default/authentik/fwd-auth
   postBuild:
     substitute:
-      AUTHENTIK_PROXY_HOST: "${APP_DNS_TAUTULLI:=tautulli}"
+      AUTHENTIK_PROXY_HOST: tautulli
   prune: true
   retryInterval: 2m
   sourceRef:
