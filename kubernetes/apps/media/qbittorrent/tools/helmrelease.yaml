@@ -1,0 +1,103 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: qbtools
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  driftDetection:
+    mode: enabled
+  dependsOn:
+    - name: qbittorrent
+      namespace: media
+  values:
+    controllers:
+      prune:
+        type: cronjob
+        cronjob: &cronJobSpec
+          schedule: '@hourly'
+          backoffLimit: 0
+          concurrencyPolicy: Forbid
+          failedJobsHistory: 1
+          successfulJobsHistory: 0
+        pod:
+          restartPolicy: Never
+
+        initContainers:
+          tagging: &container
+            image:
+              repository: ghcr.io/buroa/qbtools
+              tag: v0.21.0@sha256:3a60f001c3f5fd068ff38960fbf9db726fa59edf135b18cd50294230366c284e
+            env:
+              QBITTORRENT_HOST: qbittorrent.media.svc.cluster.local
+              QBITTORRENT_PORT: 8080
+            args: ["tagging", "--added-on", "--expired", "--last-activity", "--sites", "--unregistered"]
+            resources:
+              requests:
+                cpu: 25m
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+
+        containers:
+          expired:
+            <<: *container
+            args: ["prune", "--exclude-category", "manual", "--exclude-tag", "added:1d", "--include-tag", "expired", "--with-data"]
+
+          unregistered:
+            <<: *container
+            args: ["prune", "--exclude-category", "manual", "--exclude-tag", "added:1d", "--include-tag", "unregistered", "--with-data"]
+
+      orphaned:
+        type: cronjob
+        cronjob:
+          <<: *cronJobSpec
+          schedule: '@daily'
+        pod:
+          restartPolicy: Never
+        containers:
+          app:
+            <<: *container
+            args: ["orphaned", "--exclude-pattern", "*_unpackerred*"]
+
+      reannounce:
+        containers:
+          app:
+            <<: *container
+            args: ["reannounce", "--process-seeding"]
+
+      limiter:
+        containers:
+          app:
+            <<: *container
+            args: ["limiter", "--max-line-speed-mbps", "155", "--max-percent", "0.8", "--limit-percent", "0.4", "--interval", "5"]
+            # ARG of '155' is ~1.24 Gbps on average -> 155MB/s
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    persistence:
+      # config-file:
+      #   type: secret
+      #   name: qbtools-config-secret
+      #   globalMounts:
+      #     - path: /config/config.yaml
+      #       subPath: config.yaml
+      #       readOnly: true
+      media:
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
+        globalMounts:
+          - path: /downloads
+            subPath: Torrents

@@ -26,12 +26,13 @@ tasks:
       - which flux kubectl
 
   list:
-    desc: List all snapshots (task volsync:list APP=echo NS=default)
+    desc: List all snapshots [NS=default] [APP=required] [LOC=-b2]
     summary: |
       Args:
         cluster: Cluster to run command against (required)
         ns: Namespace the PVC is in (default: default)
         app: Application to list snapshots for (required)
+        loc: Location of the restic repository (default: blank for local)
     cmds:
       - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/list.yaml.j2 | kubectl apply --server-side --filename -
       - until kubectl --namespace {{.NS}} get job/{{.JOB}} &>/dev/null; do sleep 5; done
@@ -41,9 +42,11 @@ tasks:
     vars:
       NS: '{{.NS | default "default"}}'
       JOB: '{{.APP}}-list-snapshots'
+      LOC: '{{.LOC | default ""}}'
     env:
       APP: '{{.APP}}'
       NS: '{{.NS}}'
+      LOC: '{{.LOC}}'
     preconditions:
       - test -f {{.VOLSYNC_RESOURCES_DIR}}/list.yaml.j2
       - which flux kubectl minijinja-cli
@@ -71,7 +74,7 @@ tasks:
   # To run restore jobs in parallel for all replicationdestinations:
   #   - kubectl get replicationsources --all-namespaces --no-headers | awk '{print $2, $1}' | xargs -l bash -c 'task volsync:restore app=$0 ns=$1'
   restore:
-    desc: Restore an app [NS=default] [APP=required] [PREVIOUS=required]
+    desc: Restore an app [NS=default] [APP=required] [LOC=-b2] [PREVIOUS=required]
     cmds:
       # Suspend
       - flux --namespace {{.NS}} suspend kustomization {{.APP}}
@@ -90,11 +93,13 @@ tasks:
       - kubectl --namespace {{.NS}} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{.APP}}" --timeout=5m
     vars:
       NS: '{{.NS | default "default"}}'
+      LOC: '{{.LOC | default ""}}'
       CONTROLLER:
         sh: kubectl --namespace {{.NS}} get deployment {{.APP}} &>/dev/null && echo deployment || echo statefulset
     env:
       NS: '{{.NS}}'
       APP: '{{.APP}}'
+      LOC: '{{.LOC}}'
       PREVIOUS: '{{.PREVIOUS}}'
       CLAIM:
         sh: kubectl --namespace {{.NS}} get replicationsources/{{.APP}} --output=jsonpath='{.spec.sourcePVC}'

@@ -1,0 +1,191 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app sonarr
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      sonarr:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          ffmpeg-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                set -eux
+                wget -qO /tmp/ffmpeg.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
+                && mkdir -p /tmp/ffmpeg-extract \
+                && tar -xJ -f /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-extract \
+                && mkdir -p /usr/local/sma/bin \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg /usr/local/sma/bin/ \
+                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe /usr/local/sma/bin/ \
+                && chmod +x /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe \
+                && chown 1044:100 /usr/local/sma/bin/ffmpeg /usr/local/sma/bin/ffprobe
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              fsGroup: 0
+          sma-init:
+            image:
+              repository: docker.io/library/python
+              tag: "3.13-slim@sha256:60248ff36cf701fcb6729c085a879d81e4603f7f507345742dc82d4b38d16784"
+            command:
+              - sh
+              - -c
+              - |
+                set -eux
+                apt-get update && apt-get install -y --no-install-recommends git \
+                && rm -rf /var/lib/apt/lists/* \
+                && mkdir -p /usr/local/sma \
+                && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/sonarr-sma \
+                && cp -a /tmp/sonarr-sma/* /usr/local/sma/ \
+                && rm -rf /tmp/sonarr-sma \
+                && chown -R 1044:100 /usr/local/sma/ \
+                && python3 -m venv /usr/local/sma/venv \
+                && /usr/local/sma/venv/bin/pip install --upgrade pip \
+                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
+                  -r /usr/local/sma/setup/requirements.txt
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              fsGroup: 0
+          extras-init:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command:
+              - sh
+              - -c
+              - |
+                set -eux
+                mkdir -p /usr/local/sma \
+                && wget -qO /usr/local/sma/postSonarr.sh \
+                  https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/postSonarr.sh \
+                && chmod +x /usr/local/sma/postSonarr.sh \
+                && chown 1044:100 /usr/local/sma/postSonarr.sh
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              fsGroup: 0
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/sonarr
+              tag: "4.0.14.2938@sha256:acd5416ab9c36d017687820a32f09d09a4e25a5754aa5ebeae2e7c63d7609c13"
+            env:
+              TZ: ${TIMEZONE}
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__APP__THEME: dark
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: 'False'
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: &port 8989
+              SONARR__UPDATE__BRANCH: develop
+            envFrom:
+              - secretRef:
+                  name: sonarr-secret
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              seccompProfile: { type: RuntimeDefault }
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        className: internal
+        hosts:
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        existingClaim: *app
+      config-cache:
+        existingClaim: sonarr-cache
+        globalMounts:
+          - path: /config/MediaCover
+      config-sma:
+        type: emptyDir
+        globalMounts:
+          - path: /usr/local/sma
+      config-file:
+        type: secret
+        name: sma-configmap-secret
+        advancedMounts:
+          sonarr:
+            app:
+              - path: /usr/local/sma/config/autoProcess.ini
+                subPath: autoProcess.ini
+      media:
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
+        globalMounts:
+          - path: /tv
+            subPath: TV Shows
+          - path: /anime
+            subPath: Anime
+          - path: /ecchi
+            subPath: Ecchi
+          - path: /downloads
+            subPath: Torrents
+      tmp:
+        type: emptyDir

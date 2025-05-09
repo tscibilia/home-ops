@@ -24,6 +24,13 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
+    schematic:
+      customization:
+        extraKernelArgs:
+          - intel_iommu=on # PCI Passthrough
+          - iommu=pt       # PCI Passthrough
+          - apparmor=0     # Less security, faster puter
+          - -selinux       # Less security, faster puter
     talosImageURL: factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515
     controlPlane: true
     networkInterfaces:
@@ -48,6 +55,13 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
+    schematic:
+      customization:
+        extraKernelArgs:
+          - intel_iommu=on # PCI Passthrough
+          - iommu=pt       # PCI Passthrough
+          - apparmor=0     # Less security, faster puter
+          - -selinux       # Less security, faster puter
     talosImageURL: factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515
     controlPlane: true
     networkInterfaces:
@@ -72,6 +86,13 @@ nodes:
     installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
+    schematic:
+      customization:
+        extraKernelArgs:
+          - intel_iommu=on # PCI Passthrough
+          - iommu=pt       # PCI Passthrough
+          - apparmor=0     # Less security, faster puter
+          - -selinux       # Less security, faster puter
     talosImageURL: factory.talos.dev/installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515
     controlPlane: true
     networkInterfaces:
