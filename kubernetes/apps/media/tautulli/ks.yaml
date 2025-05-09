@@ -34,4 +34,32 @@ spec:
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: false
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app authentik-tautulli
+  namespace: &namespace media
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: tautulli
+      namespace: *namespace
+    - name: authentik
+      namespace: default
+  interval: 1h
+  path: ./kubernetes/apps/default/authentik/fwd-auth
+  postBuild:
+    substitute:
+      AUTHENTIK_PROXY_HOST: "${APP_DNS_TAUTULLI:=tautulli}"
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: *namespace
+  timeout: 5m

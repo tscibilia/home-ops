@@ -11,7 +11,7 @@ spec:
     # Need to add to the Ingress you want to protect
     # https://docs.goauthentik.io/docs/add-secure-apps/providers/proxy/server_nginx
   rules:
-    - host: &host "${AUTHENTIK_PROXY_HOST:=authentik}"
+    - host: "${AUTHENTIK_PROXY_HOST:=authentik}"
       http:
         paths:
           - pathType: Prefix
