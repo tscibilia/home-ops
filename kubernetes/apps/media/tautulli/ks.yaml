@@ -51,7 +51,7 @@ spec:
     - name: authentik
       namespace: default
   interval: 1h
-  path: ./kubernetes/apps/default/authentik/fwd-auth
+  path: ./kubernetes/apps/default/authentik/fwd-auth-int
   postBuild:
     substitute:
       AUTHENTIK_PROXY_HOST: tautulli
