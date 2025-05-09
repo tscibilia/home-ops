@@ -8,7 +8,6 @@ components:
 resources:
   - ./flaresolverr/ks.yaml
   - ./jellyseerr/ks.yaml
-  - ./overseerr/ks.yaml
   - ./prowlarr/ks.yaml
   - ./qbittorrent/ks.yaml
   - ./radarr/ks.yaml
