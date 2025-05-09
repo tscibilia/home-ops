@@ -73,11 +73,9 @@ spec:
             port: *port
     ingress:
       app:
-        className: external
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        className: internal
         hosts:
-          - host: "req.${SECRET_DOMAIN}"
+          - host: "req2.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -95,10 +93,10 @@ spec:
           - path: /app/config/logs
       tmp:
         type: emptyDir
-      media:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media
+      custom-logo:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
         globalMounts:
           - path: /app/public
             subPath: Torrents/overseerr/public
