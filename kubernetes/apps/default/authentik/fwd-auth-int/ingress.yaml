@@ -15,9 +15,13 @@ spec:
           - pathType: ImplementationSpecific
             path: "/outpost.goauthentik.io"
             backend:
+              # service:
+              #   name: authentik-outpost
+              #   namespace: default
+              #   port:
+              #     number: 9000
+
               # Or, to use an external Outpost, create an ExternalName service and reference that here.
               # See https://kubernetes.io/docs/concepts/services-networking/service/#externalname
-              service:
-                name: authentik-outpost
-                port:
-                  number: 9000
+              type: ExternalName
+              externalName: authentik-server.default.svc.cluster.local

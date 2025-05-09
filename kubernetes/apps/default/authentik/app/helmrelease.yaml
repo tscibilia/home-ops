@@ -49,6 +49,8 @@ spec:
       envFrom:
         - secretRef:
             name: *secret
+      outposts:
+        container_image_base: ghcr.io/goauthentik/%(type)s:%(version)s
       volumes:
         - name: custom-css
           configMap:
