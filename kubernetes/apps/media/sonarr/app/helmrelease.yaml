@@ -59,6 +59,8 @@ spec:
                 && mkdir -p /usr/local/sma \
                 && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/sonarr-sma \
                 && cp -a /tmp/sonarr-sma/* /usr/local/sma/ && rm -rf /tmp/sonarr-sma \
+                && mv /usr/local/sma/postSonarr.sh /usr/local/sma/postSonarr-worker.sh \
+                && chmod +x /usr/local/sma/postSonarr-worker.sh \
                 && python3 -m venv /usr/local/sma/venv \
                 && rm /usr/local/sma/venv/bin/python3 \
                 && cp $(which python3) /usr/local/sma/venv/bin/python3 \
@@ -148,24 +150,40 @@ spec:
               - -c
               - |
                 set -eux
-                /usr/local/sma/venv/bin/pip install --no-cache-dir fastapi uvicorn
-                cat << 'EOF' > /usr/local/sma/hook.py
-                from fastapi import FastAPI, Request
-                import subprocess, json, os
-                app = FastAPI()
-                @app.post("/hook")
-                async def hook(req: Request):
-                  data = await req.json()
-                  subprocess.run([
-                    "/usr/local/sma/venv/bin/python3",
-                    "/usr/local/sma/postSonarr.py",
-                    json.dumps(payload)
-                  ], check=False)
-                  return {"ok": True}
+                mkdir -p /usr/local/sma/requests
+
+                # Write the stub script that Sonarr will exec
+                cat << 'EOF' > /usr/local/sma/postSonarr.sh
+                #!/bin/sh
+                # read STDIN (the JSON Sonarr passes) and write to a unique file
+                dir=/usr/local/sma/requests
+                mkdir -p "$dir"
+                file="$dir/$(date +%s%N).json"
+                cat >"\$file"
+                exit 0
                 EOF
-                exec /usr/local/sma/venv/bin/uvicorn hook:app \
-                  --host 0.0.0.0 --port 9000 \
-                  --app-dir /usr/local/sma
+                chmod +x /usr/local/sma/postSonarr.sh
+
+                # Write a Python watcher that fires the real script
+                cat << 'PY' > /usr/local/sma/watcher.py
+                import os, time, subprocess
+                watch_dir = '/usr/local/sma/requests'
+                while True:
+                    for name in os.listdir(watch_dir):
+                        path = os.path.join(watch_dir, name)
+                        if not name.endswith('.json'):
+                            continue
+                        # read payload
+                        with open(path, 'rb') as f:
+                            data = f.read()
+                        # invoke the *real* script (with glibc & venv available here)
+                        subprocess.run(['/usr/local/sma/postSonarr-real.sh'], input=data, check=False)
+                        os.remove(path)
+                    time.sleep(1)
+                PY
+
+                # Launch the watcher under the venv python
+                exec /usr/local/sma/venv/bin/python3 /usr/local/sma/watcher.py
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
