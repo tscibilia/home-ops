@@ -10,6 +10,7 @@
     ':semanticCommits',
     ':timezone(America/New_York)',
   ],
+  assignees: ['tscibilia'],
   // enabledManagers: [
   //   'github-actions'
   // ],
