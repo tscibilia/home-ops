@@ -136,36 +136,6 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ['ALL'] }
-          sma-hook:
-            image:
-              repository: docker.io/library/python
-              tag: "3.13-slim@sha256:60248ff36cf701fcb6729c085a879d81e4603f7f507345742dc82d4b38d16784"
-            env:
-              - name: SMA_PATH
-                value: /usr/local/sma
-            command:
-              - sh
-              - -c
-              - |
-                set -eux
-                /usr/local/sma/venv/bin/pip install --no-cache-dir fastapi uvicorn
-                cat << 'EOF' > /usr/local/sma/hook.py
-                from fastapi import FastAPI, Request
-                import subprocess, json, os
-                app = FastAPI()
-                @app.post("/hook")
-                async def hook(req: Request):
-                  data = await req.json()
-                  subprocess.run([
-                    "/usr/local/sma/venv/bin/python3",
-                    "/usr/local/sma/postRadarr.py",
-                    json.dumps(payload)
-                  ], check=False)
-                  return {"ok": True}
-                EOF
-                exec /usr/local/sma/venv/bin/uvicorn hook:app \
-                  --host 0.0.0.0 --port 9000 \
-                  --app-dir /usr/local/sma
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
