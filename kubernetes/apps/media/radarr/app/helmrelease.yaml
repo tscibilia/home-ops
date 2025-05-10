@@ -22,94 +22,15 @@ spec:
       radarr:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          ffmpeg-init:
-            image:
-              repository: ghcr.io/ghcr-library/alpine
-              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
-            command:
-              - sh
-              - -c
-              - |
-                set -eux
-                wget -qO /tmp/ffmpeg.tar.xz "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" \
-                && mkdir -p /tmp/ffmpeg-extract \
-                && tar -xJ -f /tmp/ffmpeg.tar.xz -C /tmp/ffmpeg-extract \
-                && mkdir -p /usr/local/sma/bin \
-                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffmpeg /usr/local/sma/bin/ \
-                && cp /tmp/ffmpeg-extract/ffmpeg-*-static/ffprobe /usr/local/sma/bin/ \
-                && chmod +x /usr/local/sma/bin/* \
-                && chown 1044:100 /usr/local/sma/bin/*
-            securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
-          sma-init:
-            image:
-              repository: docker.io/library/python
-              tag: "3.13-slim@sha256:60248ff36cf701fcb6729c085a879d81e4603f7f507345742dc82d4b38d16784"
-            command:
-              - sh
-              - -c
-              - |
-                set -eux
-                apt-get update && apt-get install -y --no-install-recommends git \
-                && rm -rf /var/lib/apt/lists/* \
-                && mkdir -p /usr/local/sma \
-                && git clone --depth=1 https://github.com/mdhiggins/sickbeard_mp4_automator.git /tmp/radarr-sma \
-                && cp -a /tmp/radarr-sma/* /usr/local/sma/ && rm -rf /tmp/radarr-sma \
-                && python3 -m venv /usr/local/sma/venv \
-                && rm /usr/local/sma/venv/bin/python3 \
-                && cp $(which python3) /usr/local/sma/venv/bin/python3 \
-                && chmod +x /usr/local/sma/venv/bin/python3 \
-                && /usr/local/sma/venv/bin/pip install --upgrade pip \
-                && /usr/local/sma/venv/bin/pip install --no-cache-dir \
-                  -r /usr/local/sma/setup/requirements.txt \
-                && chown -R 1044:100 /usr/local/sma
-            securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
-          extras-init:
-            image:
-              repository: ghcr.io/ghcr-library/alpine
-              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
-            command:
-              - sh
-              - -c
-              - |
-                set -eux
-                mkdir -p /usr/local/sma \
-                && wget -qO /usr/local/sma/postRadarr.sh \
-                  https://raw.githubusercontent.com/mdhiggins/radarr-sma/master/extras/postRadarr.sh \
-                && chmod +x /usr/local/sma/postRadarr.sh \
-                && chown 1044:100 /usr/local/sma/postRadarr.sh
-            securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/radarr
-              tag: "5.23.1.9914@sha256:794fb31c2773491429cdf50906443c301c61298b1e53f1e95ccf723c30c73d3f"
+              repository: ghcr.io/mdhiggins/radarr-sma
+              tag: "develop@sha256:ecde06b25582cf9dc74cf83b3e6a3bbe27d064a9fd104b080460f00533f00713"
             env:
               TZ: ${TIMEZONE}
-              SMA_PATH: /usr/local/sma
-              RADARR__APP__INSTANCENAME: Radarr
-              RADARR__APP__THEME: dark
-              RADARR__AUTH__METHOD: External
-              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              RADARR__LOG__DBENABLED: 'False'
-              RADARR__LOG__LEVEL: info
-              RADARR__SERVER__PORT: &port 7878
-              RADARR__UPDATE__BRANCH: develop
-            envFrom:
-              - secretRef:
-                  name: radarr-secret
+              PUID: 1044
+              PGID: 100
             resources:
               requests:
                 cpu: 100m
@@ -118,31 +39,24 @@ spec:
                 memory: 2Gi
             probes:
               liveness: &probes
-                enabled: true
+                enabled: false
                 custom: true
                 spec:
                   httpGet:
                     path: /ping
-                    port: *port
-                  initialDelaySeconds: 0
+                    port: &port 7878
+                  initialDelaySeconds: 600
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
               startup:
                 enabled: false
-            securityContext:
-              seccompProfile: { type: RuntimeDefault }
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
     service:
       app:
         controller: *app
@@ -173,11 +87,9 @@ spec:
       config-file:
         type: secret
         name: sma-configmap-secret
-        advancedMounts:
-          radarr:
-            app:
-              - path: /usr/local/sma/config/autoProcess.ini
-                subPath: autoProcess.ini
+        globalMounts:
+          - path: /usr/local/sma/config/autoProcess.ini
+            subPath: autoProcess.ini
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
