@@ -5,7 +5,7 @@ kind: Kustomization
 configMapGenerator:
   - name: ntfy-server-config
     files:
-      - server.yml=./config/server.yml
+      - server.yml=./server.yml
 generatorOptions:
   disableNameSuffixHash: true
   annotations:
