@@ -83,6 +83,16 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+      livenessProbe: &probes
+        enabled: true
+        custom: true
+        initialDelaySeconds: 10
+        timeoutSeconds: 5
+        periodSeconds: 10
+        failureThreshold: 3
+      readinessProbe: *probes
+      startupProbe:
+        enabled: false
       resources:
         requests:
           cpu: 100m
