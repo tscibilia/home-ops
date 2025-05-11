@@ -73,13 +73,13 @@ spec:
           resources:
             requests:
               storage: 20Gi
-          storageClassName: cephfs
+          storageClassName: ceph-rbd
         resources:
-          limits:
-            memory: 1Gi
           requests:
             cpu: 500m
-            memory: 512Mi
+            memory: 1Gi
+          limits:
+            memory: 4Gi
 
     alertmanager:
       spec:
@@ -190,11 +190,11 @@ spec:
           promscrape.streamParse: "true"
           promscrape.dropOriginalLabels: "true"
         resources:
-          limits:
-            memory: 512Mi
           requests:
             cpu: 500m
             memory: 128Mi
+          limits:
+            memory: 512Mi
 
     grafana:
       enabled: false

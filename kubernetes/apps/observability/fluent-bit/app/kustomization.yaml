@@ -2,5 +2,18 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+metadata:
+  labels:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+    pod-security.kubernetes.io/enforce: &ps privileged # hostPath
+    pod-security.kubernetes.io/audit: *ps
+    pod-security.kubernetes.io/warn: *ps
 resources:
   - ./helmrelease.yaml
+  - ./rbac.yaml
+configMapGenerator:
+  - name: fluentbit-config
+    files:
+      - ./config/fluent-bit.yaml
+generatorOptions:
+  disableNameSuffixHash: true
