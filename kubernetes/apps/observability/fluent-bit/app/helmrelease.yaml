@@ -18,7 +18,7 @@ spec:
       retries: 3
   values:
     controllers:
-      fluentbit:
+      fluent-bit:
         type: daemonset
         serviceAccount:
           name: *app
@@ -52,7 +52,7 @@ spec:
             #  #startup:
             #  #  enabled: true
     service:
-     fluentbit:
+     fluent-bit:
        controller: *app
        ports:
          http:
