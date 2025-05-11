@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: ghcr.io/mdhiggins/radarr-sma
-              tag: "develop@sha256:ecde06b25582cf9dc74cf83b3e6a3bbe27d064a9fd104b080460f00533f00713"
+              tag: "develop@sha256:7c7ed0b1d5e3601daf15d48f163cb13bb38afac5c5ba2ccfd742222778b4a8f6"
             env:
               TZ: ${TIMEZONE}
               PUID: 1044
