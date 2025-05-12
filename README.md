@@ -13,10 +13,7 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 <div align="center">
 
 [![Talos](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftscibilia%2Fhome-ops%2Fmain%2Ftalos%2Ftalenv.yaml&query=talosVersion&style=for-the-badge&logo=talos&logoColor=white&color=blue&label=%20)](https://www.talos.dev/)&nbsp;&nbsp;
-[![Kubernetes](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftscibilia%2Fhome-ops%2Fmain%2Ftalos%2Ftalenv.yaml&query=kubernetesVersion&style=for-the-badge&logo=kubernetes&logoColor=white&color=blue&label=%20)](https://www.talos.dev/)&nbsp;&nbsp;
-
-[![Discord](https://img.shields.io/discord/673534664354430999?color=7289da&label=DISCORD&style=for-the-badge)](https://discord.gg/home-operations)&nbsp;&nbsp;
-[![renovate](https://img.shields.io/badge/renovate-enabled-brightgreen?style=for-the-badge&logo=renovatebot&logoColor=white)](https://github.com/renovatebot/renovate)
+[![Kubernetes](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftscibilia%2Fhome-ops%2Fmain%2Ftalos%2Ftalenv.yaml&query=kubernetesVersion&style=for-the-badge&logo=kubernetes&logoColor=white&color=blue&label=%20)](https://www.talos.dev/)
 
 </div>
 
@@ -24,7 +21,8 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 <div align="center">
 
 [![Status Page](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fbadge%2F47d5c08e-21a9-41f1-b7fd-48092e%2FpXy582uA-2.shields&style=for-the-badge&logo=statuspage&logoColor=white&label=Status%20Page)](https://status.t0m.co)&nbsp;&nbsp;
-[![Alertmanager](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F2%2Fd1cd3b92-cf69-4144-b5f2-9d044e983cff.shields&style=for-the-badge&logo=prometheus&logoColor=white&label=Alertmanager)](https://status.t0m.co)
+[![Alertmanager](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F2%2Fd1cd3b92-cf69-4144-b5f2-9d044e983cff.shields&style=for-the-badge&logo=prometheus&logoColor=white&label=Alertmanager)](https://status.t0m.co)&nbsp;&nbsp;
+[![renovate](https://img.shields.io/badge/renovate-enabled-brightgreen?style=for-the-badge&logo=renovatebot&logoColor=white)](https://github.com/renovatebot/renovate)
 
 </div>
 
