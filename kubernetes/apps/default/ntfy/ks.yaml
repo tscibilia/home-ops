@@ -24,6 +24,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_PATH: /v1/health
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

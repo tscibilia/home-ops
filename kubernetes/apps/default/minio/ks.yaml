@@ -19,6 +19,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_PATH: /minio/health/live
       GATUS_SUBDOMAIN: minio
       S3_SUBDOMAIN: s3
     substituteFrom:

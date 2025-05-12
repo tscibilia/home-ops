@@ -22,6 +22,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_PATH: /status
       VOLSYNC_CAPACITY: 4Gi
     substituteFrom:
       - name: cluster-secrets

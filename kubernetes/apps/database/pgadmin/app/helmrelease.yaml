@@ -57,7 +57,7 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /misc/ping
+                    path: ${GATUS_PATH}
                     port: &port 80
                   initialDelaySeconds: 240
                   periodSeconds: 10

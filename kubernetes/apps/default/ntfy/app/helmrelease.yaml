@@ -42,7 +42,7 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /v1/health
+                    path: ${GATUS_PATH}
                     port: &port 80
                   initialDelaySeconds: 0
                   periodSeconds: 10

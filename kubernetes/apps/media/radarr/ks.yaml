@@ -24,6 +24,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_PATH: /ping
       VOLSYNC_CAPACITY: 5Gi
     substituteFrom:
       - name: cluster-secrets
