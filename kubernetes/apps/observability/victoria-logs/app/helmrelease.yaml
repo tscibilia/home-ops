@@ -42,10 +42,10 @@ spec:
         size: 10Gi
       serviceMonitor:
         enabled: true
-    ingress:
-      enabled: true
-      pathType: Prefix
-      hosts:
-        - name: "logs.${SECRET_DOMAIN}"
-          path: /
-          port: http
+      ingress:
+        enabled: true
+        pathType: Prefix
+        hosts:
+          - name: "logs.${SECRET_DOMAIN}"
+            path: /
+            port: http
