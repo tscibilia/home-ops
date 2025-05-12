@@ -36,6 +36,9 @@ spec:
     keepHistory: false
   values:
     fullnameOverride: stack
+    global:
+      cluster:
+        dnsDomain: "cluster.local"
     victoria-metrics-operator:
       env:
         - name: VM_VMALERTDEFAULT_CONFIGRELOADERCPU
@@ -54,14 +57,7 @@ spec:
       enabled: false
 
     defaultRules:
-      rules:
-        groups:
-          etcd:
-            create: false
-          kubernetesSystemControllerManager:
-            create: false
-          kubernetesSystemScheduler:
-            create: false
+      create: true
 
     vmsingle:
       spec:
@@ -83,8 +79,6 @@ spec:
             memory: 4Gi
         extraArgs:
           maxLabelsPerTimeseries: "50"
-          # no trailing dot here:
-          vmalert.proxyURL: "http://vmalert-stack.observability.svc.cluster.local:8080"
 
     alertmanager:
       spec:
@@ -182,11 +176,18 @@ spec:
               values: ["never-used-value"]
         extraArgs:
           external.url: "https://vm.${SECRET_DOMAIN}"
-          # no trailing dot here:
-          datasource.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
-          notifier.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
-          remoteRead.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
-          remoteWrite.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
+        livenessProbe:
+          enabled: true
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          enabled: true
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 5
+          failureThreshold: 3
       ingress:
         enabled: true
         ingressClassName: internal
