@@ -89,6 +89,13 @@ spec:
                 service:
                   identifier: app
                   port: http
+          - host: "mx1.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: smtp
     persistence:
       attachments:
         type: emptyDir
