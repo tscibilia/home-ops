@@ -100,8 +100,8 @@ spec:
         globalMounts:
           - path: /var/cache/ntfy
       config-file:
-        type: configMap
-        name: ntfy-server-config
+        type: secret
+        name: ntfy-secret
         globalMounts:
           - path: /etc/ntfy/server.yml
             subPath: server.yml
