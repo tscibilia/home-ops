@@ -9,6 +9,9 @@ spec:
   chartRef:
     kind: OCIRepository
     name: app-template
+  dependsOn:
+    - name: victoria-metrics
+      namespace: observability
   install:
     remediation:
       retries: -1

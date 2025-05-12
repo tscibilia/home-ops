@@ -23,6 +23,9 @@ spec:
   chartRef:
     kind: OCIRepository
     name: silence-operator
+  dependsOn:
+    - name: victoria-metrics
+      namespace: observability
   install:
     remediation:
       retries: -1

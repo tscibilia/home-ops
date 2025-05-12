@@ -23,12 +23,17 @@ spec:
   chartRef:
     kind: OCIRepository
     name: victoria-metrics-k8s-stack
+  dependsOn:
+    - name: victoria-metrics-operator
+      namespace: observability
   interval: 15m
   maxHistory: 3
   install:
+    crds: CreateReplace
     remediation:
       retries: -1
   upgrade:
+    crds: CreateReplace
     cleanupOnFail: true
     remediation:
       retries: 3
