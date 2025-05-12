@@ -8,3 +8,4 @@ resources:
   - ./grey.yaml
   - ./hassio.yaml
   - ./nas.yaml
+  - ./ntfy.yaml
