@@ -48,7 +48,3 @@ spec:
       enableCSIEncryption: false
       enableVolumeGroupSnapshot: false
       cephFSKernelMountOptions: ms_mode=secure # Necessary, otherwise PVC won't be able to be mounted to Pod. You'll see errors like stderr: unable to get monitor info from DNS SRV with service name: ceph-mon, failed for service _ceph-mon._tcp
-      pluginTolerations:
-        - key: special
-          operator: Exists
-          effect: NoSchedule
