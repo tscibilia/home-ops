@@ -19,7 +19,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_STATUS: '404'
       GATUS_PATH: /talos_version
     substituteFrom:
       - name: cluster-secrets
