@@ -33,9 +33,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  dependsOn:
-    - name: silence-operator-crds
-      namespace: observability
   values:
     image:
       name: quay.io/giantswarm/silence-operator
