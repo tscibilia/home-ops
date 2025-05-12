@@ -26,11 +26,9 @@ spec:
   interval: 15m
   maxHistory: 3
   install:
-    crds: CreateReplace
     remediation:
       retries: -1
   upgrade:
-    crds: CreateReplace
     cleanupOnFail: true
     remediation:
       retries: 3
@@ -46,9 +44,9 @@ spec:
           value: 0
         - name: VM_VMALERTMANAGER_CONFIGRELOADERCPU
           value: 0
-      crds:
-        cleanup:
-          enabled: false
+      # crds:
+      #   cleanup:
+      #     enabled: false
       operator:
         enable_converter_ownership: true # Required to allow VM to remove VM rules it imports if a prometheus rule is deleted
 
@@ -180,13 +178,13 @@ spec:
             - key: somekey
               operator: NotIn
               values: ["never-used-value"]
-        extraArgs:
-          external.url: "https://vm.${SECRET_DOMAIN}"
-      ingress:
-        enabled: true
-        ingressClassName: internal
-        hosts:
-          - "vm.${SECRET_DOMAIN}"
+      #   extraArgs:
+      #     external.url: "https://vm.${SECRET_DOMAIN}"
+      # ingress:
+      #   enabled: true
+      #   ingressClassName: internal
+      #   hosts:
+      #     - "vm.${SECRET_DOMAIN}"
 
     vmagent:
       spec:
