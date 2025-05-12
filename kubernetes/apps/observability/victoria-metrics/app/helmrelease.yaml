@@ -68,8 +68,6 @@ spec:
         # -- Data retention period. Possible units character: h(ours), d(ays), w(eeks), y(ears), if no unit character specified - month. The minimum retention period is 24h. See these [docs](https://docs.victoriametrics.com/single-server-victoriametrics/#retention)
         retentionPeriod: "2"
         replicaCount: 1
-        extraArgs:
-          maxLabelsPerTimeseries: "50"
         storage:
           accessModes:
             - ReadWriteOnce
@@ -83,6 +81,10 @@ spec:
             memory: 1Gi
           limits:
             memory: 4Gi
+        extraArgs:
+          maxLabelsPerTimeseries: "50"
+          # no trailing dot here:
+          vmalert.proxyURL: "http://vmalert-stack.observability.svc.cluster.local:8080"
 
     alertmanager:
       spec:
@@ -178,13 +180,18 @@ spec:
             - key: somekey
               operator: NotIn
               values: ["never-used-value"]
-      #   extraArgs:
-      #     external.url: "https://vm.${SECRET_DOMAIN}"
-      # ingress:
-      #   enabled: true
-      #   ingressClassName: internal
-      #   hosts:
-      #     - "vm.${SECRET_DOMAIN}"
+        extraArgs:
+          external.url: "https://vm.${SECRET_DOMAIN}"
+          # no trailing dot here:
+          datasource.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
+          notifier.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
+          remoteRead.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
+          remoteWrite.url: "http://vmsingle-stack.observability.svc.cluster.local:8429"
+      ingress:
+        enabled: true
+        ingressClassName: internal
+        hosts:
+          - "vm.${SECRET_DOMAIN}"
 
     vmagent:
       spec:
