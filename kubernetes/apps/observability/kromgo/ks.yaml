@@ -12,7 +12,7 @@ spec:
   components:
     - ../../../../components/gatus/external
   dependsOn:
-    - name: victoria-metrics
+    - name: victoria-metrics-stack
       namespace: observability
   interval: 1h
   path: ./kubernetes/apps/observability/kromgo/app
