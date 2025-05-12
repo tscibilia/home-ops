@@ -34,7 +34,7 @@ spec:
       retries: 3
   values:
     fullnameOverride: victoria-logs
-    retentionPeriod: 2 # months
+    retentionPeriod: 1 # months
     server:
       persistentVolume:
         enabled: true
@@ -43,12 +43,9 @@ spec:
       serviceMonitor:
         enabled: true
     ingress:
-      app:
-        className: internal
-        hosts:
-          - host: "logs.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+      enabled: true
+      pathType: Prefix
+      hosts:
+        - name: "logs.${SECRET_DOMAIN}"
+          path: /
+          port: http
