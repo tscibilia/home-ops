@@ -1,0 +1,44 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/refs/heads/main/ocirepository-source-v1beta2.json
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: victoria-metrics-crds
+spec:
+  interval: 2h
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  url: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-operator-crds
+  ref:
+    tag: 0.1.1
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics-crds
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics-crds
+  interval: 15m
+  maxHistory: 3
+  install:
+    crds: Create
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    fullnameOverride: victoria-metrics-crds
+    crds:
+      enabled: true
+      # plain == false results in CRDs being rendered as templates which allows them to be upgraded
+      plain: false
+      cleanup:
+        enabled: false

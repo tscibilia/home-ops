@@ -23,6 +23,9 @@ spec:
   chartRef:
     kind: OCIRepository
     name: victoria-metrics-k8s-stack
+  dependsOn:
+    - name: victoria-metrics-crds
+      namespace: observability
   interval: 15m
   maxHistory: 3
   install:
@@ -36,22 +39,14 @@ spec:
     keepHistory: false
   values:
     fullnameOverride: stack
-    global:
-      cluster:
-        dnsDomain: "cluster.local"
     victoria-metrics-operator:
-      env:
-        - name: VM_VMALERTDEFAULT_CONFIGRELOADERCPU
-          value: 0
-        - name: VM_VMAGENTDEFAULT_CONFIGRELOADERCPU
-          value: 0
-        - name: VM_VMALERTMANAGER_CONFIGRELOADERCPU
-          value: 0
-      # crds:
-      #   cleanup:
-      #     enabled: false
+      # don't deploy crds, they are deployed by victoria-metrics-crds chart
+      crds:
+        enabled: false
+        plain: false
       operator:
         enable_converter_ownership: true # Required to allow VM to remove VM rules it imports if a prometheus rule is deleted
+        useCustomConfigReloader: true # Bundled config-reloader, should reduce vmagent and vmauth config sync-time and make it predictable.
 
     defaultDashboards:
       enabled: false
@@ -85,80 +80,79 @@ spec:
         externalURL: "https://am.${SECRET_DOMAIN}"
       ingress:
         enabled: true
-        ingressClassName: internal
         hosts:
           - "am.${SECRET_DOMAIN}"
-      useManagedConfig: true
-      config:
-        route:
-          group_by: ["alertname", "job"]
-          group_interval: 10m
-          group_wait: 1m
-          receiver: pushover
-          repeat_interval: 12h
-          routes:
-            - receiver: "null"
-              matchers:
-                - alertname=InfoInhibitor
-            - receiver: heartbeat
-              group_interval: 15s
-              group_wait: 0s
-              repeat_interval: 5m
-              matchers:
-                - alertname=Watchdog
-            - receiver: pushover
-              matchers:
-                - severity=~"warning|critical"
-        inhibit_rules:
-          - source_matchers:
-              - severity = "critical"
-            target_matchers:
-              - severity = "warning"
-            equal: ["alertname", "namespace"]
-        receivers:
-          - name: "null"
-          - name: heartbeat
-            webhook_configs:
-              - url_secret:
-                  name: &secret alertmanager-secret
-                  key: ALERTMANAGER_HEARTBEAT_URL
-          - name: pushover
-            pushover_configs:
-              - html: true
-                message: |-
-                  {{- range .Alerts }}
-                    {{- if ne .Annotations.description "" }}
-                      {{ .Annotations.description }}
-                    {{- else if ne .Annotations.summary "" }}
-                      {{ .Annotations.summary }}
-                    {{- else if ne .Annotations.message "" }}
-                      {{ .Annotations.message }}
-                    {{- else }}
-                      Alert description not available
-                    {{- end }}
-                    {{- if gt (len .Labels.SortedPairs) 0 }}
-                      <small>
-                        {{- range .Labels.SortedPairs }}
-                          <b>{{ .Name }}:</b> {{ .Value }}
-                        {{- end }}
-                      </small>
-                    {{- end }}
-                  {{- end }}
-                priority: |-
-                  {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
-                send_resolved: true
-                sound: gamelan
-                title: >-
-                  [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
-                  {{ .CommonLabels.alertname }}
-                ttl: 86400s
-                token:
-                  name: *secret
-                  key: PUSHOVER_ALERTMANAGER_TOKEN
-                user_key:
-                  name: *secret
-                  key: PUSHOVER_USER_KEY
-                url_title: View in Alertmanager
+      # useManagedConfig: true
+      # config:
+      #   route:
+      #     group_by: ["alertname", "job"]
+      #     group_interval: 10m
+      #     group_wait: 1m
+      #     receiver: pushover
+      #     repeat_interval: 12h
+      #     routes:
+      #       - receiver: "null"
+      #         matchers:
+      #           - alertname=InfoInhibitor
+      #       - receiver: heartbeat
+      #         group_interval: 15s
+      #         group_wait: 0s
+      #         repeat_interval: 5m
+      #         matchers:
+      #           - alertname=Watchdog
+      #       - receiver: pushover
+      #         matchers:
+      #           - severity=~"warning|critical"
+      #   inhibit_rules:
+      #     - source_matchers:
+      #         - severity = "critical"
+      #       target_matchers:
+      #         - severity = "warning"
+      #       equal: ["alertname", "namespace"]
+      #   receivers:
+      #     - name: "null"
+      #     - name: heartbeat
+      #       webhook_configs:
+      #         - url_secret:
+      #             name: &secret alertmanager-secret
+      #             key: ALERTMANAGER_HEARTBEAT_URL
+      #     - name: pushover
+      #       pushover_configs:
+      #         - html: true
+      #           message: |-
+      #             {{- range .Alerts }}
+      #               {{- if ne .Annotations.description "" }}
+      #                 {{ .Annotations.description }}
+      #               {{- else if ne .Annotations.summary "" }}
+      #                 {{ .Annotations.summary }}
+      #               {{- else if ne .Annotations.message "" }}
+      #                 {{ .Annotations.message }}
+      #               {{- else }}
+      #                 Alert description not available
+      #               {{- end }}
+      #               {{- if gt (len .Labels.SortedPairs) 0 }}
+      #                 <small>
+      #                   {{- range .Labels.SortedPairs }}
+      #                     <b>{{ .Name }}:</b> {{ .Value }}
+      #                   {{- end }}
+      #                 </small>
+      #               {{- end }}
+      #             {{- end }}
+      #           priority: |-
+      #             {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
+      #           send_resolved: true
+      #           sound: gamelan
+      #           title: >-
+      #             [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
+      #             {{ .CommonLabels.alertname }}
+      #           ttl: 86400s
+      #           token:
+      #             name: *secret
+      #             key: PUSHOVER_ALERTMANAGER_TOKEN
+      #           user_key:
+      #             name: *secret
+      #             key: PUSHOVER_USER_KEY
+      #           url_title: View in Alertmanager
 
     vmalert:
       spec:
@@ -176,21 +170,8 @@ spec:
               values: ["never-used-value"]
         extraArgs:
           external.url: "https://vm.${SECRET_DOMAIN}"
-        livenessProbe:
-          enabled: true
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          enabled: true
-          initialDelaySeconds: 15
-          periodSeconds: 20
-          timeoutSeconds: 5
-          failureThreshold: 3
       ingress:
         enabled: true
-        ingressClassName: internal
         hosts:
           - "vm.${SECRET_DOMAIN}"
 
@@ -210,15 +191,15 @@ spec:
     grafana:
       enabled: false
 
-    prometheus-node-exporter:
-      vmScrape:
-        spec:
-          endpoints:
-            - port: metrics
-              relabelConfigs:
-                - source_labels:
-                    - __meta_kubernetes_endpoint_node_name
-                  target_label: node
+    # prometheus-node-exporter:
+    #   vmScrape:
+    #     spec:
+    #       endpoints:
+    #         - port: metrics
+    #           relabelConfigs:
+    #             - source_labels:
+    #                 - __meta_kubernetes_endpoint_node_name
+    #               target_label: node
 
     kubelet:
       vmScrape:
@@ -276,26 +257,26 @@ spec:
     kubeProxy:
       enabled: false
 
-    additionalVictoriaMetricsMap:
-      dockerhub-rules:
-        create: true
-        groups:
-          - name: dockerhub
-            rules:
-              - alert: DockerhubRateLimitRisk
-                annotations:
-                  summary: Kubernetes cluster Dockerhub rate limit risk
-                expr: count(time() - container_last_seen{image=~"(docker.io).*",container!=""} < 30) > 100
-                labels:
-                  severity: critical
-      oom-rules:
-        create: true
-        groups:
-          - name: oom
-            rules:
-              - alert: OomKilled
-                annotations:
-                  summary: Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.
-                expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
-                labels:
-                  severity: critical
+    # additionalVictoriaMetricsMap:
+    #   dockerhub-rules:
+    #     create: true
+    #     groups:
+    #       - name: dockerhub
+    #         rules:
+    #           - alert: DockerhubRateLimitRisk
+    #             annotations:
+    #               summary: Kubernetes cluster Dockerhub rate limit risk
+    #             expr: count(time() - container_last_seen{image=~"(docker.io).*",container!=""} < 30) > 100
+    #             labels:
+    #               severity: critical
+    #   oom-rules:
+    #     create: true
+    #     groups:
+    #       - name: oom
+    #         rules:
+    #           - alert: OomKilled
+    #             annotations:
+    #               summary: Container {{ $labels.container }} in pod {{ $labels.namespace }}/{{ $labels.pod }} has been OOMKilled {{ $value }} times in the last 10 minutes.
+    #             expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
+    #             labels:
+    #               severity: critical
