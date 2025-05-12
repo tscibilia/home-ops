@@ -32,6 +32,7 @@ spec:
         name: internal
         default: true
         controllerValue: k8s.io/internal
+      allowSnippetAnnotations: true
       admissionWebhooks:
         objectSelector:
           matchExpressions:
