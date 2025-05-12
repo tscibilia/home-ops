@@ -23,9 +23,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: victoria-metrics-k8s-stack
-  dependsOn:
-    - name: victoria-metrics-operator
-      namespace: observability
   interval: 15m
   maxHistory: 3
   install:
