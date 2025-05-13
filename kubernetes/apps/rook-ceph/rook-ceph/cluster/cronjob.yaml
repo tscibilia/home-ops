@@ -43,7 +43,7 @@ spec:
           serviceAccountName: ceph-mgr-sync
           containers:
             - name: sync-mgr-endpoint
-              image: ceph/ceph:v17
+              image: quay.io/ceph/ceph:v17.2.7
               command:
                 - /bin/sh
                 - -eux
