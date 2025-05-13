@@ -60,7 +60,7 @@ spec:
                   ACTIVE_IP=""
                   for IP in 10.10.10.1 10.10.10.2 10.10.10.3; do
                     if curl -sf "http://${IP}:9283/metrics" \
-                         | grep -q '^ceph_mgr_metadata{state="active"'; then
+                         | grep -q 'ceph_mgr_metadata.*state="active"'; then
                       ACTIVE_IP="$IP"
                       break
                     fi
