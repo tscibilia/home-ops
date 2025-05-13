@@ -49,6 +49,8 @@ spec:
                 - -c
               args:
                 - |
+                  apt-get update && apt-get install -y ceph-common jq
+                  # (kubectl binary must already be in PATH)
                   set -eux
                   # 1) find the active mgr IP
                   ACTIVE_IP=$(
