@@ -4,7 +4,7 @@ grafanaDashboard:
 serviceMonitor:
   enabled: true
 prometheusRule:
-  enabled: false
+  enabled: true
 podSecurityContext:
   fsGroup: 2000
 securityContext:
