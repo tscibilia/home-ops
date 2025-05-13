@@ -43,28 +43,33 @@ spec:
           serviceAccountName: ceph-mgr-sync
           containers:
             - name: sync-mgr-endpoint
-              image: debian:12-slim
-              command:
-                - /bin/sh
-                - -c
+              image: bitnami/kubectl:1.33.0-debian-12-r1
+              command: ["/bin/sh","-c"]
               args:
                 - |
                   set -eux
 
-                  # 1) install Ceph CLI, jq & curl
-                  apt-get update && apt-get install -y --no-install-recommends ceph-common jq curl
+                  # Install only curl (jq/ceph-common not needed)
+                  apt-get update
+                  apt-get install -y --no-install-recommends curl
+                  rm -rf /var/lib/apt/lists/*
 
-                  # 2) download kubectl (latest stable)
-                  K8S_VER=$(curl -L -s https://dl.k8s.io/release/stable.txt)
-                  curl -LO "https://dl.k8s.io/release/${K8S_VER}/bin/linux/amd64/kubectl"
-                  install -o root -g root -m 0755 kubectl /usr/local/bin/
+                  # Try each mgr IP on port 9283 for the "active" metric
+                  for IP in 10.10.10.1 10.10.10.2 10.10.10.3; do
+                    if curl -sf "http://${IP}:9283/metrics" \
+                       | grep -q 'ceph_mgr_metadata{state="active"'; then
+                      ACTIVE_IP=$IP
+                      break
+                    fi
+                  done
 
-                  # 3) discover the active MGR IP
-                  ACTIVE_IP=$(ceph mgr metadata \
-                    --format=json \
-                    | jq -r '.mgrs[] | select(.state=="active") | .public_addr' | cut -d: -f1)
+                  if [ -z "${ACTIVE_IP}" ]; then
+                    echo "ERROR: no active MGR found" >&2
+                    exit 1
+                  fi
 
-                  # 4) patch the HelmRelease
-                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster --type=merge \
-                    --patch '{"spec":{"values":{"monitoring":{"externalMgrEndpoints":[{"ip":"'"${ACTIVE_IP}"'"}]}}}}'
+                  # Patch the HelmRelease to use only the active IP
+                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster \
+                    --type=merge \
+                    --patch "{\"spec\":{\"values\":{\"monitoring\":{\"externalMgrEndpoints\":[{\"ip\":\"${ACTIVE_IP}\"}]}}}}"
           restartPolicy: OnFailure
