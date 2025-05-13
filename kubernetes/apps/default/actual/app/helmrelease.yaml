@@ -30,7 +30,7 @@ spec:
             env:
               TZ: ${TIMEZONE}
               ACTUAL_PORT: &port 5006
-              ACTUAL_OPENID_ENFORCE: true
+              # ACTUAL_OPENID_ENFORCE: true
               ACTUAL_TOKEN_EXPIRATION: "never"
               ACTUAL_LOGIN_METHOD: openid
               ACTUAL_OPENID_AUTH_METHOD: openid
