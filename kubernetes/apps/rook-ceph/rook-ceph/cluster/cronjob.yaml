@@ -44,6 +44,8 @@ spec:
           containers:
             - name: sync-mgr-endpoint
               image: bitnami/kubectl:1.33.0-debian-12-r1
+              securityContext:
+                runAsUser: 0
               command: ["/bin/sh","-c"]
               args:
                 - |
