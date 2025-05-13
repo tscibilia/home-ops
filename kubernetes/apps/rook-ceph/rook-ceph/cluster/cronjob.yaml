@@ -49,7 +49,7 @@ spec:
               command: ["/bin/sh","-c"]
               args:
                 - |
-                  set -euo pipefail
+                  set -eu
 
                   # 1) Install only curl (small footprint)
                   mkdir -p /var/lib/apt/lists/partial
