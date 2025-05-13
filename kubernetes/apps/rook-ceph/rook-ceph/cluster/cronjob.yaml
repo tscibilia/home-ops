@@ -43,24 +43,28 @@ spec:
           serviceAccountName: ceph-mgr-sync
           containers:
             - name: sync-mgr-endpoint
-              image: quay.io/ceph/ceph:v17.2.7
+              image: debian:12-slim
               command:
                 - /bin/sh
                 - -c
               args:
                 - |
-                  apt-get update && apt-get install -y ceph-common jq
-                  # (kubectl binary must already be in PATH)
                   set -eux
-                  # 1) find the active mgr IP
-                  ACTIVE_IP=$(
-                    ceph mgr metadata \
-                      --format=json \
-                      | jq -r '.mgrs[] | select(.state=="active") | .public_addr' \
-                      | cut -d: -f1
-                  )
-                  # 2) patch only the externalMgrEndpoints array
-                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster \
-                    --type=merge \
+
+                  # 1) install Ceph CLI, jq & curl
+                  apt-get update && apt-get install -y --no-install-recommends ceph-common jq curl
+
+                  # 2) download kubectl (latest stable)
+                  K8S_VER=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+                  curl -LO "https://dl.k8s.io/release/${K8S_VER}/bin/linux/amd64/kubectl"
+                  install -o root -g root -m 0755 kubectl /usr/local/bin/
+
+                  # 3) discover the active MGR IP
+                  ACTIVE_IP=$(ceph mgr metadata \
+                    --format=json \
+                    | jq -r '.mgrs[] | select(.state=="active") | .public_addr' | cut -d: -f1)
+
+                  # 4) patch the HelmRelease
+                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster --type=merge \
                     --patch '{"spec":{"values":{"monitoring":{"externalMgrEndpoints":[{"ip":"'"${ACTIVE_IP}"'"}]}}}}'
           restartPolicy: OnFailure
