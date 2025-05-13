@@ -49,28 +49,29 @@ spec:
               command: ["/bin/sh","-c"]
               args:
                 - |
-                  set -eux
+                  set -euo pipefail
+
+                  # 1) Install only curl (small footprint)
                   mkdir -p /var/lib/apt/lists/partial
+                  apt-get update && apt-get install -y --no-install-recommends curl \
+                    && rm -rf /var/lib/apt/lists/*
 
-                  # Install only curl (jq/ceph-common not needed)
-                  apt-get update && apt-get install -y --no-install-recommends curl
-                  rm -rf /var/lib/apt/lists/*
-
-                  # Try each mgr IP on port 9283 for the "active" metric
+                  # 2) Find the active mgr by probing /metrics on port 9283
+                  ACTIVE_IP=""
                   for IP in 10.10.10.1 10.10.10.2 10.10.10.3; do
                     if curl -sf "http://${IP}:9283/metrics" \
-                       | grep -q 'ceph_mgr_metadata{state="active"'; then
-                      ACTIVE_IP=$IP
+                         | grep -q '^ceph_mgr_metadata{state="active"'; then
+                      ACTIVE_IP="$IP"
                       break
                     fi
                   done
 
-                  if [ -z "${ACTIVE_IP}" ]; then
+                  if [ -z "$ACTIVE_IP" ]; then
                     echo "ERROR: no active MGR found" >&2
                     exit 1
                   fi
 
-                  # Patch the HelmRelease to use only the active IP
+                  # 3) Patch only that one IP into the HelmRelease
                   kubectl -n rook-ceph patch helmrelease rook-ceph-cluster --type=merge \
                     --patch "{\"spec\":{\"values\":{\"monitoring\":{\"externalMgrEndpoints\":[{\"ip\":\"${ACTIVE_IP}\"}]}}}}"
           restartPolicy: OnFailure
