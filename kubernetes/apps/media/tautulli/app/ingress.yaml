@@ -5,7 +5,6 @@ kind: Ingress
 metadata:
   name: authentik-outpost-tautulli
 spec:
-  ingressClassName: internal
   rules:
     - host: "tautulli.t0m.co"
       http:
