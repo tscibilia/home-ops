@@ -358,6 +358,15 @@ spec:
             oid: "1.3.6.1.4.1.50495.1.2.1.6.2"
             severity: "critical"
             type: "ceph_default"
+        - alert: "CephMgrTargetDown"
+          expr: |
+            up{job="rook-ceph-mgr-external"} == 0
+            and on(instance) ceph_mgr_metadata{state="active"} == 1
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Active Ceph-MGR is down"
     - name: "pgs"
       rules:
         - alert: "CephPGsInactive"
