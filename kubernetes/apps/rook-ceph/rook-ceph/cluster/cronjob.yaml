@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ceph-mgr-sync
+  namespace: rook-ceph
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ceph-mgr-sync
+  namespace: rook-ceph
+rules:
+  - apiGroups: ["helm.toolkit.fluxcd.io"]
+    resources: ["helmreleases"]
+    verbs: ["get","patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ceph-mgr-sync
+  namespace: rook-ceph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ceph-mgr-sync
+subjects:
+  - kind: ServiceAccount
+    name: ceph-mgr-sync
+    namespace: rook-ceph
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ceph-mgr-endpoint-sync
+  namespace: rook-ceph
+spec:
+  schedule: "*/5 * * * *"   # every 5 minutes
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: ceph-mgr-sync
+          containers:
+            - name: sync-mgr-endpoint
+              image: ceph/ceph:v17
+              command:
+                - /bin/sh
+                - -eux
+                - |
+                  # 1) discover active MGR IP
+                  ACTIVE_IP=$(ceph mgr metadata \
+                    --format=json \
+                    | jq -r '.mgrs[] | select(.state=="active") | .public_addr' \
+                    | cut -d: -f1)
+                  # 2) patch the HelmRelease
+                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster \
+                    --type merge \
+                    --patch "{\"spec\":{\"values\":{\"monitoring\":{\"externalMgrEndpoints\":[{\"ip\":\"${ACTIVE_IP}\"}]}}}}}"
+          restartPolicy: OnFailure
