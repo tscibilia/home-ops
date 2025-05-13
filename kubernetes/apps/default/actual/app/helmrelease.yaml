@@ -30,10 +30,12 @@ spec:
             env:
               TZ: ${TIMEZONE}
               ACTUAL_PORT: &port 5006
+              ACTUAL_OPENID_ENFORCE: true
+              ACTUAL_TOKEN_EXPIRATION: "openid-provider"
               ACTUAL_LOGIN_METHOD: openid
               ACTUAL_OPENID_AUTH_METHOD: openid
-              ACTUAL_OPENID_DISCOVERY_URL: https://auth.${SECRET_DOMAIN}/application/o/actual/.well-known/openid-configuration
-              ACTUAL_OPENID_SERVER_HOSTNAME: https://budget.${SECRET_DOMAIN}
+              ACTUAL_OPENID_DISCOVERY_URL: "https://auth.${SECRET_DOMAIN}/application/o/actual/.well-known/openid-configuration"
+              ACTUAL_OPENID_SERVER_HOSTNAME: "https://budget.${SECRET_DOMAIN}"
             envFrom:
               - secretRef:
                   name: actual-secret
