@@ -46,15 +46,19 @@ spec:
               image: quay.io/ceph/ceph:v17.2.7
               command:
                 - /bin/sh
-                - -eux
+                - -c
+              args:
                 - |
-                  # 1) discover active MGR IP
-                  ACTIVE_IP=$(ceph mgr metadata \
-                    --format=json \
-                    | jq -r '.mgrs[] | select(.state=="active") | .public_addr' \
-                    | cut -d: -f1)
-                  # 2) patch the HelmRelease
+                  set -eux
+                  # 1) find the active mgr IP
+                  ACTIVE_IP=$(
+                    ceph mgr metadata \
+                      --format=json \
+                      | jq -r '.mgrs[] | select(.state=="active") | .public_addr' \
+                      | cut -d: -f1
+                  )
+                  # 2) patch only the externalMgrEndpoints array
                   kubectl -n rook-ceph patch helmrelease rook-ceph-cluster \
-                    --type merge \
-                    --patch "{\"spec\":{\"values\":{\"monitoring\":{\"externalMgrEndpoints\":[{\"ip\":\"${ACTIVE_IP}\"}]}}}}}"
+                    --type=merge \
+                    --patch '{"spec":{"values":{"monitoring":{"externalMgrEndpoints":[{"ip":"'"${ACTIVE_IP}"'"}]}}}}'
           restartPolicy: OnFailure
