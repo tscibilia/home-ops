@@ -48,10 +48,10 @@ spec:
               args:
                 - |
                   set -eux
+                  mkdir -p /var/lib/apt/lists/partial
 
                   # Install only curl (jq/ceph-common not needed)
-                  apt-get update
-                  apt-get install -y --no-install-recommends curl
+                  apt-get update && apt-get install -y --no-install-recommends curl
                   rm -rf /var/lib/apt/lists/*
 
                   # Try each mgr IP on port 9283 for the "active" metric
@@ -69,7 +69,6 @@ spec:
                   fi
 
                   # Patch the HelmRelease to use only the active IP
-                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster \
-                    --type=merge \
+                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster --type=merge \
                     --patch "{\"spec\":{\"values\":{\"monitoring\":{\"externalMgrEndpoints\":[{\"ip\":\"${ACTIVE_IP}\"}]}}}}"
           restartPolicy: OnFailure
