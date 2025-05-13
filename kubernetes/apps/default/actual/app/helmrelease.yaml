@@ -56,8 +56,6 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-              startup:
-                enabled: false
     defaultPodOptions:
       securityContext:
         runAsUser: 1044
