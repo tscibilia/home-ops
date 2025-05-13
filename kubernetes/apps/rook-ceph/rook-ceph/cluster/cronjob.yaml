@@ -1,25 +1,25 @@
 ---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/serviceaccount-v1.json
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: ceph-mgr-sync
-  namespace: rook-ceph
 ---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/role-rbac-v1.json
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: ceph-mgr-sync
-  namespace: rook-ceph
 rules:
   - apiGroups: ["helm.toolkit.fluxcd.io"]
     resources: ["helmreleases"]
     verbs: ["get","patch"]
 ---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/rolebinding-rbac-v1.json
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: ceph-mgr-sync
-  namespace: rook-ceph
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -27,13 +27,12 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: ceph-mgr-sync
-    namespace: rook-ceph
 ---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/cronjob.json
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: ceph-mgr-endpoint-sync
-  namespace: rook-ceph
 spec:
   schedule: "*/5 * * * *"   # every 5 minutes
   concurrencyPolicy: Replace
