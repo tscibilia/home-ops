@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: internal
   rules:
-    - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+    - host: "tautulli.t0m.co"
       http:
         paths:
           - path: /outpost.goauthentik.io
