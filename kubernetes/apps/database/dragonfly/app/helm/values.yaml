@@ -4,16 +4,7 @@ grafanaDashboard:
 serviceMonitor:
   enabled: true
 prometheusRule:
-  enabled: true
-  spec:
-    - alert: DragonflyMissing
-      expr: absent(dragonfly_uptime_in_seconds) == 1
-      for: 0m
-      labels:
-        severity: critical
-      annotations:
-        summary: Dragonfly is missing
-        description: "Dragonfly is missing"
+  enabled: false
 podSecurityContext:
   fsGroup: 2000
 securityContext:
