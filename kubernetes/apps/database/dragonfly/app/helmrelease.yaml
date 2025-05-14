@@ -35,3 +35,19 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: dragonfly-values
+  postRenderers:
+  - kustomize:
+      patches:
+        - target:
+            kind: Deployment
+            name: dragonfly-operator
+          patch: |-
+            spec:
+              template:
+                spec:
+                  containers:
+                  - name: manager
+                    args:
+                      - --health-probe-bind-address=:8081
+                      - --metrics-bind-address=0.0.0.0:8080
+                      - --leader-elect
