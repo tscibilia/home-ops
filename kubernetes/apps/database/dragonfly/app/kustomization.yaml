@@ -5,3 +5,9 @@ kind: Kustomization
 resources:
   # renovate: datasource=github-releases depName=dragonflydb/dragonfly-operator
   - ./helmrelease.yaml
+configMapGenerator:
+  - name: dragonfly-values
+    files:
+      - values.yaml=./helm/values.yaml
+configurations:
+  - ./helm/kustomizeconfig.yaml
