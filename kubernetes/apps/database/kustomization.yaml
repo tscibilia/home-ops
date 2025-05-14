@@ -7,5 +7,5 @@ components:
   - ../../components/common
 resources:
   - ./cnpg/ks.yaml
-  # - ./dragonfly/ks.yaml
+  - ./dragonfly/ks.yaml
   - ./pgadmin/ks.yaml
