@@ -54,10 +54,9 @@ spec:
             interval: 45s
     monitoring:
       enabled: false
-      createPrometheusRules: true
+      createPrometheusRules: false
       externalMgrPrometheusPort: 9283 # IP doesn't need to be specified, operator will find it itself
       externalMgrEndpoints:
-        # Only one can be a manager, it conflicts with prometheus
         - ip: 10.10.10.1
         - ip: 10.10.10.2
         - ip: 10.10.10.3
