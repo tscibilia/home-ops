@@ -52,7 +52,7 @@ spec:
               namespace: database
             patch: |-
               - op: replace
-                path: /spec/template/spec/containers/0/args
+                path: /spec/template/spec/containers/1/args
                 value:
                   - --health-probe-bind-address=:8081
                   - --metrics-bind-address=0.0.0.0:8080
