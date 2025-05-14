@@ -1,6 +1,10 @@
 ---
 grafanaDashboard:
   enabled: true
+manager:
+  extraArgs:
+    # override the default loopback bind so metrics are reachable on podIP:8080
+    metrics-bind-address: "0.0.0.0:8080"
 serviceMonitor:
   enabled: true
 prometheusRule:
