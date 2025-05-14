@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dragonfly-operator-controller-manager
+  name: dragonfly-operator
   namespace: database
 spec:
   template:
