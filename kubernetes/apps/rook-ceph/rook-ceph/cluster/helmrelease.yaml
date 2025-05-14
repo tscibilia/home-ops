@@ -62,16 +62,6 @@ spec:
         - ip: 10.10.10.2
         - ip: 10.10.10.3
       interval: 15s
-      serviceMonitor:
-        enabled: true
-        additionalEndpoints:
-          - port: http-external-metrics
-            path: /metrics
-            interval: 15s
-            relabelings:
-              - sourceLabels: [__meta_kubernetes_endpoint_address]
-                regex: "10\\.10\\.10\\.[23]"
-                action: drop
 
     # -- Settings for the block pool snapshot class
     # @default -- See [RBD Snapshots](../Storage-Configuration/Ceph-CSI/ceph-csi-snapshot.md#rbd-snapshots)
