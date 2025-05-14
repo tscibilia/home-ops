@@ -32,15 +32,11 @@ spec:
     disableHooks: true
     remediation:
       retries: 3
-  # values:
-  #   manager:
-  #     args:
-  #       - --health-probe-bind-address=:8081
-  #       - --metrics-bind-address="0.0.0.0:8080"
-  #       - --leader-elect
   valuesFrom:
     - kind: ConfigMap
       name: dragonfly-values
+  # To resolve the targetDown prom alert when the dragonfly-operator chart
+  # default ia set `--metrics-bind-address=127.0.0.1:8080`
   postRenderers:
     - kustomize:
         patches:
