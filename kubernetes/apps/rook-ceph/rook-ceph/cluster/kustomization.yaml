@@ -6,5 +6,4 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./monitorconfig.yaml
-  - ./servicemonitor.yaml
   - ./storageclass.yaml

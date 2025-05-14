@@ -181,6 +181,9 @@ spec:
           promscrape.maxScrapeSize: 50MiB
           promscrape.streamParse: "true"
           promscrape.dropOriginalLabels: "true"
+        extraScrapeConfigs:
+          name: ceph-mgr-static-scrape
+          key: ceph-mgr-scrape.yaml
         resources:
           requests:
             cpu: 500m
