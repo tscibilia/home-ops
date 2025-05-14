@@ -34,7 +34,7 @@ kind: CronJob
 metadata:
   name: ceph-mgr-endpoint-sync
 spec:
-  schedule: "*/5 * * * *"   # every 5 minutes
+  schedule: "*/15 * * * *"   # every 5 minutes
   concurrencyPolicy: Replace
   jobTemplate:
     spec:
