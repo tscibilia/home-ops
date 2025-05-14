@@ -68,6 +68,9 @@ echo "rook test" > /tmp/ceph-testfile && rados -p ceph-fs_metadata \
 ### Unreachable Network
 One other gotcha is that when you use the [Full Mesh Network](https://pve.proxmox.com/wiki/Full_Mesh_Network_for_Ceph_Server), you'll need to be careful that the `public_network` in `ceph.conf` is set to a reachable network for your Kubernetes cluster. If it's not, you'll run into weird issues that are more difficult to diagnose. Since I established my Ceph network separately in a [Broadcast Setup](https://pve.proxmox.com/wiki/Full_Mesh_Network_for_Ceph_Server#Broadcast_Setup), I was able to just add a second NIC to my Talos nodes that was `vmbr1` and updated my talos node configs to assign an IP to it (since it's not managed by a network switch).
 
+### Prometheus TargetDown 'rook-ceph-mgr-external'
+After installing VictoriaMetrics (or Prometheus), I saw the general.rules firing an alert that 2/3 of my `mgr` were down. This is because I declared all 3 as potential managers and there's only 1 at a time. I chose to run a [15m cronjob](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/rook-ceph/rook-ceph/cluster/cronjob.yaml) to probe the endpoints and check who is the current manager, then patch the `helmrelease` to only include the active manager IP. This way my gitOps can inlcude all 3 and if any are down or the manager moves due to updates, I can be sure the alert won't fire for too long.
+
 ## Improvements for future me
 ### Made an attempt at automating
 I might try setting up the following yamls so I don't need to run `import-external-cluster.sh` on each  bootstrap:
