@@ -51,32 +51,18 @@ spec:
                 - |
                   set -eu
 
-                  # 1) Install only curl (tiny)
+                  # Install only curl & grep
                   mkdir -p /var/lib/apt/lists/partial
-                  apt-get update && apt-get install -y --no-install-recommends curl \
+                  apt-get update && apt-get install -y --no-install-recommends curl grep \
                     && rm -rf /var/lib/apt/lists/*
 
+                  # Loop endpoints: only active MGR will return ceph_mgr_metadata
                   ACTIVE_IP=""
-
                   for IP in 10.10.10.1 10.10.10.2 10.10.10.3; do
-                    echo "→ Testing $IP…" >&2
-
-                    # 2a) Check HTTP status
-                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${IP}:9283/metrics" || echo "000")
-                    echo "   HTTP status: $STATUS" >&2
-                    [ "$STATUS" = "200" ] || continue
-
-                    # 2b) Sniff for the mgr metric
-                    SAMPLE=$(curl -s "http://${IP}:9283/metrics" | grep ceph_mgr_metadata | head -n1 || true)
-                    echo "   Sample metric: ${SAMPLE:-<none>}" >&2
-
-                    # 2c) Does it show state=\"active\"?
-                    if echo "$SAMPLE" | grep -q 'state="active"'; then
-                      echo "   ✅ Found active on $IP" >&2
+                    if curl -sf "http://${IP}:9283/metrics" \
+                         | grep -q '^ceph_mgr_metadata{'; then
                       ACTIVE_IP="$IP"
                       break
-                    else
-                      echo "   ⚠️  Not active, skipping" >&2
                     fi
                   done
 
@@ -85,9 +71,7 @@ spec:
                     exit 1
                   fi
 
-                  # 3) Patch in the one IP
-                  echo "Patching HelmRelease to use $ACTIVE_IP" >&2
-                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster \
-                    --type=merge \
+                  # Patch the HelmRelease to point only at the active IP
+                  kubectl -n rook-ceph patch helmrelease rook-ceph-cluster --type=merge \
                     --patch "{\"spec\":{\"values\":{\"monitoring\":{\"externalMgrEndpoints\":[{\"ip\":\"${ACTIVE_IP}\"}]}}}}"
           restartPolicy: OnFailure
