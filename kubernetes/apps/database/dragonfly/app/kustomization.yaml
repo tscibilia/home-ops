@@ -11,3 +11,5 @@ configMapGenerator:
       - values.yaml=./helm/values.yaml
 configurations:
   - ./helm/kustomizeconfig.yaml
+patchesStrategicMerge:
+  - ./patch/metricspatch.yaml
