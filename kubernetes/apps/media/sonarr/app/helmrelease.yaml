@@ -82,10 +82,16 @@ spec:
             command:
               - sh
               - -c
+            args:
               - |
-                # force it to 1044:100 once, then hold the container alive
+                echo "⏳ Waiting for Radarr to listen on 8989…"
+                until nc -z localhost 8989; do
+                  sleep 2
+                done
+                echo "✅ Fixing /usr/local/sma perms"
                 chown -R 1044:100 /usr/local/sma
                 chmod -R u+rwX,g+rwX /usr/local/sma
+                # now just stay alive so Deployment isn't “complete”
                 sleep infinity
             securityContext:
               runAsNonRoot: false
