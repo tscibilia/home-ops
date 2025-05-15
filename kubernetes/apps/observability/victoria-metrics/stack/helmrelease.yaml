@@ -86,7 +86,7 @@ spec:
         enabled: true
         hosts:
           - "am.${SECRET_DOMAIN}"
-      useManagedConfig: true
+      useManagedConfig: false
       config:
         route:
           group_by: ["alertname", "job"]
