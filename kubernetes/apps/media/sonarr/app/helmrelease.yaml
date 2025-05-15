@@ -64,7 +64,9 @@ spec:
                       echo "✅ Copying autoProcess.ini and fixing perms"
                       cp -f /tmp/config/autoProcess.ini /usr/local/sma/config/autoProcess.ini
                       chown 1044:100 /usr/local/sma/config/autoProcess.ini
-                      chmod 0640 /usr/local/sma/config/autoProcess.ini
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
     defaultPodOptions:
       securityContext:
         fsGroup: 100
