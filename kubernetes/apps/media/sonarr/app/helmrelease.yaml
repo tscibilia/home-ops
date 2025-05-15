@@ -39,7 +39,7 @@ spec:
                   https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/postSonarr.py \
                   https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/qBittorrentPostProcess.py
                 chmod +x /usr/local/sma/postSonarr.sh
-                chown 1044:100 /usr/local/sma/*
+                # chown 1044:100 /usr/local/sma/*
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -84,7 +84,7 @@ spec:
               - -c
             args:
               - |
-                echo "⏳ Waiting for Radarr to listen on 8989…"
+                echo "⏳ Waiting for Sonarr to listen on 8989…"
                 until nc -z localhost 8989; do
                   sleep 2
                 done

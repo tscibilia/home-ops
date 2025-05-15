@@ -39,7 +39,7 @@ spec:
                   https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/postRadarr.py \
                   https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/qBittorrentPostProcess.py
                 chmod +x /usr/local/sma/postRadarr.sh
-                chown 1044:100 /usr/local/sma/*
+                # chown 1044:100 /usr/local/sma/*
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
