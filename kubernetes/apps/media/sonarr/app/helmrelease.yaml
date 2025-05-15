@@ -31,7 +31,10 @@ spec:
             args:
               - |
                 set -eux
-                git clone --depth 1 https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma
+                mkdir -p /usr/local/sma
+                wget -q -O - \
+                  https://github.com/mdhiggins/sonarr-sma/archive/refs/heads/master.tar.gz \
+                  | tar xz --strip-components=1 -C /usr/local/sma
                 chown -R abc:abc /usr/local/sma
                 # chown -R 1044:100 /usr/local/sma
             securityContext:
