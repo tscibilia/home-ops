@@ -33,8 +33,10 @@ spec:
               - |
                 set -eux
                 mkdir -p /usr/local/sma \
-                && wget -qO /usr/local/sma/postSonarr.sh \
-                  https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/postSonarr.sh \
+                && wget -q -P /usr/local/sma https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/postSonarr.sh \
+                  && https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/update.py \
+                  && https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/postSonarr.py \
+                  && https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/qBittorrentPostProcess.py \
                 && chmod +x /usr/local/sma/postSonarr.sh \
                 && chown 1044:100 /usr/local/sma/postSonarr.sh
             securityContext:
