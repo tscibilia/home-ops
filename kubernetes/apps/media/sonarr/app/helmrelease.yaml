@@ -31,10 +31,8 @@ spec:
             args:
               - |
                 set -eux
-                mkdir -p /usr/local/sma
-                wget -q -O - \
-                  https://github.com/mdhiggins/sonarr-sma/archive/refs/heads/master.tar.gz \
-                  | tar xz --strip-components=1 -C /usr/local/sma
+                apk add --no-cache git openssh-client
+                git clone --depth 1 https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma
                 chown -R abc:abc /usr/local/sma
                 # chown -R 1044:100 /usr/local/sma
             securityContext:
