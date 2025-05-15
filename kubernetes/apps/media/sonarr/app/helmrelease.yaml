@@ -80,10 +80,6 @@ spec:
         existingClaim: sonarr-cache
         globalMounts:
           - path: /config/MediaCover
-      config-sma:
-        type: emptyDir
-        globalMounts:
-          - path: /usr/local/sma
       config-file:
         type: secret
         name: sma-configmap-secret
