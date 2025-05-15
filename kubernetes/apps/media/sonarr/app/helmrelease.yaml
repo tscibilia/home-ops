@@ -32,7 +32,10 @@ spec:
               - |
                 set -eux
                 apk add --no-cache git openssh-client
-                git clone --depth 1 https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma
+                git clone --depth 1 https://github.com/mdhiggins/sonarr-sma.git /tmp/sma-tmp
+                rm -rf /usr/local/sma/*
+                mv /tmp/sma-tmp/*  /usr/local/sma/
+                mv /tmp/sma-tmp/.* /usr/local/sma/ 2>/dev/null || true
                 chown -R abc:abc /usr/local/sma
                 # chown -R 1044:100 /usr/local/sma
             securityContext:
