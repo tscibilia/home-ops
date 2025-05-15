@@ -45,17 +45,6 @@ spec:
               runAsUser: 0
               runAsGroup: 0
               fsGroup: 0
-              capabilities: { add: ["CHOWN"] }
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                    - sh
-                    - -c
-                    - |
-                      # force the dir back to 1044:100
-                      chown -R 1044:100 /usr/local/sma
-                      chmod -R u+rwX,g+rwX,o-rwx /usr/local/sma
         containers:
           app:
             image:
