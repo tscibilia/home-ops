@@ -36,8 +36,7 @@ spec:
                 rm -rf /usr/local/sma/*
                 mv /tmp/sma-tmp/*  /usr/local/sma/
                 mv /tmp/sma-tmp/.* /usr/local/sma/ 2>/dev/null || true
-                chown -R abc:abc /usr/local/sma
-                # chown -R 1044:100 /usr/local/sma
+                chown -R 1044:100 /usr/local/sma
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
