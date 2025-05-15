@@ -22,6 +22,23 @@ spec:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-sma:
+            image:
+              repository: ghcr.io/ghcr-library/alpine
+              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
+            command: [sh, -c]
+            args:
+              - |
+                set -eux
+                git clone --depth 1 https://github.com/mdhiggins/sonarr-sma.git /usr/local/sma
+                chown -R abc:abc /usr/local/sma
+                # chown -R 1044:100 /usr/local/sma
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              fsGroup: 0
         containers:
           app:
             image:
