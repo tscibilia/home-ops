@@ -6,8 +6,9 @@ namespace: observability
 components:
   - ../../components/common
 resources:
-  - ./gatus/ks.yaml
   - ./fluent-bit/ks.yaml
+  - ./gatus/ks.yaml
+  - ./grafana/ks.yaml
   - ./kromgo/ks.yaml
   - ./silence-operator/ks.yaml
   - ./victoria-logs/ks.yaml
