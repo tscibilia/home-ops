@@ -75,6 +75,17 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
+            securityContext:
+              capabilities: { add: ["CHOWN"] }
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      chown -R 1044:100 /usr/local/sma
+                      chmod -R u+rwX,g+rwX /usr/local/sma
     defaultPodOptions:
       securityContext:
         fsGroup: 100
