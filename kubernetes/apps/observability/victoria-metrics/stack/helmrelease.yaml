@@ -89,38 +89,40 @@ spec:
       useManagedConfig: true
       config:
         route:
-          group_by: ["alertname","job"]
-          group_interval: "10m"
-          group_wait: "1m"
-          receiver: "pushover"
-          repeat_interval: "12h"
+          group_by: ["alertname", "job"]
+          group_interval: 10m
+          group_wait: 1m
+          receiver: pushover
+          repeat_interval: 12h
           routes:
             - receiver: "null"
-              matchers: ["alertname=\"InfoInhibitor\""]
-            - receiver: "heartbeat"
-              group_interval: "15s"
-              group_wait: "0s"
-              repeat_interval: "5m"
-              matchers: ["alertname=\"Watchdog\""]
-            - receiver: "pushover"
-              matchers: ["severity=~\"warning|critical\""]
+              matchers:
+                - alertname=InfoInhibitor
+            - receiver: heartbeat
+              group_interval: 15s
+              group_wait: 0s
+              repeat_interval: 5m
+              matchers:
+                - alertname=Watchdog
+            - receiver: pushover
+              matchers:
+                - severity=~"warning|critical"
         inhibit_rules:
-          - source_matchers: ["severity=\"critical\""]
-            target_matchers: ["severity=\"warning\""]
+          - source_matchers:
+              - severity = "critical"
+            target_matchers:
+              - severity = "warning"
             equal: ["alertname", "namespace"]
         receivers:
           - name: "null"
-          - name: "heartbeat"
+          - name: heartbeat
             webhook_configs:
               - url_secret:
                   name: &secret alertmanager-secret
                   key: ALERTMANAGER_HEARTBEAT_URL
-          - name: "pushover"
+          - name: pushover
             pushover_configs:
               - html: true
-                title: >-
-                  [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
-                  {{ .CommonLabels.alertname }}
                 message: |-
                   {{- range .Alerts }}
                     {{- if ne .Annotations.description "" }}
@@ -140,17 +142,22 @@ spec:
                       </small>
                     {{- end }}
                   {{- end }}
-                priority: "{{ if eq .Status \"firing\" }}1{{ else }}0{{ end }}"
+                priority: |-
+                  {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
                 send_resolved: true
                 sound: gamelan
-                ttl: "86400s"
+                title: >-
+                  [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
+                  {{ .CommonLabels.alertname }}
+                ttl: 86400s
                 token:
                   name: *secret
                   key: PUSHOVER_ALERTMANAGER_TOKEN
                 user_key:
                   name: *secret
                   key: PUSHOVER_USER_KEY
-                url_title: "View in Alertmanager"
+                url_title: View in Alertmanager
+
     vmalert:
       spec:
         # Skip vmalerts for vmlog rules
