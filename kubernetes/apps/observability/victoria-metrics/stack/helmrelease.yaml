@@ -86,43 +86,41 @@ spec:
         enabled: true
         hosts:
           - "am.${SECRET_DOMAIN}"
-      useManagedConfig: false
+      useManagedConfig: true
       config:
         route:
-          group_by: ["alertname", "job"]
-          group_interval: 10m
-          group_wait: 1m
-          receiver: pushover
-          repeat_interval: 12h
+          groupBy: ["alertname","job"]
+          groupInterval: "10m"
+          groupWait: "1m"
+          receiver: "pushover"
+          repeatInterval: "12h"
           routes:
             - receiver: "null"
-              matchers:
-                - alertname=InfoInhibitor
-            - receiver: heartbeat
-              group_interval: 15s
-              group_wait: 0s
-              repeat_interval: 5m
-              matchers:
-                - alertname=Watchdog
-            - receiver: pushover
-              matchers:
-                - severity=~"warning|critical"
-        inhibit_rules:
-          - source_matchers:
-              - severity = "critical"
-            target_matchers:
-              - severity = "warning"
+              matchers: ["alertname=\"InfoInhibitor\""]
+            - receiver: "heartbeat"
+              groupInterval: "15s"
+              groupWait: "0s"
+              repeatInterval: "5m"
+              matchers: ["alertname=\"Watchdog\""]
+            - receiver: "pushover"
+              matchers: ["severity=~\"warning|critical\""]
+        inhibitRules:
+          - sourceMatchers: ["severity=\"critical\""]
+            targetMatchers: ["severity=\"warning\""]
             equal: ["alertname", "namespace"]
         receivers:
           - name: "null"
-          - name: heartbeat
-            webhook_configs:
-              - url_secret:
+          - name: "heartbeat"
+            webhookConfigs:
+              - urlSecret:
                   name: &secret alertmanager-secret
                   key: ALERTMANAGER_HEARTBEAT_URL
-          - name: pushover
-            pushover_configs:
+          - name: "pushover"
+            pushoverConfigs:
               - html: true
+                title: >-
+                  [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
+                  {{ .CommonLabels.alertname }}
                 message: |-
                   {{- range .Alerts }}
                     {{- if ne .Annotations.description "" }}
@@ -142,22 +140,17 @@ spec:
                       </small>
                     {{- end }}
                   {{- end }}
-                priority: |-
-                  {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
-                send_resolved: true
+                priority: "{{ if eq .Status \"firing\" }}1{{ else }}0{{ end }}"
+                sendResolved: true
                 sound: gamelan
-                title: >-
-                  [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
-                  {{ .CommonLabels.alertname }}
-                ttl: 86400s
+                ttl: "86400s"
                 token:
                   name: *secret
                   key: PUSHOVER_ALERTMANAGER_TOKEN
-                user_key:
+                userKey:
                   name: *secret
                   key: PUSHOVER_USER_KEY
-                url_title: View in Alertmanager
-
+                urlTitle: "View in Alertmanager"
     vmalert:
       spec:
         # Skip vmalerts for vmlog rules
