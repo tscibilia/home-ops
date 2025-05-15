@@ -22,29 +22,6 @@ spec:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-sma:
-            image:
-              repository: ghcr.io/ghcr-library/alpine
-              tag: "3.12.1@sha256:d7342993700f8cd7aba8496c2d0e57be0666e80b4c441925fc6f9361fa81d10e"
-            command:
-              - sh
-              - -c
-              - |
-                set -eux
-                mkdir -p /usr/local/sma
-                wget -q -nc -P /usr/local/sma \
-                  https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/postSonarr.sh \
-                  https://raw.githubusercontent.com/mdhiggins/sonarr-sma/master/extras/update.py \
-                  https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/postSonarr.py \
-                  https://raw.githubusercontent.com/mdhiggins/sickbeard_mp4_automator/master/qBittorrentPostProcess.py
-                chmod +x /usr/local/sma/postSonarr.sh
-                # chown 1044:100 /usr/local/sma/*
-            securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
         containers:
           app:
             image:
@@ -75,29 +52,19 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-          fix-perms:
-            image:
-              repository: ghcr.io/ghcr-library/busybox
-              tag: "1.32@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc"
-            command:
-              - sh
-              - -c
-            args:
-              - |
-                echo "⏳ Waiting for Sonarr to listen on 8989…"
-                until nc -z localhost 8989; do
-                  sleep 2
-                done
-                echo "✅ Fixing /usr/local/sma perms"
-                chown -R 1044:100 /usr/local/sma
-                chmod -R u+rwX,g+rwX /usr/local/sma
-                # now just stay alive so Deployment isn't “complete”
-                sleep infinity
-            securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      echo "⏳ Waiting for Sonarr on 8989…"
+                      until nc -z 127.0.0.1 8989; do sleep 2; done
+                      echo "✅ Copying autoProcess.ini and fixing perms"
+                      cp -f /tmp/config/autoProcess.ini /usr/local/sma/config/autoProcess.ini
+                      chown 1044:100 /usr/local/sma/config/autoProcess.ini
+                      chmod 0640 /usr/local/sma/config/autoProcess.ini
     defaultPodOptions:
       securityContext:
         fsGroup: 100
@@ -134,7 +101,7 @@ spec:
         type: secret
         name: sma-configmap-secret
         globalMounts:
-          - path: /usr/local/sma/config/autoProcess.ini
+          - path: /tmp/config/autoProcess.ini
             subPath: autoProcess.ini
       media:
         type: persistentVolumeClaim
