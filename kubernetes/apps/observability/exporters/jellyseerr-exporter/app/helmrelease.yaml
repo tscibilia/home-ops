@@ -26,12 +26,12 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/willfantom/overseerr-exporter
-              tag: 1.2.1@sha256:b5cbff0fcd04a118190849b1ed92f51669109f766171106fc0b87f7a8562273b
+              repository: ghcr.io/opspotes/jellyseerr-exporter # ghcr.io/willfantom/overseerr-exporter
+              tag: 1.4.0@sha256:2667a7bed7aabfc2b08dac71cd14e352644c9e1ca7b4f9dd6f6687997c5fc825
             args:
-              - --overseerr.address
+              - --jellyseerr.address
               - http://jellyseerr.media.svc.cluster.local:80
-              - --overseerr.api-key
+              - --jellyseerr.apiKey
               - $(JELLYSEERR_API_KEY)
             envFrom:
               - secretRef:
