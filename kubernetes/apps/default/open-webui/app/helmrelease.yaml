@@ -1,0 +1,106 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app open-webui
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      open-webui:
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/open-webui/open-webui
+              tag: "0.6.5@sha256:fe7a6870ec6b2fd540c0f2007e6aa812dc4bf04a2d0a305bb344eeb10de0a7b7"
+            env:
+              TZ: "${TIMEZONE}"
+              OLLAMA_BASE_URL: http://192.168.1.196:11434
+              ENABLE_RAG_WEB_SEARCH: true
+              RAG_WEB_SEARCH_ENGINE: "searxng"
+              SEARXNG_QUERY_URL: "http://searxng.default.svc.cluster.local:8080/search?q=<query>"
+              USE_CUDA: false
+              USE_OLLAMA: false
+              ENABLE_SIGNUP: false
+              ENABLE_OAUTH_SIGNUP: true
+              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
+              OAUTH_PROVIDER_NAME: Authentik
+              OPENID_REDIRECT_URI: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth/oidc/callback
+              OPENID_PROVIDER_URL: https://auth.${SECRET_DOMAIN}/application/o/openai/.well-known/openid-configuration
+              OAUTH_SCOPES: openid email profile
+            envFrom:
+              - secretRef:
+                  name: open-webui-secrets
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: &port 8080
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 500m
+                memory: 1Gi
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        existingClaim: *app
+        globalMounts:
+          - path: /app/backend/data
+      tmp:
+        type: emptyDir
