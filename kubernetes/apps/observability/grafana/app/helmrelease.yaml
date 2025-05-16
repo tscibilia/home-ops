@@ -344,10 +344,21 @@ spec:
       #     datasource: Prometheus
       media:
         qbittorrent-exporter:
-          url: https://raw.githubusercontent.com/esanchezm/prometheus-qbittorrent-exporter/master/grafana/dashboard.json
+          url: https://raw.githubusercontent.com/esanchezm/prometheus-qbittorrent-exporter/refs/heads/master/grafana/dashboard.json
           datasource: Prometheus
-        overseerr-exporter:
-          url: https://raw.githubusercontent.com/WillFantom/overseerr-exporter/main/grafana/dashboard.json
+        jellyseerr-exporter:
+          # url: https://raw.githubusercontent.com/WillFantom/overseerr-exporter/refs/heads/main/grafana/dashboard.json
+          url: https://raw.githubusercontent.com/opspotes/jellyseerr-exporter/refs/heads/main/grafana/dashboard.json
+          datasource: Prometheus
+        sonarr-exporter:
+          # renovate: depName="Media / Sonarr"
+          gnetId: 12530
+          revision: 2
+          datasource: Prometheus
+        radarr-exporter:
+          # renovate: depName="Media / Radarr"
+          gnetId: 12896
+          revision: 1
           datasource: Prometheus
       victoria-metrics:
         backupmanager:
