@@ -37,6 +37,7 @@ spec:
               USE_CUDA: false
               USE_OLLAMA: false
               ENABLE_SIGNUP: false
+              ENABLE_LOGIN_FORM: false
               ENABLE_OAUTH_SIGNUP: true
               OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
               OAUTH_PROVIDER_NAME: Authentik
