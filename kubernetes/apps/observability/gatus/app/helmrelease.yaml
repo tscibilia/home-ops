@@ -120,11 +120,7 @@ spec:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-          nginx.org/server-snippets: |
-            location = /health {
-              proxy_method GET;
-              proxy_pass http://app/health;
-            }
+          nginx.ingress.kubernetes.io/configuration-snippet: "proxy_method GET;"
         hosts:
           - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
