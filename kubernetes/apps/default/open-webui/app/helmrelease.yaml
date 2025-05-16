@@ -99,7 +99,7 @@ spec:
                   port: http
     persistence:
       config:
-        existingClaim: *app
+        existingClaim: ${APP}
         globalMounts:
           - path: /app/backend/data
       tmp:
