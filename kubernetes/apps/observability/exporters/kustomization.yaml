@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./jellyseerr-exporter/ks.yaml
+  - ./prowlarr-exporter/ks.yaml
+  - ./qbittorrent-exporter/ks.yaml
+  - ./radarr-exporter/ks.yaml
+  # - ./sabnzbd-exporter/ks.yaml
+  - ./sonarr-exporter/ks.yaml
+  - ./tautulli-exporter/ks.yaml
