@@ -55,7 +55,7 @@ spec:
               repository: ghcr.io/twin/gatus
               tag: v5.17.0@sha256:a8c53f9e9f1a3876cd00e44a42c80fc984e118d5ba0bdbaf08980cb627d61512
             env:
-              TZ: America/New_York
+              TZ: ${TIMEZONE}
               GATUS_CONFIG_PATH: /config
               GATUS_DELAY_START_SECONDS: 5
               WEB_PORT: &port 80
@@ -64,9 +64,6 @@ spec:
                   secretKeyRef:
                     name: gatus-pguser-secret
                     key: uri
-            # envFrom:
-            #   - secretRef:
-            #       name: gatus-secret
             probes:
               liveness: &probes
                 enabled: true
@@ -80,23 +77,18 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 100m
               limits:
                 memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+        serviceAccount:
+          identifier: gatus
     defaultPodOptions:
-      # topologySpreadConstraints:
-      #   - maxSkew: 1
-      #     topologyKey: topology.kubernetes.io/zone
-      #     whenUnsatisfiable: DoNotSchedule
-      #     labelSelector:
-      #       matchLabels:
-      #         app.kubernetes.io/name: *app
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
