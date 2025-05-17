@@ -99,10 +99,6 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
     service:
       app:
         controller: *app
