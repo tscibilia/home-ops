@@ -213,14 +213,14 @@ spec:
     service:
       app:
         controller: *app
-        nameOverride: *app
+        forceRename: *app
         ports:
           http:
             primary: true
             port: *port
       gluetun:
         controller: *app
-        nameOverride: gluetun
+        forceRename: gluetun
         ports:
           socks-proxy:
             enabled: true
