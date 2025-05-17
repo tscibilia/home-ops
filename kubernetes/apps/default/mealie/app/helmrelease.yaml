@@ -97,15 +97,8 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-          startup:
-            enabled: false
-    defaultPodOptions:
-      securityContext:
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: { type: RuntimeDefault }
+              startup:
+                enabled: false
     service:
       app:
         controller: *app
