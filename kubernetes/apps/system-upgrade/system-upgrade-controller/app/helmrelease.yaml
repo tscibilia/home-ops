@@ -49,5 +49,4 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
     serviceAccount:
-      name: *app
-      create: true
+      system-upgrade-controller: {}
