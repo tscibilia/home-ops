@@ -163,7 +163,7 @@ spec:
             dependsOn: app
             image:
               repository: registry.k8s.io/git-sync/git-sync
-              tag: v4.4.0
+              tag: v4.4.1
             args:
               - "--repo=https://github.com/VueTorrent/VueTorrent"
               - "--ref=latest-release"
