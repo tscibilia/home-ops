@@ -10,7 +10,7 @@ spec:
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
-    size: 10Gi
+    size: 20Gi
     storageClass: openebs-hostpath
   superuserSecret:
     name: cnpg-secret
