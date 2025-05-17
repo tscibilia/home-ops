@@ -1,0 +1,131 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app mealie
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      mealie:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "17"
+            envFrom:
+              - secretRef:
+                  name: mealie-initdb-secret
+        containers:
+          app:
+            image:
+              repository: ghcr.io/mealie-recipes/mealie
+              tag: v2.8.0
+            env:
+              DB_ENGINE: "postgres"
+              POSTGRES_DB: *app
+              POSTGRES_USER: *app
+              POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: mealie-pguser-secret
+                    key: password
+              POSTGRES_SERVER:
+                valueFrom:
+                  secretKeyRef:
+                    name: mealie-pguser-secret
+                    key: host
+              POSTGRES_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: mealie-pguser-secret
+                    key: port
+              # Base Values
+              ALLOW_SIGNUP: "false"
+              API_DOCS: "false"
+              BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+              MAX_WORKERS: "1"
+              TZ: ${TIMEZONE}
+              WORKERS_PER_CORE: "1"
+              WEB_CONCURRENCY: "1"
+              # OIDC Values
+              OIDC_AUTH_ENABLED: "true"
+              OIDC_SIGNUP_ENABLED: "true"
+              OIDC_CONFIGURATION_URL: "https://auth.${SECRET_DOMAIN}/application/o/mealie/.well-known/openid-configuration"
+              OIDC_USER_GROUP: Plex User
+              OIDC_ADMIN_GROUP: authentik Admins
+              OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
+              OIDC_PROVIDER_NAME: Authentik
+              OIDC_REMEMBER_ME: "true"
+              OIDC_USER_CLAIM: email
+              # OpenAI Values
+              OPENAI_MODEL: gpt-4o-mini
+              OPENAI_ENABLE_IMAGE_SERVICES: "false" #creating recipes via image
+            envFrom:
+              - secretRef:
+                  name: mealie-secret
+            resources:
+              requests:
+                cpu: 20m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: &port 9000
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+          startup:
+            enabled: false
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        existingClaim: *app
+        globalMounts:
+          - path: /app/data/
