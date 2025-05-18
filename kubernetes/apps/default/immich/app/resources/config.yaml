@@ -1,0 +1,85 @@
+---
+server:
+  externalDomain: "https://${GATUS_SUNDOMAIN}.${SECRET_DOMAIN}"
+trash:
+  enabled: true
+  days: 30
+ffmpeg:
+  preset: veryslow
+  crf: 18
+  bframes: -1
+  refs: 0
+  gopSize: 0
+  twoPass: true
+  preferredHwDevice: auto
+  accel: disabled
+  accelDecode: false
+  tonemap: "reinhard"
+  temporalAQ: false
+  targetResolution: "1080"
+
+job:
+  backgroundTask:
+    concurrency: 7
+  smartSearch:
+    concurrency: 3
+  metadataExtraction:
+    concurrency: 7
+  faceDetection:
+    concurrency: 2
+  search:
+    concurrency: 7
+  sidecar:
+    concurrency: 7
+  library:
+    concurrency: 7
+  migration:
+    concurrency: 7
+  thumbnailGeneration:
+    concurrency: 4
+  videoConversion:
+    concurrency: 1
+  notifications:
+    concurrency: 7
+
+machineLearning:
+  urls: ["http://immich-ml:3003"]
+  clip:
+    modelName: ViT-B-16-SigLIP-512__webli
+  facialRecognition:
+    modelName: buffalo_l
+    minFaces: 1
+  duplicateDetection:
+    enabled: true
+    maxDistance: 0.01
+
+oauth:
+  enabled: true
+  issuerUrl: https://auth.${SECRET_DOMAIN}/
+  autoLaunch: false
+  autoRegister: true
+  buttonText: Login with Authentik
+  clientId: ${CLIENT_ID}
+  clientSecret: ${CLIENT_SECRET}
+
+passwordLogin:
+  enabled: false
+
+notifications:
+  smtp:
+    enabled: true
+    from: Immich <${SMTP_FROM}>
+    transport:
+      host: ${SMTP_HOST}
+      username: ${SMTP_USERNAME}
+      password: ${SMTP_PASSWORD}
+      port: ${SMTP_PORT}
+
+storageTemplate:
+  enabled: true
+  hashVerificationEnabled: true
+  template: "{{album}}/{{y}}/{{y}}-{{MM}}/{{filename}}"
+
+backup:
+  database:
+    enabled: false
