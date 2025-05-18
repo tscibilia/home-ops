@@ -1,0 +1,197 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app immich
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  maxHistory: 2
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      immich:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "17"
+            envFrom:
+              - secretRef:
+                  name: immich-initdb-secret
+        containers:
+          app:
+            image:
+              repository: ghcr.io/immich-app/immich-server
+              tag: &tag v1.130.3
+            env:
+              TZ: ${TIMEZONE}
+              IMMICH_LOG_LEVEL: log
+              IMMICH_ENV: production
+              REDIS_HOSTNAME: dragonfly-cluster.database.svc.cluster.local
+              REDIS_DBINDEX: 2
+              IMMICH_TELEMETRY_INCLUDE: all
+              IMMICH_CONFIG_FILE: &config /config/immich-config.yaml
+              IMMICH_IGNORE_MOUNT_CHECK_ERRORS: true
+              DB_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pguser immich-pguser-secret
+                    key: user
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: password
+              DB_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: *pguser
+                    key: uri
+            probes:
+              liveness: &srvprobes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: &srvport 2283
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 5
+              readiness: *srvprobes
+              startup:
+                enabled: false
+            resources: &resources
+              requests:
+                cpu: 100m
+                memory: 1Gi
+              limits:
+                memory: 2Gi
+            securityContext: &secCont
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+
+      machine-learning:
+        containers:
+          immich-ml:
+            image:
+              repository: ghcr.io/immich-app/immich-machine-learning
+              tag: *tag
+            env:
+              MACHINE_LEARNING_MODEL_TTL: 0
+              MACHINE_LEARNING_CACHE_FOLDER: /cache
+              MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL: ViT-B-16-SigLIP-512__webli
+            probes:
+              liveness: &wrkprobes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: &wrkport 3003
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 5
+              readiness: *wrkprobes
+              startup:
+                enabled: false
+            resources: *resources
+            securityContext: &secCont
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: Always
+        seccompProfile: { type: RuntimeDefault }
+
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *srvport
+      ml:
+        controller: machine-learning
+        ports:
+          http:
+            port: *wrkport
+
+    ingress:
+      app:
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+
+    persistence:
+      media:
+        type: persistentVolumeClaim
+        existingClaim: pvc-nfs-media
+        advancedMounts:
+          *app :
+            app:
+              - path: /usr/src/app/upload/upload
+                subPath: Immich/upload
+              - path: /usr/src/app/upload/profile
+                subPath: Immich/profile
+              - path: /usr/src/app/upload/library
+                subPath: Immich/library
+              - path: /usr/src/app/upload/thumbs
+                subPath: Immich/upload/thumbs
+              - path: /usr/src/app/upload/encoded-video
+                subPath: Immich/upload/encoded-video
+              - path: /import/tscibilia/lrexport
+                subPath: Lightroom/LRExport
+      geocoding-dump:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /usr/src/app/.reverse-geocoding-dump
+      transformers-cache:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /usr/src/app/.transformers_cache
+      config:
+        type: configMap
+        name: immich-config
+        advancedMounts:
+          *app :
+            app:
+              - path: *config
+                subPath: config.yaml
+      cache:
+        type: emptyDir
+        advancedMounts:
+          machine-learning:
+            immich-ml:
+              - path: /cache
+      tmp:
+        type: emptyDir
