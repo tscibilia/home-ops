@@ -94,7 +94,7 @@ spec:
           reloader.stakater.com/auto: "true"
         containers:
           immich-ml:
-            dependsOn: immich
+            dependsOn: app
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
               tag: *tag
