@@ -21,8 +21,7 @@ spec:
     keepHistory: false
   values:
     controllers:
-      *app :
-        strategy: RollingUpdate
+      immich:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
@@ -89,12 +88,8 @@ spec:
               capabilities: { drop: ["ALL"] }
 
       machine-learning:
-        strategy: RollingUpdate
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           immich-ml:
-            dependsOn: *app
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
               tag: *tag
@@ -129,7 +124,7 @@ spec:
         seccompProfile: { type: RuntimeDefault }
 
     service:
-      *app :
+      app:
         controller: *app
         ports:
           http:
@@ -141,7 +136,7 @@ spec:
             port: *wrkport
 
     ingress:
-      *app :
+      app:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
@@ -150,7 +145,7 @@ spec:
             paths:
               - path: /
                 service:
-                  identifier: *app
+                  identifier: app
                   port: http
 
     persistence:
