@@ -155,7 +155,10 @@ spec:
                 cpu: 10m
               limits:
                 memory: 32Mi
-            securityContext: *secCont
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       automountServiceAccountToken: false
       securityContext:
