@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/operator.victoriametrics.com/vmrule_v1beta1.json
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: qbittorrent-alerts
+  labels:
+    vmalert-logs.io/enabled: "true"
+spec:
+  groups:
+    - name: &name QbittorrentFastResumeRejected
+      type: vlogs
+      interval: 5m
+      rules:
+        - alert: *name
+          expr: '"fast resume rejected" | filter app := "qbittorrent" | count() rows | filter rows :> 0'
+          annotations:
+            description: '{{ $labels.app }} has a torrent with fast resume rejected'
