@@ -15,7 +15,7 @@ spec:
   bootstrap:
     initdb:
       postInitSQL:
-        - ALTER SYSTEM SET search_path TO "$user", public, vectors;
+        - ALTER ROLE immich SET search_path = "$user", public, vectors;
         - CREATE EXTENSION IF NOT EXISTS "vectors";
   superuserSecret:
     name: cnpg-secret
@@ -23,6 +23,8 @@ spec:
   postgresql:
     shared_preload_libraries:
       - vectors.so
+    pg_hba:
+    - host all all 10.42.0.0/16 scram-sha-256
     parameters:
       max_connections: "400"
       shared_buffers: 256MB
