@@ -21,7 +21,7 @@ spec:
     keepHistory: false
   values:
     controllers:
-      immich:
+      server:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
@@ -125,7 +125,7 @@ spec:
 
     service:
       app:
-        controller: *app
+        controller: server
         ports:
           http:
             port: *srvport
@@ -153,7 +153,7 @@ spec:
         type: persistentVolumeClaim
         existingClaim: pvc-nfs-media
         advancedMounts:
-          *app :
+          server:
             app:
               - path: /usr/src/app/upload/upload
                 subPath: Immich/upload
@@ -170,20 +170,20 @@ spec:
       geocoding-dump:
         type: emptyDir
         advancedMounts:
-          *app :
+          server:
             app:
               - path: /usr/src/app/.reverse-geocoding-dump
       transformers-cache:
         type: emptyDir
         advancedMounts:
-          *app :
+          server:
             app:
               - path: /usr/src/app/.transformers_cache
       config:
         type: configMap
         name: immich-config
         advancedMounts:
-          *app :
+          server:
             app:
               - path: *config
                 subPath: config.yaml
