@@ -5,15 +5,9 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
-  - ./vmrule.yaml
 configMapGenerator:
   - name: qbittorrent-config
     files:
       - ./resources/categories.json
-  - name: qbittorrent-coredns
-    files:
-      - ./resources/Corefile
 generatorOptions:
   disableNameSuffixHash: true
-configurations:
-  - kustomizeconfig.yaml
