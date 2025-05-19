@@ -73,7 +73,7 @@ notifications:
       host: "{{ .SENDGRID_HOST }}"
       username: "{{ .SENDGRID_USERNAME }}"
       password: "{{ .SENDGRID_PASSWORD }}"
-      port: 587
+      port: {{ .SENDGRID_PORT | atoi }}
 
 storageTemplate:
   enabled: true
