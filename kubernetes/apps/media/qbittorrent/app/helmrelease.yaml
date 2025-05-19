@@ -76,6 +76,23 @@ spec:
               runAsGroup: 0
               capabilities: { add: ["NET_ADMIN"] }
               allowPrivilegeEscalation: false
+          # TODO: Replace once gluetun supports socks5, nothing supports shadowsocks
+          socks5:
+            restartPolicy: Always
+            image:
+              repository: serjs/go-socks5-proxy
+              tag: latest@sha256:aad36c623f16850d7cea0171d1aa79d706129191db9e270b6dfd7db6b552c734
+            env:
+              PROXY_PORT: &proxy-port 8388
+            resources:
+              requests:
+                cpu: 5m
+              limits:
+                memory: 32Mi
+            securityContext: &secCont
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
         containers:
           app:
             image:
@@ -83,6 +100,7 @@ spec:
               tag: 5.1.0@sha256:fe26058628e9eb57b542204b76443b7304ed8820151d51b5c285e1828ca175a0
             env:
               TZ: ${TIMEZONE}
+              UMASK: "022"
               QBT_BitTorrent__Session__DefaultSavePath: /downloads/completed
               QBT_BitTorrent__Session__TempPath: /downloads/incomplete
               QBT_BitTorrent__Session__TempPathEnabled: true
@@ -109,10 +127,7 @@ spec:
                 memory: 1Gi
               limits:
                 memory: 2Gi
-            securityContext: &secCont
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+            securityContext: *secCont
           port-forward:
             image:
               repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
@@ -173,6 +188,13 @@ spec:
           http:
             primary: true
             port: *port
+      gluetun:
+        controller: *app
+        forceRename: gluetun
+        ports:
+          socks-proxy:
+            enabled: true
+            port: *proxy-port
     ingress:
       app:
         className: internal
