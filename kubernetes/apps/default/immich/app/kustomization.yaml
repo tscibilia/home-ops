@@ -9,7 +9,7 @@ resources:
 configMapGenerator:
   - name: immich-config-tpl
     files:
-      - ./resources/config.yaml
+      - ./resources/immich-config.yaml
 configurations:
   - ./resources/kustomizeconfig.yaml
 generatorOptions:
