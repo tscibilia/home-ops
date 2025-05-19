@@ -178,7 +178,7 @@ spec:
     defaultPodOptions:
       automountServiceAccountToken: false
       securityContext:
-        runAsNonRoot: true
+        runAsNonRoot: false
         runAsUser: 65534
         runAsGroup: 100
         fsGroup: 100
