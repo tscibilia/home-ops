@@ -176,7 +176,7 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1044
+        runAsUser: 65534
         runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
