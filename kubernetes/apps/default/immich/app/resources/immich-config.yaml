@@ -78,7 +78,7 @@ notifications:
 storageTemplate:
   enabled: true
   hashVerificationEnabled: true
-  template: "{{album}}/{{y}}/{{y}}-{{MM}}/{{filename}}"
+  template: "{{`{{y}}/{{y}}-{{MM}}/{{filename}}`}}"
 
 backup:
   database:
