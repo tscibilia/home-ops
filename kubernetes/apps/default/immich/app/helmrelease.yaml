@@ -92,7 +92,7 @@ spec:
         strategy: RollingUpdate
         containers:
           immich-ml:
-            dependsOn: server
+            dependsOn: app
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
               tag: *tag
