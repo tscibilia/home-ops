@@ -24,75 +24,75 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: 'true'
-        initContainers:
-          coredns:
-            image:
-              repository: mirror.gcr.io/coredns/coredns
-              tag: 1.12.1
-            args: ["-conf", "/etc/coredns/Corefile"]
-            restartPolicy: Always
-          gluetun:
-            dependsOn: coredns
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.40.0@sha256:2b42bfa046757145a5155acece417b65b4443c8033fb88661a8e9dcf7fda5a00
-            env: # (https://github.com/qdm12/gluetun-wiki)
-              DOT: 'off'
-              DNS_ADDRESS: "127.0.0.2"
-              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: &gluetunAuthPath /gluetun/auth.toml
-              FIREWALL_INPUT_PORTS: 8080,8388,9999 # 8080: WebUI, 8388: Socks Proxy, 9999: Kube Probes
-              FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16 # Allow access to k8s subnets
-              HEALTH_SERVER_ADDRESS: :9999
-              HEALTH_SUCCESS_WAIT_DURATION: 10s
-              VPN_TYPE: openvpn
-              VPN_SERVICE_PROVIDER: private internet access
-              VPN_INTERFACE: tun0
-              SERVER_REGIONS: CA Toronto
-              PRIVATE_INTERNET_ACCESS_OPENVPN_ENCRYPTION_PRESET: strong
-              VPN_PORT_FORWARDING: 'on'
-              PORT_FORWARD_ONLY: 'on'
-              UPDATER_PERIOD: 24h
-            envFrom:
-              - secretRef:
-                  name: qbittorrent-openvpn-secret
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                      - /bin/sh
-                      - -c
-                      - (ip rule del table 51820; ip -6 rule del table 51820) || true
-            restartPolicy: Always
-            resources:
-              requests:
-                cpu: 20m
-              limits:
-                squat.ai/tun: "1"
-                memory: 128Mi
-            securityContext:
-              # can't be non-root, or it has no access to tunnel
-              runAsNonRoot: false
-              runAsUser: 0
-              runAsGroup: 0
-              capabilities: { add: ["NET_ADMIN"] }
-              allowPrivilegeEscalation: false
-          # TODO: Replace once gluetun supports socks5, nothing supports shadowsocks
-          socks5:
-            restartPolicy: Always
-            image:
-              repository: serjs/go-socks5-proxy
-              tag: latest@sha256:aad36c623f16850d7cea0171d1aa79d706129191db9e270b6dfd7db6b552c734
-            env:
-              PROXY_PORT: &proxy-port 8388
-            resources:
-              requests:
-                cpu: 5m
-              limits:
-                memory: 32Mi
-            securityContext: &secCont
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
+        # initContainers:
+        #   coredns:
+        #     image:
+        #       repository: mirror.gcr.io/coredns/coredns
+        #       tag: 1.12.1
+        #     args: ["-conf", "/etc/coredns/Corefile"]
+        #     restartPolicy: Always
+        #   gluetun:
+        #     dependsOn: coredns
+        #     image:
+        #       repository: ghcr.io/qdm12/gluetun
+        #       tag: v3.40.0@sha256:2b42bfa046757145a5155acece417b65b4443c8033fb88661a8e9dcf7fda5a00
+        #     env: # (https://github.com/qdm12/gluetun-wiki)
+        #       DOT: 'off'
+        #       DNS_ADDRESS: "127.0.0.2"
+        #       HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: &gluetunAuthPath /gluetun/auth.toml
+        #       FIREWALL_INPUT_PORTS: 8080,8388,9999 # 8080: WebUI, 8388: Socks Proxy, 9999: Kube Probes
+        #       FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16 # Allow access to k8s subnets
+        #       HEALTH_SERVER_ADDRESS: :9999
+        #       HEALTH_SUCCESS_WAIT_DURATION: 10s
+        #       VPN_TYPE: openvpn
+        #       VPN_SERVICE_PROVIDER: private internet access
+        #       VPN_INTERFACE: tun0
+        #       SERVER_REGIONS: CA Toronto
+        #       PRIVATE_INTERNET_ACCESS_OPENVPN_ENCRYPTION_PRESET: strong
+        #       VPN_PORT_FORWARDING: 'on'
+        #       PORT_FORWARD_ONLY: 'on'
+        #       UPDATER_PERIOD: 24h
+        #     envFrom:
+        #       - secretRef:
+        #           name: qbittorrent-openvpn-secret
+        #     lifecycle:
+        #       postStart:
+        #         exec:
+        #           command:
+        #               - /bin/sh
+        #               - -c
+        #               - (ip rule del table 51820; ip -6 rule del table 51820) || true
+        #     restartPolicy: Always
+        #     resources:
+        #       requests:
+        #         cpu: 20m
+        #       limits:
+        #         squat.ai/tun: "1"
+        #         memory: 128Mi
+        #     securityContext:
+        #       # can't be non-root, or it has no access to tunnel
+        #       runAsNonRoot: false
+        #       runAsUser: 0
+        #       runAsGroup: 0
+        #       capabilities: { add: ["NET_ADMIN"] }
+        #       allowPrivilegeEscalation: false
+        #   # TODO: Replace once gluetun supports socks5, nothing supports shadowsocks
+        #   socks5:
+        #     restartPolicy: Always
+        #     image:
+        #       repository: serjs/go-socks5-proxy
+        #       tag: latest@sha256:aad36c623f16850d7cea0171d1aa79d706129191db9e270b6dfd7db6b552c734
+        #     env:
+        #       PROXY_PORT: &proxy-port 8388
+        #     resources:
+        #       requests:
+        #         cpu: 5m
+        #       limits:
+        #         memory: 32Mi
+        #     securityContext: &secCont
+        #       allowPrivilegeEscalation: false
+        #       readOnlyRootFilesystem: true
+        #       capabilities: { drop: ['ALL'] }
         containers:
           app:
             image:
@@ -104,10 +104,10 @@ spec:
               QBT_BitTorrent__Session__DefaultSavePath: /downloads/completed
               QBT_BitTorrent__Session__TempPath: /downloads/incomplete
               QBT_BitTorrent__Session__TempPathEnabled: true
-              # QBT_Preferences__WebUI__LocalHostAuth: false
-              # QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
-              # QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
-              #   10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
+              QBT_Preferences__WebUI__LocalHostAuth: false
+              QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
+              QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
+                10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
               QBT_Preferences__WebUI__AlternativeUIEnabled: true
               QBT_Preferences__WebUI__RootFolder: /addons/VueTorrent
               QBT_WEBUI_PORT: &port 8080
@@ -127,30 +127,33 @@ spec:
                 memory: 1Gi
               limits:
                 memory: 2Gi
-            securityContext: *secCont
-          port-forward:
-            image:
-              repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
-              tag: 0.0.4@sha256:5fd1da9f2d6509c00b6d6f4b3b7ada6fa097b8134040fc8965b6c1dc8584dc6b
-            env:
-              GLUETUN_CONTROL_SERVER_HOST: localhost
-              GLUETUN_CONTROL_SERVER_PORT: 8000
-              GLUETUN_CONTROL_SERVER_API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: qbittorrent-openvpn-secret
-                    key: GLUETUN_CONTROL_SERVER_API_KEY
-              QBITTORRENT_HOST: localhost
-              QBITTORRENT_WEBUI_PORT: *port
-              CRON_ENABLED: true
-              CRON_SCHEDULE: '*/5 * * * *'
-              LOG_TIMESTAMP: false
-            resources:
-              requests:
-                cpu: 5m
-              limits:
-                memory: 32Mi
-            securityContext: *secCont
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ['ALL'] }
+          # port-forward:
+          #   image:
+          #     repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
+          #     tag: 0.0.4@sha256:5fd1da9f2d6509c00b6d6f4b3b7ada6fa097b8134040fc8965b6c1dc8584dc6b
+          #   env:
+          #     GLUETUN_CONTROL_SERVER_HOST: localhost
+          #     GLUETUN_CONTROL_SERVER_PORT: 8000
+          #     GLUETUN_CONTROL_SERVER_API_KEY:
+          #       valueFrom:
+          #         secretKeyRef:
+          #           name: qbittorrent-openvpn-secret
+          #           key: GLUETUN_CONTROL_SERVER_API_KEY
+          #     QBITTORRENT_HOST: localhost
+          #     QBITTORRENT_WEBUI_PORT: *port
+          #     CRON_ENABLED: true
+          #     CRON_SCHEDULE: '*/5 * * * *'
+          #     LOG_TIMESTAMP: false
+          #   resources:
+          #     requests:
+          #       cpu: 5m
+          #     limits:
+          #       memory: 32Mi
+          #   securityContext: *secCont
           vuetorrent:
             dependsOn: app
             image:
@@ -188,13 +191,13 @@ spec:
           http:
             primary: true
             port: *port
-      gluetun:
-        controller: *app
-        forceRename: gluetun
-        ports:
-          socks-proxy:
-            enabled: true
-            port: *proxy-port
+      # gluetun:
+      #   controller: *app
+      #   forceRename: gluetun
+      #   ports:
+      #     socks-proxy:
+      #       enabled: true
+      #       port: *proxy-port
     ingress:
       app:
         className: internal
@@ -212,29 +215,29 @@ spec:
           *app :
             app:
               - path: /config
-      empty-config:
-        type: emptyDir
-        advancedMounts:
-          *app :
-            port-forward:
-              - path: /config
-      gluetun-auth:
-        type: secret
-        name: qbittorrent-gluetun-secret
-        advancedMounts:
-          *app :
-            gluetun:
-              - path: *gluetunAuthPath
-                subPath: auth.toml
-      coredns:
-        type: configMap
-        name: qbittorrent-coredns
-        advancedMounts:
-          *app :
-            coredns:
-              - path: /etc/coredns/Corefile
-                subPath: Corefile
-                readOnly: true
+      # empty-config:
+      #   type: emptyDir
+      #   advancedMounts:
+      #     *app :
+      #       port-forward:
+      #         - path: /config
+      # gluetun-auth:
+      #   type: secret
+      #   name: qbittorrent-gluetun-secret
+      #   advancedMounts:
+      #     *app :
+      #       gluetun:
+      #         - path: *gluetunAuthPath
+      #           subPath: auth.toml
+      # coredns:
+      #   type: configMap
+      #   name: qbittorrent-coredns
+      #   advancedMounts:
+      #     *app :
+      #       coredns:
+      #         - path: /etc/coredns/Corefile
+      #           subPath: Corefile
+      #           readOnly: true
       media:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
