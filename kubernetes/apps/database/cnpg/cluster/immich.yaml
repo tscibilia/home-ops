@@ -58,7 +58,7 @@ spec:
       endpointURL: https://${AWS_ENDPOINT}
       # Note: serverName version needs to be incremented
       # when recovering from an existing cnpg cluster
-      serverName: &currentCluster immich-v1
+      serverName: &currentCluster immich-v2
       s3Credentials:
         accessKeyId:
           name: cnpg-secret
