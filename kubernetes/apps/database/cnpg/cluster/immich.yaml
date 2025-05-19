@@ -14,11 +14,16 @@ spec:
     storageClass: openebs-hostpath
   bootstrap:
     initdb:
-      postInitSQL:
+      database: immich
+      owner: immich
+      secret:
+        name: immich-cnpg-initdb
+      postInitApplicationSQL:
         - CREATE EXTENSION IF NOT EXISTS "vectors";
-        - ALTER DATABASE immich SET search_path = "$user", public, vectors;
+        - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
+        - ALTER DATABASE immich SET search_path TO "$user", public, vectors;
+        - ALTER SCHEMA vectors OWNER TO immich;
         - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA vectors TO immich;
-        - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO immich;
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
