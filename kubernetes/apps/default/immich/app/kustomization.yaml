@@ -7,8 +7,10 @@ resources:
   - ./helmrelease.yaml
   - ./vmrule.yaml
 configMapGenerator:
-  - name: immich-config
+  - name: immich-config-tpl
     files:
-      - config.yaml=./resources/config.yaml
+      - ./resources/immich-config.yaml
+configurations:
+  - ./resources/kustomizeconfig.yaml
 generatorOptions:
   disableNameSuffixHash: true

@@ -25,15 +25,7 @@ spec:
         strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
-        # init by cnpg (i hope)
-        # initContainers:
-        #   01-init-db:
-        #     image:
-        #       repository: ghcr.io/home-operations/postgres-init
-        #       tag: "17"
-        #     envFrom:
-        #       - secretRef:
-        #           name: immich-initdb-secret
+        # init done by cnpg + es (removed home-ops postgres-init)
         containers:
           app:
             image:
@@ -46,7 +38,7 @@ spec:
               REDIS_HOSTNAME: dragonfly-cluster.database.svc.cluster.local
               REDIS_DBINDEX: 2
               IMMICH_TELEMETRY_INCLUDE: all
-              IMMICH_CONFIG_FILE: &config /config/immich-config.yaml
+              IMMICH_CONFIG_FILE: /config/immich-config.yaml
               IMMICH_IGNORE_MOUNT_CHECK_ERRORS: true
               DB_USERNAME:
                 valueFrom:
@@ -183,13 +175,12 @@ spec:
             app:
               - path: /usr/src/app/.transformers_cache
       config:
-        type: configMap
-        name: immich-config
+        type: secret
+        name: immich-config-secret
         advancedMounts:
           server:
             app:
-              - path: *config
-                subPath: config.yaml
+              - path: /config
       cache:
         type: emptyDir
         advancedMounts:

@@ -1,6 +1,6 @@
 ---
 server:
-  externalDomain: "https://${GATUS_SUNDOMAIN}.${SECRET_DOMAIN}"
+  externalDomain: "https://img.{{ .SECRET_DOMAIN }}"
 trash:
   enabled: true
   days: 30
@@ -55,12 +55,12 @@ machineLearning:
 
 oauth:
   enabled: true
-  issuerUrl: https://auth.${SECRET_DOMAIN}/
+  issuerUrl: https://auth.{{ .SECRET_DOMAIN }}/
   autoLaunch: false
   autoRegister: true
   buttonText: Login with Authentik
-  clientId: ${CLIENT_ID}
-  clientSecret: ${CLIENT_SECRET}
+  clientId: "{{ .IMMICH_OIDC_CLIENT_ID}}"
+  clientSecret: "{{ .IMMICH_OIDC_CLIENT_SECRET }}"
 
 passwordLogin:
   enabled: false
@@ -68,12 +68,12 @@ passwordLogin:
 notifications:
   smtp:
     enabled: true
-    from: Immich <${SMTP_FROM}>
+    from: Immich <"{{ .SENDGRID_FROM }}">
     transport:
-      host: ${SMTP_HOST}
-      username: ${SMTP_USERNAME}
-      password: ${SMTP_PASSWORD}
-      port: ${SMTP_PORT}
+      host: "{{ .SENDGRID_HOST }}"
+      username: "{{ .SENDGRID_USERNAME }}"
+      password: "{{ .SENDGRID_PASSWORD }}"
+      port: "{{ .SENDGRID_PORT }}"
 
 storageTemplate:
   enabled: true
