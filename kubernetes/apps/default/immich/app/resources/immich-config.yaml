@@ -55,12 +55,13 @@ machineLearning:
 
 oauth:
   enabled: true
-  issuerUrl: https://auth.{{ .SECRET_DOMAIN }}/
+  issuerUrl: "https://auth.{{ .SECRET_DOMAIN }}/application/o/immich/"
   autoLaunch: false
   autoRegister: true
   buttonText: Login with Authentik
   clientId: "{{ .IMMICH_OIDC_CLIENT_ID}}"
   clientSecret: "{{ .IMMICH_OIDC_CLIENT_SECRET }}"
+  scope: "openid email profile"
 
 passwordLogin:
   enabled: false
