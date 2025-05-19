@@ -24,9 +24,9 @@ spec:
     shared_preload_libraries:
       - vectors.so
     pg_hba:
-    - host all all 10.42.0.0/16 scram-sha-256
+      - host all all 10.42.0.0/16 scram-sha-256
     parameters:
-      max_connections: "400"
+      max_connections: "600"
       shared_buffers: 256MB
   nodeMaintenanceWindow:
     inProgress: false

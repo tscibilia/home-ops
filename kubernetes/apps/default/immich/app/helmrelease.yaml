@@ -22,6 +22,7 @@ spec:
   values:
     controllers:
       server:
+        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
@@ -36,7 +37,7 @@ spec:
           app:
             image:
               repository: ghcr.io/immich-app/immich-server
-              tag: &tag v1.130.3
+              tag: &tag v1.132.3
             env:
               TZ: ${TIMEZONE}
               IMMICH_LOG_LEVEL: log
@@ -88,8 +89,10 @@ spec:
               capabilities: { drop: ["ALL"] }
 
       machine-learning:
+        strategy: RollingUpdate
         containers:
           immich-ml:
+            dependsOn: server
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
               tag: *tag
@@ -113,7 +116,7 @@ spec:
               startup:
                 enabled: false
             resources: *resources
-            securityContext: &secCont
+            securityContext: *secCont
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
