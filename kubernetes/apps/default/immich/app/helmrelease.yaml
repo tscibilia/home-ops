@@ -112,7 +112,7 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
+        runAsUser: 1044
         runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: Always
