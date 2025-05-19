@@ -127,10 +127,10 @@ spec:
                 memory: 1Gi
               limits:
                 memory: 2Gi
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   readOnlyRootFilesystem: true
+            #   capabilities: { drop: ['ALL'] }
           # port-forward:
           #   image:
           #     repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
