@@ -15,8 +15,10 @@ spec:
   bootstrap:
     initdb:
       postInitSQL:
-        - ALTER ROLE immich SET search_path = "$user", public, vectors;
         - CREATE EXTENSION IF NOT EXISTS "vectors";
+        - ALTER DATABASE immich SET search_path = "$user", public, vectors;
+        - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA vectors TO immich;
+        - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO immich;
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
