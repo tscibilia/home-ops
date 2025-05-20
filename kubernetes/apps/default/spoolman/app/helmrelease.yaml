@@ -38,7 +38,9 @@ spec:
               runAsNonRoot: false
               runAsUser: 0
               runAsGroup: 0
-              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              allowPrivilegeEscalation: true
+              capabilities: { add: ["CHOWN"] }
         containers:
           app:
             image:
