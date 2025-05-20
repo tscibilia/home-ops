@@ -50,9 +50,6 @@ spec:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
-    defaultPodOptions:
-      securityContext:
-        runAsNonRoot: true
     service:
       app:
         controller: *app
