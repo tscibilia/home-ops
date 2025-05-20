@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: ghcr.io/mdhiggins/sonarr-sma
-              tag: "develop@sha256:dbff05fed39c2555f240bc5635b345aae845b00fd790101ea3aad958633fea65"
+              tag: "develop@sha256:b6d085cbed26e140c6516c667b6d5e027ccaa18282792a80a847e1d3c39f941e"
             env:
               TZ: ${TIMEZONE}
               PUID: 1044
