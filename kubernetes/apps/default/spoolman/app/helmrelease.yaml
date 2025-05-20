@@ -33,7 +33,9 @@ spec:
               - -c
               - |
                 # adjust /data (or whatever path your app uses)
+                echo "[$(date +'%Y-%m-%dT%H:%M:%SZ')] init: fixing ownership on /home/app/.local/share/spoolman"
                 chown -R 1000:100 /home/app/.local/share/spoolman
+                echo "[$(date +'%Y-%m-%dT%H:%M:%SZ')] init: ownership set to 1000:100 on /home/app/.local/share/spoolman"
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
@@ -67,7 +69,7 @@ spec:
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
+              capabilities: { add: ["SETUID", "SETGID", "CHOWN"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
