@@ -34,6 +34,11 @@ spec:
               - |
                 # adjust /data (or whatever path your app uses)
                 chown -R 1000:100 /home/app/.local/share/spoolman
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              allowPrivilegeEscalation: false
         containers:
           app:
             image:
