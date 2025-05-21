@@ -347,7 +347,9 @@ spec:
       media:
         qbittorrent-exporter:
           url: https://raw.githubusercontent.com/esanchezm/prometheus-qbittorrent-exporter/refs/heads/master/grafana/dashboard.json
-          datasource: Prometheus
+          datasource:
+            - name: DS_PROMETHEUS
+              value: Prometheus
         jellyseerr-exporter:
           # url: https://raw.githubusercontent.com/WillFantom/overseerr-exporter/refs/heads/main/grafana/dashboard.json
           url: https://raw.githubusercontent.com/opspotes/jellyseerr-exporter/refs/heads/main/grafana/dashboard.json
