@@ -53,7 +53,7 @@ spec:
               PORT_FORWARD_ONLY: 'on'
               UPDATER_PERIOD: 24h
               HTTPPROXY: 'on'
-              HTTPPROXY_LISTENING_ADDRESS: &privoxy 8888
+              HTTPPROXY_LISTENING_ADDRESS: :8888
             envFrom:
               - secretRef:
                   name: qbittorrent-openvpn-secret
@@ -196,7 +196,7 @@ spec:
         ports:
           privoxy:
             enabled: true
-            port: *privoxy
+            port: 8888
           socks-proxy:
             enabled: true
             port: *socks5
