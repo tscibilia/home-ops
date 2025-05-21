@@ -1,38 +1,5 @@
 ---
-use_default_settings:
-  engines:
-    keep_only:
-      - google images
-      - google news
-      - google scholar
-      - google play apps
-      - duckduckgo
-      - gitlab
-      - github
-      - codeberg
-      - sourcehut
-      - bitbucket
-      - apple app store
-      - wikipedia
-      - currency
-      - docker hub
-      - ddg definitions
-      - bandcamp
-      - deviantart
-      - tineye
-      - apple maps
-      - flickr
-      - free software directory
-      - openstreetmap
-      - lib.rs
-      - reddit
-      - soundcloud
-      - stackoverflow
-      - askubuntu
-      - superuser
-      - searchcode code
-      - unsplash
-      - youtube
+use_default_settings: true
 
 server:
   public_instance: false
