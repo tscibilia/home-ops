@@ -15,7 +15,7 @@ resources:
   - ./ntfy/ks.yaml
   - ./open-webui/ks.yaml
   - ./radicale/ks.yaml
-  - ./searxng/ks.yaml
+  # - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
   - ./vaultwarden/ks.yaml
   - ./pvc.yaml
