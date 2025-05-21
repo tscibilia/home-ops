@@ -28,11 +28,19 @@ spec:
             image:
               repository: ghcr.io/searxng/searxng
               tag: 2025.5.17-86373e7@sha256:2f45ccc0b330faa47d8706de883c6e583b38806e32b51172d93c381ce1d92f0b
+            command: ["/usr/local/searxng/venv/bin/uwsgi", "--master", "/usr/local/searxng/.template/uwsgi.ini"]
             env:
+              TZ: "${TIMEZONE}"
               SEARXNG_BASE_URL: &url https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               SEARXNG_URL: *url
               SEARXNG_PORT: &port 8080
               SEARXNG_REDIS_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/3
+              UWSGI_THREADS:
+                valueFrom:
+                  resourceFieldRef:
+                    containerName: app
+                    resource: limits.cpu # not defined, so will use node allocatable
+              UWSGI_WORKERS: "1" # UWSGI_WORKERS: *cpu
             envFrom:
               - secretRef:
                   name: searxng-secret
@@ -61,6 +69,16 @@ spec:
               capabilities:
                 add: ["CHOWN", "SETGID" ,"SETUID", "DAC_OVERRIDE"]
                 drop: ["ALL"]
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: &uid 977 # upstream `searxng` user
+        runAsGroup: *uid
+        fsGroup: *uid
+        fsGroupChangePolicy: "Always"
+        seccompProfile: { type: "RuntimeDefault" }
     service:
       app:
         controller: *app

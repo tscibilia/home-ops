@@ -1,5 +1,38 @@
 ---
-use_default_settings: true
+use_default_settings:
+  engines:
+    keep_only:
+      - google images
+      - google news
+      - google scholar
+      - google play apps
+      - duckduckgo
+      - gitlab
+      - github
+      - codeberg
+      - sourcehut
+      - bitbucket
+      - apple app store
+      - wikipedia
+      - currency
+      - docker hub
+      - ddg definitions
+      - bandcamp
+      - deviantart
+      - tineye
+      - apple maps
+      - flickr
+      - free software directory
+      - openstreetmap
+      - lib.rs
+      - reddit
+      - soundcloud
+      - stackoverflow
+      - askubuntu
+      - superuser
+      - searchcode code
+      - unsplash
+      - youtube
 
 server:
   public_instance: false
@@ -64,3 +97,48 @@ hostnames:
     - (.*\.)?stackoverflow.com$
     - (.*\.)?askubuntu.com$
     - (.*\.)?superuser.com$
+
+engines:
+  - name: brave
+    disabled: true
+  - name: startpage
+    disabled: true
+  - name: apple app store
+    disabled: false
+  - name: ddg definitions
+    disabled: false
+  - name: tineye
+    disabled: false
+  - name: apple maps
+    disabled: false
+  - name: duckduckgo images
+    disabled: false
+  - name: fdroid
+    disabled: true
+  - name: free software directory
+    disabled: false
+  - name: bitbucket
+    disabled: false
+  - name: gitlab
+    disabled: false
+  - name: codeberg
+    disabled: false
+  - name: reddit
+    disabled: false
+  - name: google play apps
+    disabled: false
+  - name: lobste.rs
+    disabled: true
+  - name: npm
+    disabled: true
+  - name: nyaa
+    disabled: true
+    categories: videos
+  - name: searchcode code
+    disabled: true
+  - name: mojeek
+    disabled: true
+  - name: lib.rs
+    disabled: true
+  - name: sourcehut
+    disabled: true
