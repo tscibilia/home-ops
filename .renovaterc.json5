@@ -384,7 +384,7 @@
       ],
       datasourceTemplate: "docker",
       depNameTemplate: "ghcr.io/home-operations/{{ upstream }}",
-      registryUrlsTemplate: ["https://ghcr.io"],
+      registryUrls: ["https://ghcr.io"],
       versioningTemplate: "semver"
     },
   ]
