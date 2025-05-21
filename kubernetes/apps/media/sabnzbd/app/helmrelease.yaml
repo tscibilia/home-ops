@@ -1,0 +1,102 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app sabnzbd
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      sabnzbd:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/sabnzbd
+              tag: 4.5.1@sha256:0bd045af783ba13da0a9bf029ae5e574c9dcfcc65f1cd348ffc06b2660be90ff
+            env:
+              TZ: ${TIMEZONE}
+              SABNZBD__PORT: &port 80
+              SABNZBD__HOST_WHITELIST_ENTRIES: >-
+                sabnzbd,
+                sabnzbd.media,
+                sabnzbd.media.svc,
+                sabnzbd.media.svc.cluster,
+                sabnzbd.media.svc.cluster.local,
+                ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},
+                sabnzbd.${SECRET_DOMAIN}
+            # envFrom:
+            #   - secretRef:
+            #       name: sabnzbd-secret
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            probes:
+              liveness: &probes
+                enabled: false
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        className: internal
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        existingClaim: *app
+      media:
+        type: persistentVolumeClaim
+        existingClaim: pvc-media-nfs
+        globalMounts:
+          - path: /media
+            subPath: Media
+      tmp:
+        type: emptyDir
