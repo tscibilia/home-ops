@@ -61,10 +61,10 @@ spec:
               capabilities:
                 add: ["CHOWN", "SETGID" ,"SETUID", "DAC_OVERRIDE"]
                 drop: ["ALL"]
-    defaultPodOptions:
-      securityContext:
-        fsGroupChangePolicy: Always
-        seccompProfile: { type: RuntimeDefault }
+        pod:
+          securityContext:
+            fsGroupChangePolicy: Always
+            seccompProfile: { type: RuntimeDefault }
     service:
       app:
         controller: *app
