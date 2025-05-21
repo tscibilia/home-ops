@@ -84,11 +84,6 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      config:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /etc/searxng
       config-files:
         type: configMap
         name: searxng-config
