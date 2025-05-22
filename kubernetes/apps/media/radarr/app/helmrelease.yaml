@@ -89,12 +89,6 @@ spec:
           - path: /usr/local/sma/config
             subPath: Torrents/sma-init/config
             readOnly: false
-      media1:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media
-        globalMounts:
-          - path: /Media
       config-venv:
         type: emptyDir
         globalMounts:
