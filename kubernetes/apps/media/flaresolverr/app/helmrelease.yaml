@@ -40,3 +40,12 @@ spec:
         ports:
           http:
             port: 8191
+    persistence:
+      scripts:
+        type: configMap
+        name: flaresolverr-scripts
+        defaultMode: 0775
+        globalMounts:
+          - path: /app/flaresolverr_service.py
+            subPath: flaresolverr_service.py
+            readOnly: true
