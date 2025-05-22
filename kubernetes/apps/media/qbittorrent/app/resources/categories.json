@@ -1,17 +1,17 @@
 {
     "audiobooks": {
-        "save_path": "/downloads/completed/AudioBooks"
+        "save_path": "/Media/torrents/completed/audiobooks"
     },
     "movies": {
-        "save_path": "/downloads/completed/Movies"
+        "save_path": "/Media/torrents/completed/movies"
     },
     "music": {
-        "save_path": "/downloads/completed/Music"
+        "save_path": "/Media/torrents/completed/music"
     },
-    "other": {
-        "save_path": "/downloads/completed/Other"
+    "manual": {
+        "save_path": "/Media/torrents/completed/manual"
     },
     "tv": {
-        "save_path": "/downloads/completed/TV"
+        "save_path": "/Media/torrents/completed/tv"
     }
 }
