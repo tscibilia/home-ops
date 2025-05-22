@@ -101,5 +101,5 @@ spec:
         existingClaim: pvc-media-nfs
         globalMounts:
           - path: /app/public
-            subPath: Torrents/overseerr/public
+            subPath: torrents/overseerr/public
             readOnly: true

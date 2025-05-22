@@ -38,9 +38,9 @@ spec:
                 sabnzbd.media.svc.cluster.local,
                 ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},
                 sabnzbd.${SECRET_DOMAIN}
-            # envFrom:
-            #   - secretRef:
-            #       name: sabnzbd-secret
+            envFrom:
+              - secretRef:
+                  name: sabnzbd-secret
             resources:
               requests:
                 cpu: 100m
@@ -93,10 +93,10 @@ spec:
       config:
         existingClaim: *app
       media:
-        type: persistentVolumeClaim
-        existingClaim: pvc-media-nfs
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media/usenet
         globalMounts:
-          - path: /media
-            subPath: Media
+          - path: /Media/usenet
       tmp:
         type: emptyDir

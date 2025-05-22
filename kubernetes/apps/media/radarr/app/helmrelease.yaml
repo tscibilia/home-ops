@@ -76,18 +76,20 @@ spec:
         globalMounts:
           - path: /config/MediaCover
       media:
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media
+        globalMounts:
+          - path: /Media
+      sma-init:
         type: persistentVolumeClaim
         existingClaim: pvc-media-nfs
         globalMounts:
-          - path: /movies
-            subPath: Movies
-          - path: /downloads
-            subPath: Torrents
           - path: /usr/local/sma
-            subPath: Torrents/sma-init
+            subPath: torrents/sma-init
             readOnly: true
           - path: /usr/local/sma/config
-            subPath: Torrents/sma-init/config
+            subPath: torrents/sma-init/config
             readOnly: false
       config-venv:
         type: emptyDir

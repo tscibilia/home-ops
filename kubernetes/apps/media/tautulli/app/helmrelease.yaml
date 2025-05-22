@@ -118,9 +118,8 @@ spec:
         globalMounts:
           - path: /scripts
       plex:
-        type: persistentVolumeClaim
-        existingClaim: pvc-media-nfs
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media/library/plex/Logs
         globalMounts:
           - path: /logs
-            subPath: Plex/Logs
-            readOnly: true
