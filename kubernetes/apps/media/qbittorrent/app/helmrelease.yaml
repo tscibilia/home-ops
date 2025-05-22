@@ -241,11 +241,11 @@ spec:
                 subPath: Corefile
                 readOnly: true
       media:
-        type: persistentVolumeClaim
-        existingClaim: pvc-media-nfs
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media/torrents
         globalMounts:
-          - path: /downloads
-            subPath: Torrents
+          - path: /Media/torrents
       addons:
         type: emptyDir
         globalMounts:

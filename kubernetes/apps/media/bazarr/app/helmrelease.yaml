@@ -107,17 +107,11 @@ spec:
         globalMounts:
           - path: /config/log
       media:
-        type: persistentVolumeClaim
-        existingClaim: pvc-media-nfs
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media/library
         globalMounts:
-          - path: /tv
-            subPath: TV Shows
-          - path: /anime
-            subPath: Anime
-          - path: /ecchi
-            subPath: Ecchi
-          - path: /downloads
-            subPath: Torrents
+          - path: /Media/library
       scripts:
         type: configMap
         name: bazarr-scripts

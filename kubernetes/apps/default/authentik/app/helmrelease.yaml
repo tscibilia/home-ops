@@ -65,7 +65,7 @@ spec:
           readOnly: true
         - name: media
           mountPath: /media
-          subPath: Torrents/sso
+          subPath: torrents/sso
     authentik:
       error_reporting:
         enabled: false
