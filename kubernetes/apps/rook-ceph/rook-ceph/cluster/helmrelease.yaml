@@ -53,7 +53,7 @@ spec:
             disabled: false
             interval: 45s
     monitoring:
-      enabled: true
+      enabled: false
       createPrometheusRules: false
       externalMgrPrometheusPort: 9283 # IP doesn't need to be specified, operator will find it itself
       externalMgrEndpoints:
