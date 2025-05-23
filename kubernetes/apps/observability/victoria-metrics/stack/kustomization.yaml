@@ -6,3 +6,10 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./secret.yaml
+patches:
+  - target:
+      group: operator.victoriametrics.com
+      version: v1beta1
+      kind: VMServiceScrape
+      name: rook-ceph-mgr
+    path: ./patchrookcephdrop.yaml

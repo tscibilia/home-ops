@@ -57,18 +57,6 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
-      serviceMonitor:
-        enabled: true
-        namespace: monitoring
-        labels:
-          app: rook-ceph
-        interval: 15s
-        port: metrics
-        relabelings:
-          - action: drop
-            regex: 10\\.10\\.10\\.[23]
-            sourceLabels:
-              - __meta_kubernetes_endpoint_address
       externalMgrPrometheusPort: 9283 # IP doesn't need to be specified, operator will find it itself
       externalMgrEndpoints:
         - ip: 10.10.10.1
@@ -106,3 +94,19 @@ spec:
     # # -- A list of CephObjectStore configurations to deploy
     # # @default -- See [below](#ceph-object-stores)
     cephObjectStores: {}
+
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              group: monitoring.coreos.com
+              version: v1
+              kind: ServiceMonitor
+              name: rook-ceph-mgr
+            patch: |
+              - op: add
+                path: /spec/endpoints/0/relabelings
+                value:
+                  - sourceLabels: ["__meta_kubernetes_endpoint_address"]
+                    regex: "10\\.10\\.10\\.[23]"
+                    action: drop
