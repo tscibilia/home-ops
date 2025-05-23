@@ -57,6 +57,18 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
+      serviceMonitor:
+        enabled: true
+        namespace: monitoring
+        labels:
+          app: rook-ceph
+        interval: 15s
+        port: metrics
+        relabelings:
+          - action: drop
+            regex: 10\\.10\\.10\\.[23]
+            sourceLabels:
+              - __meta_kubernetes_endpoint_address
       externalMgrPrometheusPort: 9283 # IP doesn't need to be specified, operator will find it itself
       externalMgrEndpoints:
         - ip: 10.10.10.1
