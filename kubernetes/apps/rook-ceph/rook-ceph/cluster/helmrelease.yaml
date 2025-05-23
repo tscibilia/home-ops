@@ -58,8 +58,8 @@ spec:
       externalMgrPrometheusPort: 9283 # IP doesn't need to be specified, operator will find it itself
       externalMgrEndpoints:
         - ip: 10.10.10.1
-        - ip: 10.10.10.2
-        - ip: 10.10.10.3
+        # - ip: 10.10.10.2
+        # - ip: 10.10.10.3
       interval: 15s
 
     # -- Settings for the block pool snapshot class
