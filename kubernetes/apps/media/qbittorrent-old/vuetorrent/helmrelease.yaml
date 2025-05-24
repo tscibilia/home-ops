@@ -30,7 +30,7 @@ spec:
               tag: 2.3.0@sha256:65033d52cdccd863b5f07e53587921b93bea841d9831c087139d85076f6f1da1
             env:
               # renovate: datasource=github-releases depName=VueTorrent/VueTorrent
-              RELEASE_TYPE: v2.24.2
+              RELEASE_TYPE: v2.25.0
               PORT: &port 8080
               QBIT_BASE: http://qbittorrent:8080
             resources:
