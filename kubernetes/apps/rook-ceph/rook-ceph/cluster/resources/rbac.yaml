@@ -1,0 +1,99 @@
+---
+# yaml-language-server: $schema=https://github.com/kubernetes/kubernetes/raw/refs/heads/master/api/openapi-spec/v3/apis__rbac.authorization.k8s.io__v1_openapi.json
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-monitor
+  namespace: rook-ceph
+rules:
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+---
+# yaml-language-server: $schema=https://github.com/kubernetes/kubernetes/raw/refs/heads/master/api/openapi-spec/v3/apis__rbac.authorization.k8s.io__v1_openapi.json
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-monitor
+  namespace: rook-ceph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rook-ceph-monitor
+subjects:
+  - kind: ServiceAccount
+    name: rook-ceph-system
+    namespace: rook-ceph
+---
+# yaml-language-server: $schema=https://github.com/kubernetes/kubernetes/raw/refs/heads/master/api/openapi-spec/v3/apis__rbac.authorization.k8s.io__v1_openapi.json
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-metrics
+  namespace: rook-ceph
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+---
+# yaml-language-server: $schema=https://github.com/kubernetes/kubernetes/raw/refs/heads/master/api/openapi-spec/v3/apis__rbac.authorization.k8s.io__v1_openapi.json
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-metrics
+  namespace: rook-ceph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rook-ceph-metrics
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: rook-ceph
+---
+# yaml-language-server: $schema=https://github.com/kubernetes/kubernetes/raw/refs/heads/master/api/openapi-spec/v3/apis__rbac.authorization.k8s.io__v1_openapi.json
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-monitor-mgr
+  namespace: rook-ceph
+rules:
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+    verbs:
+      - get
+      - list
+      - create
+      - update
+---
+# yaml-language-server: $schema=https://github.com/kubernetes/kubernetes/raw/refs/heads/master/api/openapi-spec/v3/apis__rbac.authorization.k8s.io__v1_openapi.json
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: rook-ceph-monitor-mgr
+  namespace: rook-ceph
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rook-ceph-monitor-mgr
+subjects:
+  - kind: ServiceAccount
+    name: rook-ceph-mgr
+    namespace: rook-ceph
