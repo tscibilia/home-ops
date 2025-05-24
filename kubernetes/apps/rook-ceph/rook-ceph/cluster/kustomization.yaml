@@ -6,6 +6,5 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./monitorconfig.yaml
-  - ./prometheusrule.yaml
   - ./storageclass.yaml
   - ./resources
