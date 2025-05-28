@@ -27,7 +27,7 @@ spec:
           app :
             image:
               repository: ghcr.io/vuetorrent/vuetorrent-backend
-              tag: 2.3.0@sha256:65033d52cdccd863b5f07e53587921b93bea841d9831c087139d85076f6f1da1
+              tag: 2.3.0@sha256:c9d68383283cb50f5e9ece6b3c6eab63277c3ac3de760f5682100c3ad9acb2ae
             env:
               # renovate: datasource=github-releases depName=VueTorrent/VueTorrent
               RELEASE_TYPE: v2.25.0
