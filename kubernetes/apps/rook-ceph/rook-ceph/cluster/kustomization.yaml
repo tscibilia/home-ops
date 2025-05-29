@@ -7,4 +7,4 @@ resources:
   - ./helmrelease.yaml
   - ./monitorconfig.yaml
   - ./storageclass.yaml
-  - ./resources/prometheusrule.yaml
+  - ./prometheusrule.yaml
