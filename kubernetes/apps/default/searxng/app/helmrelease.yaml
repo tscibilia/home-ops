@@ -28,7 +28,7 @@ spec:
             image:
               repository: ghcr.io/searxng/searxng
               tag: 2025.5.17-86373e7@sha256:2f45ccc0b330faa47d8706de883c6e583b38806e32b51172d93c381ce1d92f0b
-            command: ["/usr/local/searxng/venv/bin/uwsgi", "--master", "/usr/local/searxng/.template/uwsgi.ini"]
+            # command: ["/usr/local/searxng/venv/bin/uwsgi", "--master", "/usr/local/searxng/.template/uwsgi.ini"]
             env:
               TZ: "${TIMEZONE}"
               SEARXNG_BASE_URL: &url https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
@@ -67,8 +67,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
-                add: ["CHOWN", "SETGID" ,"SETUID", "DAC_OVERRIDE"]
                 drop: ["ALL"]
+                add: ["CHOWN", "SETGID" ,"SETUID", "DAC_OVERRIDE"]
     defaultPodOptions:
       automountServiceAccountToken: false
       enableServiceLinks: false
