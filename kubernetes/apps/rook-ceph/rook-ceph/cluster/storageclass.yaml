@@ -36,25 +36,25 @@ parameters:
   pool: ceph-fs_data
 allowVolumeExpansion: true
 reclaimPolicy: Delete
-# ---
-# apiVersion: snapshot.storage.k8s.io/v1
-# kind: VolumeSnapshotClass
-# metadata:
-#   name: ceph-rbd-snapshot
-# driver: rook-ceph.rbd.csi.ceph.com # Has to match namespace
-# parameters:
-#   clusterID: rook-ceph
-#   csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
-#   csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
-# deletionPolicy: Delete
-# ---
-# apiVersion: snapshot.storage.k8s.io/v1
-# kind: VolumeSnapshotClass
-# metadata:
-#   name: cephfs-snapshot
-# driver: rook-ceph.cephfs.csi.ceph.com # Has to match namespace
-# parameters:
-#   clusterID: rook-ceph
-#   csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
-#   csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
-# deletionPolicy: Delete
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: ceph-rbd-snapshot
+driver: rook-ceph.rbd.csi.ceph.com # Has to match namespace
+parameters:
+  clusterID: rook-ceph
+  csi.storage.k8s.io/snapshotter-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/snapshotter-secret-namespace: rook-ceph
+deletionPolicy: Delete
+---
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: cephfs-snapshot
+driver: rook-ceph.cephfs.csi.ceph.com # Has to match namespace
+parameters:
+  clusterID: rook-ceph
+  csi.storage.k8s.io/snapshotter-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/snapshotter-secret-namespace: rook-ceph
+deletionPolicy: Delete
