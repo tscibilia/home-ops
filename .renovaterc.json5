@@ -6,8 +6,7 @@
     'helpers:pinGitHubActionDigests',
     ':automergeBranch',
     ':dependencyDashboard',
-    'prConcurrentLimit:0',
-    'prHourlyLimit:10',
+    ':disableRateLimiting',
     ':semanticCommits',
     ':timezone(America/New_York)',
   ],
@@ -19,7 +18,7 @@
   dependencyDashboardTitle: 'Renovate Dashboard 🤖',
   dependencyDashboardApproval: false,
   platformAutomerge: true,
-  prConcurrentLimit: 5,
+  prConcurrentLimit: 0,
   prHourlyLimit: 10,
   suppressNotifications: [
     'prEditedNotification',
