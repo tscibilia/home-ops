@@ -21,6 +21,8 @@ spec:
         - alert: VolSyncVolumeOutOfSync
           expr: |
             volsync_volume_out_of_sync == 1
+            and on(obj_name,obj_namespace)
+            (volsync_replicationdestination_trigger_manual == "true" == false)
           annotations:
             summary: >-
               {{ $labels.obj_namespace }}/{{ $labels.obj_name }} volume is out of sync
