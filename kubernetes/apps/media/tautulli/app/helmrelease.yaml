@@ -90,7 +90,7 @@ spec:
         annotations:
           # See instructions at https://goauthentik.io/docs/providers/proxy/forward_auth
           nginx.ingress.kubernetes.io/auth-url: |-
-            http://ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+            http://authentik-server.default.svc.cluster.local:80/outpost.goauthentik.io/auth/nginx
           nginx.ingress.kubernetes.io/auth-signin: |-
             https://{{ .Release.Name }}.${SECRET_DOMAIN}/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
           nginx.ingress.kubernetes.io/auth-response-headers: |-
