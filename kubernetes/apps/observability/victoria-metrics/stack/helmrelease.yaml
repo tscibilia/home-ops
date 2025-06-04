@@ -197,6 +197,22 @@ spec:
     grafana:
       enabled: false
 
+    kube-state-metrics:
+      livenessProbe:
+        httpGet:
+          path: /healthz
+          port: telemetry
+        initialDelaySeconds: 60
+        periodSeconds:       20
+        failureThreshold:    6
+      readinessProbe:
+        httpGet:
+          path: /readyz
+          port: telemetry
+        initialDelaySeconds: 30
+        periodSeconds:       15
+        failureThreshold:    5
+
     prometheus-node-exporter:
       vmScrape:
         spec:
