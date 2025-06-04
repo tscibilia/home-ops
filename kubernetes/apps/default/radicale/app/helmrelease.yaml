@@ -39,6 +39,10 @@ spec:
                 memory: 128M
               limits:
                 memory: 256M
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"], add: ["CHOWN SETUID SETGID KILL"] }
     defaultPodOptions:
       securityContext:
         runAsUser: 1044
