@@ -6,7 +6,7 @@ metadata:
   name: immich
 spec:
   instances: 3
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16-v0.3.0
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16-0.3.0
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
@@ -29,7 +29,7 @@ spec:
   enableSuperuserAccess: true
   postgresql:
     shared_preload_libraries:
-      - vectors.so
+      - vchord.so
     pg_hba:
       - host all all 10.42.0.0/16 scram-sha-256
     parameters:
