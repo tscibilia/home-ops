@@ -6,30 +6,31 @@ metadata:
   name: immich
 spec:
   instances: 3
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16-v0.3.0
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16-0.3.0
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
     size: 20Gi
     storageClass: openebs-hostpath
-  bootstrap:
-    initdb:
-      database: immich
-      owner: immich
-      secret:
-        name: immich-cnpg-initdb
-      postInitApplicationSQL:
-        - CREATE EXTENSION IF NOT EXISTS "vectors";
-        - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
-        - ALTER DATABASE immich SET search_path TO "$user", public, vectors;
-        - ALTER SCHEMA vectors OWNER TO immich;
-        - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA vectors TO immich;
+  # bootstrap:
+  #   initdb:
+  #     database: immich
+  #     owner: immich
+  #     secret:
+  #       name: immich-cnpg-initdb
+  #     postInitApplicationSQL:
+  #       - CREATE EXTENSION IF NOT EXISTS "vectors";
+  #       - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
+  #       - ALTER DATABASE immich SET search_path TO "$user", public, vectors;
+  #       - ALTER SCHEMA vectors OWNER TO immich;
+  #       - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA vectors TO immich;
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
   postgresql:
     shared_preload_libraries:
       - vectors.so
+      - vchord.so
     pg_hba:
       - host all all 10.42.0.0/16 scram-sha-256
     parameters:
@@ -67,11 +68,6 @@ spec:
           name: cnpg-secret
           key: AWS_SECRET_ACCESS_KEY
 
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
-  # bootstrap:
-  #   recovery:
-  #     source: &previousCluster immich-v1
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
   # externalClusters:
   #   - name: *previousCluster
