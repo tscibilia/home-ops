@@ -13,17 +13,17 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
   bootstrap:
-    # initdb:
-    #   postInitSQL:
-    #     - ALTER SYSTEM SET search_path TO "$user", public, vectors;
-    #     - CREATE EXTENSION IF NOT EXISTS "vectors";
     initdb:
-      import:
-        databases: ["*"]
-        roles: ["*"]
-        source:
-          externalCluster: &previousCluster immichmigrate
-        type: monolith
+      postInitSQL:
+        - ALTER SYSTEM SET search_path TO "$user", public, vectors;
+        - CREATE EXTENSION IF NOT EXISTS "vectors";
+    # initdb:
+    #   import:
+    #     databases: ["*"]
+    #     roles: ["*"]
+    #     source:
+    #       externalCluster: &previousCluster immichmigrate
+    #     type: monolith
     # recovery:
     #   source: &previousCluster immichmigrate
   superuserSecret:
@@ -68,13 +68,13 @@ spec:
   #         key: AWS_SECRET_ACCESS_KEY
 
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-    - name: *previousCluster
-      connectionParameters:
-        host: immichmigrate.database.svc.cluster.local
-        user: postgres
-        dbname: postgres
-        sslmode: require
-      password:
-        name: cnpg-secret
-        key: password
+  # externalClusters:
+  #   - name: *previousCluster
+  #     connectionParameters:
+  #       host: immichmigrate.database.svc.cluster.local
+  #       user: postgres
+  #       dbname: postgres
+  #       sslmode: require
+  #     password:
+  #       name: cnpg-secret
+  #       key: password
