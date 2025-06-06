@@ -38,18 +38,24 @@ spec:
       deploymentStrategy:
         type: RollingUpdate
       env:
-        AUTHENTIK_HOST: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-        AUTHENTIK_STORAGE__MEDIA__BACKEND: file
-        AUTHENTIK_REDIS__HOST: "dragonfly-cluster.database.svc.cluster.local"
-        AUTHENTIK_REDIS__DB: "1"
-        AUTHENTIK_POSTGRESQL__NAME: *app
-        AUTHENTIK_POSTGRESQL__USER: *app
-        AUTHENTIK_POSTGRESQL__PASSWORD:
+        - name: AUTHENTIK_REDIS__HOST
+          value: "dragonfly-cluster.database.svc.cluster.local"
+        - name: AUTHENTIK_REDIS__DB
+          value: 1
+        - name: AUTHENTIK_POSTGRESQL__NAME
+          value: *app
+        - name: AUTHENTIK_POSTGRESQL__USER
+          value: *app
+        - name: AUTHENTIK_HOST
+          value: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+        - name: AUTHENTIK_STORAGE__MEDIA__BACKEND
+          value: file
+        - name: AUTHENTIK_POSTGRESQL__PASSWORD
           valueFrom:
             secretKeyRef:
               name: authentik-pguser-secret
               key: password
-        AUTHENTIK_POSTGRESQL__HOST:
+        - name: AUTHENTIK_POSTGRESQL__HOST
           valueFrom:
             secretKeyRef:
               name: authentik-pguser-secret
