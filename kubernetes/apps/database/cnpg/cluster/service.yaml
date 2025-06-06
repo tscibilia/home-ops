@@ -34,21 +34,3 @@ spec:
       port: 5432
       protocol: TCP
       targetPort: 5432
----
-# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/service-v1.json
-apiVersion: v1
-kind: Service
-metadata:
-  name: immichmigrate
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: "immichmigrate.${SECRET_DOMAIN}"
-spec:
-  type: LoadBalancer
-  selector:
-    cnpg.io/cluster: immichmigrate
-    cnpg.io/instanceRole: primary
-  ports:
-    - name: postgres
-      port: 5432
-      protocol: TCP
-      targetPort: 5432
