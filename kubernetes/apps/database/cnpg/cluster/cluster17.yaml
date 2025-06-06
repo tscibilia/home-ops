@@ -32,29 +32,41 @@ spec:
   monitoring:
     enablePodMonitor: true
 
-  backup:
-    retentionPolicy: 7d
-    barmanObjectStore: &barmanObjectStore
-      data:
-        compression: bzip2
-      wal:
-        compression: bzip2
-        maxParallel: 4
-      destinationPath: s3://${AWS_CNPG_BUCKET}
-      endpointURL: https://${AWS_ENDPOINT}
-      # Note: serverName version needs to be incremented
-      # when recovering from an existing cnpg cluster
-      serverName: &currentCluster postgres17-v1
-      s3Credentials:
-        accessKeyId:
-          name: cnpg-secret
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: cnpg-secret
-          key: AWS_SECRET_ACCESS_KEY
+  # backup:
+  #   retentionPolicy: 7d
+  #   barmanObjectStore: &barmanObjectStore
+  #     data:
+  #       compression: bzip2
+  #     wal:
+  #       compression: bzip2
+  #       maxParallel: 4
+  #     destinationPath: s3://${AWS_CNPG_BUCKET}
+  #     endpointURL: https://${AWS_ENDPOINT}
+  #     # Note: serverName version needs to be incremented
+  #     # when recovering from an existing cnpg cluster
+  #     serverName: &currentCluster postgres17-v1
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: cnpg-secret
+  #         key: AWS_ACCESS_KEY_ID
+  #       secretAccessKey:
+  #         name: cnpg-secret
+  #         key: AWS_SECRET_ACCESS_KEY
 
-  # Note: previousCluster needs to be set to the name of the previous cluster when recovering
-  # Note: initdb import is needed when migrating from an existing cnpg cluster
+  # # Note: previousCluster needs to be set to the name of the previous
+  # # cluster when recovering from an existing cnpg cluster
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster postgres17-v1
+  # # Note: externalClusters is needed when recovering from an existing cnpg cluster
+  # externalClusters:
+  #   - name: *previousCluster
+  #     barmanObjectStore:
+  #       <<: *barmanObjectStore
+  #       serverName: *previousCluster
+
+  # # Note: previousCluster needs to be set to the name of the previous cluster when recovering
+  # # Note: initdb import is needed when migrating from an existing cnpg cluster
   # bootstrap:
   #   initdb:
   #     import:
@@ -63,17 +75,7 @@ spec:
   #       source:
   #         externalCluster: &previousCluster postgres16
   #       type: monolith
-  #   recovery:
-  #     source: &previousCluster postgres17-v1
-
-  # Note: externalClusters is needed when recovering from an existing cnpg cluster
   # externalClusters:
-  #   - name: *previousCluster
-  #     barmanObjectStore:
-  #       <<: *barmanObjectStore
-  #       serverName: *previousCluster
-
-  # Note this section is used to migrate from an existing cnpg cluster
   #   - name: *previousCluster
   #     connectionParameters:
   #       host: postgres16.database.svc.cluster.local
