@@ -9,20 +9,21 @@ spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.3.0
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
-  bootstrap:
-    initdb:
-      postInitSQL:
-        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
-      import:
-        databases: ["*"]
-        roles: ["*"]
-        source:
-          externalCluster: &previousCluster immich
-        type: monolith
+  # bootstrap:
+  #   initdb:
+  #     postInitSQL:
+  #       - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+  #     import:
+  #       databases: ["*"]
+  #       roles: ["*"]
+  #       source:
+  #         externalCluster: &previousCluster immich-v1
+  #       type: monolith
+
   # Note: previousCluster needs to be set to the name of the previous
   # cluster when recovering from an existing cnpg cluster
   #   recovery:
-  #     source: &previousCluster immich
+  #     source: &previousCluster immich-v1
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
@@ -75,17 +76,17 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
 
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
+  # externalClusters:
   #   - name: *previousCluster
   #     barmanObjectStore:
   #       <<: *barmanObjectStore
   #       serverName: *previousCluster
-    - name: *previousCluster
-      connectionParameters:
-        host: immich.database.svc.cluster.local
-        user: postgres
-        dbname: postgres
-        sslmode: require
-      password:
-        name: cnpg-secret
-        key: password
+  #   - name: *previousCluster
+  #     connectionParameters:
+  #       host: immich.database.svc.cluster.local
+  #       user: postgres
+  #       dbname: postgres
+  #       sslmode: require
+  #     password:
+  #       name: cnpg-secret
+  #       key: password
