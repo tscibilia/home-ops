@@ -6,6 +6,7 @@ resources:
   - ./cluster16.yaml
   - ./externalsecret.yaml
   - ./immich.yaml
+  - ./immich17.yaml
   - ./prometheusrule.yaml
   - ./scheduledbackup.yaml
   - ./service.yaml
