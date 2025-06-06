@@ -6,31 +6,31 @@ metadata:
   name: immich
 spec:
   instances: 1
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16-v0.3.0
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:16-0.3.0
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
     size: 20Gi
     storageClass: openebs-hostpath
-  bootstrap:
-    initdb:
-      postInitSQL:
-        - ALTER SYSTEM SET search_path TO "$user", public, vectors;
-        - CREATE EXTENSION IF NOT EXISTS "vectors";
-    # initdb:
-    #   import:
-    #     databases: ["*"]
-    #     roles: ["*"]
-    #     source:
-    #       externalCluster: &previousCluster immichmigrate
-    #     type: monolith
-    # recovery:
-    #   source: &previousCluster immichmigrate
+  # bootstrap:
+  #   initdb:
+  #     postInitSQL:
+  #       - ALTER SYSTEM SET search_path TO "$user", public, vectors;
+  #       - CREATE EXTENSION IF NOT EXISTS "vectors";
+  #   initdb:
+  #     import:
+  #       databases: ["*"]
+  #       roles: ["*"]
+  #       source:
+  #         externalCluster: &previousCluster immichmigrate
+  #       type: monolith
+  #   recovery:
+  #     source: &previousCluster immichmigrate
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
   postgresql:
-    shared_preload_libraries: ["vectors.so"]
+    shared_preload_libraries: ["vchord.so"]
     pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
     parameters:
       max_connections: "600"
