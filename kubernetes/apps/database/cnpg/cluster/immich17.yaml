@@ -17,7 +17,7 @@ spec:
         databases: ["*"]
         roles: ["*"]
         source:
-          externalCluster: immich
+          externalCluster: &previousCluster immich
         type: monolith
   # Note: previousCluster needs to be set to the name of the previous
   # cluster when recovering from an existing cnpg cluster
