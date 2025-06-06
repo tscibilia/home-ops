@@ -11,7 +11,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
-    - ../cnpg
+    - ../../../../components/cnpg
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
@@ -25,6 +25,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: auth
+      CNPG_NAME: postgres17
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

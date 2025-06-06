@@ -5,7 +5,7 @@ kind: Cluster
 metadata:
   name: postgres17
 spec:
-  instances: 1
+  instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
@@ -53,35 +53,33 @@ spec:
           name: cnpg-secret
           key: AWS_SECRET_ACCESS_KEY
 
+  # Note: previousCluster needs to be set to the name of the previous cluster when recovering
   # Note: initdb import is needed when migrating from an existing cnpg cluster
-  bootstrap:
-    initdb:
-      import:
-        databases: ["*"]
-        roles: ["*"]
-        source:
-          externalCluster: &previousCluster postgres16
-        type: monolith
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
+  # bootstrap:
+  #   initdb:
+  #     import:
+  #       databases: ["*"]
+  #       roles: ["*"]
+  #       source:
+  #         externalCluster: &previousCluster postgres16
+  #       type: monolith
   #   recovery:
-  #     source: &previousCluster postgres16
+  #     source: &previousCluster postgres17-v1
 
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-  # Note this section is used to recover from an existing cnpg cluster
+  # externalClusters:
   #   - name: *previousCluster
   #     barmanObjectStore:
   #       <<: *barmanObjectStore
   #       serverName: *previousCluster
 
   # Note this section is used to migrate from an existing cnpg cluster
-    - name: *previousCluster
-      connectionParameters:
-        host: postgres16.database.svc.cluster.local
-        user: postgres
-        dbname: postgres
-        sslmode: require
-      password:
-        name: cnpg-secret
-        key: password
+  #   - name: *previousCluster
+  #     connectionParameters:
+  #       host: postgres16.database.svc.cluster.local
+  #       user: postgres
+  #       dbname: postgres
+  #       sslmode: require
+  #     password:
+  #       name: cnpg-secret
+  #       key: password
