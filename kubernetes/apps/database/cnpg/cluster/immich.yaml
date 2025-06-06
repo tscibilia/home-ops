@@ -13,25 +13,27 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
   bootstrap:
-    # initdb:
-    #   postInitSQL:
-    #     - ALTER SYSTEM SET search_path TO "$user", public, vectors;
-    #     - CREATE EXTENSION IF NOT EXISTS "vectors";
-    initdb:
-      import:
-        databases: ["*"]
-        roles: ["*"]
-        source:
-          externalCluster: &previousCluster immichmigrate
-        type: monolith
-    # recovery:
-    #   source: &previousCluster immich
+  #   initdb:
+  #     database: immich
+  #     owner: immich
+  #     secret:
+  #       name: immich-cnpg-initdb
+  #     postInitApplicationSQL:
+  #       - CREATE EXTENSION IF NOT EXISTS "vectors";
+  #       - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
+  #       - ALTER DATABASE immich SET search_path TO "$user", public, vectors;
+  #       - ALTER SCHEMA vectors OWNER TO immich;
+  #       - GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA vectors TO immich;
+    recovery:
+      source: &previousCluster immich-v2
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
   postgresql:
-    shared_preload_libraries: ["vectors.so"]
-    pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
+    shared_preload_libraries:
+      - vectors.so
+    pg_hba:
+      - host all all 10.42.0.0/16 scram-sha-256
     parameters:
       max_connections: "600"
       shared_buffers: 256MB
@@ -47,7 +49,7 @@ spec:
     enablePodMonitor: true
 
   backup:
-    retentionPolicy: 7d
+    retentionPolicy: 30d
     barmanObjectStore: &barmanObjectStore
       data:
         compression: bzip2
@@ -58,7 +60,7 @@ spec:
       endpointURL: https://${AWS_ENDPOINT}
       # Note: serverName version needs to be incremented
       # when recovering from an existing cnpg cluster
-      serverName: &currentCluster immich-v1
+      serverName: &currentCluster immich-v3
       s3Credentials:
         accessKeyId:
           name: cnpg-secret
@@ -68,13 +70,8 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
 
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-    - name: *previousCluster
-      connectionParameters:
-        host: immichmigrate.database.svc.cluster.local
-        user: postgres
-        dbname: postgres
-        sslmode: require
-      password:
-        name: cnpg-secret
-        key: password
+  # externalClusters:
+  #   - name: *previousCluster
+  #     barmanObjectStore:
+  #       <<: *barmanObjectStore
+  #       serverName: *previousCluster
