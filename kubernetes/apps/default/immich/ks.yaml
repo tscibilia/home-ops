@@ -27,6 +27,7 @@ spec:
       GATUS_SUBDOMAIN: img
       GATUS_PATH: /api/server/ping
       CNPG_NAME: immich17
+      PG_VER: "17"
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

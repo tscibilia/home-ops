@@ -29,7 +29,7 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: mp
       GATUS_PATH: /api/app/about
-      CNPG_NAME: postgres17
+      CNPG_NAME: postgres16
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

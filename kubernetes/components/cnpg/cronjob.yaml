@@ -23,13 +23,13 @@ spec:
           containers:
             - name: *name
               # https://github.com/prodrigestivill/docker-postgres-backup-local/discussions/109
-              image: docker.io/prodrigestivill/postgres-backup-local:17
+              image: docker.io/prodrigestivill/postgres-backup-local:${PG_VER:=16}
               imagePullPolicy: IfNotPresent
               command:
                 - /backup.sh
               env:
                 - name: POSTGRES_HOST
-                  value: ${CNPG_NAME:=postgres17}-rw.database.svc.cluster.local
+                  value: ${CNPG_NAME:=postgres16}-rw.database.svc.cluster.local
                 - name: POSTGRES_DB
                   value: ${APP}
                 - name: POSTGRES_USER

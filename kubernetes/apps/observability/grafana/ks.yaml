@@ -21,7 +21,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CNPG_NAME: postgres17
+      CNPG_NAME: postgres16
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

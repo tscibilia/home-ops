@@ -15,18 +15,6 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: postgres17
-spec:
-  schedule: "0 30 3 * * *"
-  immediate: true
-  backupOwnerReference: self
-  cluster:
-    name: postgres17
----
-# yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/postgresql.cnpg.io/scheduledbackup_v1.json
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
   name: immich17
 spec:
   schedule: "0 30 3 * * *"
