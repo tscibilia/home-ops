@@ -82,6 +82,10 @@ spec:
                   identifier: app
                   port: http
     persistence:
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /app/config/logs
       config:
         type: configMap
         name: homepage-configmap
@@ -144,3 +148,4 @@ spec:
                 - customresourcedefinitions/status
               verbs:
                 - get
+                - list
