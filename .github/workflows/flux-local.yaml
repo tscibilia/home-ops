@@ -35,7 +35,6 @@ jobs:
         uses: docker://ghcr.io/allenporter/flux-local:v7.5.4
         with:
           args: >-
-            --log-level=DEBUG
             test
             --all-namespaces
             --enable-helm
