@@ -5,7 +5,7 @@ kind: Cluster
 metadata:
   name: postgres17
 spec:
-  instances: 3
+  instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
@@ -64,24 +64,3 @@ spec:
   #     barmanObjectStore:
   #       <<: *barmanObjectStore
   #       serverName: *previousCluster
-
-  # # Note: previousCluster needs to be set to the name of the previous cluster when recovering
-  # # Note: initdb import is needed when migrating from an existing cnpg cluster
-  # bootstrap:
-  #   initdb:
-  #     import:
-  #       databases: ["*"]
-  #       roles: ["*"]
-  #       source:
-  #         externalCluster: &previousCluster postgres16
-  #       type: monolith
-  # externalClusters:
-  #   - name: *previousCluster
-  #     connectionParameters:
-  #       host: postgres16.database.svc.cluster.local
-  #       user: postgres
-  #       dbname: postgres
-  #       sslmode: require
-  #     password:
-  #       name: cnpg-secret
-  #       key: password
