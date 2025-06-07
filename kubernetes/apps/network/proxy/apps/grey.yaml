@@ -26,9 +26,11 @@ subsets:
   - addresses:
       - ip: ${GREY_IP}
     ports:
-      - port: 5000
+      - name: http
+        port: 5000
         protocol: TCP
-      - port: 1196
+      - name: ovpn
+        port: 1196
         protocol: UDP
 ---
 # yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/ingress.json
