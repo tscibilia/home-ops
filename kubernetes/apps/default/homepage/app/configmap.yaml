@@ -90,12 +90,12 @@ data:
               key: {{HOMEPAGE_VAR_JELLYSEERR_TOKEN}}
 
     - Network:
-        - Gluetun:
-            icon: gluetun.png
-            description: VPN Client
-            widget:
-              type: gluetun
-              url: http://qbittorrent-exporter.media.svc.cluster.local:8000
+        # - Gluetun:
+        #     icon: gluetun.png
+        #     description: VPN Client
+        #     widget:
+        #       type: gluetun
+        #       url: http://qbittorrent-gluetun.media.svc.cluster.local:8000
         - Immich:
             icon: immich.png
             href: https://img.t0m.co/
@@ -103,6 +103,8 @@ data:
             widget:
               type: immich
               url: http://immich-app.default.svc.cluster.local:2283
+              key: {{HOMEPAGE_VAR_IMMICH_TOKEN}}
+              version: 2
         - AdGuard:
             icon: sh-adguard-home.png
             href: https://ag.${SECRET_DOMAIN}/
