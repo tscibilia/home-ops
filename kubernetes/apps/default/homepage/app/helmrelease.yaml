@@ -82,11 +82,11 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      logs:
+      config:
         type: emptyDir
         globalMounts:
-          - path: /app/config/logs
-      config:
+          - path: /app/config
+      config-files:
         type: configMap
         name: homepage-configmap
         globalMounts:
