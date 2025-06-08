@@ -86,7 +86,7 @@ data:
             description: Plex Request
             widget:
               type: jellyseerr
-              url: http://jellyseerr.media.svc.cluster.local:5055
+              url: http://jellyseerr.media.svc.cluster.local:80
               key: {{HOMEPAGE_VAR_JELLYSEERR_TOKEN}}
 
     - Network:
