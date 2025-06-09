@@ -73,6 +73,10 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: [ALL] }
     defaultPodOptions:
+      hostAliases:
+        - ip: "192.168.1.196"
+          hostnames:
+            - "p1g6.local"
       securityContext:
         runAsNonRoot: true
         runAsUser: 568
