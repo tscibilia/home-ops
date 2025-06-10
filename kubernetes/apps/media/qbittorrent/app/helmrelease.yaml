@@ -49,7 +49,6 @@ spec:
               WIREGUARD_ADDRESSES: 10.14.0.2/16
               SERVER_COUNTRIES: Canada
               VPN_INTERFACE: tun0
-              VPN_PORT_FORWARDING: 'on'
               UPDATER_PERIOD: 24h
               HTTPPROXY: 'on'
               HTTPPROXY_LISTENING_ADDRESS: :8888
