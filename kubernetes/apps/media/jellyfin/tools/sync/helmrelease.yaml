@@ -39,12 +39,14 @@ spec:
                   name: jellyfin-sync-secret
             env:
               DEBUG_LEVEL: debug
-              DRYRUN: false
+              DRYRUN: "False"
               JELLYFIN_BASEURL: http://jellyfin.media.svc.cluster.local:8096
+              LIBRARY_MAPPING: '{ "Shows": "TV Shows" }'
               LOGFILE: /tmp/sync.log
               MARK_FILE: /tmp/mark.log
               PLEX_BASEURL: http://192.168.5.113:32400
-              RUN_ONLY_ONCE: true
+              SSL_BYPASS: "True"
+              RUN_ONLY_ONCE: "True"
               TZ: ${TIMEZONE}
               WHITELIST_LIBRARY: Movies,Shows
             resources:
