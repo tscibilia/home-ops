@@ -50,13 +50,12 @@ spec:
               SERVER_COUNTRIES: Canada
               VPN_INTERFACE: tun0
               VPN_PORT_FORWARDING: 'on'
-              PORT_FORWARD_ONLY: 'on'
               UPDATER_PERIOD: 24h
               HTTPPROXY: 'on'
               HTTPPROXY_LISTENING_ADDRESS: :8888
             envFrom:
               - secretRef:
-                  name: qbittorrent-openvpn-secret
+                  name: qbittorrent-vpn-secret
             lifecycle:
               postStart:
                 exec:
