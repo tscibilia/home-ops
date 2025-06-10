@@ -44,11 +44,11 @@ spec:
               FIREWALL_OUTBOUND_SUBNETS: 10.42.0.0/16,10.43.0.0/16 # Allow access to k8s subnets
               HEALTH_SERVER_ADDRESS: :9999
               HEALTH_SUCCESS_WAIT_DURATION: 10s
-              VPN_TYPE: openvpn
-              VPN_SERVICE_PROVIDER: private internet access
+              VPN_SERVICE_PROVIDER: surfshark
+              VPN_TYPE: wireguard
+              WIREGUARD_ADDRESSES: 10.14.0.2/16
+              SERVER_COUNTRIES: Canada
               VPN_INTERFACE: tun0
-              SERVER_REGIONS: CA Toronto
-              PRIVATE_INTERNET_ACCESS_OPENVPN_ENCRYPTION_PRESET: strong
               VPN_PORT_FORWARDING: 'on'
               PORT_FORWARD_ONLY: 'on'
               UPDATER_PERIOD: 24h
