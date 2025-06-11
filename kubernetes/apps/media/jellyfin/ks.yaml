@@ -51,6 +51,8 @@ spec:
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
+    - name: jellyfin
+      namespace: *namespace
   interval: 1h
   path: ./kubernetes/apps/media/jellyfin/tools
   prune: true
