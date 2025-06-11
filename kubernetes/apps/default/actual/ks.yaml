@@ -44,17 +44,17 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app actual-helpers
+  name: &app actual-tools
   namespace: &namespace default
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: external-secrets
-      namespace: external-secrets
+    - name: actual
+      namespace: *namespace
   interval: 1h
-  path: ./kubernetes/apps/default/actual/helpers
+  path: ./kubernetes/apps/default/actual/tools
   prune: true
   retryInterval: 2m
   sourceRef:
