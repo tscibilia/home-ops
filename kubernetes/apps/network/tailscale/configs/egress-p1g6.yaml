@@ -1,0 +1,11 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    tailscale.com/tailnet-fqdn: ${TAILSCALE_MAGICDNS}
+  name: p1g6
+spec:
+  externalName: placeholder   # any value, will be overwritten by operator
+  type: ExternalName
