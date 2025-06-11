@@ -5,7 +5,8 @@ kind: Service
 metadata:
   annotations:
     tailscale.com/tailnet-fqdn: "p1g6.${TAILSCALE_MAGICDNS}"
-  name: p1g6
+    tailscale.com/hostname: ts-p1g6
+  name: egress-p1g6
 spec:
   externalName: placeholder   # any value, will be overwritten by operator
   type: ExternalName
