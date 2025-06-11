@@ -124,9 +124,9 @@ spec:
             resources:
               requests:
                 cpu: 150m
-                memory: 1Gi
-              limits:
                 memory: 2Gi
+              limits:
+                memory: 4Gi
             securityContext: *secCont
           port-forward:
             image:
