@@ -9,6 +9,7 @@ resources:
   - ./actual/ks.yaml
   - ./authentik/ks.yaml
   - ./echo/ks.yaml
+  - ./echo2/ks.yaml
   - ./homepage/ks.yaml
   - ./immich/ks.yaml
   - ./komga/ks.yaml
