@@ -50,16 +50,6 @@ spec:
           value: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
         - name: AUTHENTIK_STORAGE__MEDIA__BACKEND
           value: file
-        - name: AUTHENTIK_POSTGRESQL__PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: authentik-pguser-secret
-              key: password
-        - name: AUTHENTIK_POSTGRESQL__HOST
-          valueFrom:
-            secretKeyRef:
-              name: authentik-pguser-secret
-              key: host
       envFrom:
         - secretRef:
             name: *secret
@@ -85,14 +75,13 @@ spec:
         enabled: false
     server:
       replicas: 1
-      initContainers:
-        01-init-db:
-          image:
-            repository: ghcr.io/home-operations/postgres-init
-            tag: "17"
-          envFrom:
-            - secretRef:
-                name: authentik-initdb-secret
+      # initContainers:
+      #   01-init-db:
+      #     image:
+      #       repository: ghcr.io/home-operations/postgres-init:17
+      #     envFrom:
+      #       - secretRef:
+      #           name: authentik-initdb-secret
       ingress:
         enabled: true
         ingressClassName: external
