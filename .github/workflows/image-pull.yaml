@@ -48,7 +48,6 @@ jobs:
         uses: docker://ghcr.io/allenporter/flux-local:v7.5.4
         with:
           args: >-
-            --log-level=DEBUG
             get cluster
             --all-namespaces
             --path /github/workspace/kubernetes/flux/cluster
