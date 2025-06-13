@@ -50,16 +50,6 @@ spec:
           value: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
         - name: AUTHENTIK_STORAGE__MEDIA__BACKEND
           value: file
-        - name: AUTHENTIK_POSTGRESQL__PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: authentik-pguser-secret
-              key: password
-        - name: AUTHENTIK_POSTGRESQL__HOST
-          valueFrom:
-            secretKeyRef:
-              name: authentik-pguser-secret
-              key: host
       envFrom:
         - secretRef:
             name: *secret
