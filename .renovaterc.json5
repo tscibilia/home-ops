@@ -168,6 +168,12 @@
       ],
     },
     {
+      "description": ["Loose versioning for non-semver containers"],
+      "matchDatasources": ["docker"],
+      "matchPackagePatterns": ["searxng"],
+      "versioning": "loose"
+    },
+    {
       description: 'Don’t open PRs for this image at all',
       matchDatasources: [
         'docker',
