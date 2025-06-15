@@ -10,6 +10,7 @@ resources:
   - ./fluent-bit/ks.yaml
   - ./gatus/ks.yaml
   - ./grafana/ks.yaml
+  - ./karma/ks.yaml
   - ./keda/ks.yaml
   - ./kromgo/ks.yaml
   - ./silence-operator/ks.yaml
