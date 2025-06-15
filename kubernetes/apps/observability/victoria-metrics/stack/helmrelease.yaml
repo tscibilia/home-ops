@@ -79,12 +79,12 @@ spec:
           maxLabelsPerTimeseries: "50"
 
     alertmanager:
-      spec:
-        externalURL: "https://am.${SECRET_DOMAIN}"
-      ingress:
-        enabled: true
-        hosts:
-          - "am.${SECRET_DOMAIN}"
+      # spec:
+      #   externalURL: "https://am.${SECRET_DOMAIN}"
+      # ingress:
+      #   enabled: true
+      #   hosts:
+      #     - "am.${SECRET_DOMAIN}"
       useManagedConfig: true
       config:
         route:
