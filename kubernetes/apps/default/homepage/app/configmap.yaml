@@ -16,7 +16,7 @@ data:
         - VM/Prom:
             - icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/victoriametrics-light.svg
               abbr: VM
-              href: https://vm.t0m.co/
+              href: https://vm.t0m.co/vmui/
         - Logs:
             - icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/victoriametrics-light.svg
               abbr: LG
