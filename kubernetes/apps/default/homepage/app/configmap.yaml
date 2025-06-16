@@ -9,18 +9,18 @@ metadata:
 data:
   bookmarks.yaml: | # https://gethomepage.dev/configs/bookmarks
     - Bookmarks:
-        - YouTube:
-            - icon: youtube.png
-              abbr: YT
-              href: https://youtube.com/
         - Selfh.st:
-            - icon: https://selfh.st/content/images/size/w256h256/2023/09/favicon-1.png
+            - icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/selfh-st.svg
               abbr: SH
               href: https://selfh.st/
-        - Hacker:
-            - icon: https://news.ycombinator.com/y18.svg
-              abbr: HN
-              href: https://news.ycombinator.com/
+        - VM/Prom:
+            - icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/victoriametrics-light.svg
+              abbr: VM
+              href: https://vm.t0m.co/
+        - Logs:
+            - icon: https://cdn.jsdelivr.net/gh/selfhst/icons/svg/victoriametrics-light.svg
+              abbr: LG
+              href: https://logs.t0m.co/
   docker.yaml: | # https://gethomepage.dev/configs/docker/
     tower:
         host: ${UNRAID_IP}
