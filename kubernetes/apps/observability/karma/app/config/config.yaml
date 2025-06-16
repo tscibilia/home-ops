@@ -10,7 +10,6 @@ alertmanager:
         filters:
           alertmanager:
             - alertname=Watchdog
-            - prometheus=observability/vmalertmanager-stack
 filters:
   default:
     - "@state!=suppressed"
