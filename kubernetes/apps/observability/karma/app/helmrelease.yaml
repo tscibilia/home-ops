@@ -22,7 +22,7 @@ spec:
         replicas: 1
         strategy: RollingUpdate
         annotations:
-          configmap.reloader.stakater.com/reload: "true"
+          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
