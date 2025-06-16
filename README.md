@@ -14,7 +14,8 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 
 [![Talos](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.t0m.co%2Ftalos_version&style=for-the-badge&logo=talos&logoColor=white&color=blue)](https://talos.dev  "Talos OS")&nbsp;&nbsp;
 [![Kubernetes](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.t0m.co%2Fkubernetes_version&style=for-the-badge&logo=kubernetes&logoColor=white&color=blue&label=k8s)](https://kubernetes.io)&nbsp;&nbsp;
-[![Flux](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.t0m.co%2Fflux_version&style=for-the-badge&logo=flux&logoColor=white&color=blue&label=Flux)](https://fluxcd.io)
+[![Flux](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.t0m.co%2Fflux_version&style=for-the-badge&logo=flux&logoColor=white&color=blue&label=Flux)](https://fluxcd.io)&nbsp;&nbsp;
+[![Renovate](https://img.shields.io/github/actions/workflow/status/tscibilia/home-ops/renovate.yaml?branch=main&label=&logo=renovatebot&style=for-the-badge&color=blue)](https://github.com/tscibilia/home-ops/actions/workflows/renovate.yaml)
 
 </div>
 
@@ -46,6 +47,49 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 ### 🔎 Support
 
 If you like this project, please consider supporting the work of [onedr0p](https://github.com/sponsors/onedr0p?frequency=one-time) and [bjw-s](https://github.com/sponsors/bjw-s?frequency=one-time).
+
+---
+
+### <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/kubernetes.svg" alt="☸️" width="20" height="20"> Kubernetes
+
+My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a semi-hyper-converged cluster, workloads and block storage are sharing the same available resources on my nodes while I have a separate server with for NFS shares, bulk file storage and backups.
+
+### Core Components
+
+- [actions-runner-controller](https://github.com/actions/actions-runner-controller): Self-hosted Github runners using [Renovate](https://github.com/renovatebot/renovate).
+- [cert-manager](https://github.com/cert-manager/cert-manager): Creates SSL certificates for services in my cluster.
+- [cilium](https://github.com/cilium/cilium): Kubernetes CNI.
+- [cloudflared](https://github.com/cloudflare/cloudflared): Enables Cloudflare secure access to my routes.
+- [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs ingress DNS records to a DNS provider.
+- [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
+- [k8s-gateway](https://github.com/k8s-gateway/k8s_gateway): CoreDNS plugin to support internal ingress records.
+- [nginx](https://github.com/nginx/nginx): Ingress controller and reverse proxy.
+- [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
+- [sops](https://github.com/getsops/sops): Managed secrets for Kubernetes which are commited to Git.
+- [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
+- [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller): Automatic Kubernetes and Talos upgrades.
+- [volsync](https://github.com/backube/volsync): Backup and recovery of persistent volume claims.
+
+### Observability
+
+- [alertmanager](https://github.com/prometheus/alertmanager): Handles processing and sending alerts.
+- [fluent-bit](https://github.com/fluent/fluent-bit): Log processor.
+- [gatus](https://github.com/TwiN/gatus): High level status dashboard.
+- [grafana](https://github.com/grafana/grafana): Data visualization platform.
+- [karma](https://github.com/prymitive/karma): Alertmanager dashboard, based on Cloudflare's unsee.
+- [keda](https://github.com/kedacore/keda): Autoscales containers depending on event (i.e. NFS share is down)
+- [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
+- [ntfy](https://github.com/binwiederhier/ntfy): Handles receiving alerts on my devices.
+- [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
+- [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
+- [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics): Time series database, drop-in replacement for Prometheus.
+
+### Cloud Services
+
+- [aKeyless](https://akeyless.io): Managing secrets via external-secrets.
+- [Cloudflare](https://cloudflare.com/): Tunnels for exposing services and DNS provider.
+- [Backblaze B2](https://www.backblaze.com/): Daily backups from volsync and cnpg.
+- [SendGrid](https://sendgrid.com/): Sending system emails.
 
 ---
 
