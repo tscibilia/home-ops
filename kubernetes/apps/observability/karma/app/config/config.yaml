@@ -1,0 +1,16 @@
+---
+alertmanager:
+  interval: 60s
+  servers:
+    - name: main
+      uri: http://vmalertmanager-stack.observability.svc.cluster.local:9093
+      timeout: 10s
+      healthcheck:
+        visible: false
+        filters:
+          alertmanager:
+            - alertname=Watchdog
+            - prometheus=observability/vmalertmanager-stack
+filters:
+  default:
+    - "@state!=suppressed"
