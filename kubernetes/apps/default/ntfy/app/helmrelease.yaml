@@ -63,8 +63,8 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
         sysctls:
-        - name: net.ipv4.ip_unprivileged_port_start
-          value: "0"
+          - name: net.ipv4.ip_unprivileged_port_start
+            value: "0"
     service:
       app:
         controller: *app
@@ -75,6 +75,7 @@ spec:
         controller: *app
         type: LoadBalancer
         annotations:
+          coredns.io/hostname: "mx1.${SECRET_DOMAIN}"
           io.cilium/lb-ipam-ips: 192.168.5.232
         ports:
           smtp:
