@@ -78,7 +78,7 @@ data:
             description: Plex Monitor
             widget:
               type: tautulli
-              url: http://tautulli.media.svc.cluster.local:80
+              url: http://tautulli.media.svc.cluster.local:8181
               key: {{HOMEPAGE_VAR_TAUTULLI_TOKEN}}
         - Jellyseerr:
             icon: jellyseerr.png
