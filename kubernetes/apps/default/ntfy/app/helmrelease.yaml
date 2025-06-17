@@ -79,9 +79,9 @@ spec:
           io.cilium/lb-ipam-ips: 192.168.5.232
         ports:
           smtp:
-            port: 25
+            port: 5225
     ingress:
-      app:
+      external:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
@@ -92,6 +92,15 @@ spec:
                 service:
                   identifier: app
                   port: http
+      internal:
+        className: internal
+        hosts:
+          - host: "mx1.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: smtp
     persistence:
       attachments:
         type: emptyDir
