@@ -79,7 +79,7 @@ spec:
           io.cilium/lb-ipam-ips: 192.168.5.232
         ports:
           smtp:
-            port: 5225
+            port: 25
     ingress:
       app:
         className: external
