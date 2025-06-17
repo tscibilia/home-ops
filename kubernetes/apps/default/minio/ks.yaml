@@ -11,9 +11,12 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
+    - ../../../../components/keda/nfs-scaler
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
+    - name: keda
+      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/default/minio/app
   postBuild:

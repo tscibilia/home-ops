@@ -11,16 +11,19 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/guarded
+    - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
     - name: generic-device-plugin
       namespace: kube-system
-    - name: volsync
-      namespace: volsync-system
+    - name: keda
+      namespace: observability
     - name: rook-ceph-cluster
       namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
   interval: 1h
   path: ./kubernetes/apps/media/qbittorrent/app
   postBuild:

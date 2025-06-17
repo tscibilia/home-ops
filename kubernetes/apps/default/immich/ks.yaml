@@ -11,6 +11,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../components/cnpg
+    - ../../../../components/keda/nfs-scaler
     - ../../../../components/gatus/external
   dependsOn:
     - name: cnpg-cluster
@@ -19,6 +20,8 @@ spec:
       namespace: database
     - name: external-secrets
       namespace: external-secrets
+    - name: keda
+      namespace: observability
   interval: 30m
   path: ./kubernetes/apps/default/immich/app
   postBuild:

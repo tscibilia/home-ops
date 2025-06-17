@@ -13,10 +13,10 @@ spec:
     - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
-    - name: volsync
-      namespace: volsync-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
   interval: 1h
   path: ./kubernetes/apps/media/tautulli/app
   postBuild:
