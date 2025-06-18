@@ -68,15 +68,13 @@ spec:
     service:
       app:
         controller: *app
-        type: LoadBalancer
         annotations:
           coredns.io/hostname: "mx1.${SECRET_DOMAIN}"
-          io.cilium/lb-ipam-ips: &lbIP 192.168.5.232
         ports:
           http:
             port: *port
           smtp:
-            port: 25
+            port: 5225
     ingress:
       app:
         className: external
