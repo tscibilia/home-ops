@@ -68,23 +68,21 @@ spec:
     service:
       app:
         controller: *app
-        ports:
-          http:
-            port: *port
-      smtp:
-        controller: *app
         type: LoadBalancer
         annotations:
           coredns.io/hostname: "mx1.${SECRET_DOMAIN}"
-          io.cilium/lb-ipam-ips: 192.168.5.232
+          io.cilium/lb-ipam-ips: &lbIP 192.168.5.232
         ports:
+          http:
+            port: *port
           smtp:
             port: 25
     ingress:
       app:
         className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: *lbIP
+          external-dns.alpha.kubernetes.io/hostname: "mx1.${SECRET_DOMAIN}"
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:

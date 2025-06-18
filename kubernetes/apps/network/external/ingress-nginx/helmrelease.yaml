@@ -74,6 +74,7 @@ spec:
             any: true
       extraArgs:
         default-ssl-certificate: cert-manager/${SECRET_DOMAIN/./-}-production-tls
+        tcp-services-configmap: default/ntfy-tcp-service
         udp-services-configmap: network/grey-udp-service
       resources:
         requests:

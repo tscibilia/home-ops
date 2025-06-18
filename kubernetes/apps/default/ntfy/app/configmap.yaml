@@ -1,0 +1,10 @@
+---
+# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/configmap.json
+# Tell the nginx controller to open and proxy UDP 25
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy-tcp-service
+  namespace: default
+data:
+  "25": "default/ntfy:25"
