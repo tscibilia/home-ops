@@ -81,7 +81,7 @@ spec:
       app:
         className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: *lbIP
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           external-dns.alpha.kubernetes.io/hostname: "mx1.${SECRET_DOMAIN}"
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
