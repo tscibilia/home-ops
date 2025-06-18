@@ -64,6 +64,7 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
 - [k8s-gateway](https://github.com/k8s-gateway/k8s_gateway): CoreDNS plugin to support internal ingress records.
 - [nginx](https://github.com/nginx/nginx): Ingress controller and reverse proxy.
+- [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
 - [sops](https://github.com/getsops/sops): Managed secrets for Kubernetes which are commited to Git.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
@@ -79,7 +80,6 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [karma](https://github.com/prymitive/karma): Alertmanager dashboard, based on Cloudflare's unsee.
 - [keda](https://github.com/kedacore/keda): Autoscales containers depending on event (i.e. NFS share is down)
 - [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
-- [ntfy](https://github.com/binwiederhier/ntfy): Handles receiving alerts on my devices.
 - [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
 - [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
 - [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics): Time series database, drop-in replacement for Prometheus.
@@ -89,7 +89,8 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [aKeyless](https://akeyless.io): Managing secrets via external-secrets.
 - [Cloudflare](https://cloudflare.com/): Tunnels for exposing services and DNS provider.
 - [Backblaze B2](https://www.backblaze.com/): Daily backups from volsync and cnpg.
-- [SendGrid](https://sendgrid.com/): Sending system emails.
+- [Amazon SES](https://aws.amazon.com/ses/): Sending system emails.
+- [Pushover](https://pushover.net/): Sending push notifications to mobile.
 
 ---
 
