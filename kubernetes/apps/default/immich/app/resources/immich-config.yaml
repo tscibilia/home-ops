@@ -69,12 +69,12 @@ passwordLogin:
 notifications:
   smtp:
     enabled: true
-    from: Immich <"{{ .SENDGRID_FROM }}">
+    from: Immich <"{{ .SMTP_FROM }}">
     transport:
-      host: "{{ .SENDGRID_HOST }}"
-      username: "{{ .SENDGRID_USERNAME }}"
-      password: "{{ .SENDGRID_PASSWORD }}"
-      port: {{ .SENDGRID_PORT | atoi }}
+      host: "{{ .SMTP_HOST }}"
+      username: "{{ .SMTP_USERNAME }}"
+      password: "{{ .SMTP_PASSWORD }}"
+      port: {{ .SMTP_PORT | atoi }}
 
 storageTemplate:
   enabled: true
