@@ -74,11 +74,12 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 ### Observability
 
 - [alertmanager](https://github.com/prometheus/alertmanager): Handles processing and sending alerts.
+- [blackbox-exporter](https://github.com/prometheus/blackbox_exporter): Probe external endpoint ports for success/failure.
 - [fluent-bit](https://github.com/fluent/fluent-bit): Log processor.
 - [gatus](https://github.com/TwiN/gatus): High level status dashboard.
 - [grafana](https://github.com/grafana/grafana): Data visualization platform.
 - [karma](https://github.com/prymitive/karma): Alertmanager dashboard, based on Cloudflare's unsee.
-- [keda](https://github.com/kedacore/keda): Autoscales containers depending on event (i.e. NFS share is down)
+- [keda](https://github.com/kedacore/keda): Autoscales containers on events (i.e. blackbox reports NFS share is down).
 - [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
 - [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
 - [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
