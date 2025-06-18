@@ -5,6 +5,7 @@ kind: Component
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./scaledobject.yaml
   - ./vmrule.yaml
 configMapGenerator:
   - name: immich-config-tpl
