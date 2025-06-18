@@ -41,7 +41,7 @@ spec:
       - --ingress-class=external
     # managedRecordTypes: ["CNAME", "TXT"]
     policy: sync
-    sources: ["crd", "ingress", "service"]
+    sources: ["crd", "ingress"]
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters: ["${SECRET_DOMAIN}"]

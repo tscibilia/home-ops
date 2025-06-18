@@ -76,8 +76,6 @@ spec:
         type: LoadBalancer
         annotations:
           coredns.io/hostname: "mx1.${SECRET_DOMAIN}"
-          external-dns.alpha.kubernetes.io/hostname: "mx1.${SECRET_DOMAIN}"
-          external-dns.alpha.kubernetes.io/record-type: "A"
           io.cilium/lb-ipam-ips: 192.168.5.232
         ports:
           smtp:
@@ -87,6 +85,8 @@ spec:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/hostname: "mx1.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/record-type: "A"
         hosts:
           - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
