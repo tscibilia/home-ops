@@ -74,6 +74,7 @@ spec:
             any: true
       extraArgs:
         default-ssl-certificate: cert-manager/${SECRET_DOMAIN/./-}-production-tls
+        udp-services-configmap: network/grey-udp-service
       resources:
         requests:
           cpu: 100m
