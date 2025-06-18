@@ -48,8 +48,6 @@ spec:
           value: *app
         - name: AUTHENTIK_HOST
           value: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-        - name: AUTHENTIK_STORAGE__MEDIA__BACKEND
-          value: file
         - name: AUTHENTIK_POSTGRESQL__PASSWORD
           valueFrom:
             secretKeyRef:
@@ -69,17 +67,11 @@ spec:
         - name: custom-css
           configMap:
             name: authentik-customize
-        - name: media
-          persistentVolumeClaim:
-            claimName: pvc-nfs-media
       volumeMounts:
         - name: custom-css
           mountPath: /web/dist/custom.css
           subPath: custom.css
           readOnly: true
-        - name: media
-          mountPath: /media
-          subPath: torrents/sso
     authentik:
       error_reporting:
         enabled: false
