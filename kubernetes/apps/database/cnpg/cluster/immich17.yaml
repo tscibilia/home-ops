@@ -53,6 +53,11 @@ spec:
   storage:
     size: 20Gi
     storageClass: openebs-hostpath
+  env:
+    - name: AWS_REQUEST_CHECKSUM_CALCULATION
+      value: when_required
+    - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+      value: when_required
 
   backup:
     retentionPolicy: 7d
