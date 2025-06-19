@@ -7,7 +7,8 @@ metadata:
 spec:
   advanced:
     restoreToOriginalReplicaCount: true
-  cooldownPeriod: 0
+  pollingInterval: 60
+  cooldownPeriod: 120
   minReplicaCount: 0
   maxReplicaCount: 1
   scaleTargetRef:
