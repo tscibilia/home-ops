@@ -80,8 +80,9 @@ spec:
       extraArgs:
         external.url: "https://${APP}.${SECRET_DOMAIN}"
         maxLabelsPerTimeseries: "50"
-        search.maxConcurrentRequests: "3"
-        search.maxQueueDuration: "15s"
+        search.maxConcurrentRequests: "6"
+        search.maxQueueDuration: "30s"
+        search.maxQueryDuration: "120s"
       ingress:
         enabled: true
         ingressClassName: internal
