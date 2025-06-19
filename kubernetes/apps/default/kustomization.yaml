@@ -10,7 +10,7 @@ resources:
   - ./authentik/ks.yaml
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
-  # - ./immich/ks.yaml
+  - ./immich/ks.yaml
   - ./komga/ks.yaml
   - ./mealie/ks.yaml
   - ./minio/ks.yaml
