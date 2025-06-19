@@ -26,14 +26,15 @@ spec:
   dependsOn:
     - name: victoria-metrics-crds
       namespace: observability
-  interval: 15m
-  maxHistory: 3
+  interval: 30m
+  maxHistory: 2
   install:
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   uninstall:
     keepHistory: false

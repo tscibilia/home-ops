@@ -5,20 +5,22 @@ kind: HelmRelease
 metadata:
   name: &app fluent-bit
 spec:
-  interval: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   values:
     controllers:
-      fluent-bit:
+      *app :
         type: daemonset
         serviceAccount:
           name: *app

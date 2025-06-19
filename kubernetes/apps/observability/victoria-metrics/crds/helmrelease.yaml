@@ -17,13 +17,13 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: victoria-metrics-crds
+  name: &app victoria-metrics-crds
 spec:
   chartRef:
     kind: OCIRepository
-    name: victoria-metrics-crds
-  interval: 15m
-  maxHistory: 3
+    name: *app
+  interval: 30m
+  maxHistory: 2
   install:
     crds: Create
     remediation:
@@ -31,11 +31,12 @@ spec:
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
   uninstall:
     keepHistory: false
   values:
-    fullnameOverride: victoria-metrics-crds
+    fullnameOverride: *app
     crds:
       enabled: true
       # plain == false results in CRDs being rendered as templates which allows them to be upgraded

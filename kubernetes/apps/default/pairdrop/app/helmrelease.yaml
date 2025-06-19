@@ -5,10 +5,11 @@ kind: HelmRelease
 metadata:
   name: &app pairdrop
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: -1
@@ -17,9 +18,11 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     controllers:
-      pairdrop:
+      *app :
         strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"

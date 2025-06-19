@@ -17,21 +17,25 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: blackbox-exporter
+  name: &app blackbox-exporter
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
-    name: blackbox-exporter
+    name: *app
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
-    fullnameOverride: blackbox-exporter
+    fullnameOverride: *app
     securityContext:
       readOnlyRootFilesystem: true
       allowPrivilegeEscalation: false

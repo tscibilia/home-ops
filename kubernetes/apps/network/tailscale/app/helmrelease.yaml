@@ -19,11 +19,11 @@ kind: HelmRelease
 metadata:
   name: &app tailscale-operator
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: *app
   maxHistory: 2
+  interval: 1h
   install:
     crds: CreateReplace
     remediation:
@@ -34,6 +34,8 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     oauthSecretVolume:
       secret:
