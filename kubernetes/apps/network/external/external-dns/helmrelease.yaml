@@ -5,7 +5,6 @@ kind: HelmRelease
 metadata:
   name: &app external-dns
 spec:
-  interval: 1h
   chart:
     spec:
       chart: external-dns
@@ -14,6 +13,8 @@ spec:
         kind: HelmRepository
         name: external-dns
         namespace: flux-system
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: 3
@@ -22,6 +23,8 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     fullnameOverride: *app
     provider: cloudflare
@@ -29,7 +32,7 @@ spec:
       - name: CF_API_TOKEN
         valueFrom:
           secretKeyRef:
-            name: external-dns-secret
+            name: &secret external-dns-secret
             key: api-token
     extraArgs:
       - --cloudflare-dns-records-per-page=1000
@@ -48,4 +51,4 @@ spec:
     serviceMonitor:
       enabled: true
     podAnnotations:
-      secret.reloader.stakater.com/reload: external-dns-secret
+      secret.reloader.stakater.com/reload: *secret

@@ -19,17 +19,21 @@ kind: HelmRelease
 metadata:
   name: &app authentik
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: authentik
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     global:
       fullnameOverride: *app

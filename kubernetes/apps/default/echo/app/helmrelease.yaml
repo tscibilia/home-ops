@@ -3,25 +3,29 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: echo
+  name: &app echo
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   dependsOn:
     - name: cloudflared
       namespace: network
   values:
     controllers:
-      echo:
+      *app :
         strategy: RollingUpdate
         containers:
           app:
@@ -63,13 +67,13 @@ spec:
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
-        controller: echo
+        controller: *app
         ports:
           http:
             port: *port
     serviceMonitor:
       app:
-        serviceName: echo
+        serviceName: *app
         endpoints:
           - port: http
             scheme: http

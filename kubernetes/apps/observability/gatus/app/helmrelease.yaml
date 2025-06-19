@@ -5,10 +5,11 @@ kind: HelmRelease
 metadata:
   name: &app gatus
 spec:
-  interval: 30m
   chartRef:
     kind: OCIRepository
     name: app-template
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: -1
@@ -19,7 +20,7 @@ spec:
       retries: 3
   values:
     controllers:
-      gatus:
+      *app :
         replicas: 1
         strategy: Recreate
         annotations:

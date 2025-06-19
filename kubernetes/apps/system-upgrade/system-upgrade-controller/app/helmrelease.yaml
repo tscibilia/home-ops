@@ -5,20 +5,24 @@ kind: HelmRelease
 metadata:
   name: &app system-upgrade-controller
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
+  maxHistory: 2
+  interval: 1h
   install:
     remediation:
       retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
+  uninstall:
+    keepHistory: false
   values:
     controllers:
-      system-upgrade-controller:
+      *app :
         strategy: RollingUpdate
         replicas: 2
         containers:
@@ -44,7 +48,7 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
         serviceAccount:
-          identifier: system-upgrade-controller
+          identifier: *app
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -59,12 +63,12 @@ spec:
             roles: ["os:admin"]
     rbac:
       bindings:
-        system-upgrade-controller:
+        *app :
           type: ClusterRoleBinding
           roleRef:
             kind: ClusterRole
             name: cluster-admin
           subjects:
-            - identifier: system-upgrade-controller
+            - identifier: *app
     serviceAccount:
-      system-upgrade-controller: {}
+      *app : {}
