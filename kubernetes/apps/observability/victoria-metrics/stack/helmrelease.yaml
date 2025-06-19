@@ -78,12 +78,12 @@ spec:
           limits:
             cpu: 3000m
             memory: 6Gi
-        extraArgs:
-          # external.url: "https://${APP}.${SECRET_DOMAIN}"
-          maxLabelsPerTimeseries: "50"
-          maxConcurrentRequests: "6"
-          maxQueueDuration: "30s"
-          maxQueryDuration: "120s"
+        # extraArgs:
+        #   external.url: "https://${APP}.${SECRET_DOMAIN}"
+        #   maxLabelsPerTimeseries: "50"
+        #   maxConcurrentRequests: "6"
+        #   maxQueueDuration: "30s"
+        #   maxQueryDuration: "120s"
       ingress:
         enabled: true
         ingressClassName: internal
