@@ -60,29 +60,30 @@ spec:
           create: false
 
     vmsingle:
-      # -- Data retention period. Possible units character: h(ours), d(ays), w(eeks), y(ears), if no unit character specified - month. The minimum retention period is 24h. See these [docs](https://docs.victoriametrics.com/single-server-victoriametrics/#retention)
-      retentionPeriod: "2"
-      replicaCount: 1
-      storage:
-        accessModes:
-          - ReadWriteOnce
+      spec:
+        # -- Data retention period. Possible units character: h(ours), d(ays), w(eeks), y(ears), if no unit character specified - month. The minimum retention period is 24h. See these [docs](https://docs.victoriametrics.com/single-server-victoriametrics/#retention)
+        retentionPeriod: "2"
+        replicaCount: 1
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
+          storageClassName: ceph-rbd
         resources:
           requests:
-            storage: 20Gi
-        storageClassName: ceph-rbd
-      resources:
-        requests:
-          cpu: "2"
-          memory: 4Gi
-        limits:
-          cpu: "4"
-          memory: 6Gi
-      extraArgs:
-        external.url: "https://${APP}.${SECRET_DOMAIN}"
-        maxLabelsPerTimeseries: "50"
-        search.maxConcurrentRequests: "6"
-        search.maxQueueDuration: "30s"
-        search.maxQueryDuration: "120s"
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 3000m
+            memory: 6Gi
+        extraArgs:
+          external.url: "https://${APP}.${SECRET_DOMAIN}"
+          maxLabelsPerTimeseries: "50"
+          maxConcurrentRequests: "6"
+          maxQueueDuration: "30s"
+          maxQueryDuration: "120s"
       ingress:
         enabled: true
         ingressClassName: internal
