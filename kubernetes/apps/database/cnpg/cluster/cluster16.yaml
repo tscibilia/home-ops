@@ -32,6 +32,14 @@ spec:
       memory: 2Gi
   monitoring:
     enablePodMonitor: true
+  # https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
+  env:
+    - name: AWS_REQUEST_CHECKSUM_CALCULATION
+      value: when_required
+    - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+      value: when_required
+    - name: TZ
+      value: America/New_York
 
   backup:
     retentionPolicy: 7d
