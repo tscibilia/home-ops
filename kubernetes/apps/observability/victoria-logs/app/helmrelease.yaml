@@ -50,6 +50,6 @@ spec:
         enabled: true
         pathType: Prefix
         hosts:
-          - name: "${APP}.${SECRET_DOMAIN}"
+          - name: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             path: /
             port: http

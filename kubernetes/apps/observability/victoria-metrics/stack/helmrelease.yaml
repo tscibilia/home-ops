@@ -78,7 +78,7 @@ spec:
           memory: 4Gi
       extraArgs:
         maxLabelsPerTimeseries: "50"
-        external.url: "https://vm.${SECRET_DOMAIN}"
+        external.url: "https://${APP}.${SECRET_DOMAIN}"
         search.maxConcurrentRequests: "4"
         search.maxQueueDuration: "15s"
       ingress:
