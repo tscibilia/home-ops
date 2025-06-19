@@ -79,7 +79,7 @@ spec:
             cpu: 3000m
             memory: 6Gi
         extraArgs:
-          external.url: "https://${APP}.${SECRET_DOMAIN}"
+          # external.url: "https://${APP}.${SECRET_DOMAIN}"
           maxLabelsPerTimeseries: "50"
           maxConcurrentRequests: "6"
           maxQueueDuration: "30s"
