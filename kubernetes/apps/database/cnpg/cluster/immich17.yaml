@@ -54,26 +54,26 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
 
-  backup:
-    retentionPolicy: 7d
-    barmanObjectStore: &barmanObjectStore
-      data:
-        compression: bzip2
-      wal:
-        compression: bzip2
-        maxParallel: 4
-      destinationPath: s3://${AWS_CNPG_BUCKET}
-      endpointURL: https://${AWS_ENDPOINT}
-      # Note: serverName version needs to be incremented
-      # when recovering from an existing cnpg cluster
-      serverName: &currentCluster immich17-v1
-      s3Credentials:
-        accessKeyId:
-          name: cnpg-secret
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: cnpg-secret
-          key: AWS_SECRET_ACCESS_KEY
+  # backup:
+  #   retentionPolicy: 7d
+  #   barmanObjectStore: &barmanObjectStore
+  #     data:
+  #       compression: bzip2
+  #     wal:
+  #       compression: bzip2
+  #       maxParallel: 4
+  #     destinationPath: s3://${AWS_CNPG_BUCKET}
+  #     endpointURL: https://${AWS_ENDPOINT}
+  #     # Note: serverName version needs to be incremented
+  #     # when recovering from an existing cnpg cluster
+  #     serverName: &currentCluster immich17-v1
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: cnpg-secret
+  #         key: AWS_ACCESS_KEY_ID
+  #       secretAccessKey:
+  #         name: cnpg-secret
+  #         key: AWS_SECRET_ACCESS_KEY
 
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
   # externalClusters:
