@@ -78,6 +78,8 @@ spec:
       extraArgs:
         maxLabelsPerTimeseries: "50"
         external.url: "https://vm.${SECRET_DOMAIN}"
+        search.maxConcurrentRequests: "4"
+        search.maxQueueDuration: "15s"
       ingress:
         enabled: true
         ingressClassName: internal
