@@ -72,10 +72,11 @@ spec:
         storageClassName: ceph-rbd
       resources:
         requests:
-          cpu: 500m
-          memory: 2Gi
-        limits:
+          cpu: 2
           memory: 4Gi
+        limits:
+          cpu: 4
+          memory: 6Gi
       extraArgs:
         external.url: "https://${APP}.${SECRET_DOMAIN}"
         maxLabelsPerTimeseries: "50"
