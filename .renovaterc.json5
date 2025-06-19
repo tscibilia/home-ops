@@ -130,6 +130,15 @@
       },
     },
     {
+      description: "Immich Group",
+      groupName: "Immich",
+      matchPackageNames: ["/immich/"],
+      matchDatasources: ["docker"],
+      group: {commitMessageTopic: "{{{groupName}}}"},
+      separateMinorPatch: true,
+      sourceUrl: "https://github.com/immich-app/immich",
+    },
+    {
       description: 'Rook-Ceph Group',
       groupName: 'Rook-Ceph',
       matchDatasources: [
