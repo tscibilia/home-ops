@@ -77,9 +77,9 @@ spec:
         limits:
           memory: 4Gi
       extraArgs:
-        maxLabelsPerTimeseries: "50"
         external.url: "https://${APP}.${SECRET_DOMAIN}"
-        search.maxConcurrentRequests: "4"
+        maxLabelsPerTimeseries: "50"
+        search.maxConcurrentRequests: "3"
         search.maxQueueDuration: "15s"
       ingress:
         enabled: true
@@ -88,13 +88,13 @@ spec:
           nginx.ingress.kubernetes.io/auth-url: |-
             http://ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
           nginx.ingress.kubernetes.io/auth-signin: |-
-            https://vm.${SECRET_DOMAIN}/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
+            https://${APP}.${SECRET_DOMAIN}/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
           nginx.ingress.kubernetes.io/auth-response-headers: |-
             Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid,X-authentik-entitlements
           nginx.ingress.kubernetes.io/auth-snippet: |
             proxy_set_header X-Forwarded-Host $http_host;
         hosts:
-          - "vm.${SECRET_DOMAIN}"
+          - "${APP}.${SECRET_DOMAIN}"
 
     alertmanager:
       useManagedConfig: true
