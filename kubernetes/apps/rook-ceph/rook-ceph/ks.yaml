@@ -64,7 +64,8 @@ spec:
   timeout: 15m
   wait: false
   patches:
-    - target:
+    - # modify ServiceMonitor to only scrape the mgr service on primary node
+      target:
         kind: ServiceMonitor
         name: rook-ceph-mgr
         namespace: rook-ceph
