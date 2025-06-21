@@ -40,6 +40,20 @@ spec:
     - name: job
       value: rook-ceph-mgr-external
       isRegex: false
+# ---
+# # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.giantswarm.io/silence_v1alpha1.json
+# apiVersion: monitoring.giantswarm.io/v1alpha1
+# kind: Silence
+# metadata:
+#   name: ceph-mgr-toomanyscrapeerrors
+# spec:
+#   matchers:
+#     - name: alertname
+#       value: TooManyScrapeErrors
+#       isRegex: false
+#     - name: job
+#       value: vmagent-stack
+#       isRegex: false
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.giantswarm.io/silence_v1alpha1.json
 apiVersion: monitoring.giantswarm.io/v1alpha1
