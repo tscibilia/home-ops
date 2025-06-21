@@ -7,3 +7,5 @@ resources:
   - ./helmrelease.yaml
   - ./monitorconfig.yaml
   - ./storageclass.yaml
+patchesStrategicMerge:
+  - ./servicemonitor-patch.yaml
