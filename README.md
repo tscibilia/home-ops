@@ -89,6 +89,7 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 
 - [aKeyless](https://akeyless.io): Managing secrets via external-secrets.
 - [Cloudflare](https://cloudflare.com/): Tunnels for exposing services and DNS provider.
+- [Cloudinary](https://cloudinary.com/): Image hosting for plex newsletter posters.
 - [Backblaze B2](https://www.backblaze.com/): Daily backups from volsync and cnpg.
 - [Amazon SES](https://aws.amazon.com/ses/): Sending system emails.
 - [Pushover](https://pushover.net/): Sending push notifications to mobile.
