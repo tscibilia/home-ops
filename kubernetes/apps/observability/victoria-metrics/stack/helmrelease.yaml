@@ -193,10 +193,14 @@ spec:
             memory: 256Mi
           limits:
             memory: 512Mi
-        extraScrapeConfigs: []
 
     grafana:
       enabled: false
+
+    external:
+      grafana:
+        host: "https://grafana.${SECRET_DOMAIN}"
+        datasource: Prometheus
 
     kube-state-metrics:
       livenessProbe:
