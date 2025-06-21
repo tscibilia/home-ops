@@ -63,3 +63,15 @@ spec:
   targetNamespace: *namespace
   timeout: 15m
   wait: false
+  patches:
+    - target:
+        kind: ServiceMonitor
+        name: rook-ceph-mgr
+        namespace: rook-ceph
+      patch: |-
+        - op: add
+          path: /spec/endpoints/0/relabelings
+          value:
+            - sourceLabels: ["__address__"]
+              regex: 10.10.10.1:9283
+              action: keep
