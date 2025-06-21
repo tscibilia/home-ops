@@ -193,6 +193,14 @@ spec:
             memory: 256Mi
           limits:
             memory: 512Mi
+        extraScrapeConfigs: []
+      vmScrape:
+        spec:
+          metricRelabelConfigs:
+            # Drop nodes not typically a rook-ceph-mgr.
+            - source_labels: [__address__]
+              regex: 10.10.10.1:9283
+              action: keep
 
     grafana:
       enabled: false
