@@ -70,14 +70,9 @@ spec:
         name: rook-ceph-mgr
         namespace: rook-ceph
       patch: |-
-        - op: replace
-        path: /spec/endpoints
+        - op: add
+        path: /spec/endpoints/0/relabelings
         value:
-          - port: http-external-metrics
-            path: /metrics
-            interval: 15s
-            honorLabels: true
-            relabelings:
-              - sourceLabels: ["__address__"]
-                regex: 10.10.10.1:9283
-                action: keep
+          - sourceLabels: ["__address__"]
+            regex: 10.10.10.1:9283
+            action: keep
