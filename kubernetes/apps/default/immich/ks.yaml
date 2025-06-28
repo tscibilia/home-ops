@@ -37,7 +37,7 @@ spec:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
       name: *postgresAppName
-      namespace: *namespace
+      namespace: database
   healthCheckExprs:
     - apiVersion: *postgresVersion
       kind: *postgresKind
