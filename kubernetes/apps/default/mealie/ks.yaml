@@ -29,10 +29,20 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: mp
       GATUS_PATH: /api/app/about
-      CNPG_NAME: postgres16
+      CNPG_NAME: &postgresAppName postgres16
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
+  healthChecks:
+    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
+      kind: &postgresKind Cluster
+      name: *postgresAppName
+      namespace: database
+  healthCheckExprs:
+    - apiVersion: *postgresVersion
+      kind: *postgresKind
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   prune: true
   retryInterval: 2m
   sourceRef:
