@@ -84,11 +84,11 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
 
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  # externalClusters:
-  #   - name: *previousCluster
-  #     barmanObjectStore:
-  #       <<: *barmanObjectStore
-  #       serverName: *previousCluster
+  externalClusters:
+    - name: *previousCluster
+      barmanObjectStore:
+        <<: *barmanObjectStore
+        serverName: *previousCluster
   #   - name: *previousCluster
   #     connectionParameters:
   #       host: immich.database.svc.cluster.local
