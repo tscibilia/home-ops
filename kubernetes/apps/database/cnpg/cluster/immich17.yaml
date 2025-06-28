@@ -24,9 +24,8 @@ spec:
   enableSuperuserAccess: true
   monitoring:
     enablePodMonitor: true
-  nodeMaintenanceWindow:
-    inProgress: false
-    reusePVC: true
+  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
+  enablePDB: true
   postgresql:
     shared_preload_libraries: ["vchord.so"]
     pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
@@ -48,7 +47,7 @@ spec:
   storage:
     size: 20Gi
     storageClass: openebs-hostpath
-  # https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
+  # Fix for non AWS backup https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
   env:
     - name: AWS_REQUEST_CHECKSUM_CALCULATION
       value: when_required
@@ -78,17 +77,17 @@ spec:
           name: cnpg-secret
           key: AWS_SECRET_ACCESS_KEY
 
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
-  bootstrap:
-    recovery:
-      source: &previousCluster immich17-v1
-  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-    - name: *previousCluster
-      barmanObjectStore:
-        <<: *barmanObjectStore
-        serverName: *previousCluster
+  # # Note: previousCluster needs to be set to the name of the previous
+  # # cluster when recovering from an existing cnpg cluster
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster immich17-v1
+  # # Note: externalClusters is needed when recovering from an existing cnpg cluster
+  # externalClusters:
+  #   - name: *previousCluster
+  #     barmanObjectStore:
+  #       <<: *barmanObjectStore
+  #       serverName: *previousCluster
   #   - name: *previousCluster
   #     connectionParameters:
   #       host: immich.database.svc.cluster.local

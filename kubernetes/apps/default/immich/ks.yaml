@@ -28,11 +28,21 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: img
       GATUS_PATH: /api/server/ping
-      CNPG_NAME: immich17
+      CNPG_NAME: &postgresAppName immich17
       PG_VER: "17"
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
+  healthChecks:
+    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
+      kind: &postgresKind Cluster
+      name: *postgresAppName
+      namespace: *namespace
+  healthCheckExprs:
+    - apiVersion: *postgresVersion
+      kind: *postgresKind
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   prune: true
   retryInterval: 1m
   sourceRef:
