@@ -9,7 +9,7 @@ spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.2
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
-  bootstrap:
+  # bootstrap:
   #   initdb:
   #     postInitSQL:
   #       - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
@@ -19,11 +19,6 @@ spec:
   #       source:
   #         externalCluster: &previousCluster immich-v1
   #       type: monolith
-
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
-    recovery:
-      source: &previousCluster immich-v1
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
@@ -83,6 +78,11 @@ spec:
           name: cnpg-secret
           key: AWS_SECRET_ACCESS_KEY
 
+  # Note: previousCluster needs to be set to the name of the previous
+  # cluster when recovering from an existing cnpg cluster
+  bootstrap:
+    recovery:
+      source: &previousCluster immich17-v1
   # Note: externalClusters is needed when recovering from an existing cnpg cluster
   externalClusters:
     - name: *previousCluster
