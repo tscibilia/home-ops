@@ -23,22 +23,22 @@ spec:
             command: ["/bin/sh", "-c"]
             args: ["/opt/guacamole/bin/initdb.sh --postgresql | tee /migrations/initdb.sql"]
             env:
-              POSTGRESQL_HOSTNAME:
+              POSTGRESQL_HOSTNAME: &host
                 valueFrom:
                   secretKeyRef:
                     name: guacamole-pguser-secret
                     key: host
-              POSTGRESQL_DATABASE:
+              POSTGRESQL_DATABASE: &db
                 valueFrom:
                   secretKeyRef:
                     name: guacamole-pguser-secret
                     key: db
-              POSTGRESQL_USER:
+              POSTGRESQL_USERNAME: &user
                 valueFrom:
                   secretKeyRef:
                     name: guacamole-pguser-secret
                     key: user
-              POSTGRESQL_PASSWORD:
+              POSTGRESQL_PASSWORD: &pass
                 valueFrom:
                   secretKeyRef:
                     name: guacamole-pguser-secret
@@ -75,26 +75,10 @@ spec:
               GUACD_HOSTNAME: guacd.default.svc.cluster.local
               GUACAMOLE_HOME: /guacamole
               GUACD_PORT: "4822"
-              POSTGRESQL_HOSTNAME:
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: host
-              POSTGRESQL_DATABASE:
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: db
-              POSTGRESQL_USER:
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: user
-              POSTGRESQL_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: password
+              POSTGRESQL_HOSTNAME: *host
+              POSTGRESQL_DATABASE: *db
+              POSTGRESQL_USERNAME: *user
+              POSTGRESQL_PASSWORD: *pass
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
