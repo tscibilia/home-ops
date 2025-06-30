@@ -46,7 +46,7 @@ spec:
               repository: docker.io/guacamole/guacamole
               tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
             command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /guacamole/extensions; cp /opt/guacamole/extensions/guacamole-history-recording-storage/*.jar /guacamole/extensions; cp /opt/guacamole/extensions/guacamole-auth-sso/openid/*.jar /guacamole/extensions;"]
+            args: ["mkdir -p /guacamole/extensions; cp /opt/guacamole/extensions/guacamole-history-recording-storage/*.jar /guacamole/extensions;"] # cp /opt/guacamole/extensions/guacamole-auth-sso/openid/*.jar /guacamole/extensions;
           04-init-custom:
             image:
               repository: docker.io/curlimages/curl
