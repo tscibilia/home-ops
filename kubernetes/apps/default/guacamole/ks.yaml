@@ -42,7 +42,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: rdp
-      CNPG_NAME: postgres16
+      CNPG_NAME: &postgresAppName postgres16
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
