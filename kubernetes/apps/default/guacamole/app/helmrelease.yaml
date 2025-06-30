@@ -22,34 +22,16 @@ spec:
               tag: 17@sha256:e0c87ce7df39d06b93f27cf2cc6a056611f13faaa88cc07ab4dc8bf7a85d0b11
             envFrom:
               - secretRef:
-                  name: &secret guacamole-initdb-secret
+                  name: &secret guacamole-secret
           01-init-schema:
             image:
               repository: docker.io/guacamole/guacamole
               tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
             command: ["/bin/sh", "-c"]
             args: ["/opt/guacamole/bin/initdb.sh --postgresql > /migrations/initdb.sql"]
-            env:
-              POSTGRESQL_HOSTNAME: &host
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: host
-              POSTGRESQL_DATABASE: &db
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: db
-              POSTGRESQL_USERNAME: &user
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: user
-              POSTGRESQL_PASSWORD: &pass
-                valueFrom:
-                  secretKeyRef:
-                    name: guacamole-pguser-secret
-                    key: password
+            envFrom:
+              - secretRef:
+                  name: *secret
           02-init-migrations:
             image:
               repository: ghcr.io/home-operations/postgres-init
@@ -64,7 +46,7 @@ spec:
               repository: docker.io/guacamole/guacamole
               tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
             command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /guacamole/extensions; cp /opt/guacamole/extensions/guacamole-auth-totp/*.jar /guacamole/extensions;"]
+            args: ["mkdir -p /guacamole/extensions; cp /opt/guacamole/extensions/guacamole-history-recording-storage/*.jar /guacamole/extensions;"]
           04-init-custom:
             image:
               repository: docker.io/curlimages/curl
@@ -82,10 +64,9 @@ spec:
               GUACD_HOSTNAME: guacd.default.svc.cluster.local
               GUACAMOLE_HOME: /guacamole
               GUACD_PORT: "4822"
-              POSTGRESQL_HOSTNAME: *host
-              POSTGRESQL_DATABASE: *db
-              POSTGRESQL_USERNAME: *user
-              POSTGRESQL_PASSWORD: *pass
+            envFrom:
+              - secretRef:
+                  name: guacamole-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
@@ -125,8 +106,6 @@ spec:
             01-init-schema:
               - path: /migrations
             02-init-migrations:
-              - path: /migrations
-            app:
               - path: /migrations
       plugins:
         type: emptyDir
