@@ -21,7 +21,7 @@ spec:
               repository: docker.io/guacamole/guacamole
               tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
             command: ["/bin/sh", "-c"]
-            args: ["/opt/guacamole/bin/initdb.sh --postgresql > /migrations/initdb.sql"]
+            args: ["/opt/guacamole/bin/initdb.sh --postgresql | tee /migrations/initdb.sql"]
             envFrom: &envFrom
               - secretRef:
                   name: guacamole-initdb-secret
