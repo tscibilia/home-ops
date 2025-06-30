@@ -132,6 +132,8 @@ spec:
           *app :
             app:
               - path: /guacamole
+            02-init-migrations:
+              - path: /migrations
             03-init-plugin:
               - path: /guacamole
             04-init-custom:
