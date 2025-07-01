@@ -14,57 +14,14 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
-        strategy: RollingUpdate
-        initContainers:
-          00-init-db:
-            image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: 17@sha256:e0c87ce7df39d06b93f27cf2cc6a056611f13faaa88cc07ab4dc8bf7a85d0b11
-            envFrom:
-              - secretRef:
-                  name: &secret guacamole-secret
-          01-init-schema:
-            image:
-              repository: docker.io/guacamole/guacamole
-              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
-            command: ["/bin/sh", "-c"]
-            args: ["/opt/guacamole/bin/initdb.sh --postgresql > /migrations/initdb.sql"]
-            envFrom:
-              - secretRef:
-                  name: *secret
-          02-init-migrations:
-            image:
-              repository: ghcr.io/home-operations/postgres-init
-              tag: 17@sha256:e0c87ce7df39d06b93f27cf2cc6a056611f13faaa88cc07ab4dc8bf7a85d0b11
-            command: ["/bin/sh", "-c"]
-            args: ["export PGPASSWORD=$(INIT_POSTGRES_SUPER_PASS); psql -h $(INIT_POSTGRES_HOST) -d $(INIT_POSTGRES_DBNAME) -U $(INIT_POSTGRES_USER) -a -w -f /migrations/initdb.sql || true;"]
-            envFrom:
-              - secretRef:
-                  name: *secret
-          03-init-plugin:
-            image:
-              repository: docker.io/guacamole/guacamole
-              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
-            command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /guacamole/extensions; cp /opt/guacamole/extensions/guacamole-history-recording-storage/*.jar /guacamole/extensions;"]
-          04-init-custom:
-            image:
-              repository: docker.io/curlimages/curl
-              tag: 8.14.1@sha256:9a1ed35addb45476afa911696297f8e115993df459278ed036182dd2cd22b67b
-            command: ["/bin/sh", "-c"]
-            args: ["curl -L -o /guacamole/extensions/branding.jar https://s3.t0m.co/t0m-public/guacamole/branding.jar"]
         containers:
           app:
             image:
-              repository: docker.io/guacamole/guacamole
-              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+              repository: ghcr.io/flcontainers/guacamole
+              tag: testing@sha256:2da4c3a6950db6431164888519d940ad860997ea08002a7676678d7969a7eeea
             env:
               TZ: ${TIMEZONE}
-              WEBAPP_CONTEXT: ROOT
-              GUACD_HOSTNAME: guacd.default.svc.cluster.local
-              GUACAMOLE_HOME: /guacamole
-              GUACD_PORT: "4822"
-              OPENID_ENABLED: "true"
+              EXTENSIONS: auth-sso-openid
             envFrom:
               - secretRef:
                   name: guacamole-secret
@@ -100,21 +57,13 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      migrations:
-        type: emptyDir
-        advancedMounts:
-          *app :
-            01-init-schema:
-              - path: /migrations
-            02-init-migrations:
-              - path: /migrations
-      plugins:
-        type: emptyDir
-        advancedMounts:
-          *app :
-            app:
-              - path: /guacamole
-            03-init-plugin:
-              - path: /guacamole
-            04-init-custom:
-              - path: /guacamole
+      config:
+        existingClaim: *app
+        globalMounts:
+          - path: /config
+      branding:
+        type: configMap
+        name: guacamole-configmap
+        globalMounts:
+        - path: /config/guacamole/extensions/branding.jar
+          subPath: branding.jar
