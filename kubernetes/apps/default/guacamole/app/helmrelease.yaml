@@ -73,6 +73,7 @@ spec:
               GUACD_HOSTNAME: guacd.default.svc.cluster.local
               GUACAMOLE_HOME: /guacamole
               GUACD_PORT: "4822"
+              OPENID_ENABLED: "true"
             envFrom:
               - secretRef:
                   name: guacamole-secret
