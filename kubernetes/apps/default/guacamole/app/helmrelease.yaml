@@ -5,10 +5,21 @@ kind: HelmRelease
 metadata:
   name: &app guacamole
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: app-template
+  maxHistory: 2
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
   values:
     controllers:
       *app :
@@ -65,5 +76,5 @@ spec:
         type: configMap
         name: guacamole-configmap
         globalMounts:
-        - path: /config/guacamole/extensions/branding.jar
-          subPath: branding.jar
+          - path: /config/guacamole/extensions/branding.jar
+            subPath: branding.jar
