@@ -99,7 +99,7 @@ spec:
         server: ${NAS_IP}
         path: /volume1/Media/library
         globalMounts:
-          - path: /Media/library
+          - path: /downloads/library
       downloads:
         type: emptyDir
         globalMounts:
