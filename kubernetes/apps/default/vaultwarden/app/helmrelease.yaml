@@ -30,7 +30,7 @@ spec:
           01-init-branding:
             image:
               repository: docker.io/amazon/aws-cli
-              tag: 2.27.47@sha256:9c09286acba40b27577e630dc6aff4cc44b401eaa81ebda69d3c761bb566def2
+              tag: 2.27.48@sha256:d925bcc8bbae9847680ea6a84c240ab015f3d6a235df211a2796b8d63eeb6f17
             command: ["/bin/sh", "-c"]
             args: ["mkdir -p /data/templates; aws --endpoint-url https://s3.${SECRET_DOMAIN} s3 cp --no-sign-request --recursive s3://t0m-public/vaultwarden/templates/ /data/templates/"]
         containers:
