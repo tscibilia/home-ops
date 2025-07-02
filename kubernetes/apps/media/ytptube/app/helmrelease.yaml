@@ -100,5 +100,9 @@ spec:
         path: /volume1/Media/library
         globalMounts:
           - path: /Media/library
+      downloads:
+        type: emptyDir
+        globalMounts:
+          - path: /downloads
       tmp:
         type: emptyDir
