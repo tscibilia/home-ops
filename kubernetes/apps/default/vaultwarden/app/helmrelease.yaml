@@ -32,7 +32,7 @@ spec:
               repository: docker.io/amazon/aws-cli
               tag: 2.27.47@sha256:9c09286acba40b27577e630dc6aff4cc44b401eaa81ebda69d3c761bb566def2
             command: ["/bin/sh", "-c"]
-            args: ["aws --endpoint-url https://s3.t0m.co s3 cp --no-sign-request --recursive s3://t0m-public/vaultwarden/templates/ /templates/"]
+            args: ["aws --endpoint-url https://s3.t0m.co s3 cp --no-sign-request --recursive s3://t0m-public/vaultwarden/templates/ /data/templates/"]
         containers:
           app:
             image:
@@ -49,7 +49,7 @@ spec:
               DOMAIN: "https://pw.${SECRET_DOMAIN}"
               SHOW_PASSWORD_HINT: "true"
               ICON_SERVICE: "duckduckgo"
-              TEMPLATES_FOLDER: "templates"
+              TEMPLATES_FOLDER: "data/templates"
             envFrom:
               - secretRef:
                   name: vaultwarden-secrets
@@ -101,7 +101,5 @@ spec:
         type: emptyDir
         advancedMounts:
           *app :
-            app:
-              - path: /templates
             01-init-branding:
-              - path: /templates
+              - path: /data/templates
