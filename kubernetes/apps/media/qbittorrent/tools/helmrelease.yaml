@@ -84,12 +84,13 @@ spec:
           app:
             <<: *container
             args: ["reannounce", "--process-seeding"]
-      limiter:
-        containers:
-          app:
-            <<: *container
-            args: ["limiter", "--max-line-speed-mbps", "155", "--max-percent", "0.9", "--limit-percent", "0.45", "--interval", "5"]
-            # ARG of '155' is ~1.24 Gbps on average -> 155MB/s
+      # limiter requires sabnzbd to be running
+      # limiter:
+      #   containers:
+      #     app:
+      #       <<: *container
+      #       args: ["limiter", "--max-line-speed-mbps", "155", "--max-percent", "0.9", "--limit-percent", "0.45", "--interval", "5"]
+      #       # ARG of '155' is ~1.24 Gbps on average -> 155MB/s
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
