@@ -29,10 +29,11 @@ spec:
         initContainers:
           01-init-branding:
             image:
-              repository: docker.io/bitnami/aws-cli
-              tag: 2.27.30@sha256:9f39bc4957559b8736bc7845eb9e443bc8578e15632fc79278a40f965db71999
+              repository: quay.io/minio/mc
+              tag: RELEASE.2025-05-21T01-59-54Z@sha256:09f93f534cde415d192bb6084dd0e0ddd1715fb602f8a922ad121fd2bf0f8b44
             command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /data/templates; aws --endpoint-url https://s3.${SECRET_DOMAIN} s3 cp --no-sign-request --recursive s3://t0m-public/vaultwarden/templates/ /data/templates/"]
+            args: ["mkdir -p /data/templates; mc alias set s3 https://s3.t0m.co '' '' --api S3v4; mc cp --recursive s3/t0m-public/vaultwarden/templates/ /data/templates/"]
+            # args: ["mkdir -p /data/templates; aws --endpoint-url https://s3.${SECRET_DOMAIN} s3 cp --no-sign-request --recursive s3://t0m-public/vaultwarden/templates/ /data/templates/"]
         containers:
           app:
             image:
