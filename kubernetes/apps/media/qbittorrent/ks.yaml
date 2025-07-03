@@ -59,6 +59,10 @@ spec:
   interval: 1h
   retryInterval: 2m
   path: ./kubernetes/apps/media/qbittorrent/tools
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
