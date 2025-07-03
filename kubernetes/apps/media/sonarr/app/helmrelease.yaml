@@ -28,12 +28,21 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/mdhiggins/sonarr-sma
-              tag: "develop@sha256:b6d085cbed26e140c6516c667b6d5e027ccaa18282792a80a847e1d3c39f941e"
+              repository: ghcr.io/home-operations/sonarr
+              tag: 4.0.15.2940@sha256:ca6c735014bdfb04ce043bf1323a068ab1d1228eea5bab8305ca0722df7baf78
             env:
               TZ: ${TIMEZONE}
-              PUID: 1044
-              PGID: 100
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__APP__THEME: dark
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__LOG__DBENABLED: "False"
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: &port 8989
+              SONARR__UPDATE__BRANCH: develop
+            envFrom:
+              - secretRef:
+                  name: sonarr-secret
             resources:
               requests:
                 cpu: 100m
@@ -42,19 +51,30 @@ spec:
                 memory: 2Gi
             probes:
               liveness: &probes
-                enabled: false
+                enabled: true
                 custom: true
                 spec:
                   httpGet:
                     path: ${GATUS_PATH}
-                    port: &port 8989
-                  initialDelaySeconds: 600
+                    port: *port
+                  initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
               startup:
                 enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
     service:
       app:
         controller: *app
@@ -94,20 +114,5 @@ spec:
         path: /volume1/Media
         globalMounts:
           - path: /Media
-      sma-init:
-        type: persistentVolumeClaim
-        existingClaim: pvc-media-nfs
-        globalMounts:
-          - path: /usr/local/sma
-            subPath: torrents/sma-init
-            readOnly: true
-          - path: /usr/local/sma/config
-            subPath: torrents/sma-init/config
-            readOnly: false
-      config-venv:
-        type: emptyDir
-        globalMounts:
-          - path: /usr/local/sma/venv
-            readOnly: false
       tmp:
         type: emptyDir
