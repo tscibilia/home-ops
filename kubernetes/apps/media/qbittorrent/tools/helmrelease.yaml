@@ -59,10 +59,10 @@ spec:
         containers:
           unregistered:
             <<: *container
-            args: ["prune", "--exclude-category", "manual", "--exclude-category", "music", "--exclude-tag", "added:1d", "--include-tag", "unregistered", "--with-data", "--dry-run"]
+            args: ["prune", "--exclude-category", "manual", "--exclude-category", "music", "--exclude-tag", "added:1d", "--include-tag", "unregistered", "--with-data"]
           expired:
             <<: *container
-            args: ["prune", "--exclude-category", "manual", "--exclude-category", "music", "--exclude-tag", "added:1d", "--include-tag", "expired", "--with-data", "--dry-run"]
+            args: ["prune", "--exclude-category", "manual", "--exclude-category", "music", "--exclude-tag", "added:1d", "--include-tag", "expired", "--with-data"]
         pod:
           restartPolicy: Never
       orphaned:
@@ -74,7 +74,7 @@ spec:
         containers:
           app:
             <<: *container
-            args: ["orphaned", "--exclude-pattern", "*_unpackerred*", "--dry-run"]
+            args: ["orphaned", "--exclude-pattern", "*_unpackerred*"]
         pod:
           restartPolicy: Never
       reannounce:
@@ -83,15 +83,15 @@ spec:
             <<: *container
             args: ["reannounce", "--process-seeding"]
       # limiter requires sabnzbd
-      limiter:
-        containers:
-          app:
-            <<: *container
-            envFrom:
-              - secretRef:
-                  name: qbtools-secret
-            args: ["limiter", "--max-line-speed-mbps", "155", "--max-percent", "0.9", "--limit-percent", "0.45", "--interval", "5"]
-            # ARG of '155' is ~1.24 Gbps on average -> 155MB/s
+      # limiter:
+      #   containers:
+      #     app:
+      #       <<: *container
+      #       envFrom:
+      #         - secretRef:
+      #             name: qbtools-secret
+      #       args: ["limiter", "--max-line-speed-mbps", "155", "--max-percent", "0.9", "--limit-percent", "0.45", "--interval", "5"]
+      #       # ARG of '155' is ~1.24 Gbps on average -> 155MB/s
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
