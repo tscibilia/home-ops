@@ -39,7 +39,7 @@ spec:
     - name: AWS_RESPONSE_CHECKSUM_VALIDATION
       value: when_required
     - name: TZ
-      value: America/New_York
+      value: ${TIMEZONE}
 
   backup:
     retentionPolicy: 7d
