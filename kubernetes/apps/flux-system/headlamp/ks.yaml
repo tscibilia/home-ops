@@ -17,7 +17,7 @@ spec:
     - name: rook-ceph-cluster
       namespace: rook-ceph
   interval: 30m
-  path: ./kubernetes/apps/flux-system/headlamp
+  path: ./kubernetes/apps/flux-system/headlamp/app
   postBuild:
     substitute:
       APP: *app
