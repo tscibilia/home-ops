@@ -47,13 +47,6 @@ spec:
         volumeMounts:
           - mountPath: /build/plugins
             name: headlamp-plugins
-    ingress:
-      enabled: true
-      ingressClassName: internal
-      hosts:
-        - host: ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
-          paths:
-            - /
     config:
       pluginsDir: /build/plugins
     serviceAccount:
