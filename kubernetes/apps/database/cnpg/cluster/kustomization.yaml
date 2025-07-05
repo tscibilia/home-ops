@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - ./cluster16.yaml
   - ./externalsecret.yaml
-  - ./immich17.yaml
+  # - ./immich17.yaml
   - ./prometheusrule.yaml
   - ./scheduledbackup.yaml
   - ./service.yaml
