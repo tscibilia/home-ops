@@ -43,6 +43,7 @@ spec:
       # TODO: Enable on next Flux release and remove name & tag
       # REF: https://github.com/fluxcd/helm-controller/pull/1212
       name: giantswarm/silence-operator
+      # renovate: datasource=docker depName=quay.io/giantswarm/silence-operator
       tag: 0.17.0
     networkPolicy:
       enabled: false
