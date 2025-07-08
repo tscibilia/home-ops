@@ -25,13 +25,13 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          01-init-plugin:
-            image:
-              repository: docker.io/curlimages/curl
-              tag: 8.14.1@sha256:9a1ed35addb45476afa911696297f8e115993df459278ed036182dd2cd22b67b
-            command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /config/guacamole/extensions; curl -L -o /config/guacamole/extensions/branding.jar https://s3.t0m.co/t0m-public/guacamole/branding.jar"]
+        # initContainers:
+        #   01-init-plugin:
+        #     image:
+        #       repository: docker.io/curlimages/curl
+        #       tag: 8.14.1@sha256:9a1ed35addb45476afa911696297f8e115993df459278ed036182dd2cd22b67b
+        #     command: ["/bin/sh", "-c"]
+        #     args: ["mkdir -p /config/guacamole/extensions; curl -L -o /config/guacamole/extensions/branding.jar https://s3.t0m.co/t0m-public/guacamole/branding.jar"]
         containers:
           app:
             image:
@@ -76,7 +76,8 @@ spec:
                   port: http
     persistence:
       config:
-        existingClaim: *app
+        # existingClaim: *app
+        type: emptyDir
         globalMounts:
           - path: /config
       # branding:
