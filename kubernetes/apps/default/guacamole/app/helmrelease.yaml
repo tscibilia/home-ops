@@ -25,11 +25,18 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-plugin:
+            image:
+              repository: docker.io/curlimages/curl
+              tag: 8.14.1@sha256:9a1ed35addb45476afa911696297f8e115993df459278ed036182dd2cd22b67b
+            command: ["/bin/sh", "-c"]
+            args: ["mkdir -p /config/guacamole/extensions; curl -L -o /config/guacamole/extensions/branding.jar https://s3.t0m.co/t0m-public/guacamole/branding.jar"]
         containers:
           app:
             image:
               repository: ghcr.io/flcontainers/guacamole
-              tag: testing@sha256:2da4c3a6950db6431164888519d940ad860997ea08002a7676678d7969a7eeea
+              tag: testing@sha256:ad6f0c606fbe9368d6b8ade0e284ed1e974b558ce98cc40bd49c95a49cf5f196
             env:
               TZ: ${TIMEZONE}
               # EXTENSIONS: auth-sso-openid
@@ -72,9 +79,9 @@ spec:
         existingClaim: *app
         globalMounts:
           - path: /config
-      branding:
-        type: configMap
-        name: guacamole-configmap
-        globalMounts:
-          - path: /config/guacamole/extensions/branding.jar
-            subPath: branding.jar
+      # branding:
+      #   type: configMap
+      #   name: guacamole-configmap
+      #   globalMounts:
+      #     - path: /config/guacamole/extensions/branding.jar
+      #       subPath: branding.jar
