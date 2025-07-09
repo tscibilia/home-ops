@@ -39,7 +39,7 @@ spec:
               tag: testing@sha256:ad6f0c606fbe9368d6b8ade0e284ed1e974b558ce98cc40bd49c95a49cf5f196
             env:
               TZ: ${TIMEZONE}
-              EXTENSIONS: auth-sso-openid
+              # EXTENSIONS: auth-sso-openid
             envFrom:
               - secretRef:
                   name: guacamole-secret
