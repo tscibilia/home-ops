@@ -40,6 +40,7 @@ spec:
             env:
               TZ: ${TIMEZONE}
               EXTENSIONS: auth-sso-openid
+              GUACD_LOG_LEVEL: debug
             envFrom:
               - secretRef:
                   name: guacamole-secret
