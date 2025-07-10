@@ -39,10 +39,7 @@ spec:
     fullnameOverride: *app
     initContainers:
       - image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:v0.3.0@sha256:1e68d403c3327d86b3966a1c86643d1fa6e9971595c0c7bb2cfd2ff38e555aa2
-        command:
-          - /bin/sh
-          - -c
-          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/
+        command: ["/bin/sh", "-c", "mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/"]
         name: headlamp-plugins
         volumeMounts:
           - mountPath: /build/plugins
@@ -56,10 +53,9 @@ spec:
       create: false
     persistentVolumeClaim:
       enabled: true
-      accessModes:
-        - ReadWriteMany
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: openebs-hostpath
       size: 1G
-      storageClassName: cephfs
     volumeMounts:
       - mountPath: /build/plugins
         name: headlamp-plugins
