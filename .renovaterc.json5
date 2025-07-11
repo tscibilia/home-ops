@@ -177,10 +177,20 @@
       ],
     },
     {
-      "description": ["Loose versioning for non-semver containers"],
+      "description": ["Only update SearXNG when minor version changes"],
       "matchDatasources": ["docker"],
       "matchPackagePatterns": ["searxng"],
-      "versioning": "loose"
+      "extractVersion": "^([0-9]+\\.[0-9]+\\.[0-9]+)",
+      "semanticCommits": false,
+      "major": {
+        "enabled": true
+      },
+      "minor": {
+        "enabled": true
+      },
+      "patch": {
+        "enabled": false
+      }
     },
     {
       description: 'Don’t open PRs for this image at all',
