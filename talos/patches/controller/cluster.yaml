@@ -6,6 +6,10 @@ cluster:
       enable-aggregator-routing: true
       feature-gates: MutatingAdmissionPolicy=true
       runtime-config: admissionregistration.k8s.io/v1alpha1=true
+      oidc-client-id: "${OIDC_CLIENT_ID}"
+      oidc-issuer-url: "${OIDC_ISSUER_URL}"
+      oidc-username-claim: preferred_username
+      oidc-groups-claim: groups
   controllerManager:
     extraArgs:
       bind-address: 0.0.0.0

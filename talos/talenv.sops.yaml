@@ -1,0 +1,18 @@
+OIDC_CLIENT_ID: ENC[AES256_GCM,data:+Vt/ttYEIRjqWRrlNQhugJ4hR6qjI301LodAoI815ak4ZEU2uzryhA==,iv:tn+2WWx4Djy8JGKI1Hrxrw64N5ejnuLWlVl5qlXRUio=,tag:zjWkl+CiXDWkC9yB0QFatg==,type:str]
+OIDC_ISSUER_URL: ENC[AES256_GCM,data:apts1Tv5hpqjwXJDmg1hb6hck6xwLXoyeItunRhQZbPcjbAJhDWhiAGOHA==,iv:IU1Gz9DNrZeGrvmvNBNgM5knMTb7/GnJ2+OGsURnrT8=,tag:trLNWebmG4SviDCbufvqpQ==,type:str]
+sops:
+  age:
+    - recipient: age1qm2n4kev6p96vftkelnq9atayy20hpzcwclmfra4e3lq20jhtatqxfk4j0
+      enc: |
+        -----BEGIN AGE ENCRYPTED FILE-----
+        YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBsVzZVdmJPUDFTQXYzd2ox
+        ZkdnbkppVi9DaUpVUUpISWw5ZjhvMFFVeW1RCm1LcnVpRVRXVk12eUtEQ0dPb2JN
+        My9seWN0L1orVTlMaEVETlVjYVBrYkUKLS0tIDdyNzl2YUZuZnR3Mm51U01vWWM3
+        bGg3VGd6REx1UmkzWlRXWjVPdDJTZE0KhzKegLWtTVxzmmzxCo2nqQq82Mo9CXTz
+        3SFE7XcoEjNzcpL56voTM+rWxLFneN8UVCnuaDOHtW+kiL4MwJje1Q==
+        -----END AGE ENCRYPTED FILE-----
+  lastmodified: "2025-07-11T15:05:48Z"
+  mac: ENC[AES256_GCM,data:LCRclrAerKjzlTeR/MtHFy+sNTMzIXYA2LYWU5UlT6hP1nfvwmWiDIpYl1WI88irEBzEJ3SteKLRn4SBRyDltQ/NbVllMFlXl14tx7At0eTGLK0E5TU6XHBtzMW6vODfOPbMLGl88DrDoj1HH9b2kJN4vJMGKebTcoFU7DS8HTM=,iv:0mjy0SXqxt+k1KlSreW3Yr0O2YLIK691rnRHSwGJoXU=,tag:UAyFnb8RNAESMqRe5M+TKQ==,type:str]
+  unencrypted_suffix: _unencrypted
+  mac_only_encrypted: true
+  version: 3.10.2
