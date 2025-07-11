@@ -30,3 +30,6 @@ subjects:
   - kind: ServiceAccount
     name: *name
     namespace: flux-system
+  - kind: Group
+    name: authentik-Admins
+    apiGroup: rbac.authorization.k8s.io

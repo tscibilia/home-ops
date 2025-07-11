@@ -50,8 +50,10 @@ spec:
         secret:
           create: false
         externalSecret:
-          enabled: false #keep getting auth errors, upon oidc login i instantly get logged out
+          enabled: true #keep getting auth errors, upon oidc login i instantly get logged out https://github.com/kubernetes-sigs/headlamp/issues/3441
           name: headlamp-secret
+      extraArgs:
+        - "-oidc-groups-claim=groups"
     env:
       - name: HEADLAMP_CONFIG_TRACING_ENABLED
         value: "false"
