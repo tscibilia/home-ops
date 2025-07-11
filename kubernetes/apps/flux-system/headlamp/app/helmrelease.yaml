@@ -56,7 +56,7 @@ spec:
       - name: HEADLAMP_CONFIG_TRACING_ENABLED
         value: "false"
       - name: HEADLAMP_CONFIG_METRICS_ENABLED
-        value: "false"
+        value: "true"
     serviceAccount:
       create: false
       name: headlamp-admin
