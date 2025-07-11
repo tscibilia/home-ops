@@ -52,20 +52,20 @@ spec:
         externalSecret:
           enabled: true
           name: headlamp-secret
+    env:
+      - name: HEADLAMP_CONFIG_TRACING_ENABLED
+        value: "false"
+      - name: HEADLAMP_CONFIG_METRICS_ENABLED
+        value: "false"
     serviceAccount:
       create: false
       name: headlamp-admin
     clusterRoleBinding:
       create: false
-    persistentVolumeClaim:
-      enabled: true
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: openebs-hostpath
-      size: 1G
     volumeMounts:
       - mountPath: /build/plugins
         name: headlamp-plugins
     volumes:
       - name: headlamp-plugins
-        persistentVolumeClaim:
-          claimName: *app
+        emptyDir:
+          sizeLimit: 100Mi
