@@ -37,7 +37,7 @@ spec:
           app:
             image:
               repository: ghcr.io/mealie-recipes/mealie
-              tag: v2.8.0@sha256:63aef46d90975d9cf9c0fdb9399fc2fe36acd222e1db6be99c504b9ccdbee967
+              tag: v3.0.0@sha256:6d6efd40f9758142202362195dabdf7eb9a9761a32bf8931289b2d89d2ec98b3
             env:
               DB_ENGINE: "postgres"
               POSTGRES_DB: *app
@@ -59,6 +59,7 @@ spec:
                     key: port
               # Base Values
               ALLOW_SIGNUP: "false"
+              ALLOW_PASSWORD_LOGIN: "false"
               API_DOCS: "false"
               BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               MAX_WORKERS: "1"
@@ -68,7 +69,6 @@ spec:
               # OIDC Values
               OIDC_AUTH_ENABLED: "true"
               OIDC_SIGNUP_ENABLED: "true"
-              OIDC_CONFIGURATION_URL: "https://auth.${SECRET_DOMAIN}/application/o/mealie/.well-known/openid-configuration"
               OIDC_USER_GROUP: Plex User
               OIDC_ADMIN_GROUP: authentik Admins
               OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
