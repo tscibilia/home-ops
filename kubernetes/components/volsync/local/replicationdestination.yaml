@@ -13,12 +13,12 @@ spec:
     repository: "${APP}-volsync-secret"
     copyMethod: Snapshot
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=ceph-rbd-snapshot}"
-    cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=ceph-rbd}"
+    cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=openebs-hostpath}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
-    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=2Gi}"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-rbd}"
     accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
-    capacity: "${VOLSYNC_CAPACITY:=1Gi}"
+    capacity: "${VOLSYNC_CAPACITY:=2Gi}"
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=100}
