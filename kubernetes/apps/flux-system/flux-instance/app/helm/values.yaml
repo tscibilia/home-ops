@@ -55,38 +55,38 @@ instance:
                   - name: manager
                     resources:
                       limits:
-                        memory: 1Gi
+                        memory: 2Gi
         target:
           kind: Deployment
           name: (kustomize-controller|helm-controller|source-controller)
-      # - # Enable in-memory kustomize builds
-      #   patch: |
-      #     - op: add
-      #       path: /spec/template/spec/containers/0/args/-
-      #       value: --concurrent=10
-      #     - op: replace
-      #       path: /spec/template/spec/volumes/0
-      #       value:
-      #         name: temp
-      #         emptyDir:
-      #           medium: Memory
-      #   target:
-      #     kind: Deployment
-      #     name: kustomize-controller
-      # - # Enable Helm repositories caching
-      #   patch: |
-      #     - op: add
-      #       path: /spec/template/spec/containers/0/args/-
-      #       value: --helm-cache-max-size=10
-      #     - op: add
-      #       path: /spec/template/spec/containers/0/args/-
-      #       value: --helm-cache-ttl=60m
-      #     - op: add
-      #       path: /spec/template/spec/containers/0/args/-
-      #       value: --helm-cache-purge-interval=5m
-      #   target:
-      #     kind: Deployment
-      #     name: source-controller
+      - # Enable in-memory kustomize builds
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --concurrent=10
+          - op: replace
+            path: /spec/template/spec/volumes/0
+            value:
+              name: temp
+              emptyDir:
+                medium: Memory
+        target:
+          kind: Deployment
+          name: kustomize-controller
+      - # Enable Helm repositories caching
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --helm-cache-max-size=10
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --helm-cache-ttl=60m
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --helm-cache-purge-interval=5m
+        target:
+          kind: Deployment
+          name: source-controller
       - # Flux near OOM detection for Helm
         patch: |
           - op: add
@@ -98,6 +98,14 @@ instance:
           - op: add
             path: /spec/template/spec/containers/0/args/-
             value: --oom-watch-interval=500ms
+        target:
+          kind: Deployment
+          name: helm-controller
+      - # Disable chart digest tracking (https://github.com/fluxcd/helm-controller/pull/1212)
+        patch: |
+          - op: add
+            path: /spec/template/spec/containers/0/args/-
+            value: --feature-gates=DisableChartDigestTracking=true
         target:
           kind: Deployment
           name: helm-controller
