@@ -10,15 +10,15 @@ spec:
   trigger:
     manual: restore-once
   restic:
-    repository: "${APP}-volsync-secret"
+    repository: "${APP}-volsync${VOLSYNC_REPOSITORY}-secret" # defaults to local, "-b2" for remote
     copyMethod: Snapshot
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=ceph-rbd-snapshot}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=openebs-hostpath}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
-    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=2Gi}"
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-rbd}"
     accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
-    capacity: "${VOLSYNC_CAPACITY:=2Gi}"
+    capacity: "${VOLSYNC_CAPACITY:=5Gi}"
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=100}
