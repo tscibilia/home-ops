@@ -161,14 +161,14 @@ spec:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/kubernetes
-          # - name: unifi
-          #   orgId: 1
-          #   folder: Unifi
-          #   type: file
-          #   disableDeletion: false
-          #   editable: true
-          #   options:
-          #     path: /var/lib/grafana/dashboards/unifi
+          - name: unifi
+            orgId: 1
+            folder: Unifi
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/unifi
           - name: media
             orgId: 1
             folder: Media
@@ -319,32 +319,32 @@ spec:
           gnetId: 15760
           revision: 36
           datasource: Prometheus
-      # unifi:
-      #   unifi-insights:
-      #     # renovate: depName="UniFi-Poller: Client Insights - Prometheus"
-      #     gnetId: 11315
-      #     revision: 9
-      #     datasource: Prometheus
-      #   unifi-network-sites:
-      #     # renovate: depName="UniFi-Poller: Network Sites - Prometheus"
-      #     gnetId: 11311
-      #     revision: 5
-      #     datasource: Prometheus
-      #   unifi-uap:
-      #     # renovate: depName="UniFi-Poller: UAP Insights - Prometheus"
-      #     gnetId: 11314
-      #     revision: 10
-      #     datasource: Prometheus
-      #   unifi-usw:
-      #     # renovate: depName="UniFi-Poller: USW Insights - Prometheus"
-      #     gnetId: 11312
-      #     revision: 9
-      #     datasource: Prometheus
-      #   unifi-pdu:
-      #     # renovate: depName="UniFi-Poller: PDU Insights - Prometheus"
-      #     gnetId: 23027
-      #     revision: 1
-      #     datasource: Prometheus
+      unifi:
+        unifi-insights:
+          # renovate: depName="UniFi-Poller: Client Insights - Prometheus"
+          gnetId: 11315
+          revision: 9
+          datasource: Prometheus
+        unifi-network-sites:
+          # renovate: depName="UniFi-Poller: Network Sites - Prometheus"
+          gnetId: 11311
+          revision: 5
+          datasource: Prometheus
+        unifi-uap:
+          # renovate: depName="UniFi-Poller: UAP Insights - Prometheus"
+          gnetId: 11314
+          revision: 10
+          datasource: Prometheus
+        unifi-usw:
+          # renovate: depName="UniFi-Poller: USW Insights - Prometheus"
+          gnetId: 11312
+          revision: 9
+          datasource: Prometheus
+        unifi-pdu:
+          # renovate: depName="UniFi-Poller: PDU Insights - Prometheus"
+          gnetId: 23027
+          revision: 1
+          datasource: Prometheus
       media:
         qbittorrent-exporter:
           url: https://raw.githubusercontent.com/esanchezm/prometheus-qbittorrent-exporter/refs/heads/master/grafana/dashboard.json
