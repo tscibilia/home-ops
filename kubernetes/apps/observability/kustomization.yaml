@@ -14,5 +14,6 @@ resources:
   - ./keda/ks.yaml
   - ./kromgo/ks.yaml
   - ./silence-operator/ks.yaml
+  - ./unpoller/ks.yaml
   - ./victoria-logs/ks.yaml
   - ./victoria-metrics/ks.yaml
