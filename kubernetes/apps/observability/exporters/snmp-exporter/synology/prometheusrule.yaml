@@ -1,0 +1,70 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: synolgy-rules
+spec:
+  groups:
+    - name: synology.rules
+      rules:
+        - alert: SynologyHighMemoryUsage
+          expr: (1 - (memAvailReal / memTotalReal)) * 100 > 85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High memory usage on Synology NAS
+            description: Memory usage is above 85% for more than 5 minutes on {{ $labels.instance}}.
+        - alert: SynologyLowDiskSpace
+          expr: (1 - (hrStorageUsed / hrStorageSize)) * 100 < 10
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: Low disk space on Synology NAS
+            description: Less than 10% disk space remaining on {{ $labels.instance }}.
+        - alert: SynologyNASDown
+          expr: up{job="synology"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: Synology NAS is unreachable
+            description: No SNMP response from Synology NAS at {{ $labels.instance }} for 2 minutes.
+        - alert: SynologyHighCPUUsage
+          expr: (ssCpuUser + ssCpuSystem) > 90
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High CPU usage on Synology NAS
+            description: CPU usage is above 90% for more than 5 minutes on {{ $labels.instance }}.
+        - alert: SynologyRAIDDegraded
+          expr: raidStatus != 1
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: RAID degraded on Synology NAS
+            description: RAID status is not normal on {{ $labels.instance }}.
+        - alert: SynologyFanFailure
+          expr: systemFanStatus != 1 or cpuFanStatus != 1
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: Fan failure on Synology NAS
+            description: One or more fans have failed on {{ $labels.instance }}.
+        - alert: SynologyHighTemperature
+          expr: temperature > 60
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: High temperature on Synology NAS
+            description: "System temperature is above 60\xB0C on {{ $labels.instance }}."
+
