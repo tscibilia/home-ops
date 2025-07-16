@@ -5,10 +5,10 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
-  # - ./prometheusrule.yaml
+  - ./prometheusrule.yaml
 configMapGenerator:
   - name: snmp-exporter-synology
     files:
-      - snmp.yaml=./snmp.yml
+      - snmp.yaml=./snmp.yaml
 generatorOptions:
   disableNameSuffixHash: true
