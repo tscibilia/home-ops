@@ -59,4 +59,4 @@ spec:
       relabelings:
         - { sourceLabels: ["__address__"], targetLabel: __param_target }
         - { sourceLabels: ["__param_target"], targetLabel: instance }
-        - { sourceLabels: ["__param_target"], regex: (.*), replacement: snmp:9116, targetLabel: "__address__" }
+        - { targetLabel: "__address__", replacement: localhost:9116 }
