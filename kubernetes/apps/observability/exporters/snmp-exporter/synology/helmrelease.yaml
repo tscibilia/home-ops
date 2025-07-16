@@ -52,7 +52,7 @@ spec:
       params:
         - name: nas
           module: ["synology"]
-          target: ["${NAS_IP}:161"]
+          target: "${NAS_IP}:161"
           auth: ["public_v2"]
       path: /snmp
       scrapeTimeout: 10s
