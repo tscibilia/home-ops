@@ -28,7 +28,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      UNRAID_SERVER: ${UNRAID_IP}
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
