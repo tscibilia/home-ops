@@ -3,7 +3,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: snmp-exporter-synology
+  name: snmp-exporter
 spec:
   interval: 5m
   layerSelector:
@@ -17,7 +17,7 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app sonarr-exporter-synology
+  name: &app snmp-exporter-synology
 spec:
   chartRef:
     kind: OCIRepository
