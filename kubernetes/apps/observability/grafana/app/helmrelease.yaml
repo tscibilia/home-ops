@@ -107,7 +107,7 @@ spec:
         groups_attribute_path: groups
         name_attribute_path: name
       auth.generic_oauth.group_mapping:
-        role_attribute_path: contains(groups, 'authentik Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'
+        role_attribute_path: contains(groups, 'authentik-Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'
         org_id: 1
       auth.basic:
         enabled: true
