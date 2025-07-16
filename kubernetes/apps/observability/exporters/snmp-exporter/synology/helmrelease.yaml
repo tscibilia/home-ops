@@ -59,4 +59,4 @@ spec:
       relabelings:
         - { sourceLabels: ["__address__"], targetLabel: __param_target }
         - { sourceLabels: ["__param_target"], targetLabel: instance }
-        - { targetLabel: "__address__", replacement: "{{ .Release.Name }}.{{ .Release.Namespace ffffff}}.svc.cluster.local:9116" }
+        - { targetLabel: "__address__", replacement: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local:9116" }
