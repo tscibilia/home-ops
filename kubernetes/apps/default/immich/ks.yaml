@@ -12,6 +12,7 @@ spec:
   components:
     - ../../../../components/cnpg
     - ../../../../components/gatus/external
+    - ../../../../components/keda/nfs-scaler
   dependsOn:
     - name: cnpg-cluster
       namespace: database
