@@ -244,7 +244,9 @@ spec:
           # renovate: depName="Synology NAS Details"
           gnetId: 14284
           revision: 10
-          datasource: Prometheus
+          datasource:
+            - { name: DS_PROMETHEUS, value: Prometheus }
+            - { name: VAR_NASDevices, value: 1 }
         spegel:
           # renovate: depName="Spegel"
           gnetId: 18089
