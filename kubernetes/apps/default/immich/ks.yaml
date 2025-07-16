@@ -12,7 +12,7 @@ spec:
   components:
     - ../../../../components/cnpg
     - ../../../../components/gatus/external
-    - ../../../../components/keda/nfs-scaler
+    # Uses separate keda scaledobject.yaml
   dependsOn:
     - name: cnpg-cluster
       namespace: database
