@@ -9,7 +9,13 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../../components/keda/nfs-bkup-scaler
   dependsOn:
+    - name: keda
+      namespace: observability
+    - name: openebs
+      namespace: openebs-system
     - name: snapshot-controller
       namespace: kube-system
   healthChecks:
@@ -20,6 +26,8 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/volsync-system/volsync/app
   postBuild:
+    substitute:
+      APP: *app
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
