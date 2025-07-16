@@ -246,7 +246,7 @@ spec:
           revision: 10
           datasource:
             - { name: DS_PROMETHEUS, value: Prometheus }
-            - { name: VAR_NASDevices, value: 1 }
+            - { name: VAR_NASDEVICES, value: 1 }
         spegel:
           # renovate: depName="Spegel"
           gnetId: 18089
