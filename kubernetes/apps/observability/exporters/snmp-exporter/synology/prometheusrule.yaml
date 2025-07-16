@@ -12,21 +12,21 @@ spec:
     - name: synology.rules
       rules:
         - alert: SynologyHighMemoryUsage
-          expr: (1 - (memAvailReal / memTotalReal)) * 100 > 85
+          expr: ((memTotalReal - memAvailReal) / 1000000) * 10 > 85
           for: 5m
           labels:
             severity: warning
           annotations:
             summary: High memory usage on Synology NAS
             description: Memory usage is above 85% for more than 5 minutes on {{ $labels.instance}}.
-        - alert: SynologyLowDiskSpace
-          expr: (1 - (hrStorageUsed / hrStorageSize)) * 100 < 10
-          for: 5m
-          labels:
-            severity: critical
-          annotations:
-            summary: Low disk space on Synology NAS
-            description: Less than 10% disk space remaining on {{ $labels.instance }}.
+        # - alert: SynologyLowDiskSpace
+        #   expr: (1 - (hrStorageUsed / hrStorageSize)) * 100 < 10
+        #   for: 5m
+        #   labels:
+        #     severity: critical
+        #   annotations:
+        #     summary: Low disk space on Synology NAS
+        #     description: Less than 10% disk space remaining on {{ $labels.instance }}.
         - alert: SynologyNASDown
           expr: up{instance="${NAS_IP}"} == 0
           for: 2m
