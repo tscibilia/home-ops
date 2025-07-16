@@ -19,6 +19,6 @@ spec:
     - type: prometheus
       metadata:
         serverAddress: http://vmsingle-stack.observability.svc.cluster.local:8429
-        query: probe_success{instance=~"192.168.1.190:2049"}
+        query: probe_success{instance=~"${UNRAID_SERVER}:2049"}
         threshold: "1"
         ignoreNullValues: "0"
