@@ -52,11 +52,11 @@ spec:
       params:
         - name: nas
           module: ["synology"]
-          target: ${NAS_IP}
+          target: ["${NAS_IP}:161"]
           auth: ["public_v2"]
       path: /snmp
       scrapeTimeout: 10s
       relabelings:
-        - { sourceLabels: ["__address__"], targetLabel: __param_target }
-        - { sourceLabels: ["__param_target"], targetLabel: instance }
-        # - { targetLabel: "__address__", replacement: snmp-exporter-synology.observability.svc.cluster.local:9116 }
+        - { sourceLabels: ["__address__"], targetLabel: "__param_target" }
+        - { sourceLabels: ["__param_target"], targetLabel: "instance" }
+        - { targetLabel: "__address__", replacement: "snmp-exporter-synology.observability.svc.cluster.local:9116" }
