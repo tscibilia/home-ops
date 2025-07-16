@@ -1,4 +1,15 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/keda.sh/triggerauthentication_v1alpha1.json
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: volsync-keda-query
+spec:
+  secretTargetRef:
+    - parameter: UNRAID_IP
+      name: cluster-secrets
+      key: UNRAID_IP
+---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/keda.sh/scaledobject_v1alpha1.json
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
@@ -19,6 +30,8 @@ spec:
     - type: prometheus
       metadata:
         serverAddress: http://vmsingle-stack.observability.svc.cluster.local:8429
-        query: probe_success{instance=~"192.168.1.190:2049"}
+        query: probe_success{instance=~"{{UNRAID_IP}}:2049"}
         threshold: "1"
         ignoreNullValues: "0"
+      authenticationRef:
+        name: volsync-keda-query
