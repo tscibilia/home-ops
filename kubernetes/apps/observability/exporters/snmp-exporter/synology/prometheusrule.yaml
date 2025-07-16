@@ -18,7 +18,7 @@ spec:
             severity: warning
           annotations:
             summary: High memory usage on Synology NAS
-            description: Memory usage is above 85% for more than 5 minutes on {{ $labels.instance}}.
+            description: Memory usage is above 85% for more than 5 minutes on {{ $labels.instance }}.
         - alert: SynologyLowDiskSpace
           # This alert checks if the used disk space on volumes 1 and 2 is above 90%, specific to my Synology NAS
           expr: (hrStorageUsed{hrStorageDescr=~"/volume[12]$"} / hrStorageSize{hrStorageDescr=~"/volume[12]$"}) * 100 > 90
