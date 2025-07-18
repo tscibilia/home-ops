@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/operator.victoriametrics.com/vmrule_v1beta1.json
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: plex-alerts
+  labels:
+    vmalert-logs.io/enabled: "true"
+spec:
+  groups:
+    - name: &name PlexDatabaseIsBusy
+      type: vlogs
+      interval: 5m
+      rules:
+        - alert: *name
+          expr: sum by (app) (count_over_time({app="plex"} |~ "(?i)retry busy DB"[5m])) > 0
+          annotations:
+            description: '{{ $labels.app }} is experiencing database issues'
+          labels:
+            severity: critical
