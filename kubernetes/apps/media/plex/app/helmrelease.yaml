@@ -65,13 +65,14 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
+        runAsUser: 1044
         runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [44]
     service:
       app:
+        controller: *app
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.42.210
@@ -93,10 +94,11 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      config-cache:
-        existingClaim: plex-cache
-        globalMounts:
-          - path: /config/Library/Application Support/Plex Media Server/Cache
+      # Cache must be commented out initial install in order to avoid permission issues in '/config/Library/Application Support/Plex Media Server'
+      # config-cache:
+      #   existingClaim: plex-cache
+      #   globalMounts:
+      #     - path: /config/Library/Application Support/Plex Media Server/Cache
       media:
         type: nfs
         server: ${NAS_IP}
