@@ -28,7 +28,7 @@ spec:
         initContainers:
           01-migrate-plex:
             image:
-              repository: docker.io/ghcr-library/busybox
+              repository: docker.io/library/busybox
               tag: latest
             command:
               - sh
