@@ -29,7 +29,7 @@ spec:
           01-migrate-plex:
             image:
               repository: docker.io/ghcr-library/busybox
-              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
+              tag: latest
             command:
               - sh
               - -c
