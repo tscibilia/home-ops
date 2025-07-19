@@ -34,10 +34,18 @@ spec:
               - sh
               - -c
               - |
-                  echo "[init] Cleaning old Plex files..." && \
+                  echo "[init] Creating tmp directory..." && \
+                  mkdir -p "/tmp/migrate" && \
+                  echo "[init] Copy tarball to tmp directory..." && \
+                  cp "/Media/library/plex/migrate/Plex.tar.gz" "/tmp/migrate/Plex.tar.gz" && \
+                  echo "[init] Cleaning init Plex files..." && \
                   rm -rf "/config/Library Application Support/Plex Media Server/*" && \
                   echo "[init] Extracting Plex archive..." && \
-                  tar --exclude='Cache/*' --exclude='Thumbnails/*' -xzf "/Media/library/plex/migrate/Plex.tar.gz" -C "/config/Library Application Support/Plex Media Server/"
+                  tar --exclude='Cache/*' --exclude='Thumbnails/*' -xzf "/Media/library/plex/migrate/Plex.tar.gz" -C "/config/Library Application Support/Plex Media Server/" && \
+                  echo "[init] Cleaning up tmp directory..." && \
+                  rm -rf "/config/Library Application Support/Plex Media Server/*" && \
+                  echo "[init] Setting ownership to plex:plex..." && \
+                  chown -R 1044:100 "/config/Library Application Support/Plex Media Server/"
         containers:
           app:
             image:
@@ -131,5 +139,12 @@ spec:
                 subPath: logs
               - path: /transcode
                 subPath: transcode
+              - path: /tmp
+                subPath: tmp
+      init-tmpfs:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            01-migrate-plex:
               - path: /tmp
                 subPath: tmp
