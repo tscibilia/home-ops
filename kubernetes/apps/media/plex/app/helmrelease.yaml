@@ -132,10 +132,12 @@ spec:
             readOnly: true
       tmpfs:
         type: emptyDir
-        globalMounts:
-          - path: /config/Library/Application Support/Plex Media Server/Logs
-            subPath: logs
-          - path: /transcode
-            subPath: transcode
-          - path: /tmp
-            subPath: tmp
+        advancedMounts:
+          *app :
+            app:
+              - path: /config/Library/Application Support/Plex Media Server/Logs
+                subPath: logs
+              - path: /transcode
+                subPath: transcode
+              - path: /tmp
+                subPath: tmp
