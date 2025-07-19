@@ -13,7 +13,7 @@ spec:
       interval: 5m
       rules:
         - alert: *name
-          expr: sum by (app) (count_over_time({app="plex"} |~ "(?i)retry busy DB"[5m])) > 0
+          expr: '"retry busy DB" | filter app := "plex" | count() rows | filter rows :> 0'
           annotations:
             description: '{{ $labels.app }} is experiencing database issues'
           labels:

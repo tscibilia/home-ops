@@ -25,6 +25,19 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          01-migrate-plex:
+            image:
+              repository: docker.io/ghcr-library/busybox
+              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
+            command:
+              - sh
+              - -c
+              - |
+                  echo "[init] Cleaning old Plex files..." && \
+                  rm -rf "/config/Library Application Support/Plex Media Server/*" && \
+                  echo "[init] Extracting Plex archive..." && \
+                  tar --exclude='Cache/*' --exclude='Thumbnails/*' -xzf "/Media/library/plex/migrate/Plex.tar.gz" -C "/config/Library Application Support/Plex Media Server/"
         containers:
           app:
             image:
@@ -98,10 +111,10 @@ spec:
       config:
         existingClaim: *app
       # Cache must be commented out initial install in order to avoid permission issues in '/config/Library/Application Support/Plex Media Server'
-      # config-cache:
-      #   existingClaim: plex-cache
-      #   globalMounts:
-      #     - path: /config/Library/Application Support/Plex Media Server/Cache
+      config-cache:
+        existingClaim: plex-cache
+        globalMounts:
+          - path: /config/Library/Application Support/Plex Media Server/Cache
       media:
         type: nfs
         server: ${NAS_IP}
@@ -114,8 +127,8 @@ spec:
         advancedMounts:
           *app :
             app:
-              # - path: /config/Library/Application Support/Plex Media Server/Logs
-              #   subPath: logs
+              - path: /config/Library/Application Support/Plex Media Server/Logs
+                subPath: logs
               - path: /transcode
                 subPath: transcode
               - path: /tmp
