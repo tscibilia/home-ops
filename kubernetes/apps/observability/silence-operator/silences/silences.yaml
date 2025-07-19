@@ -96,15 +96,3 @@ spec:
       value: PersistentVolumeUsageNearFull
     - name: persistentvolumeclaim
       value: plex-cache
-# ---
-# # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
-# apiVersion: observability.giantswarm.io/v1alpha2
-# kind: Silence
-# metadata:
-#   name: nas-memory-high-utilization
-# spec:
-#   matchers:
-#     - name: alertname
-#       value: NodeMemoryHighUtilization
-#     - name: instance
-#       value: ${NAS_IP}:9100
