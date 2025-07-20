@@ -101,10 +101,10 @@ spec:
 apiVersion: observability.giantswarm.io/v1alpha2
 kind: Silence
 metadata:
-  name: ceph-pvc-nearfull-plex-cache
+  name: ceph-pvc-nearfull-volsync-plex-src
 spec:
   matchers:
     - name: alertname
       value: PersistentVolumeUsageNearFull
     - name: persistentvolumeclaim
-      value: plex-cache
+      value: volsync-plex-src
