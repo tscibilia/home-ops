@@ -122,9 +122,3 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /scripts
-      plex:
-        type: nfs
-        server: ${NAS_IP}
-        path: /volume1/Media/library/plex/Logs
-        globalMounts:
-          - path: /logs
