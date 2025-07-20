@@ -69,7 +69,7 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 30Gi
+              storage: 40Gi
           storageClassName: ceph-rbd
         resources:
           requests:
