@@ -44,7 +44,7 @@ spec:
               LIBRARY_MAPPING: '{ "Shows": "TV Shows" }'
               LOGFILE: /tmp/sync.log
               MARK_FILE: /tmp/mark.log
-              PLEX_BASEURL: http://192.168.5.113:32400
+              PLEX_BASEURL: http://plex.media.svc.cluster.local:32400
               SSL_BYPASS: "True"
               RUN_ONLY_ONCE: "True"
               TZ: ${TIMEZONE}

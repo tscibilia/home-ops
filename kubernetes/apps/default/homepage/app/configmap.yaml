@@ -70,7 +70,7 @@ data:
             description: Plex Server
             widget:
               type: plex
-              url: http://192.168.5.113:32400
+              url: http://plex.media.svc.cluster.local:32400
               key: {{HOMEPAGE_VAR_PLEX_TOKEN}}
         - Tautulli:
             icon: tautulli.png
