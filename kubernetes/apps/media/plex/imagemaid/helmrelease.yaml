@@ -40,6 +40,7 @@ spec:
               PLEX_PATH: /data/plex_config/Library/Application Support/Plex Media Server
               MODE: report
               TIMEOUT: 1200
+              LOCAL_DB: true
               IGNORE_RUNNING: true
               PHOTO_TRANSCODER: true
             envFrom:
