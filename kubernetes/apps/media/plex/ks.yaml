@@ -28,7 +28,7 @@ spec:
       GATUS_PATH: /identity
       VOLSYNC_PUID: "1044"
       VOLSYNC_CAPACITY: 120Gi
-      VOLSYNC_CACHE_CAPACITY: 25Gi
+      VOLSYNC_CACHE_CAPACITY: 40Gi
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
