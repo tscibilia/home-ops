@@ -1,0 +1,56 @@
+templates:
+  status:
+    optional:
+      - last
+    conditionals:
+      all:
+        conditions:
+          - key: [ended, returning, canceled]
+            value: true
+      tmdb:
+        conditions:
+          - key: [ended, returning, canceled]
+            value: <<key>>
+    ignore_blank_results: true
+    allowed_library_types: show
+    plex_search:
+      any:
+        episode_air_date: <<last>>
+    plex_all: <<all>>
+    filters:
+      tmdb_status: <<tmdb>>
+    default:
+      overlay: <<overlay_name>>
+      group: status
+      weight_<<key>>: <<weight>>
+      horizontal_offset: 15
+      horizontal_align: left
+      vertical_offset: 15
+      vertical_align: top
+    overlay:
+      name: <<overlay_name>>
+      group: <<group>>
+      weight: <<weight_<<key>>>>
+      horizontal_offset: <<horizontal_offset>>
+      horizontal_align: <<horizontal_align>>
+      vertical_offset: <<vertical_offset>>
+      vertical_align: <<vertical_align>>
+
+overlays:
+############################
+#         STATUS           #
+############################
+
+  Airing:
+    variables: {key: airing, weight: 40, last: 14}
+    template: [name: status]
+    # suppress_overlays: Returning
+  Returning:
+    variables: {key: returning, weight: 30}
+    template: [name: status]
+  Canceled:
+    variables: {key: canceled, weight: 20}
+    template: [name: status]
+  Ended:
+    variables: {key: ended, weight: 10}
+    template: [name: status]

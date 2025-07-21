@@ -1,0 +1,116 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kometa
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  maxHistory: 2
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        type: cronjob
+        cronjob:
+          schedule: "30 2 * * *"
+          timeZone: &TZ ${TIMEZONE}
+          concurrencyPolicy: Forbid
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+        initContainers:
+          01-init-overlays:
+            image:
+              repository: quay.io/minio/mc
+              tag: RELEASE.2025-05-21T01-59-54Z@sha256:09f93f534cde415d192bb6084dd0e0ddd1715fb602f8a922ad121fd2bf0f8b44
+            command: ["/bin/sh", "-c"]
+            args: ["mkdir -p /config/overlays; mc alias set s3 https://s3.t0m.co '' '' --api S3v4; mc cp --recursive s3/t0m-public/kometa/overlays/ /config/overlays/"]
+          02-init-assets:
+            image:
+              repository: quay.io/minio/mc
+              tag: RELEASE.2025-05-21T01-59-54Z@sha256:09f93f534cde415d192bb6084dd0e0ddd1715fb602f8a922ad121fd2bf0f8b44
+            command: ["/bin/sh", "-c"]
+            args: ["mkdir -p /config/assets; mc alias set s3 https://s3.t0m.co '' '' --api S3v4; mc cp --recursive s3/t0m-public/kometa/assets/ /config/assets/"]
+        containers:
+          app:
+            image:
+              repository: docker.io/kometateam/kometa
+              tag: v2.2.0@sha256:e8bf350bcdf7e16fc3ab0f128e2ef43a447bd1c4d3352a2f521fcf2b3b421d39
+            command:
+              - /bin/sh
+              - -c
+            args:
+              - |
+                python3 kometa.py --run --read-only-config --run-libraries "Anime";
+                python3 kometa.py --run --read-only-config --run-libraries "Movies";
+                python3 kometa.py --run --read-only-config --run-libraries "TV Shows";
+            env:
+              TZ: *TZ
+              KOMETA_READ_ONLY_CONFIG: true
+            envFrom:
+              - secretRef:
+                  name: kometa-secret
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 4096Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values: ["plex"]
+              topologyKey: kubernetes.io/hostname
+    persistence:
+      config:
+        existingClaim: *app
+      config-file:
+        type: configMap
+        name: kometa-configmap
+        globalMounts:
+          - path: /config/config.yml
+            subPath: config.yml
+            readOnly: true
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          kometa:
+            app:
+              - path: /config/logs
+                subPath: logs

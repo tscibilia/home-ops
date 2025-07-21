@@ -1,0 +1,284 @@
+libraries:
+  Anime:     # this library overrides sonarr root path and profile
+    run_order:
+      - collections
+      - metadata
+      - operations
+      - overlays
+    collection_files:
+      - pmm: anilist
+        template_variables:
+          use_popular: false
+          order_top: 01
+          summary_top: Top 10 Rated movies on AniList
+          limit_top: 10
+          visible_library_popular: true
+          visible_home_popular: false
+          visible_shared_popular: false
+          collection_section: 09
+          collection_mode: show_items
+    overlay_files:
+      - remove_overlays: false
+      - repo: Overlays - ShowStatus.yml
+      - pmm: ratings
+        template_variables:
+          rating1: audience
+          rating1_image: mal
+          horizontal_position: left
+          vertical_position: bottom
+          rating_alignment: horizontal
+      - pmm: commonsense
+        template_variables:
+          horizontal_offset: 15
+          horizontal_align: right
+          vertical_offset: 15
+          vertical_align: bottom
+          addon_position: right
+    operations:
+      delete_unmanaged_collections: true
+      mass_genre_update: tmdb
+      mass_content_rating_update: mdb_commonsense
+      mass_audience_rating_update: mal
+      mass_critic_rating_update: mdb_metacritic
+    sonarr:
+      root_folder_path: /Media/library/anime
+      quality_profile: Any - Prefer-720p
+      series_type: anime
+
+  Movies:
+    run_order:
+      - collections
+      - metadata
+      - operations
+      - overlays
+    collection_files:
+      - repo: Movies.yml
+    overlay_files:
+      - remove_overlays: false
+      - repo: Overlays - Resolution.yml
+      - repo: Overlays - Audio.yml
+      - repo: Overlays - Special.yml
+      - pmm: ratings
+        template_variables:
+          rating1: critic
+          rating1_image: rt_tomato
+          rating2: audience
+          rating2_image: rt_popcorn
+          rating3: user
+          rating3_image: mdb
+          horizontal_position: center
+          vertical_position: bottom
+          rating_alignment: horizontal
+      - pmm: commonsense
+        template_variables:
+          horizontal_offset: 15
+          horizontal_align: right
+          vertical_offset: 15
+          vertical_align: top
+          addon_position: right
+    operations:
+      delete_unmanaged_collections: true
+      delete_collections_with_less: 2
+      mass_genre_update: imdb
+      mass_content_rating_update: mdb_commonsense
+      mass_critic_rating_update: mdb_metacritic
+      mass_audience_rating_update: mdb_tomatoesaudience
+      mass_user_rating_update: mdb
+
+  TV Shows:
+    run_order:
+      - collections
+      - metadata
+      - operations
+      - overlays
+    collection_files:
+      - repo: TV Shows.yml
+    overlay_files:
+      - remove_overlays: false
+      - repo: Overlays - ShowStatus.yml
+      - pmm: ratings
+        template_variables:
+          rating1: critic
+          rating1_image: rt_tomato
+          rating2: audience
+          rating2_image: rt_popcorn
+          horizontal_position: left
+          vertical_position: bottom
+          rating_alignment: horizontal
+      - pmm: commonsense
+        template_variables:
+          horizontal_offset: 15
+          horizontal_align: right
+          vertical_offset: 15
+          vertical_align: bottom
+          addon_position: right
+      # Episode specific overlays
+      - pmm: commonsense
+        template_variables:
+          overlay_level: episode
+          horizontal_offset: 15
+          horizontal_align: left
+          vertical_offset: 15
+          vertical_align: top
+          use_dv: false
+          use_hdr: false
+      - file: config/OverlayAudio.yml
+        template_variables:
+          overlay_level: episode
+          horizontal_offset: 0
+          horizontal_align: center
+          vertical_offset: 15
+          vertical_align: top
+          back_color: '#00000099'
+          style: compact
+      - pmm: episode_info
+        template_variables:
+          vertical_offset: 15
+      - pmm: runtimes
+        template_variables:
+          overlay_level: episode
+          horizontal_align: center
+          vertical_position: bottom
+    operations:
+      delete_unmanaged_collections: true
+      delete_collections_with_less: 2
+      mass_genre_update: tmdb
+      mass_content_rating_update: mdb_commonsense
+      mass_critic_rating_update: mdb_metacritic
+      mass_audience_rating_update: mdb_tomatoesaudience
+      mass_episode_audience_rating_update: tmdb
+      mass_user_rating_update: mdb
+
+playlist_files:
+- pmm: playlist
+  template_variables:
+    use_arrow: true
+    use_mcu: true
+    use_dcau: false
+    use_pokemon: false
+    use_startrek: false
+    use_starwars: true
+    use_clonewars: false
+    use_xmen: false
+
+settings:
+  cache: true
+  cache_expiration: 60
+  asset_directory: config/assets
+  # https://test.kometa.wiki/en/latest/kometa/guides/assets/?h=assets+fold#asset-folders-vs-flat-assets
+  asset_folders: true
+  asset_depth: 0
+  create_asset_folders: false
+  prioritize_assets: true
+  dimensional_asset_rename: false
+  download_url_assets: true
+  show_missing_season_assets: false
+  show_missing_episode_assets: false
+  show_asset_not_needed: true
+  sync_mode: sync
+  minimum_items: 1
+  default_collection_order:
+  delete_below_minimum: true
+  delete_not_scheduled: false
+  run_again_delay: 2
+  missing_only_released: false
+  only_filter_missing: false
+  show_unmanaged: false
+  show_filtered: false
+  show_options: false
+  show_missing: false
+  show_missing_assets: false
+  save_report: false
+  tvdb_language: eng
+  ignore_ids:
+  ignore_imdb_ids:
+  item_refresh_delay: 0
+  playlist_sync_to_user: all
+  playlist_exclude_user:
+  playlist_report: false
+  verify_ssl: true
+  custom_repo: https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/plex/kometa/resources/
+  check_nightly: false
+  show_unconfigured: true
+  playlist_exclude_users:
+
+mal:
+  client_id: <<MYANIMELIST_CLIENT_ID>>
+  client_secret: <<MYANIMELIST_CLIENT_SECRET>>
+  localhost_url: <<MYANIMELIST_LOCALHOST_URL>>
+  authorization:
+    access_token: <<MYANIMELIST_ACCESS_TOKEN>>
+    token_type: Bearer
+    expires_in: <<MYANIMELIST_EXPIRES_IN>>
+    refresh_token: <<MYANIMELIST_REFRESH_TOKEN>>
+
+mdblist:
+  apikey: <<MDBLIST_API_KEY>>
+  cache_expiration: 60
+
+omdb:
+  apikey: <<OMDB_API_KEY>>
+  cache_expiration: 60
+
+plex:
+  url: http://plex.media:32400
+  token: <<PLEX_API_KEY>>
+  timeout: 60
+  clean_bundles: false
+  empty_trash: false
+  optimize: false
+
+radarr:
+  url: http://radarr.media:7878
+  token: <<RADARR_API_KEY>>
+  add_missing: false
+  add_existing: false
+  root_folder_path: /data/media/movies
+  monitor: true
+  availability: announced
+  quality_profile: HD
+  tag:
+  search: false
+  radarr_path:
+  plex_path:
+  upgrade_existing: false
+
+sonarr:
+  url: http://sonarr.media:8989
+  token: <<SONARR_API_KEY>>
+  add_missing: false
+  add_existing: false
+  root_folder_path: /data/media/tv
+  monitor: all
+  quality_profile: HD
+  language_profile: English
+  series_type: standard
+  season_folder: true
+  tag:
+  search: false
+  cutoff_search: false
+  sonarr_path:
+  plex_path:
+  upgrade_existing: false
+
+tautulli:
+  url: http://tautulli.media:8181
+  apikey: <<TAUTULLI_API_KEY>>
+
+tmdb:
+  apikey: <<TMDB_API_KEY>>
+  language: en
+  cache_expiration: 60
+  region:
+
+trakt:
+  client_id: <<TRAKT_CLIENT_ID>>
+  client_secret: <<TRAKT_CLIENT_SECRET>>
+  authorization:
+    access_token: <<TRAKT_ACCESS_TOKEN>>
+    token_type: Bearer
+    expires_in: <<TRAKT_EXPIRES_IN>>
+    refresh_token: <<TRAKT_REFRESH_TOKEN>>
+    scope: public
+    created_at: <<TRAKT_CREATED_AT>>
+  pin:
