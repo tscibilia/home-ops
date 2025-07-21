@@ -93,8 +93,6 @@ libraries:
       - overlays
     collection_files:
       - repo: TV Shows.yml
-      - pmm: basic
-      - pmm: imdb
     overlay_files:
       - remove_overlays: false
       - repo: Overlays - ShowStatus.yml
@@ -151,14 +149,27 @@ libraries:
       mass_episode_audience_rating_update: tmdb
       mass_user_rating_update: mdb
 
+playlist_files:
+- pmm: playlist
+  template_variables:
+    use_arrow: true
+    use_mcu: true
+    use_dcau: false
+    use_pokemon: false
+    use_startrek: false
+    use_starwars: true
+    use_clonewars: false
+    use_xmen: false
+
 settings:
   cache: true
   cache_expiration: 60
   asset_directory: config/assets
-  asset_folders: false
+  # https://test.kometa.wiki/en/latest/kometa/guides/assets/?h=assets+fold#asset-folders-vs-flat-assets
+  asset_folders: true
   asset_depth: 0
   create_asset_folders: false
-  prioritize_assets: false
+  prioritize_assets: true
   dimensional_asset_rename: false
   download_url_assets: true
   show_missing_season_assets: false
