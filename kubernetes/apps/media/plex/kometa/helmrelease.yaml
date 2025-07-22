@@ -45,8 +45,8 @@ spec:
                   mkdir -p /config/overlays;
                   mkdir -p /config/assets;
                   mc alias set s3 https://s3.t0m.co '' '' --api S3v4;
-                  mc cp --recursive s3/t0m-public/kometa/overlays/ /config/overlays/;
-                  mc cp --recursive s3/t0m-public/kometa/assets/ /config/assets/
+                  mc cp --recursive --overwrite=if-source-newer s3/t0m-public/kometa/overlays/ /config/overlays/;
+                  mc cp --recursive --overwrite=if-source-newer s3/t0m-public/kometa/assets/ /config/assets/
         containers:
           app:
             image:
@@ -58,8 +58,8 @@ spec:
             args:
               - |
                 python3 kometa.py --run --read-only-config --run-libraries "Anime";
-              # python3 kometa.py --run --read-only-config --run-libraries "Movies";
-              # python3 kometa.py --run --read-only-config --run-libraries "TV Shows";
+                python3 kometa.py --run --read-only-config --run-libraries "Movies";
+                python3 kometa.py --run --read-only-config --run-libraries "TV Shows";
             env:
               TZ: *TZ
               KOMETA_READ_ONLY_CONFIG: true
