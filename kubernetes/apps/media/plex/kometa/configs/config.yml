@@ -233,7 +233,7 @@ radarr:
   token: <<RADARR_API_KEY>>
   add_missing: false
   add_existing: false
-  root_folder_path: /data/media/movies
+  root_folder_path: /Media/library/movies
   monitor: true
   availability: announced
   quality_profile: HD
@@ -248,7 +248,7 @@ sonarr:
   token: <<SONARR_API_KEY>>
   add_missing: false
   add_existing: false
-  root_folder_path: /data/media/tv
+  root_folder_path: /Media/library/tv
   monitor: all
   quality_profile: HD
   language_profile: English

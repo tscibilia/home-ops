@@ -79,7 +79,7 @@ spec:
                 memory: 1Gi
               limits:
                 cpu: 2000m
-                memory: 8Gi
+                memory: 6Gi # Usage peaks at 4.2Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
