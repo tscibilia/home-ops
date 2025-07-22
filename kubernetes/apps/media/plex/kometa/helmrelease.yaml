@@ -38,13 +38,15 @@ spec:
               repository: quay.io/minio/mc
               tag: RELEASE.2025-05-21T01-59-54Z@sha256:09f93f534cde415d192bb6084dd0e0ddd1715fb602f8a922ad121fd2bf0f8b44
             command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /config/overlays; mc alias set s3 https://s3.t0m.co '' '' --api S3v4; mc cp --recursive s3/t0m-public/kometa/overlays/ /config/overlays/"]
-          02-init-assets:
-            image:
-              repository: quay.io/minio/mc
-              tag: RELEASE.2025-05-21T01-59-54Z@sha256:09f93f534cde415d192bb6084dd0e0ddd1715fb602f8a922ad121fd2bf0f8b44
-            command: ["/bin/sh", "-c"]
-            args: ["mkdir -p /config/assets; mc alias set s3 https://s3.t0m.co '' '' --api S3v4; mc cp --recursive s3/t0m-public/kometa/assets/ /config/assets/"]
+            env:
+              HOME: /tmp
+            args:
+              - |
+                  mkdir -p /config/overlays;
+                  mkdir -p /config/assets;
+                  mc alias set s3 https://s3.t0m.co '' '' --api S3v4;
+                  mc cp --recursive s3/t0m-public/kometa/overlays/ /config/overlays/;
+                  mc cp --recursive s3/t0m-public/kometa/assets/ /config/assets/
         containers:
           app:
             image:
