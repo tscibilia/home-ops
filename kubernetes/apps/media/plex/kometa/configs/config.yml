@@ -54,7 +54,7 @@ libraries:
           rating1_image: rt_tomato
           rating2: audience
           rating2_image: rt_popcorn
-          horizontal_position: center
+          horizontal_position: left
           vertical_position: bottom
           rating_alignment: horizontal
       - default: commonsense
