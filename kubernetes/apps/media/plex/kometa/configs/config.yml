@@ -94,7 +94,7 @@ libraries:
       - default: *ageRating
         template_variables:
           builder_level: episode
-      - file: config/OverlayAudio.yml
+      - repo: Overlays - Audio.yml
         template_variables:
           builder_level: episode
           horizontal_offset: 0
@@ -211,7 +211,7 @@ radarr:
   root_folder_path: /Media/library/movies
   monitor: true
   availability: announced
-  quality_profile: HD
+  quality_profile: HD - 720p/1080p
   tag:
   search: false
   radarr_path:
@@ -225,7 +225,7 @@ sonarr:
   add_existing: false
   root_folder_path: /Media/library/tv
   monitor: all
-  quality_profile: HD
+  quality_profile: Any - Prefer-720p
   language_profile: English
   series_type: standard
   season_folder: true

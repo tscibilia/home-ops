@@ -4,7 +4,13 @@ templates:
 #        TEMPLATES         #
 ############################
 
-  network:
+  Charts:
+    sort_title: "!01_<<collection_name>>"
+    sync_mode: sync
+    collection_order: custom
+    collection_mode: hide
+    schedule: daily
+  Network:
     optional:
       - network
     tmdb_network: <<network>>
@@ -20,53 +26,42 @@ collections:
 #    Chart Collections    #
 ###########################
 
-  Trending Shows:
-    smart_label: originally_available.desc
-    sort_title: +_1Trending
+  Trending This Week:
+    template: {name: Charts, sort_title: +_1Trending, visible_library: true, visible_home: true, visible_shared: true}
+    tmdb_trending_weekly: 30
+    collection_order: custom
     sync_mode: sync
-    trakt_trending: 40
-    summary: Shows Trending across the internet
-    url_poster: https://i.imgur.com/dKGkfdL.jpg
-    url_background: https://wallpapercave.com/wp/wp5054947.jpg
 
-  Popular TV This Week:
-    smart_label: originally_available.desc
-    sort_title: +_2Popular
+  Popular Shows:
+    template: {name: Charts, sort_title: +_2Popular}
+    tmdb_popular: 30
+    collection_order: custom
     sync_mode: sync
-    imdb_list:
-      url: https://www.imdb.com/search/title/?title_type=tv_series,tv_miniseries
-      limit: 40
-    summary: A collection of the most popular shows over the past week.
-    url_poster: https://i.imgur.com/06YA2Sk.jpg
-    url_background: https://wallpapercave.com/wp/wp5054947.jpg
-    visible_library: true
-    visible_home: true
-    visible_shared: true
 
 ###########################
 #   Network Collections   #
 ###########################
 
   Apple Original Series:
-    template: { name: network, network: "2552, 1932", poster: https://theposterdb.com/api/assets/96539}
+    template: { name: Network, network: "2552, 1932", poster: https://theposterdb.com/api/assets/96539}
     url_background: https://wallpaper-house.com/data/out/8/wallpaper2you_228774.png
   Amazon Original Series:
-    template: { name: network, network: 1024, poster: https://theposterdb.com/api/assets/47605}
+    template: { name: Network, network: 1024, poster: https://theposterdb.com/api/assets/47605}
     url_background: https://i.imgur.com/2jfs7oS.png
   Disney:
-    template: { name: network, network: "142, 44, 2991", poster: https://theposterdb.com/api/assets/47601}
+    template: { name: Network, network: "142, 44, 2991", poster: https://theposterdb.com/api/assets/47601}
     url_background: https://wallpaper.dog/large/20509069.jpg
   Disney+:
-    template: { name: network, network: 2739, poster: https://theposterdb.com/api/assets/96541}
+    template: { name: Network, network: 2739, poster: https://theposterdb.com/api/assets/96541}
     url_background: https://wallpaper.dog/large/20509069.jpg
   Netflix Original Series:
-    template: { name: network, network: 213, poster: https://theposterdb.com/api/assets/204455}
+    template: { name: Network, network: 213, poster: https://theposterdb.com/api/assets/204455}
     url_background: https://img5.goodfon.com/original/1920x1080/1/61/fon-netflix-logo-raduga-tsvet-fon-background-skachat-oboi-sk.jpg
   HBO Original Series:
-    template: { name: network, network: "49, 5484, 5485, 3186, 2593", poster: https://theposterdb.com/api/assets/47606}
+    template: { name: Network, network: "49, 5484, 5485, 3186, 2593", poster: https://theposterdb.com/api/assets/47606}
     url_background: https://wallpapercave.com/wp/wp6402755.png
   HULU Original Series:
-    template: { name: network, network: 453, poster: https://theposterdb.com/api/assets/204450}
+    template: { name: Network, network: 453, poster: https://theposterdb.com/api/assets/204450}
     url_background: https://cdn.vox-cdn.com/thumbor/oR4hqrmTxbX_O4gdJ6np8h-PxFk=/0x439:750x861/1600x900/cdn.vox-cdn.com/uploads/chorus_image/image/56311701/Image_uploaded_from_iOS__8_.1503433270.jpg
 
 ###########################
