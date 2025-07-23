@@ -1,12 +1,12 @@
 libraries:
-  Anime:     # this library overrides sonarr root path and profile
-    run_order:
+  Anime:
+    run_order: &runOrder
       - collections
       - metadata
       - operations
       - overlays
     collection_files:
-      - pmm: anilist
+      - default: anilist
         template_variables:
           use_popular: false
           order_top: 01
@@ -20,14 +20,14 @@ libraries:
     overlay_files:
       - remove_overlays: false
       - repo: Overlays - ShowStatus.yml
-      - pmm: ratings
+      - default: ratings
         template_variables:
           rating1: audience
           rating1_image: mal
           horizontal_position: left
           vertical_position: bottom
           rating_alignment: horizontal
-      - pmm: commonsense
+      - default: &ageRating commonsense
         template_variables:
           horizontal_offset: 15
           horizontal_align: right
@@ -46,11 +46,7 @@ libraries:
       series_type: anime
 
   Movies:
-    run_order:
-      - collections
-      - metadata
-      - operations
-      - overlays
+    run_order: *runOrder
     collection_files:
       - repo: Movies.yml
     overlay_files:
@@ -58,24 +54,16 @@ libraries:
       - repo: Overlays - Resolution.yml
       - repo: Overlays - Audio.yml
       - repo: Overlays - Special.yml
-      - pmm: ratings
+      - default: ratings
         template_variables:
           rating1: critic
           rating1_image: rt_tomato
           rating2: audience
           rating2_image: rt_popcorn
-          rating3: user
-          rating3_image: mdb
           horizontal_position: center
           vertical_position: bottom
           rating_alignment: horizontal
-      - pmm: commonsense
-        template_variables:
-          horizontal_offset: 15
-          horizontal_align: right
-          vertical_offset: 15
-          vertical_align: top
-          addon_position: right
+      - default: *ageRating
     operations:
       delete_unmanaged_collections: true
       delete_collections_with_less: 2
@@ -86,17 +74,13 @@ libraries:
       mass_user_rating_update: mdb
 
   TV Shows:
-    run_order:
-      - collections
-      - metadata
-      - operations
-      - overlays
+    run_order: *runOrder
     collection_files:
       - repo: TV Shows.yml
     overlay_files:
       - remove_overlays: false
       - repo: Overlays - ShowStatus.yml
-      - pmm: ratings
+      - default: ratings
         template_variables:
           rating1: critic
           rating1_image: rt_tomato
@@ -105,38 +89,29 @@ libraries:
           horizontal_position: left
           vertical_position: bottom
           rating_alignment: horizontal
-      - pmm: commonsense
-        template_variables:
-          horizontal_offset: 15
-          horizontal_align: right
-          vertical_offset: 15
-          vertical_align: bottom
-          addon_position: right
+      - default: *ageRating
       # Episode specific overlays
-      - pmm: commonsense
+      - default: *ageRating
         template_variables:
-          overlay_level: episode
-          horizontal_offset: 15
-          horizontal_align: left
-          vertical_offset: 15
-          vertical_align: top
-          use_dv: false
-          use_hdr: false
+          builder_level: episode
       - file: config/OverlayAudio.yml
         template_variables:
-          overlay_level: episode
+          builder_level: episode
           horizontal_offset: 0
           horizontal_align: center
           vertical_offset: 15
           vertical_align: top
           back_color: '#00000099'
-          style: compact
-      - pmm: episode_info
+      - default: episode_info
         template_variables:
+          builder_level: episode
+          horizontal_offset: 15
+          horizontal_align: left
           vertical_offset: 15
-      - pmm: runtimes
+          vertical_align: bottom
+      - default: runtimes
         template_variables:
-          overlay_level: episode
+          builder_level: episode
           horizontal_align: center
           vertical_position: bottom
     operations:
@@ -150,7 +125,7 @@ libraries:
       mass_user_rating_update: mdb
 
 playlist_files:
-- pmm: playlist
+- default: playlist
   template_variables:
     use_arrow: true
     use_mcu: true
