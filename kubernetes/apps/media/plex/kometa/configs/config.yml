@@ -12,6 +12,8 @@ libraries:
           visible_shared_popular: false
           collection_section: 09
           collection_mode: show_items
+    # metadata_files:
+    #   - repo: Metadata - Anime Posters.yaml
     overlay_files:
       - remove_overlays: false
       - repo: Overlays - ShowStatus.yml
@@ -43,6 +45,8 @@ libraries:
   Movies:
     collection_files:
       - repo: Movies.yml
+    # metadata_files:
+    #   - repo: Metadata - Movie Posters.yaml
     overlay_files:
       - remove_overlays: false
       - repo: Overlays - Resolution.yml
@@ -76,6 +80,8 @@ libraries:
   TV Shows:
     collection_files:
       - repo: TV Shows.yml
+    metadata_files:
+      - repo: Metadata - TV Posters.yaml
     overlay_files:
       - remove_overlays: false
       - repo: Overlays - ShowStatus.yml
