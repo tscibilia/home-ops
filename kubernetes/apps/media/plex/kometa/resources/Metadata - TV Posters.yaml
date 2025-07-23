@@ -56,3 +56,30 @@ metadata:
             url_poster: https://api.mediux.pro/assets/b94710c9-35a6-4b47-b219-0de483272904
           12:
             url_poster: https://api.mediux.pro/assets/5bc55ea6-351f-4458-9f91-368f6c2b65bc
+  452595: # TVDB id for Dexter: Resurrection. Set by cenodude on MediUX. https://mediux.pro/sets/35348
+    url_poster: https://api.mediux.pro/assets/5b3445f7-cdfe-43a6-8f54-41b49b2d55f1
+    seasons:
+      1:
+        url_poster: https://api.mediux.pro/assets/26e6f442-83fc-4493-bc13-c2e89ff8f8b9
+        episodes:
+          1:
+            url_poster: https://api.mediux.pro/assets/d7cc181c-9bf5-4879-bd21-eba87f26cd3c
+          2:
+            url_poster: https://api.mediux.pro/assets/cc1154d7-1073-4659-809d-15dc308ed331
+          3:
+            url_poster: https://api.mediux.pro/assets/3603bfa8-31d2-4f08-803a-a4b020c8c248
+          4:
+            url_poster: https://api.mediux.pro/assets/9cd442c1-759c-4eed-b758-2bca565fce53
+          5:
+            url_poster: https://api.mediux.pro/assets/5c7202ed-713c-4b99-85d2-ce375d3c2396
+          6:
+            url_poster: https://api.mediux.pro/assets/a2be58f2-856b-4d54-95c0-16a3b25a1030
+          7:
+            url_poster: https://api.mediux.pro/assets/cd33c893-d082-4a6e-9e2b-21ebcea101cc
+          8:
+            url_poster: https://api.mediux.pro/assets/eed31ff4-a105-4215-b675-3fa2a1645238
+          9:
+            url_poster: https://api.mediux.pro/assets/0efc3a70-164a-442e-bb1f-368f9adf94b7
+          10:
+            url_poster: https://api.mediux.pro/assets/b520cf61-b5b3-48c7-a0fe-ea0105a1fc25
+
