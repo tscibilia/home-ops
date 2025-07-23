@@ -1,10 +1,5 @@
 libraries:
   Anime:
-    run_order: &runOrder
-      - collections
-      - metadata
-      - operations
-      - overlays
     collection_files:
       - default: anilist
         template_variables:
@@ -27,7 +22,7 @@ libraries:
           horizontal_position: left
           vertical_position: bottom
           rating_alignment: horizontal
-      - default: &ageRating commonsense
+      - default: commonsense
         template_variables:
           horizontal_offset: 15
           horizontal_align: right
@@ -46,7 +41,6 @@ libraries:
       series_type: anime
 
   Movies:
-    run_order: *runOrder
     collection_files:
       - repo: Movies.yml
     overlay_files:
@@ -63,7 +57,13 @@ libraries:
           horizontal_position: center
           vertical_position: bottom
           rating_alignment: horizontal
-      - default: *ageRating
+      - default: commonsense
+        template_variables:
+          horizontal_offset: 15
+          horizontal_align: right
+          vertical_offset: 15
+          vertical_align: bottom
+          addon_position: right
     operations:
       delete_unmanaged_collections: true
       delete_collections_with_less: 2
@@ -74,7 +74,6 @@ libraries:
       mass_user_rating_update: mdb
 
   TV Shows:
-    run_order: *runOrder
     collection_files:
       - repo: TV Shows.yml
     overlay_files:
@@ -89,11 +88,22 @@ libraries:
           horizontal_position: left
           vertical_position: bottom
           rating_alignment: horizontal
-      - default: *ageRating
+      - default: commonsense
+        template_variables:
+          horizontal_offset: 15
+          horizontal_align: right
+          vertical_offset: 15
+          vertical_align: bottom
+          addon_position: right
       # Episode specific overlays
-      - default: *ageRating
+      - default: commonsense
         template_variables:
           builder_level: episode
+          horizontal_offset: 15
+          horizontal_align: right
+          vertical_offset: 15
+          vertical_align: bottom
+          addon_position: right
       - repo: Overlays - Audio.yml
         template_variables:
           builder_level: episode
@@ -137,6 +147,11 @@ playlist_files:
     use_xmen: false
 
 settings:
+  run_order:
+    - collections
+    - metadata
+    - operations
+    - overlays
   cache: true
   cache_expiration: 60
   asset_directory: config/assets
