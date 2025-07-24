@@ -45,6 +45,9 @@ libraries:
   Movies:
     collection_files:
       - repo: Movies.yml
+      - default: basic
+        template_variables:
+          sort_prefix: +_1
     # metadata_files:
     #   - repo: Metadata - Movie Posters.yaml
     overlay_files:

@@ -27,13 +27,13 @@ collections:
 ###########################
 
   Trending This Week:
-    template: {name: Charts, sort_title: +_1Trending, visible_library: true, visible_home: true, visible_shared: true}
+    template: {name: Charts, sort_title: +_1Trending, url_poster: https://i.imgur.com/dKGkfdL.jpg, visible_library: true, visible_home: true, visible_shared: true}
     tmdb_trending_weekly: 30
     collection_order: custom
     sync_mode: sync
 
   Popular Shows:
-    template: {name: Charts, sort_title: +_2Popular}
+    template: {name: Charts, sort_title: +_2Popular, url_poster: https://i.imgur.com/06YA2Sk.jpg}
     tmdb_popular: 30
     collection_order: custom
     sync_mode: sync
