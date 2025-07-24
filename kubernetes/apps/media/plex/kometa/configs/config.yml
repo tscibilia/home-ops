@@ -1,5 +1,7 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Kometa-Team/Kometa/nightly/json-schema/config-schema.json
 libraries:
   Anime:
+    report_path: /config/logs/Anime_report.yml
     collection_files:
       - default: anilist
         template_variables:
@@ -32,9 +34,11 @@ libraries:
           vertical_align: bottom
           addon_position: right
     operations:
-      delete_unmanaged_collections: true
+      delete_collections:
+        managed: false
       mass_genre_update: tmdb
-      mass_content_rating_update: mdb_commonsense
+      mass_content_rating_update:
+        - mdb_commonsense
       mass_audience_rating_update: mal
       mass_critic_rating_update: mdb_metacritic
     sonarr:
@@ -43,6 +47,7 @@ libraries:
       series_type: anime
 
   Movies:
+    report_path: /config/logs/Movies_report.yml
     collection_files:
       - repo: Movies.yml
       - default: basic
@@ -72,15 +77,18 @@ libraries:
           vertical_align: bottom
           addon_position: right
     operations:
-      delete_unmanaged_collections: true
-      delete_collections_with_less: 2
+      delete_collections:
+        managed: false
+        less: 2
       mass_genre_update: imdb
-      mass_content_rating_update: mdb_commonsense
+      mass_content_rating_update:
+        - mdb_commonsense
       mass_critic_rating_update: mdb_metacritic
       mass_audience_rating_update: mdb_tomatoesaudience
       mass_user_rating_update: mdb
 
   TV Shows:
+    report_path: /config/logs/TV_report.yml
     collection_files:
       - repo: TV Shows.yml
     metadata_files:
@@ -134,10 +142,12 @@ libraries:
           horizontal_align: center
           vertical_position: bottom
     operations:
-      delete_unmanaged_collections: true
-      delete_collections_with_less: 2
+      delete_collections:
+        managed: false
+        less: 2
       mass_genre_update: tmdb
-      mass_content_rating_update: mdb_commonsense
+      mass_content_rating_update:
+        - mdb_commonsense
       mass_critic_rating_update: mdb_metacritic
       mass_audience_rating_update: mdb_tomatoesaudience
       mass_episode_audience_rating_update: tmdb
@@ -192,12 +202,10 @@ settings:
   ignore_ids:
   ignore_imdb_ids:
   item_refresh_delay: 0
-  playlist_sync_to_user: all
-  playlist_exclude_user:
+  playlist_sync_to_users: all
   playlist_report: false
   verify_ssl: true
   custom_repo: https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/plex/kometa/resources/
-  check_nightly: false
   show_unconfigured: true
   playlist_exclude_users:
 
@@ -268,7 +276,7 @@ tmdb:
   apikey: <<TMDB_API_KEY>>
   language: en
   cache_expiration: 60
-  region:
+  region: US
 
 trakt:
   client_id: <<TRAKT_CLIENT_ID>>

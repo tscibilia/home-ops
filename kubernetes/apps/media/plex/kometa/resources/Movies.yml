@@ -34,7 +34,7 @@ templates:
     summary: TMDB Most Popular Movies of the <<yearGte>>s
     smart_label: audience_rating.desc
     url_poster: <<poster>>
-    schedule: monthly(10)
+    schedule: monthly(28)
   Studio: #https://github.com/meisnate12/Plex-Meta-Manager-Configs/blob/322faad6fbbdf83a91a45f733ac8c2192f292975/meisnate12/Studios.yml
     optional:
       - company
@@ -163,7 +163,7 @@ collections:
     template: {name: Movie, collection: 8091, summary: 8091, poster: https://theposterdb.com/api/assets/1213}
     letterboxd_list: https://letterboxd.com/director525/list/aliens/
   Anorak's Almanac:
-    template: {name: Movie, poster: https://i.imgur.com/qyC5uuI.jpg}
+    template: {name: Movie, poster: https://theposterdb.com/api/assets/628116}
     letterboxd_list: https://letterboxd.com/jonthemantis/list/ready-player-one-anoraks-almanac/
     summary: A list of all movies referenced in the book Ready Player One.
 
