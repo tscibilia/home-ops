@@ -138,6 +138,7 @@ collections:
 ###########################
   James Bond:
     template: {name: Movie, collection: 645, summary: 645, poster: https://theposterdb.com/api/assets/115662}
+    radarr_add_missing: true
   X-Men:
     template: {name: Movie, collection: 748, summary: 748, poster: https://theposterdb.com/api/assets/20}
   Mission Impossible:
@@ -146,11 +147,12 @@ collections:
     template: {name: Movie, collection: 295, summary: 295, poster: https://theposterdb.com/api/assets/71934}
   Jurassic Park:
     template: {name: Movie, collection: 328, summary: 328, poster: https://theposterdb.com/api/assets/45080}
+    radarr_add_missing: true
   Harry Potter:
     template: {name: Movie, collection: 1241, summary: 1241, poster: https://theposterdb.com/api/assets/545}
   Lord of the Rings:
     template: {name: Movie, summary: 119, poster: https://theposterdb.com/api/assets/33509}
-    letterboxd_list: https://letterboxd.com/galadriei/list/the-lord-of-the-rings-and-the-hobbit-ranked/
+    imdb_list: https://www.imdb.com/list/ls566772032
   The Matrix:
     template: {name: Movie, collection: 2344, summary: 2344, poster: https://theposterdb.com/api/assets/12041}
   Star Wars:
@@ -159,7 +161,7 @@ collections:
     template: {name: Movie, collection: 1570, summary: 1570, poster: https://theposterdb.com/api/assets/35982}
   Aliens:
     template: {name: Movie, collection: 8091, summary: 8091, poster: https://theposterdb.com/api/assets/1213}
-    letterboxd_list: https://letterboxd.com/moviemaniac05/list/alien/
+    letterboxd_list: https://letterboxd.com/director525/list/aliens/
   Anorak's Almanac:
     template: {name: Movie, poster: https://i.imgur.com/qyC5uuI.jpg}
     letterboxd_list: https://letterboxd.com/jonthemantis/list/ready-player-one-anoraks-almanac/

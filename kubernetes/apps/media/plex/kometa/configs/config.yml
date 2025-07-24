@@ -236,7 +236,7 @@ radarr:
   monitor: true
   availability: announced
   quality_profile: HD - 720p/1080p
-  tag:
+  tag: 0-kometa
   search: false
   radarr_path:
   plex_path:
@@ -253,7 +253,7 @@ sonarr:
   language_profile: English
   series_type: standard
   season_folder: true
-  tag:
+  tag: 0-kometa
   search: false
   cutoff_search: false
   sonarr_path:
@@ -280,4 +280,4 @@ trakt:
     refresh_token: <<TRAKT_REFRESH_TOKEN>>
     scope: public
     created_at: <<TRAKT_CREATED_AT>>
-  pin: <<TRAKT_PIN>>
+  pin:
