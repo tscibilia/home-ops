@@ -95,6 +95,7 @@ libraries:
       - repo: Metadata - TV Posters.yaml
     overlay_files:
       - remove_overlays: false
+      - reapply_overlay: true # Temporary
       - repo: Overlays - ShowStatus.yml
       - default: ratings
         template_variables:
@@ -140,6 +141,7 @@ libraries:
         template_variables:
           builder_level: episode
           horizontal_align: center
+          vertical_offset: 15
           vertical_position: bottom
     operations:
       delete_collections:
