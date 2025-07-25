@@ -95,7 +95,7 @@ libraries:
       - repo: Metadata - TV Posters.yaml
     overlay_files:
       - remove_overlays: false
-      - reapply_overlay: true # Temporary
+      - reapply_overlays: true # Temporary
       - repo: Overlays - ShowStatus.yml
       - default: ratings
         template_variables:
