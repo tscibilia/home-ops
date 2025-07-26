@@ -18,6 +18,7 @@ resources:
   - ./open-webui/ks.yaml
   - ./pairdrop/ks.yaml
   - ./radicale/ks.yaml
+  - ./rclone/ks.yaml
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
   - ./vaultwarden/ks.yaml
