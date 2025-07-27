@@ -32,8 +32,8 @@ spec:
               tag: "v3.3.25@sha256:68160ec125e5cde23bc45549a443da0da0223cf4f0de7571ed2c6851cf6e1561"
             env:
               TZ: ${TIMEZONE}
-              LOG_LEVEL: debug
-              LOG_HTML: true
+              # LOG_LEVEL: debug
+              # LOG_HTML: true
             resources:
               requests:
                 cpu: 15m
