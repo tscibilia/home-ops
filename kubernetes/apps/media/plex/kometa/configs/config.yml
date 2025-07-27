@@ -112,36 +112,36 @@ libraries:
           vertical_offset: 15
           vertical_align: bottom
           addon_position: right
-      # Episode specific overlays
-      - default: commonsense
-        template_variables:
-          builder_level: episode
-          horizontal_offset: 15
-          horizontal_align: right
-          vertical_offset: 15
-          vertical_align: bottom
-          addon_position: right
-      - repo: Overlays - Audio.yml
-        template_variables:
-          builder_level: episode
-          horizontal_offset: 0
-          horizontal_align: center
-          vertical_offset: 15
-          vertical_align: top
-          back_color: '#00000099'
-      - default: episode_info
-        template_variables:
-          builder_level: episode
-          horizontal_offset: 15
-          horizontal_align: left
-          vertical_offset: 15
-          vertical_align: bottom
-      - default: runtimes
-        template_variables:
-          builder_level: episode
-          horizontal_align: center
-          vertical_offset: 15
-          vertical_position: bottom
+      # Episode specific overlays, takes 22hrs to run!
+      # - default: commonsense
+      #   template_variables:
+      #     builder_level: episode
+      #     horizontal_offset: 15
+      #     horizontal_align: right
+      #     vertical_offset: 15
+      #     vertical_align: bottom
+      #     addon_position: right
+      # - repo: Overlays - Audio.yml
+      #   template_variables:
+      #     builder_level: episode
+      #     horizontal_offset: 0
+      #     horizontal_align: center
+      #     vertical_offset: 15
+      #     vertical_align: top
+      #     back_color: '#00000099'
+      # - default: episode_info
+      #   template_variables:
+      #     builder_level: episode
+      #     horizontal_offset: 15
+      #     horizontal_align: left
+      #     vertical_offset: 15
+      #     vertical_align: bottom
+      # - default: runtimes
+      #   template_variables:
+      #     builder_level: episode
+      #     horizontal_align: center
+      #     vertical_offset: 15
+      #     vertical_position: bottom
     operations:
       delete_collections:
         managed: false
@@ -151,7 +151,7 @@ libraries:
         - mdb_commonsense
       mass_critic_rating_update: mdb_metacritic
       mass_audience_rating_update: mdb_tomatoesaudience
-      mass_episode_audience_rating_update: tmdb
+      # mass_episode_audience_rating_update: tmdb
       mass_user_rating_update: mdb
 
 playlist_files:
