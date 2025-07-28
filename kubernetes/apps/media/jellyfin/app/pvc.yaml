@@ -8,5 +8,5 @@ spec:
   accessModes: ["ReadWriteOnce"]
   resources:
     requests:
-      storage: 60Gi
+      storage: 80Gi
   storageClassName: ceph-rbd
