@@ -1,0 +1,127 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app rclone
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  maxHistory: 2
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      *app :
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image: &img
+              repository: ghcr.io/rclone/rclone
+              tag: 1.70.3@sha256:34c729127386abec1c610b2aa024e39b4498dc2b4a72a0798ae21fbdc1b0493b
+            args: ["serve", "/data", "--log-level=DEBUG", "--use-json-log", "--rc", "--rc-addr=:$(HTTP_PORT)", "--rc-serve", "--rc-serve-no-modtime", "--rc-web-gui", "--rc-web-gui-no-open-browser", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)", "--exclude", "**/／*", "--exclude", "**/／**"]
+            env: &env
+              TZ: ${TIMEZONE}
+              HTTP_PORT: &http 8080
+              METRICS_PORT: &metrics 9090
+              RCLONE_URL: http://rclone.default.svc.cluster.local/
+              # without the multithread config, every 64Mi the 3DS transfer will "write: broken pipe"
+              RCLONE_MULTI_THREAD_CUTOFF: "0"
+              RCLONE_MULTI_THREAD_STREAMS: "1"
+            envFrom: &envFrom
+              - secretRef:
+                  name: rclone-secret
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            resources: &res
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+            securityContext: &sc
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+      k8s-b2: &cron
+        type: cronjob
+        cronjob: &cj
+          schedule: "@daily"
+          concurrencyPolicy: Replace
+          ttlSecondsAfterFinished: 3600
+          failedJobsHistory: 1
+          backoffLimit: 2
+        containers:
+          app: &rclct
+            image: *img
+            command: ["/bin/sh", "-c", "rclone rc $(ARG)"]
+            env: &envcr
+              <<: *env
+              RCLONE_TIMEOUT: 1h
+              ARG: | # TODO: so much jank over k8s doing auto shell escaping on args and me wanting to not repeat the command line
+                sync/sync srcFs='/data/kubernetes/volsync' dstFs='b2-volsync:t0mKube/volsync' _config='{"Progress": true}' _filter='{"ExcludeRule":["**/／*","**/／**"]}'
+            envFrom: *envFrom
+            securityContext: *sc
+        pod:
+          annotations: &cran
+            reloader.stakater.com/auto: "false"
+          resources: *res
+        annotations: *cran
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 80
+            targetPort: *http
+    ingress:
+      app:
+        className: internal
+        hosts:
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        type: secret
+        name: rclone-config-secret
+        advancedMounts:
+          *app :
+            app:
+              - path: "/.rclone.conf"
+                subPath: "rclone.conf"
+      data:
+        type: nfs
+        server: ${UNRAID_IP}
+        path: /mnt/user/backup
+        globalMounts:
+          - path: /data
+            readOnly: true
+      tmp:
+        type: emptyDir

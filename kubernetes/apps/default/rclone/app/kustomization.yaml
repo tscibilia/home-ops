@@ -1,0 +1,15 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - ./externalsecret.yaml
+  - ./helmrelease.yaml
+configMapGenerator:
+  - name: rclone-config-tpl
+    files:
+      - ./resources/rclone.conf
+configurations:
+  - ./resources/kustomizeconfig.yaml
+generatorOptions:
+  disableNameSuffixHash: true
