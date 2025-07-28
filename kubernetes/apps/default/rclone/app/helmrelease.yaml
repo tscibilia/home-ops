@@ -112,7 +112,7 @@ spec:
         type: secret
         name: rclone-config-secret
         advancedMounts:
-          server:
+          *app :
             app:
               - path: "/.rclone.conf"
                 subPath: "rclone.conf"
