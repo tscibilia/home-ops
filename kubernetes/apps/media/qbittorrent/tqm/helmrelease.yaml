@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: qbtools
+  name: tqm
 spec:
   chartRef:
     kind: OCIRepository
@@ -27,71 +27,55 @@ spec:
     keepHistory: false
   values:
     controllers:
-      prune:
+      *app :
         type: cronjob
         cronjob: &cronJobSpec
-          schedule: '@hourly'
-          timeZone: &TZ ${TIMEZONE}
+          schedule: 0 * * * *
           backoffLimit: 0
           concurrencyPolicy: Forbid
           successfulJobsHistory: 1
           failedJobsHistory: 1
           ttlSecondsAfterFinished: 3600
         initContainers:
-          tagging: &container
+          retag: &container
             image:
-              repository: ghcr.io/buroa/qbtools
-              tag: v0.21.1@sha256:fd13085f7534719b7b30828684661b7f5611bbc4156831123775cfcd9b8f2eb5
-            env:
-              TZ: *TZ
-              QBITTORRENT_HOST: qbittorrent.media.svc.cluster.local
-              QBITTORRENT_PORT: 8080
-            args: ["tagging", "--added-on", "--expired", "--last-activity", "--sites", "--unregistered", "--not-linked"]
+              repository: ghcr.io/home-operations/tqm
+              tag: 1.15.0@sha256:70545e1a52e5afc4a6474c5b492e127be7b776eb9cea7adea3c6399e67ae2287
+            args:
+              - retag
+              - qb
             resources:
               requests:
-                cpu: 25m
+                cpu: 10m
               limits:
-                memory: 256Mi
+                memory: 64Mi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
         containers:
-          unregistered:
+          clean:
             <<: *container
-            args: ["prune", "--exclude-category", "manual", "--exclude-category", "music", "--exclude-tag", "added:1d", "--include-tag", "unregistered", "--with-data"]
-          expired:
-            <<: *container
-            args: ["prune", "--exclude-category", "manual", "--exclude-category", "music", "--exclude-tag", "added:1d", "--include-tag", "expired", "--with-data"]
+            args:
+              - clean
+              - qb
         pod:
           restartPolicy: Never
       orphaned:
         type: cronjob
         cronjob:
           <<: *cronJobSpec
-          schedule: '@daily'
+          schedule: 0 0 * * 0
           suspend: true
         containers:
           app:
             <<: *container
-            args: ["orphaned", "--exclude-pattern", "*_unpackerred*"]
+            args:
+              - orphan
+              - qb
+              - --dry-run
         pod:
           restartPolicy: Never
-      reannounce:
-        containers:
-          app:
-            <<: *container
-            args: ["reannounce", "--process-seeding"]
-      # limiter requires sabnzbd
-      # limiter:
-      #   containers:
-      #     app:
-      #       <<: *container
-      #       envFrom:
-      #         - secretRef:
-      #             name: qbtools-secret
-      #       args: ["limiter", "--max-line-speed-mbps", "155", "--max-percent", "0.9", "--limit-percent", "0.45", "--interval", "5"]
-      #       # ARG of '155' is ~1.24 Gbps on average -> 155MB/s
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -102,10 +86,14 @@ spec:
         seccompProfile: { type: RuntimeDefault }
     persistence:
       config:
-        type: secret
-        name: qbtools-secret
+        type: emptyDir
         globalMounts:
-          - path: /config/config.yaml
+          - path: /.config/tqm
+      config-file:
+        type: configMap
+        name: "{{ .Release.Name }}-configmap"
+        globalMounts:
+          - path: /.config/tqm/config.yaml
             subPath: config.yaml
             readOnly: true
       media:
@@ -114,3 +102,4 @@ spec:
         path: /volume1/Media/torrents
         globalMounts:
           - path: /Media/torrents
+            readOnly: true
