@@ -5,9 +5,4 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
-configMapGenerator:
-  - files:
-      - config.yaml=./config/config.yaml
-    name: qbtools-configmap
-generatorOptions:
-  disableNameSuffixHash: true
+  - ./config/config.sops.yaml

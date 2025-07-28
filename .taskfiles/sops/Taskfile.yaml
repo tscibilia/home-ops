@@ -7,12 +7,12 @@ tasks:
   encrypt:
     desc: Encrypt all Kubernetes SOPS secrets
     cmds:
-      - for: { var: file }
-        task: .encrypt-file
+      - for: { var: FILE }
+        task: encrypt-file
         vars:
-          file: "{{.ITEM}}"
+          FILE: "{{.ITEM}}"
     vars:
-      file:
+      FILE:
         sh: find "{{.KUBERNETES_DIR}}" -type f -name "*.sops.*" -exec grep -L "ENC\[AES256_GCM" {} \;
 
   encrypt-file:
