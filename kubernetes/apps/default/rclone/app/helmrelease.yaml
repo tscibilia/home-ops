@@ -122,5 +122,12 @@ spec:
         globalMounts:
           - path: /data
             readOnly: true
+      cache:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /.cache
+                subPath: cache
       tmp:
         type: emptyDir
