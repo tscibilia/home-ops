@@ -31,7 +31,7 @@ spec:
             image: &img
               repository: ghcr.io/rclone/rclone
               tag: 1.70.3@sha256:34c729127386abec1c610b2aa024e39b4498dc2b4a72a0798ae21fbdc1b0493b
-            args: ["serve", "ftp", "/data", "--addr=:$(FTP_PORT)", "--log-level=DEBUG", "--use-json-log", "--rc", "--rc-addr=:$(HTTP_PORT)", "--rc-serve", "--rc-serve-no-modtime", "--rc-web-gui", "--rc-web-gui-no-open-browser", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)", "--exclude", "**/／*", "--exclude", "**/／**", "--exclude", "Nintendo 3DS/title/*/*/content/*.app", "--exclude", "**.cia", "--exclude", "**.fbi", "--exclude", "**.nds", "--exclude", "**.mp3", "--exclude", "**.m4a", "--exclude", "**.aac", "--exclude", "**.wav", "--exclude", "**.flac"]
+            args: ["serve", "/data", "--log-level=DEBUG", "--use-json-log", "--rc", "--rc-addr=:$(HTTP_PORT)", "--rc-serve", "--rc-serve-no-modtime", "--rc-web-gui", "--rc-web-gui-no-open-browser", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)", "--exclude", "**/／*", "--exclude", "**/／**"]
             env: &env
               TZ: ${TIMEZONE}
               HTTP_PORT: &http 8080
@@ -42,13 +42,13 @@ spec:
               RCLONE_MULTI_THREAD_STREAMS: "1"
             envFrom: &envFrom
               - secretRef:
-                  name: rclone-secrets
+                  name: rclone-secret
             probes:
               liveness:
                 enabled: true
               readiness:
                 enabled: true
-            resources:
+            resources: &res
               requests:
                 cpu: 10m
                 memory: 128Mi
@@ -66,13 +66,6 @@ spec:
           ttlSecondsAfterFinished: 3600
           failedJobsHistory: 1
           backoffLimit: 2
-        initContainers:
-          01-ping: &ping
-            image: *img
-            command: ["/bin/sh", "-c", "until rclone backend features $(REMOTE): --contimeout=5s --timeout=5s; do printf 'Waiting for handheld to come online...'; sleep 2; done"]
-            env:
-              REMOTE: 3ds
-            securityContext: *sc
         containers:
           app: &rclct
             image: *img
@@ -81,18 +74,13 @@ spec:
               <<: *env
               RCLONE_TIMEOUT: 1h
               ARG: | # TODO: so much jank over k8s doing auto shell escaping on args and me wanting to not repeat the command line
-                sync/sync srcFs='3ds:/' dstFs='/data/3ds/' _config='{"Progress": true}' _filter='{"ExcludeRule":["**/／*","**/／**", "**/content/*.app","Nintendo 3DS/title/**/**/content/*.app","**/*.cia","**/*.fbi","**/*.nds","**/*.mp3","**/*.m4a","**/*.aac","**/*.wav","**/*.flac"]}'
+                sync/sync srcFs='/data/kubernetes/volsync' dstFs='b2-volsync:t0mKube/volsync' _config='{"Progress": true}' _filter='{"ExcludeRule":["**/／*","**/／**"]}'
             envFrom: *envFrom
             securityContext: *sc
         pod:
           annotations: &cran
             reloader.stakater.com/auto: "false"
-          resources:
-            requests:
-              cpu: 10m
-            limits:
-              cpu: "1"
-              memory: 128Mi
+          resources: *res
         annotations: *cran
     defaultPodOptions:
       securityContext:
@@ -107,7 +95,8 @@ spec:
         controller: *app
         ports:
           http:
-            port: &port 8000
+            port: 80
+            targetPort: *http
     ingress:
       app:
         className: internal
@@ -119,10 +108,18 @@ spec:
                   identifier: app
                   port: http
     persistence:
+      config:
+        type: secret
+        name: rclone-config-secret
+        advancedMounts:
+          server:
+            app:
+              - path: "/.rclone.conf"
+                subPath: "rclone.conf"
       data:
         type: nfs
         server: ${UNRAID_IP}
-        path: /mnt/user/backup/kubernetes
+        path: /mnt/user/backup
         globalMounts:
           - path: *data
             readOnly: true
