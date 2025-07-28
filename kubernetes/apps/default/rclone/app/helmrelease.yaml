@@ -121,7 +121,7 @@ spec:
         server: ${UNRAID_IP}
         path: /mnt/user/backup
         globalMounts:
-          - path: *data
+          - path: /data
             readOnly: true
       tmp:
         type: emptyDir
