@@ -27,7 +27,7 @@ spec:
           reloader.stakater.com/auto: "true"
         type: cronjob
         cronjob:
-          schedule: "30 6 * * *"
+          schedule: "05 2 * * *"
           timeZone: ${TIMEZONE}
         containers:
           app:
