@@ -36,7 +36,7 @@ spec:
     keepHistory: false
   values:
     githubConfigUrl: https://github.com/tscibilia/home-ops
-    githubConfigSecret: "{{ .Release.Name }}-secret"
+    githubConfigSecret: home-ops-runner-secret
     minRunners: 1
     maxRunners: 3
     containerMode:
