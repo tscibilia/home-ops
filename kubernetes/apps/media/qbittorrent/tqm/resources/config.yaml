@@ -42,7 +42,7 @@ filters:
       - { name: added:14d,    mode: full, update: ['AddedDays >= 14 && AddedDays < 30'] }
       - { name: added:30d,    mode: full, update: ['AddedDays >= 30 && AddedDays < 180'] }
       - { name: added:180d,   mode: full, update: ['AddedDays >= 180'] }
-      - { name: not-linked,   mode: full, update: ['HardlinkedOutsideClient == false && Label in ["sonarr", "radarr"]'] }
+      - { name: not-linked,   mode: full, update: ['HardlinkedOutsideClient == false && Label in ["tv", "movies"]'] }
       - { name: site:ant,     mode: full, update: ['TrackerName == "anthelion.me"'] }
       - { name: site:ar,      mode: full, update: ['TrackerName == "alpharatio.cc"'] }
       - { name: site:ath,     mode: full, update: ['TrackerName == "aither.cc"'] }
