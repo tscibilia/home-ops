@@ -2,6 +2,9 @@
     "audiobooks": {
         "save_path": "/Media/torrents/completed/audiobooks"
     },
+    "cross-seed": {
+        "save_path": "/Media/torrents/completed/cross-seed"
+    },
     "movies": {
         "save_path": "/Media/torrents/completed/movies"
     },

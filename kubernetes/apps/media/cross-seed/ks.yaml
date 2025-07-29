@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../../components/keda/nfs-scaler
+    # - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
     - name: external-secrets
