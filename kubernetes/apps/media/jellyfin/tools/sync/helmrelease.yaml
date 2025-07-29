@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: jellyfin-sync
+  name: &app jellyfin-sync
 spec:
   interval: 1h
   chartRef:
@@ -18,7 +18,7 @@ spec:
       retries: 3
   values:
     controllers:
-      jellyfin-sync:
+      *app :
         annotations:
           reloader.stakater.com/auto: "true"
         type: cronjob
@@ -36,7 +36,7 @@ spec:
               tag: 8.2.0@sha256:cbd8712389848cb5a2c9a54f712d7aded184cf2233bea4db9d5a890083e2f30e
             envFrom:
               - secretRef:
-                  name: jellyfin-sync-secret
+                  name: "{{ .Release.Name }}-secret"
             env:
               DEBUG_LEVEL: debug
               DRYRUN: "False"

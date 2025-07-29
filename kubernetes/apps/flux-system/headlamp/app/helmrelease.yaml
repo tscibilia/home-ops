@@ -40,10 +40,10 @@ spec:
     initContainers:
       - image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:v0.4.0@sha256:8d14174a166e2ccb2080a9f745b2ce8e19587ff8a2f41753eb1294875e650474
         command: ["/bin/sh", "-c", "mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/"]
-        name: headlamp-plugins
+        name: "{{ .Release.Name }}-plugins"
         volumeMounts:
           - mountPath: /build/plugins
-            name: headlamp-plugins
+            name: "{{ .Release.Name }}-plugins"
     config:
       pluginsDir: /build/plugins
       oidc:
@@ -51,7 +51,7 @@ spec:
           create: false
         externalSecret:
           enabled: true #keep getting auth errors, upon oidc login i instantly get logged out https://github.com/kubernetes-sigs/headlamp/issues/3441
-          name: headlamp-secret
+          name: "{{ .Release.Name }}-secret"
     env:
       - name: HEADLAMP_CONFIG_TRACING_ENABLED
         value: "false"
@@ -59,13 +59,13 @@ spec:
         value: "true"
     serviceAccount:
       create: false
-      name: headlamp-admin
+      name: "{{ .Release.Name }}-admin"
     clusterRoleBinding:
       create: false
     volumeMounts:
       - mountPath: /build/plugins
-        name: headlamp-plugins
+        name: "{{ .Release.Name }}-plugins"
     volumes:
-      - name: headlamp-plugins
+      - name: "{{ .Release.Name }}-plugins"
         emptyDir:
           sizeLimit: 100Mi

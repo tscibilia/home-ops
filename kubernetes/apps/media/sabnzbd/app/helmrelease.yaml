@@ -43,7 +43,7 @@ spec:
                 sabnzbd.${SECRET_DOMAIN}
             envFrom:
               - secretRef:
-                  name: sabnzbd-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 100m
