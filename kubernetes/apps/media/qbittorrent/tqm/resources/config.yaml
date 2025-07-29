@@ -1,7 +1,7 @@
 ---
 clients:
   qb:
-    download_path: /Media/torrents/complete
+    download_path: /Media/torrents/completed
     enabled: true
     filter: default
     type: qbittorrent
@@ -17,6 +17,8 @@ filters:
       - SeedingHours < 26 && !IsUnregistered()
     remove:
       - IsUnregistered()
+      # Remove non-private torrents that meet ratio/seed time criteria
+      - IsPrivate == false && (Ratio > 2.0 || SeedingDays >= 7.0)
       - (
           HasAnyTag(
             "site:ant", "site:ar", "site:fl", "site:fnp", "site:ipt",
