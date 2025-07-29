@@ -78,5 +78,6 @@ filters:
       - { name: site:tl,      mode: full, update: ['TrackerName in ["tleechreload.org", "torrentleech.org"]'] }
       - { name: site:uhd,     mode: full, update: ['TrackerName == "uhdbits.org"'] }
       - { name: site:ulcx,    mode: full, update: ['TrackerName == "upload.cx"'] }
+      - { name: permaseed,    mode: full, update: ['Label == "manual"'] }
       - { name: tracker-down, mode: full, update: ['IsTrackerDown()'] }
       - { name: unregistered, mode: full, update: ['IsUnregistered()'] }
