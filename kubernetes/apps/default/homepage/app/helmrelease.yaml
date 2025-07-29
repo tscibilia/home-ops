@@ -35,7 +35,7 @@ spec:
               HOMEPAGE_ALLOWED_HOSTS: "*"
             envFrom:
               - secretRef:
-                  name: homepage-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 20m
@@ -91,7 +91,7 @@ spec:
           - path: /app/config
       config-files:
         type: configMap
-        name: homepage-configmap
+        name: "{{ .Release.Name }}-configmap"
         globalMounts:
           - path: /app/config/bookmarks.yaml
             subPath: bookmarks.yaml
@@ -106,18 +106,18 @@ spec:
           - path: /app/config/widgets.yaml
             subPath: widgets.yaml
     serviceAccount:
-      homepage: {}
+      *app : {}
     rbac:
       bindings:
-        homepage:
+        *app :
           type: ClusterRoleBinding
           roleRef:
             kind: ClusterRole
-            name: homepage
+            name: *app
           subjects:
-            - identifier: homepage
+            - identifier: *app
       roles:
-        homepage:
+        *app :
           type: ClusterRole
           rules:
             - apiGroups:

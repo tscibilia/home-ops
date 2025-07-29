@@ -53,7 +53,7 @@ spec:
               TEMPLATES_FOLDER: "data/templates"
             envFrom:
               - secretRef:
-                  name: vaultwarden-secrets
+                  name: "{{ .Release.Name }}-secrets"
             probes:
               liveness: &probes
                 enabled: false

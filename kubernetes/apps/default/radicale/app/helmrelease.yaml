@@ -75,14 +75,14 @@ spec:
           - path: /data
       config:
         type: secret
-        name: radicale-config
+        name: "{{ .Release.Name }}-config"
         globalMounts:
           - path: /config/config
             subPath: config.cfg
             readOnly: true
       auth:
         type: secret
-        name: radicale-secret
+        name: "{{ .Release.Name }}-secret"
         globalMounts:
           - path: /config/users
             subPath: users

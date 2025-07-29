@@ -71,8 +71,9 @@ spec:
                   port: http
     persistence:
       media:
-        type: persistentVolumeClaim
-        existingClaim: pvc-nfs-media
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media
         globalMounts:
           - path: /data/books
             subPath: library/books

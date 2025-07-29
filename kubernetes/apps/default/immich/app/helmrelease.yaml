@@ -45,7 +45,7 @@ spec:
               DB_USERNAME:
                 valueFrom:
                   secretKeyRef:
-                    name: &pguser immich-pguser-secret
+                    name: &pguser "{{ .Release.Name }}-pguser-secret"
                     key: user
               DB_PASSWORD:
                 valueFrom:
@@ -147,8 +147,9 @@ spec:
 
     persistence:
       media:
-        type: persistentVolumeClaim
-        existingClaim: pvc-nfs-media
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media
         advancedMounts:
           server:
             app:
@@ -178,7 +179,7 @@ spec:
               - path: /usr/src/app/.transformers_cache
       config:
         type: secret
-        name: immich-config-secret
+        name: "{{ .Release.Name }}-config-secret"
         advancedMounts:
           server:
             app:

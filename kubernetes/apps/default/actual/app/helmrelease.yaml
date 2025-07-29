@@ -41,7 +41,7 @@ spec:
               ACTUAL_OPENID_SERVER_HOSTNAME: "https://budget.${SECRET_DOMAIN}"
             envFrom:
               - secretRef:
-                  name: actual-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 20m

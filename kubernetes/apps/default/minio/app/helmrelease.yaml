@@ -47,7 +47,7 @@ spec:
               MINIO_IDENTITY_OPENID_DISPLAY_NAME: "Login with Authentik"
             envFrom:
               - secretRef:
-                  name: minio-secret
+                  name: "{{ .Release.Name }}-secret"
             args: ["server", "/data", "--console-address", ":9001"]
             probes:
               liveness: &probes
@@ -125,8 +125,9 @@ spec:
                   port: s3
     persistence:
       data:
-        type: persistentVolumeClaim
-        existingClaim: pvc-nfs-media
+        type: nfs
+        server: ${NAS_IP}
+        path: /volume1/Media
         globalMounts:
           - path: /data
             subPath: Minio
