@@ -76,13 +76,13 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      secret-file:
-        type: secret
-        name: "{{ .Release.Name }}-secret"
-        globalMounts:
-          - path: /config/config.js
-            subPath: config.js
-            readOnly: true
+      # secret-file:
+      #   type: secret
+      #   name: "{{ .Release.Name }}-secret"
+      #   globalMounts:
+      #     - path: /config/config.js
+      #       subPath: config.js
+      #       readOnly: true
       media:
         type: nfs
         server: ${NAS_IP}
