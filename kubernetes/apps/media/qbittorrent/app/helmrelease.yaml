@@ -54,7 +54,7 @@ spec:
               VPN_SERVICE_PROVIDER: airvpn
               VPN_TYPE: wireguard
               WIREGUARD_ADDRESSES: 10.186.30.135/32
-              FIREWALL_VPN_INPUT_PORTS: 64804
+              FIREWALL_VPN_INPUT_PORTS: &vpnPort 64804
               SERVER_COUNTRIES: Canada
               VPN_INTERFACE: tun0
               UPDATER_PERIOD: 24h
@@ -116,6 +116,7 @@ spec:
                 10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
               QBT_Preferences__WebUI__AlternativeUIEnabled: true
               QBT_Preferences__WebUI__RootFolder: /add-ons/VueTorrent
+              QBT_TORRENTING_PORT: *vpnPort
               QBT_WEBUI_PORT: &port 8080
             probes:
               liveness:
@@ -134,50 +135,6 @@ spec:
               limits:
                 memory: 4Gi
             securityContext: *secCont
-          port-forward:
-            image:
-              repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
-              tag: 0.0.4@sha256:838ba41b3c736b23ae30f7e79a2610173f389a5ac6fb2b3e9c7bd482b9353c18
-            env:
-              GLUETUN_CONTROL_SERVER_HOST: localhost
-              GLUETUN_CONTROL_SERVER_PORT: 8000
-              GLUETUN_CONTROL_SERVER_API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: qbittorrent-vpn-secret
-                    key: GLUETUN_CONTROL_SERVER_API_KEY
-              QBITTORRENT_HOST: localhost
-              QBITTORRENT_WEBUI_PORT: *port
-              CRON_ENABLED: true
-              CRON_SCHEDULE: '*/5 * * * *'
-              LOG_TIMESTAMP: false
-            resources:
-              requests:
-                cpu: 5m
-              limits:
-                memory: 32Mi
-            securityContext: *secCont
-          vuetorrent:
-            dependsOn: app
-            image:
-              repository: registry.k8s.io/git-sync/git-sync
-              tag: v4.4.2@sha256:3089d9787b89bdc5af01d9f6e8d515aefb9672e8aea3972d7ff67478112bacb3
-            args:
-              - "--repo=https://github.com/VueTorrent/VueTorrent"
-              - "--ref=latest-release"
-              - "--period=86400s"
-              - "--root=/add-ons"
-              - "--group-write"
-              - "--add-user"
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                memory: 32Mi
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       automountServiceAccountToken: false
       securityContext:
