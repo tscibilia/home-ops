@@ -62,7 +62,7 @@ spec:
         cronjob: &cj
           schedule: "@daily"
           concurrencyPolicy: Replace
-          ttlSecondsAfterFinished: 3600
+          ttlSecondsAfterFinished: 86400
           failedJobsHistory: 1
           backoffLimit: 2
         containers:
