@@ -65,7 +65,7 @@ spec:
         runAsUser: 1044
         runAsGroup: 100
         fsGroup: 100
-        fsGroupChangePolicy: OnRootMismatch
+        fsGroupChangePolicy: Always
         supplementalGroups: [65534]
     service:
       app:
