@@ -36,7 +36,7 @@ spec:
             env:
               CROSS_SEED_PORT: &port 2468
               TZ: ${TIMEZONE}
-            args: ["daemon"]
+            args: ["daemon", "-v"]
             probes:
               liveness: &probes
                 enabled: true
@@ -89,3 +89,14 @@ spec:
         globalMounts:
           - path: /Media/torrents
             subPath: torrents
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          cross-seed:
+            app:
+              - path: /config/logs
+                subPath: logs
+              - path: /config/torrent_cache
+                subPath: torrent_cache
+              - path: /tmp
+                subPath: tmp
