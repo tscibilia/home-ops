@@ -31,7 +31,7 @@ spec:
             image: &img
               repository: ghcr.io/rclone/rclone
               tag: 1.70.3@sha256:34c729127386abec1c610b2aa024e39b4498dc2b4a72a0798ae21fbdc1b0493b
-            args: ["rcd", "--rc-web-gui", "--rc-web-gui-update", "--rc-web-gui-force-update", "--rc-web-gui-no-open-browser", "--rc-addr=:$(HTTP_PORT)", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)"]
+            args: ["rcd", "--rc-web-gui", "--rc-web-gui-update", "--rc-web-gui-force-update", "--rc-web-gui-no-open-browser", "--rc-addr=:$(HTTP_PORT)", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)", "--log-level=INFO"]
             env: &env
               TZ: ${TIMEZONE}
               HTTP_PORT: &http 8080
