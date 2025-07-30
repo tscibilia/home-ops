@@ -7,7 +7,7 @@ metadata:
 spec:
   sourcePVC: "${VOLSYNC_CLAIM:-${APP}}"
   trigger:
-    schedule: "0 */6 * * *" # every 6 hours
+    schedule: "${VOLSYNC_SCHEDULE:=0 */6 * * *}" # every 6 hours
   restic:
     copyMethod: "${VOLSYNC_COPYMETHOD:=Snapshot}"
     repository: "${APP}-volsync${VOLSYNC_REPOSITORY}-secret" # defaults to local, "-b2" for remote
