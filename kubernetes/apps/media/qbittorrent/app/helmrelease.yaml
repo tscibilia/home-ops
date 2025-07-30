@@ -51,9 +51,10 @@ spec:
               HTTP_CONTROL_SERVER_ADDRESS: &gluetunCtrlSrvr :8000
               HTTPPROXY: 'on'
               HTTPPROXY_LISTENING_ADDRESS: &gluetunPrivoxy :8888
-              VPN_SERVICE_PROVIDER: surfshark
+              VPN_SERVICE_PROVIDER: airvpn
               VPN_TYPE: wireguard
-              WIREGUARD_ADDRESSES: 10.14.0.2/16
+              WIREGUARD_ADDRESSES: 10.186.30.135/32
+              FIREWALL_VPN_INPUT_PORTS: 64804
               SERVER_COUNTRIES: Canada
               VPN_INTERFACE: tun0
               UPDATER_PERIOD: 24h
