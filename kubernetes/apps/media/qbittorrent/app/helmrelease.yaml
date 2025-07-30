@@ -107,8 +107,8 @@ spec:
             env:
               TZ: ${TIMEZONE}
               UMASK: "022"
-              QBT_BitTorrent__Session__DefaultSavePath: /downloads/completed
-              QBT_BitTorrent__Session__TempPath: /downloads/incomplete
+              QBT_BitTorrent__Session__DefaultSavePath: /Media/torrents/completed
+              QBT_BitTorrent__Session__TempPath: /Media/torrents/incomplete
               QBT_BitTorrent__Session__TempPathEnabled: true
               QBT_Preferences__WebUI__LocalHostAuth: false
               QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
