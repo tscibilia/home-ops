@@ -36,7 +36,8 @@ spec:
             env:
               CROSS_SEED_PORT: &port 2468
               TZ: ${TIMEZONE}
-            args: ["tail", "-f", "/dev/null"] # ["daemon"]
+            command: ["tail", "-f", "/dev/null"]
+            args: [] # ["daemon"]
             probes:
               liveness: &probes
                 enabled: true
