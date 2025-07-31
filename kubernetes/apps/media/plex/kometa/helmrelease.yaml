@@ -65,7 +65,7 @@ spec:
               KOMETA_READ_ONLY_CONFIG: true
             envFrom:
               - secretRef:
-                  name: kometa-secret
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness:
                 enabled: false
@@ -105,7 +105,7 @@ spec:
         existingClaim: *app
       config-file:
         type: configMap
-        name: kometa-configmap
+        name: "{{ .Release.Name }}-configmap"
         globalMounts:
           - path: /config/config.yml
             subPath: config.yml
@@ -113,7 +113,7 @@ spec:
       tmpfs:
         type: emptyDir
         advancedMounts:
-          kometa:
+          *app :
             app:
               - path: /config/logs
                 subPath: logs

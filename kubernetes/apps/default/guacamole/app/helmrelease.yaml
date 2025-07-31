@@ -43,7 +43,7 @@ spec:
               GUACD_LOG_LEVEL: debug
             envFrom:
               - secretRef:
-                  name: guacamole-secret
+                  name: "{{ .Release.Name }}-secret"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false

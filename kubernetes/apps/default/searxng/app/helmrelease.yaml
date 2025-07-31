@@ -46,7 +46,7 @@ spec:
               UWSGI_WORKERS: "1" # UWSGI_WORKERS: *cpu
             envFrom:
               - secretRef:
-                  name: searxng-secret
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
@@ -103,7 +103,7 @@ spec:
     persistence:
       config-files:
         type: configMap
-        name: searxng-config
+        name: "{{ .Release.Name }}-config"
         globalMounts:
           - path: /etc/searxng/settings.yml
             subPath: settings.yml

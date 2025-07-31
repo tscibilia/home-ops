@@ -41,7 +41,7 @@ spec:
               RCLONE_MULTI_THREAD_STREAMS: "1"
             envFrom: &envFrom
               - secretRef:
-                  name: rclone-secret
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness:
                 enabled: true
@@ -109,7 +109,7 @@ spec:
     persistence:
       config:
         type: secret
-        name: rclone-config-secret
+        name: "{{ .Release.Name }}-config-secret"
         advancedMounts:
           *app :
             app:

@@ -84,7 +84,7 @@ spec:
     persistence:
       config-file:
         type: configMap
-        name: karma-configmap
+        name: "{{ .Release.Name }}-configmap"
         globalMounts:
           - path: *config
             subPath: config.yaml

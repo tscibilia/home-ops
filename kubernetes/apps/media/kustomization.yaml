@@ -20,4 +20,3 @@ resources:
   - ./sonarr/ks.yaml
   - ./tautulli/ks.yaml
   - ./ytptube/ks.yaml
-  - ./pvc.yaml

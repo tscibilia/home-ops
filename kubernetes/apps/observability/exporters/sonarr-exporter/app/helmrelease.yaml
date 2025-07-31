@@ -38,7 +38,7 @@ spec:
               URL: http://sonarr.media.svc.cluster.local:8989
             envFrom:
               - secretRef:
-                  name: sonarr-exporter-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 5m

@@ -32,7 +32,7 @@ spec:
               tag: "17"
             envFrom:
               - secretRef:
-                  name: mealie-initdb-secret
+                  name: "{{ .Release.Name }}-initdb-secret"
         containers:
           app:
             image:
@@ -45,17 +45,17 @@ spec:
               POSTGRES_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: mealie-pguser-secret
+                    name: "{{ .Release.Name }}-pguser-secret"
                     key: password
               POSTGRES_SERVER:
                 valueFrom:
                   secretKeyRef:
-                    name: mealie-pguser-secret
+                    name: "{{ .Release.Name }}-pguser-secret"
                     key: host
               POSTGRES_PORT:
                 valueFrom:
                   secretKeyRef:
-                    name: mealie-pguser-secret
+                    name: "{{ .Release.Name }}-pguser-secret"
                     key: port
               # Base Values
               ALLOW_SIGNUP: "false"
@@ -80,7 +80,7 @@ spec:
               OPENAI_ENABLE_IMAGE_SERVICES: "false" #creating recipes via image
             envFrom:
               - secretRef:
-                  name: mealie-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 20m

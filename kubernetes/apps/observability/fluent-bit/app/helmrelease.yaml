@@ -64,7 +64,7 @@ spec:
     persistence:
       config:
         type: configMap
-        name: fluentbit-config
+        name: "{{ .Release.Name }}-config"
       logs-containers: # normal Talos disk mount
         type: hostPath
         hostPath: &path "/var/log/containers"

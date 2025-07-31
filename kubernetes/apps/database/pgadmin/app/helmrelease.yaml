@@ -44,12 +44,12 @@ spec:
               PGADMIN_DEFAULT_EMAIL:
                 valueFrom:
                   secretKeyRef:
-                    name: pgadmin-secret
+                    name: "{{ .Release.Name }}-secret"
                     key: PGADMIN_DEFAULT_EMAIL
               PGADMIN_DEFAULT_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: pgadmin-secret
+                    name: "{{ .Release.Name }}-secret"
                     key: PGADMIN_DEFAULT_PASSWORD
             probes:
               liveness: &probes

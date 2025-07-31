@@ -13,7 +13,7 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
   superuserSecret:
-    name: cnpg-secret
+    name: "{{ .Release.Name }}-secret"
   enableSuperuserAccess: true
   postgresql:
     parameters:
@@ -56,10 +56,10 @@ spec:
       serverName: &currentCluster postgres16-v4
       s3Credentials:
         accessKeyId:
-          name: cnpg-secret
+          name: "{{ .Release.Name }}-secret"
           key: AWS_ACCESS_KEY_ID
         secretAccessKey:
-          name: cnpg-secret
+          name: "{{ .Release.Name }}-secret"
           key: AWS_SECRET_ACCESS_KEY
 
   # # Note: previousCluster needs to be set to the name of the previous

@@ -35,7 +35,7 @@ spec:
               BAZARR__PORT: &port 6767
             envFrom:
               - secretRef:
-                  name: bazarr-secret
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
                 enabled: true
@@ -130,7 +130,7 @@ spec:
           - path: /Media/library
       scripts:
         type: configMap
-        name: bazarr-scripts
+        name: "{{ .Release.Name }}-scripts"
         defaultMode: 0775
         globalMounts:
           - path: /scripts/subcleaner.sh
