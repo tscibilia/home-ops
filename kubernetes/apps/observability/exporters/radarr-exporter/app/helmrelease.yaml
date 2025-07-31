@@ -38,7 +38,7 @@ spec:
               URL: http://radarr.media.svc.cluster.local:7878
             envFrom:
               - secretRef:
-                  name: radarr-exporter-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 5m

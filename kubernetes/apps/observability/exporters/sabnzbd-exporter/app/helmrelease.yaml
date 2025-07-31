@@ -37,7 +37,7 @@ spec:
               URL: http://sabnzbd.media.svc.cluster.local:8080
             envFrom:
               - secretRef:
-                  name: sabnzbd-exporter-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 5m

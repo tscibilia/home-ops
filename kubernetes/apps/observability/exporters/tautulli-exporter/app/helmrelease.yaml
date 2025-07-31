@@ -35,7 +35,7 @@ spec:
               TAUTULLI_URI: http://tautulli.media.svc.cluster.local:8181
             envFrom:
               - secretRef:
-                  name: tautulli-exporter-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 5m

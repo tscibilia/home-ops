@@ -37,7 +37,7 @@ spec:
               - $(JELLYSEERR_API_KEY)
             envFrom:
               - secretRef:
-                  name: jellyseerr-exporter-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 5m

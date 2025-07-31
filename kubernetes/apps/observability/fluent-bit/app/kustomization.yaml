@@ -12,7 +12,7 @@ resources:
   - ./helmrelease.yaml
   - ./rbac.yaml
 configMapGenerator:
-  - name: fluentbit-config
+  - name: fluent-bit-config
     files:
       - ./config/fluent-bit.yaml
 generatorOptions:

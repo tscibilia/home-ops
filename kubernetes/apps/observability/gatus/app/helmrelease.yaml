@@ -32,7 +32,7 @@ spec:
               tag: "17"
             envFrom:
               - secretRef:
-                  name: gatus-initdb-secret
+                  name: "{{ .Release.Name }}-initdb-secret"
           init-config:
             image:
               repository: ghcr.io/home-operations/k8s-sidecar
@@ -63,7 +63,7 @@ spec:
               DB_URI:
                 valueFrom:
                   secretKeyRef:
-                    name: gatus-pguser-secret
+                    name: "{{ .Release.Name }}-pguser-secret"
                     key: uri
             probes:
               liveness: &probes
@@ -130,7 +130,7 @@ spec:
         type: emptyDir
       config-file:
         type: configMap
-        name: gatus-configmap
+        name: "{{ .Release.Name }}-configmap"
         globalMounts:
           - path: /config/config.yaml
             subPath: config.yaml
