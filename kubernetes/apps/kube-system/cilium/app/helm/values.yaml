@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://github.com/cilium/cilium/raw/refs/tags/v1.18.0/install/kubernetes/cilium/values.schema.json
 autoDirectNodeRoutes: true
 bpf:
   masquerade: true
@@ -43,6 +44,7 @@ operator:
       enabled: true
   replicas: 1
   rollOutPods: true
+  tolerations: []
 prometheus:
   enabled: true
   serviceMonitor:
