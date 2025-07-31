@@ -34,22 +34,22 @@ spec:
               repository: ghcr.io/cross-seed/cross-seed
               tag: 6.13.1@sha256:1c721b96c8c8c8c9d362c5ac57644fc552bff728496b9a8b6400383d3c47e709
             env:
-              CROSS_SEED_PORT: &port 2468
               TZ: ${TIMEZONE}
-            args: ["daemon", "-v"]
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/ping
-                    port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
+              CROSS_SEED_PORT: &port 2468
+            # args: ["daemon", "-v"]
+            # probes:
+            #   liveness: &probes
+            #     enabled: true
+            #     custom: true
+            #     spec:
+            #       httpGet:
+            #         path: /api/ping
+            #         port: *port
+            #       initialDelaySeconds: 0
+            #       periodSeconds: 10
+            #       timeoutSeconds: 1
+            #       failureThreshold: 3
+            #   readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -62,8 +62,8 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: false
-        runAsUser: 0
-        runAsGroup: 0
+        runAsUser: 1044
+        runAsGroup: 100
         fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [65534]
@@ -90,14 +90,3 @@ spec:
         globalMounts:
           - path: /Media/torrents
             subPath: torrents
-      tmpfs:
-        type: emptyDir
-        advancedMounts:
-          cross-seed:
-            app:
-              - path: /config/logs
-                subPath: logs
-              - path: /config/torrent_cache
-                subPath: torrent_cache
-              - path: /tmp
-                subPath: tmp
