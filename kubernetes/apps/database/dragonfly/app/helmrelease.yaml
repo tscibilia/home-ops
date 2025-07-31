@@ -34,7 +34,7 @@ spec:
       retries: 3
   valuesFrom:
     - kind: ConfigMap
-      name: "{{ .Release.Name }}-values"
+      name: dragonfly-values
   # To resolve the targetDown prom alert when the dragonfly-operator chart
   # default ia set `--metrics-bind-address=127.0.0.1:8080`
   postRenderers:

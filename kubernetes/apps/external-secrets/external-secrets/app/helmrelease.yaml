@@ -32,4 +32,4 @@ spec:
       retries: 3
   valuesFrom:
     - kind: ConfigMap
-      name: "{{ .Release.Name }}-values"
+      name: external-secrets-values

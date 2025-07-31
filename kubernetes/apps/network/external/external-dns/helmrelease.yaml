@@ -32,7 +32,7 @@ spec:
       - name: CF_API_TOKEN
         valueFrom:
           secretKeyRef:
-            name: &secret "{{ .Release.Name }}-secret"
+            name: &secret external-dns-secret
             key: api-token
     extraArgs:
       - --cloudflare-dns-records-per-page=1000
