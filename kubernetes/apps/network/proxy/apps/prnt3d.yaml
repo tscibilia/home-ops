@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: &name 3dp
+  name: &name prnt3d
   labels:
     app: *name
 spec:
@@ -17,7 +17,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: 3dp
+  name: prnt3d
 subsets:
   - addresses:
       - ip: 192.168.1.104
@@ -28,13 +28,13 @@ subsets:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &name 3dp
+  name: &name prnt3d
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "prnt.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/hostname: "3dp.${SECRET_DOMAIN}"
 spec:
   ingressClassName: internal
   rules:
-    - host: "prnt.${SECRET_DOMAIN}"
+    - host: "3dp.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /
