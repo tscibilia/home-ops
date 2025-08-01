@@ -55,6 +55,7 @@ spec:
               VPN_TYPE: wireguard
               WIREGUARD_ADDRESSES: 10.186.30.135/32
               FIREWALL_VPN_INPUT_PORTS: &vpnPort 64804
+              SERVER_NAMES: Ukdah
               SERVER_HOSTNAMES: ca.vpn.airdns.org
               VPN_INTERFACE: tun0
               UPDATER_PERIOD: 24h
