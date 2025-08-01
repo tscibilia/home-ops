@@ -30,11 +30,11 @@ kind: Ingress
 metadata:
   name: &name 3dp
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "3dp.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/hostname: "prnt.${SECRET_DOMAIN}"
 spec:
   ingressClassName: internal
   rules:
-    - host: "3dp.${SECRET_DOMAIN}"
+    - host: "prnt.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /
