@@ -68,7 +68,7 @@ spec:
           cnpg.io/pluginServerSecret: &serverCert barman-cloud-server-tls
         labels:
           cnpg.io/pluginName: barman-cloud.cloudnative-pg.io
-        controller: barman-cloud
+        controller: *app
         ports:
           tcp:
             port: *port
