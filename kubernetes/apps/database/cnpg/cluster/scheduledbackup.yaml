@@ -1,15 +1,3 @@
-# ---
-# # yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/postgresql.cnpg.io/scheduledbackup_v1.json
-# apiVersion: postgresql.cnpg.io/v1
-# kind: ScheduledBackup
-# metadata:
-#   name: postgres16-sqldata
-# spec:
-#   schedule: "0 30 3 * * *"
-#   immediate: true
-#   backupOwnerReference: self
-#   cluster:
-#     name: postgres16
 ---
 # yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/postgresql.cnpg.io/scheduledbackup_v1.json
 apiVersion: postgresql.cnpg.io/v1
@@ -25,18 +13,6 @@ spec:
   schedule: "@daily"
   immediate: true
   backupOwnerReference: self
-# ---
-# # yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/postgresql.cnpg.io/scheduledbackup_v1.json
-# apiVersion: postgresql.cnpg.io/v1
-# kind: ScheduledBackup
-# metadata:
-#   name: immich17-sqldata
-# spec:
-#   schedule: "0 30 3 * * *"
-#   immediate: true
-#   backupOwnerReference: self
-#   cluster:
-#     name: immich17
 ---
 # yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/postgresql.cnpg.io/scheduledbackup_v1.json
 apiVersion: postgresql.cnpg.io/v1
