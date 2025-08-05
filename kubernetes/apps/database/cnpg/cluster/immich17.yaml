@@ -4,11 +4,16 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: immich17
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   instances: 3
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.2
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
+  storage:
+    size: 20Gi
+    storageClass: openebs-hostpath
   # bootstrap:
   #   initdb:
   #     postInitSQL:
@@ -22,10 +27,6 @@ spec:
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
-  monitoring:
-    enablePodMonitor: true
-  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
-  enablePDB: true
   postgresql:
     shared_preload_libraries: ["vchord.so"]
     pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
@@ -44,9 +45,10 @@ spec:
       memory: 1Gi
     limits:
       memory: 2Gi
-  storage:
-    size: 20Gi
-    storageClass: openebs-hostpath
+  monitoring:
+    enablePodMonitor: true
+  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
+  enablePDB: true
   # Fix for non AWS backup https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
   env:
     - name: AWS_REQUEST_CHECKSUM_CALCULATION
@@ -56,44 +58,21 @@ spec:
     - name: TZ
       value: ${TIMEZONE}
 
-  backup:
-    retentionPolicy: 7d
-    barmanObjectStore: &barmanObjectStore
-      data:
-        compression: bzip2
-      wal:
-        compression: bzip2
-        maxParallel: 4
-      destinationPath: s3://${AWS_CNPG_BUCKET}
-      endpointURL: https://${AWS_ENDPOINT}
-      # Note: serverName version needs to be incremented
-      # when recovering from an existing cnpg cluster
-      serverName: &currentCluster immich17-v4
-      s3Credentials:
-        accessKeyId:
-          name: cnpg-secret
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: cnpg-secret
-          key: AWS_SECRET_ACCESS_KEY
-
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
-  bootstrap:
-    recovery:
-      source: &previousCluster immich17-v3
-  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-    - name: *previousCluster
-      barmanObjectStore:
-        <<: *barmanObjectStore
-        serverName: *previousCluster
-    # - name: *previousCluster
-    #   connectionParameters:
-    #     host: immich.database.svc.cluster.local
-    #     user: postgres
-    #     dbname: postgres
-    #     sslmode: require
-    #   password:
-    #     name: cnpg-secret
-    #     key: password
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: *name
+        serverName: *name
+  # Note: this is needed when recovering from an existing cnpg cluster
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  # bootstrap:
+  #   recovery:
+  #     source: source
+  # externalClusters:
+  #   - name: source
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         barmanObjectName: *name
+  #         serverName: main-immich17

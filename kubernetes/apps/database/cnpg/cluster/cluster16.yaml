@@ -4,6 +4,8 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: postgres16
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:16
@@ -21,9 +23,6 @@ spec:
       shared_buffers: '512MB'
     pg_hba:
     - host all all 10.42.0.0/16 scram-sha-256
-  nodeMaintenanceWindow:
-    inProgress: false
-    reusePVC: true
   resources:
     requests:
       cpu: 500m
@@ -32,7 +31,9 @@ spec:
       memory: 2Gi
   monitoring:
     enablePodMonitor: true
-  # https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
+  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
+  enablePDB: true
+  # Fix for non AWS backup https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
   env:
     - name: AWS_REQUEST_CHECKSUM_CALCULATION
       value: when_required
@@ -41,35 +42,21 @@ spec:
     - name: TZ
       value: ${TIMEZONE}
 
-  backup:
-    retentionPolicy: 7d
-    barmanObjectStore: &barmanObjectStore
-      data:
-        compression: bzip2
-      wal:
-        compression: bzip2
-        maxParallel: 8
-      destinationPath: s3://${AWS_CNPG_BUCKET}
-      endpointURL: https://${AWS_ENDPOINT}
-      # Note: serverName version needs to be incremented
-      # when recovering from an existing cnpg cluster
-      serverName: &currentCluster postgres16-v5
-      s3Credentials:
-        accessKeyId:
-          name: cnpg-secret
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: cnpg-secret
-          key: AWS_SECRET_ACCESS_KEY
-
-  # Note: previousCluster needs to be set to the name of the previous
-  # cluster when recovering from an existing cnpg cluster
-  bootstrap:
-    recovery:
-      source: &previousCluster postgres16-v4
-  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-    - name: *previousCluster
-      barmanObjectStore:
-        <<: *barmanObjectStore
-        serverName: *previousCluster
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: *name
+        serverName: *name
+  # Note: this is needed when recovering from an existing cnpg cluster
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  # bootstrap:
+  #   recovery:
+  #     source: source
+  # externalClusters:
+  #   - name: source
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         barmanObjectName: *name
+  #         serverName: main-postgres16
