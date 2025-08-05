@@ -28,7 +28,7 @@ filters:
       - IsUnregistered()
       # Remove non-private torrents that meet ratio/seed time criteria
       - IsPrivate == false && (Ratio > 2.0 || SeedingDays >= 7.0)
-      # Remove private torrents that meet ratio/seed time criteria
+      # Remove private torrents that meet 3.0 ratio/24d seed time criteria
       - (
           HasAnyTag(
             "site:ant", "site:ar", "site:fl", "site:fnp", "site:ipt",
@@ -43,7 +43,7 @@ filters:
             "site:nbl", "site:oe", "site:phd", "site:rfx", "site:sp",
             "site:st", "site:td", "site:tl", "site:uhd", "site:ulcx"
           ) &&
-          SeedingDays > 24
+          SeedingDays > 60
         )
       # Remove torrents that are not linked and seeding for more than 24 days
       - HasAnyTag("not-linked") && SeedingDays > 24
