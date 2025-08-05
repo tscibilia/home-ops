@@ -3,8 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app cnpg-barman-cloud
-  namespace: database
+  name: &app barman-cloud
 spec:
   chartRef:
     kind: OCIRepository
@@ -89,156 +88,68 @@ spec:
         leader-election-role:
           type: Role
           rules:
-            - apiGroups:
-                - ""
-              resources:
-                - configmaps
-              verbs:
-                - get
-                - list
-                - watch
-                - create
-                - update
-                - patch
-                - delete
-            - apiGroups:
-                - coordination.k8s.io
-              resources:
-                - leases
-              verbs:
-                - get
-                - list
-                - watch
-                - create
-                - update
-                - patch
-                - delete
-            - apiGroups:
-                - ""
-              resources:
-                - events
-              verbs:
-                - create
-                - patch
+            - apiGroups: [ "" ]
+              resources: [ "configmaps" ]
+              verbs: [ "get", "list", "watch", "create", "update", "patch", "delete" ]
+            - apiGroups: [ "coordination.k8s.io" ]
+              resources: [ "leases" ]
+              verbs: [ "get", "list", "watch", "create", "update", "patch", "delete" ]
+            - apiGroups: [ "" ]
+              resources: [ "events" ]
+              verbs: [ "create", "patch" ]
         metrics-auth-role:
           type: ClusterRole
           rules:
-            - apiGroups:
-                - authentication.k8s.io
-              resources:
-                - tokenreviews
-              verbs:
-                - create
-            - apiGroups:
-                - authorization.k8s.io
-              resources:
-                - subjectaccessreviews
-              verbs:
-                - create
+            - apiGroups: [ "authentication.k8s.io" ]
+              resources: [ "tokenreviews" ]
+              verbs: [ "create" ]
+            - apiGroups: [ "authorization.k8s.io" ]
+              resources: [ "subjectaccessreviews" ]
+              verbs: [ "create" ]
         metrics-reader:
           type: ClusterRole
           rules:
-            - nonResourceURLs:
-                - /metrics
-              verbs:
-                - get
+            - nonResourceURLs: [ "/metrics" ]
+              verbs: [ "get" ]
         objectstore-editor-role:
           type: ClusterRole
           rules:
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores
-              verbs:
-                - create
-                - delete
-                - get
-                - list
-                - patch
-                - update
-                - watch
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores/status
-              verbs:
-                - get
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores" ]
+              verbs: [ "create", "delete", "get", "list", "patch", "update", "watch" ]
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores/status" ]
+              verbs: [ "get" ]
         objectstore-viewer-role:
           type: ClusterRole
           rules:
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores
-              verbs:
-                - get
-                - list
-                - watch
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores/status
-              verbs:
-                - get
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores" ]
+              verbs: [ "get", "list", "watch" ]
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores/status" ]
+              verbs: [ "get" ]
         *app :
           type: ClusterRole
           rules:
-            - apiGroups:
-                - ""
-              resources:
-                - secrets
-              verbs:
-                - create
-                - delete
-                - get
-                - list
-                - watch
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores
-              verbs:
-                - create
-                - delete
-                - get
-                - list
-                - patch
-                - update
-                - watch
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores/finalizers
-              verbs:
-                - update
-            - apiGroups:
-                - barmancloud.cnpg.io
-              resources:
-                - objectstores/status
-              verbs:
-                - get
-                - patch
-                - update
-            - apiGroups:
-                - postgresql.cnpg.io
-              resources:
-                - backups
-              verbs:
-                - get
-                - list
-                - watch
-            - apiGroups:
-                - rbac.authorization.k8s.io
-              resources:
-                - rolebindings
-                - roles
-              verbs:
-                - create
-                - get
-                - list
-                - patch
-                - update
-                - watch
+            - apiGroups: [ "" ]
+              resources: [ "secrets" ]
+              verbs: [ "create", "delete", "get", "list", "watch" ]
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores" ]
+              verbs: [ "create", "delete", "get", "list", "patch", "update", "watch" ]
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores/finalizers" ]
+              verbs: [ "update" ]
+            - apiGroups: [ "barmancloud.cnpg.io" ]
+              resources: [ "objectstores/status" ]
+              verbs: [ "get", "patch", "update" ]
+            - apiGroups: [ "postgresql.cnpg.io" ]
+              resources: [ "backups" ]
+              verbs: [ "get", "list", "watch" ]
+            - apiGroups: [ "rbac.authorization.k8s.io" ]
+              resources: [ "rolebindings", "roles" ]
+              verbs: [ "create", "get", "list", "patch", "update", "watch" ]
       bindings:
         leader-election-rolebinding:
           type: RoleBinding
@@ -249,7 +160,7 @@ spec:
           subjects: &subject
             - kind: ServiceAccount
               identifier: *app
-              namespace: cnpg-system
+              namespace: database
         metrics-auth-rolebinding:
           type: ClusterRoleBinding
           roleRef: &roleRef
