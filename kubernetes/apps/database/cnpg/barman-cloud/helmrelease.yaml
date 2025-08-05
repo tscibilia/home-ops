@@ -82,7 +82,7 @@ spec:
         name: *clientCert
         globalMounts: [ { path: /client } ]
     serviceAccount:
-      cnpg-barman-cloud:
+      *app :
         forceRename: *app
     rbac:
       roles:
@@ -180,7 +180,7 @@ spec:
                 - objectstores/status
               verbs:
                 - get
-        cnpg-barman-cloud:
+        *app :
           type: ClusterRole
           rules:
             - apiGroups:
