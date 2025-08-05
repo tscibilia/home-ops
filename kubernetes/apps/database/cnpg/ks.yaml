@@ -53,3 +53,33 @@ spec:
   targetNamespace: *namespace
   timeout: 15m
   wait: true
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cnpg-barman-cloud
+  namespace: &namespace database
+spec:
+  dependsOn:
+    - name: cnpg-operator
+      namespace: *namespace
+    - name: cnpg-cluster
+      namespace: *namespace
+  interval: 30m
+  path: ./kubernetes/apps/database/cnpg/barman-cloud
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+      - kind: Secret
+        name: cnpg-secret
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: *namespace
+  timeout: 15m
+  wait: true
