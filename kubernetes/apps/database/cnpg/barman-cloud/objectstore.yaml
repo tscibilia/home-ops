@@ -4,7 +4,6 @@ apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
   name: barman-objectstore
-  namespace: database
 spec:
   retentionPolicy: 7d
   configuration:
