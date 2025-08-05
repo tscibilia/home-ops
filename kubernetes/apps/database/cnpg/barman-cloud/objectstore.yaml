@@ -3,7 +3,30 @@
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: barman-objectstore
+  name: postgres16
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://${AWS_CNPG_BUCKET}
+    endpointURL: https://${AWS_ENDPOINT}
+    s3Credentials:
+      accessKeyId:
+        name: cnpg-secret
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: cnpg-secret
+        key: AWS_SECRET_ACCESS_KEY
+    data:
+      compression: bzip2
+    wal:
+      compression: bzip2
+      maxParallel: 8
+---
+# yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/barmancloud.cnpg.io/objectstore_v1.json
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: immich17
 spec:
   retentionPolicy: 7d
   configuration:
