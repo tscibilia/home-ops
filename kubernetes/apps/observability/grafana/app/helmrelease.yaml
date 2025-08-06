@@ -197,7 +197,7 @@ spec:
             type: prometheus
             uid: prometheus
             access: proxy
-            url: http://vmsingle-stack.observability.svc.cluster.local:8429
+            url: http://vmsingle-stack.observability.svc.cluster.local:8428
             isDefault: true
           - name: Alertmanager
             type: alertmanager

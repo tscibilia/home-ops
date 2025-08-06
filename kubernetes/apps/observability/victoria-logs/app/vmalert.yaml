@@ -12,7 +12,7 @@ spec:
   notifiers:
     - url: http://vmalertmanager-stack.observability.svc.cluster.local:9093
   remoteWrite:
-    url: &vm http://vmsingle-stack.observability.svc.cluster.local:8429
+    url: &vm http://vmsingle-stack.observability.svc.cluster.local:8428
   remoteRead:
     url: *vm
   ruleSelector:
