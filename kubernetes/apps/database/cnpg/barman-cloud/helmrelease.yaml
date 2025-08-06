@@ -34,6 +34,7 @@ spec:
               - --server-key=/server/tls.key
               - --client-cert=/client/tls.crt
               - --server-address=:9090
+              - --metrics-bind-address=:8443
               - --leader-elect
               - --log-level=debug
             env:
@@ -71,6 +72,12 @@ spec:
         ports:
           tcp:
             port: *port
+      metrics:
+        forceRename: barman-metrics
+        controller: *app
+        ports:
+          tcp:
+            port: 8443
     persistence:
       server:
         type: secret
