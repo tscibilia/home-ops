@@ -21,13 +21,6 @@ spec:
             - name: repository
               mountPath: /repository
           resources: {}
-        - name: b2
-          image: docker.io/restic/restic:latest
-          args: ["unlock", "--remove-all"]
-          envFrom:
-            - secretRef:
-                name: {{ ENV.APP }}-volsync-b2-secret
-          resources: {}
       volumes:
         - name: repository
           nfs:
