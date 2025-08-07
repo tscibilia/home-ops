@@ -72,11 +72,11 @@ spec:
               readiness: *srvprobes
               startup:
                 enabled: false
-            resources: &resources
-              requests:
+            resources:
+              requests: &resReq
                 cpu: 100m
                 memory: 1Gi
-              limits:
+              limits: &resLim
                 memory: 4Gi
             securityContext: &secCont
               allowPrivilegeEscalation: false
@@ -93,7 +93,6 @@ spec:
             env:
               MACHINE_LEARNING_MODEL_TTL: 0
               MACHINE_LEARNING_CACHE_FOLDER: /cache
-              # MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL: ViT-B-16-SigLIP-512__webli
             probes:
               liveness: &wrkprobes
                 enabled: true
@@ -109,8 +108,16 @@ spec:
               readiness: *wrkprobes
               startup:
                 enabled: false
-            resources: *resources
+            resources:
+              requests: *resReq
+              limits:
+                <<: *resLim
+                nvidia.com/gpu: "1"
             securityContext: *secCont
+        pod:
+          runtimeClassName: nvidia
+          nodeSelector:
+            feature.node.kubernetes.io/pci-0300_10de.present: "true"
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -119,6 +126,7 @@ spec:
         fsGroup: 100
         fsGroupChangePolicy: Always
         seccompProfile: { type: RuntimeDefault }
+        supplementalGroups: [44]
 
     service:
       app:
