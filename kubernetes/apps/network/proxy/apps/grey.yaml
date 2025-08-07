@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/service-v1.json
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service.json
 apiVersion: v1
 kind: Service
 metadata:
@@ -17,7 +17,7 @@ spec:
       targetPort: 1196
       protocol: UDP
 ---
-# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/endpoints-v1.json
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/endpoints.json
 apiVersion: v1
 kind: Endpoints
 metadata:
@@ -33,7 +33,7 @@ subsets:
         port: 1196
         protocol: UDP
 ---
-# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/ingress.json
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/ingress.json
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -55,7 +55,7 @@ spec:
                 port:
                   name: http
 ---
-# yaml-language-server: $schema=https://github.com/instrumenta/kubernetes-json-schema/raw/refs/heads/master/v1.18.1/configmap.json
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/configmap.json
 # Tell the nginx controller to open and proxy UDP 1196
 apiVersion: v1
 kind: ConfigMap
