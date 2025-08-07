@@ -30,6 +30,9 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+  dependsOn:
+    - name: node-feature-discovery
+      namespace: kube-system
   # https://github.com/NVIDIA/k8s-device-plugin/blob/main/deployments/helm/nvidia-device-plugin/values.yaml
   values:
     image:
@@ -41,7 +44,7 @@ spec:
         operator: Exists
         effect: NoSchedule
     nodeSelector:
-      feature.node.kubernetes.io/nvidia.com: nvidia
+      feature.node.kubernetes.io/pci-0300_10de.present: "true"
     affinity: []
     # Shared gpu access https://github.com/NVIDIA/k8s-device-plugin#shared-access-to-gpus
     config:
