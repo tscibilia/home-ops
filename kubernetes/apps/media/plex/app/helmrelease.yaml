@@ -56,12 +56,16 @@ spec:
               requests:
                 cpu: "1"
               limits:
-                # gpu.intel.com/i915: 1
+                nvidia.com/gpu: "1"
                 memory: 8Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+        pod:
+          runtimeClassName: nvidia
+          nodeSelector:
+            feature.node.kubernetes.io/pci-10de.present: "true"
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
