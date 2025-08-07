@@ -377,6 +377,11 @@ spec:
           gnetId: 12896
           revision: 1
           datasource: Prometheus
+        dcgm-exporter:
+          # renovate: depName="Media / NVIDIA"
+          gnetId: 12239
+          revision: 2
+          datasource: Prometheus
       victoria-metrics:
         backupmanager:
           url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/refs/heads/master/dashboards/backupmanager.json
