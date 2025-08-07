@@ -5,3 +5,4 @@ kind: Kustomization
 resources:
   - ./external-dns.yaml
   - ./ingress-nginx.yaml
+  - ./nvidia-device-plugin.yaml
