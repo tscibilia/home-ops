@@ -40,7 +40,7 @@ spec:
     keepHistory: false
   values:
     cephVersion:
-      image: quay.io/ceph/ceph:v17.2.8
+      image: quay.io/ceph/ceph:v19.2.3
     operatorNamespace: rook-ceph
     cephClusterSpec:
       external:
