@@ -9,11 +9,11 @@ spec:
   chart:
     spec:
       # renovate: registryUrl=https://nvidia.github.io/k8s-device-plugin
-      chart: *app
+      chart: nvidia-device-plugin
       version: 0.17.3
       sourceRef:
         kind: HelmRepository
-        name: *app
+        name: nvidia-device-plugin
         namespace: flux-system
       interval: 15m
   driftDetection:
