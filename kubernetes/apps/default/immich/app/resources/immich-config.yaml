@@ -5,18 +5,23 @@ trash:
   enabled: true
   days: 30
 ffmpeg:
-  preset: veryslow
-  crf: 18
+  preset: veryfast
+  crf: 20
+  targetVideoCodec: "hevc"
+  acceptedVideoCodecs: ["h264", "hevc"]
+  targetAudioCodec: "aac"
+  acceptedAudioCodecs: ["aac", "mp3"]
+  targetResolution: "1080"
   bframes: -1
   refs: 0
   gopSize: 0
   twoPass: true
   preferredHwDevice: auto
-  accel: disabled
-  accelDecode: false
+  transcode: "required"
+  accel: "qsv"
+  accelDecode: true
   tonemap: "reinhard"
   temporalAQ: false
-  targetResolution: "1080"
 
 job:
   backgroundTask:
