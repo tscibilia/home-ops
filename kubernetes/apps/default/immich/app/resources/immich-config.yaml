@@ -15,7 +15,7 @@ ffmpeg:
   bframes: -1
   refs: 0
   gopSize: 0
-  twoPass: true
+  twoPass: false
   preferredHwDevice: auto
   transcode: "required"
   accel: "qsv"
