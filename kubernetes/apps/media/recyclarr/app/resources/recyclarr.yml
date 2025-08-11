@@ -21,14 +21,14 @@ sonarr:
         upgrade:
           allowed: true
           until_quality: WEB 720p
-    media_naming:
-      series: plex
-      season: default
-      episodes:
-        rename: true
-        standard: "{Series TitleYear} - S{season:00}E{episode:00} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
-        daily: "{Series TitleYear} - {Air-Date} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
-        anime: "{Series TitleYear} - S{season:00}E{episode:00} - {(absolute:000)} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+    # media_naming:
+    #   series: plex
+    #   season: default
+    #   episodes:
+    #     rename: true
+    #     standard: "{Series TitleYear} - S{season:00}E{episode:00} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+    #     daily: "{Series TitleYear} - {Air-Date} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+    #     anime: "{Series TitleYear} - S{season:00}E{episode:00} - {(absolute:000)} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
     quality_definition:
       type: series
       preferred_ratio: 0.035 # Adjust for preferred file size
@@ -66,11 +66,11 @@ radarr:
         upgrade:
           allowed: true
           until_quality: WEB 2160p
-    media_naming:
-      folder: "{Movie CleanTitle} ({Release Year}) {tmdb-{TmdbId}}"
-      movie:
-        rename: true
-        standard: "{Movie CleanTitle} ({Release Year}) {edition-{Edition Tags}} {[Quality Full]}{[MediaInfo 3D]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+    # media_naming:
+    #   folder: "{Movie CleanTitle} ({Release Year}) {tmdb-{TmdbId}}"
+    #   movie:
+    #     rename: true
+    #     standard: "{Movie CleanTitle} ({Release Year}) {edition-{Edition Tags}} {[Quality Full]}{[MediaInfo 3D]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
     quality_definition:
       type: movie
       preferred_ratio: 0.035 # Adjust for preferred file size
