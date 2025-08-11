@@ -21,6 +21,14 @@ sonarr:
         upgrade:
           allowed: true
           until_quality: WEB 720p
+    media_naming:
+      series: plex
+      season: default
+      episodes:
+        rename: true
+        standard: "{Series TitleYear} - S{season:00}E{episode:00} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+        daily: "{Series TitleYear} - {Air-Date} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+        anime: "{Series TitleYear} - S{season:00}E{episode:00} - {(absolute:000)} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
     quality_definition:
       type: series
       preferred_ratio: 0.035 # Adjust for preferred file size
@@ -46,22 +54,26 @@ radarr:
     api_key: !env_var RADARR_API_KEY
     delete_old_custom_formats: false
     replace_existing_custom_formats: true
-    quality_profiles:
-      - name: SQP-1 WEB (1080p)
-      - name: UHD Bluray + WEB
-      - name: Remux-1080p - Anime
-        min_format_score: 2000
-    quality_definition:
-      type: movie
-      preferred_ratio: 0.035 # Adjust for preferred file size
     include:
       - template: radarr-quality-definition-movie
       - template: radarr-quality-profile-sqp-1-web-1080p
       - template: radarr-custom-formats-sqp-1-web-1080p
       - template: radarr-quality-profile-uhd-bluray-web
       - template: radarr-custom-formats-uhd-bluray-web
-      - template: radarr-quality-profile-anime
-      - template: radarr-custom-formats-anime
+    quality_profiles:
+      - name: SQP-1 WEB (1080p)
+      - name: UHD Bluray + WEB
+        upgrade:
+          allowed: true
+          until_quality: WEB 2160p
+    media_naming:
+      folder: "{Movie CleanTitle} ({Release Year}) {tmdb-{TmdbId}}"
+      movie:
+        rename: true
+        standard: "{Movie CleanTitle} ({Release Year}) {edition-{Edition Tags}} {[Quality Full]}{[MediaInfo 3D]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
+    quality_definition:
+      type: movie
+      preferred_ratio: 0.035 # Adjust for preferred file size
     custom_formats:
       - trash_ids:
           - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
@@ -107,13 +119,8 @@ radarr:
             score: -10000
       - trash_ids:
           - 923b6abef9b17f937fab56cfcf89e1f1 # DV (WEBDL)
-          - b17886cb4158d9fea189859409975758 # HDR10+ Boost
+          - b17886cb4158d9fea189859409975758 # HDR10Plus Boost
           - 55a5b50cb416dea5a50c4955896217ab # DV HDR10+ Boost
+          - 9c38ebb7384dada637be8899efa68e6f # SDR Block
         assign_scores_to:
           - name: UHD Bluray + Web
-            score: -10000
-      - trash_ids:
-          - 4a3b087eea2ce012fcc1ce319259a3be # Anime Dual Audio
-        assign_scores_to:
-          - name: Remux-1080p - Anime
-            score: 2000 # Require (Jap/Eng) dual audio
