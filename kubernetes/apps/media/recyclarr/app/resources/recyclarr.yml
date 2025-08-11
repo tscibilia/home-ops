@@ -7,6 +7,7 @@ sonarr:
     delete_old_custom_formats: false
     replace_existing_custom_formats: true
     include:
+      - template: sonarr-quality-definition-series
       - template: sonarr-v4-quality-profile-web-1080p-alternative # Use for older LQ shows
       - template: sonarr-v4-custom-formats-web-1080p
       - template: sonarr-v4-quality-profile-anime
@@ -14,6 +15,9 @@ sonarr:
       - name: WEB-1080p
       - name: Remux-1080p - Anime
         min_format_score: 2000
+    quality_definition:
+      type: series
+      preferred_ratio: 0.075 # Adjust for preferred file size
     custom_formats:
       - trash_ids:
           - 32b367365729d530ca1c124a0b180c64 # Bad Dual Groups
@@ -23,6 +27,7 @@ sonarr:
           - 1b3994c551cbb92a2c781af061f4ab44 # Scene
         assign_scores_to:
           - name: WEB-1080p
+          - name: Remux-1080p - Anime
       - trash_ids:
           - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
         assign_scores_to:
@@ -40,7 +45,11 @@ radarr:
       - name: UHD Bluray + WEB
       - name: Remux-1080p - Anime
         min_format_score: 2000
+    quality_definition:
+      type: movie
+      preferred_ratio: 0.075 # Adjust for preferred file size
     include:
+      - template: radarr-quality-definition-movie
       - template: radarr-quality-profile-sqp-1-web-1080p
       - template: radarr-custom-formats-sqp-1-web-1080p
       - template: radarr-quality-profile-uhd-bluray-web
@@ -67,6 +76,8 @@ radarr:
           - f537cf427b64c38c8e36298f657e4828 # Scene
         assign_scores_to:
           - name: SQP-1 WEB (1080p)
+          - name: UHD Bluray + WEB
+          - name: Remux-1080p - Anime
       - trash_ids:
           - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
           - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
