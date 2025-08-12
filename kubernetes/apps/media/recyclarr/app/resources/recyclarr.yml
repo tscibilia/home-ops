@@ -43,6 +43,12 @@ sonarr:
           - name: WEB-1080p
           - name: Remux-1080p - Anime
       - trash_ids:
+          - d7c747094a7c65f4c2de083c24899e8b # Proritize Freeleech
+        assign_scores_to:
+          - name: WEB-1080p
+          - name: Remux-1080p - Anime
+            score: 250
+      - trash_ids:
           - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
         assign_scores_to:
           - name: Remux-1080p - Anime
@@ -81,6 +87,12 @@ radarr:
           - name: SQP-1 WEB (1080p)
             score: 0
       - trash_ids:
+          - 0d91270a7255a1e388fa85e959f359d8 # Proritize Freeleech
+        assign_scores_to:
+          - name: SQP-1 WEB (1080p)
+          - name: UHD Bluray + WEB
+            score: 250
+      - trash_ids:
           - 570bc9ebecd92723d2d21500f4be314c # Remaster
           - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
           - e0c07d59beb37348e975a930d5e50319 # Criterion Collection
@@ -95,7 +107,6 @@ radarr:
         assign_scores_to:
           - name: SQP-1 WEB (1080p)
           - name: UHD Bluray + WEB
-          - name: Remux-1080p - Anime
       - trash_ids:
           - 417804f7f2c4308c1f4c5d380d4c4475 # ATMOS (undefined)
           - 1af239278386be2919e1bcee0bde047e # DD+ ATMOS
