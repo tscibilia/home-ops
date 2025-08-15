@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: ghcr.io/arabcoders/ytptube
-              tag: "v0.8.3@sha256:e42108f613359dfd235f088f72a798a81a6ab8200404cacc0609079fba70594f"
+              tag: "v0.8.4@sha256:6d483fad045c09d90cfd3d1c0fe4cd9e83bd05ffa5afc4242082ce5aa9a00c14"
             env:
               TZ: ${TIMEZONE}
             probes:
