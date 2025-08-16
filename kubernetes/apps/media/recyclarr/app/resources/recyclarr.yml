@@ -31,7 +31,7 @@ sonarr:
     #     anime: "{Series TitleYear} - S{season:00}E{episode:00} - {(absolute:000)} - {Episode CleanTitle:90} {[Quality Full]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
     quality_definition:
       type: series
-      preferred_ratio: 0.035 # Adjust for preferred file size
+      preferred_ratio: 0.025 # Adjust for preferred file size
     custom_formats:
       - trash_ids:
           - 32b367365729d530ca1c124a0b180c64 # Bad Dual Groups
@@ -79,7 +79,7 @@ radarr:
     #     standard: "{Movie CleanTitle} ({Release Year}) {edition-{Edition Tags}} {[Quality Full]}{[MediaInfo 3D]}{[Mediainfo AudioCodec} {Mediainfo AudioChannels]}{[MediaInfo VideoDynamicRangeType]}{[Mediainfo VideoCodec]}{-Release Group}"
     quality_definition:
       type: movie
-      preferred_ratio: 0.035 # Adjust for preferred file size
+      preferred_ratio: 0.025 # Adjust for preferred file size
     custom_formats:
       - trash_ids:
           - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
