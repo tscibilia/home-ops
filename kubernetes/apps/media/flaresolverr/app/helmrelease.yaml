@@ -28,12 +28,15 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/flaresolverr/flaresolverr
-              tag: "v3.3.25@sha256:68160ec125e5cde23bc45549a443da0da0223cf4f0de7571ed2c6851cf6e1561"
+              repository: docker.io/alexfozor/flaresolverr
+              tag: "pr-1300-experimental-v2@sha256:aec3bc0ab1b1f562af31dcfe89771273a2ead44a77c5492e38ecb94e5ab00b1b"
+              # repository: ghcr.io/flaresolverr/flaresolverr
+              # tag: "v3.3.25@sha256:68160ec125e5cde23bc45549a443da0da0223cf4f0de7571ed2c6851cf6e1561"
             env:
               TZ: ${TIMEZONE}
-              # LOG_LEVEL: debug
-              # LOG_HTML: true
+              CAPTCHA_SOLVER: none
+              LOG_LEVEL: info
+              LOG_HTML: false
             resources:
               requests:
                 cpu: 15m
