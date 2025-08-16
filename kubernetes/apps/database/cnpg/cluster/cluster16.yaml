@@ -59,4 +59,4 @@ spec:
         name: barman-cloud.cloudnative-pg.io
         parameters:
           barmanObjectName: *name
-          serverName: main-postgres16
+          serverName: *name
