@@ -29,7 +29,7 @@ spec:
           app:
             image:
               repository: docker.io/alexfozor/flaresolverr
-              tag: "pr-1300-experimental-v2@sha256:aec3bc0ab1b1f562af31dcfe89771273a2ead44a77c5492e38ecb94e5ab00b1b"
+              tag: "pr-1300@sha256:6cbd506462cc85a2ce1dfc0033e35129c21405f042eb9f136dbec88ddb1470b9"
             env:
               TZ: ${TIMEZONE}
               CAPTCHA_SOLVER: none
