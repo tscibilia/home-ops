@@ -43,7 +43,7 @@ libraries:
       mass_critic_rating_update: mdb_metacritic
     sonarr:
       root_folder_path: /Media/library/anime
-      quality_profile: Any - Prefer-720p
+      quality_profile: Remux-1080p - Anime
       series_type: anime
 
   Movies:
@@ -244,7 +244,7 @@ radarr:
   root_folder_path: /Media/library/movies
   monitor: true
   availability: announced
-  quality_profile: HD - 720p/1080p
+  quality_profile: SQP-1 WEB (1080p)
   tag: 0-kometa
   search: false
   radarr_path:
@@ -258,7 +258,7 @@ sonarr:
   add_existing: false
   root_folder_path: /Media/library/tv
   monitor: all
-  quality_profile: Any - Prefer-720p
+  quality_profile: WEB-1080p
   language_profile: English
   series_type: standard
   season_folder: true
