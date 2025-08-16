@@ -42,12 +42,12 @@ spec:
     - name: TZ
       value: ${TIMEZONE}
 
-  plugins:
-    - name: barman-cloud.cloudnative-pg.io
-      isWALArchiver: true
-      parameters:
-        barmanObjectName: *name
-        serverName: *name
+  # plugins:
+  #   - name: barman-cloud.cloudnative-pg.io
+  #     isWALArchiver: true
+  #     parameters:
+  #       barmanObjectName: *name
+  #       serverName: *name
   # Note: this is needed when recovering from an existing cnpg cluster
   # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
   bootstrap:
