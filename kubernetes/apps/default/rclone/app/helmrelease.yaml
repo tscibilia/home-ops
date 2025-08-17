@@ -98,6 +98,10 @@ spec:
         pod:
           annotations: *cran
           resources: *res
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 34 #pxmx backup user
+            runAsGroup: 34 #pxmx backup user
         annotations: *cran
     defaultPodOptions:
       securityContext:
