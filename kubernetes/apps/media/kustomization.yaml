@@ -9,8 +9,10 @@ resources:
   - ./bazarr/ks.yaml
   - ./cross-seed/ks.yaml
   - ./flaresolverr/ks.yaml
+  - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
   - ./jellyseerr/ks.yaml
+  - ./kometa/ks.yaml
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
   - ./prowlarr/ks.yaml
