@@ -102,6 +102,7 @@ spec:
             runAsNonRoot: true
             runAsUser: 34 #pxmx backup user
             runAsGroup: 34 #pxmx backup user
+            fsGroup: 34 #pxmx backup user
         annotations: *cran
     defaultPodOptions:
       securityContext:
