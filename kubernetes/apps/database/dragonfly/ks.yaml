@@ -39,7 +39,7 @@ spec:
   healthCheckExprs:
     - apiVersion: dragonflydb.io/v1alpha1
       kind: Dragonfly
-      current: status.phase == 'ready'
+      current: status.phase == 'Ready'
   interval: 30m
   path: ./kubernetes/apps/database/dragonfly/cluster
   postBuild:
