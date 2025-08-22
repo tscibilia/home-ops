@@ -153,6 +153,23 @@
       },
     },
     {
+      "description": "CloudNativePG Barman Cloud",
+      "groupName": "cloudnative-pg plugin-barman-cloud",
+      "matchPackagePatterns": [
+        "cloudnative-pg/plugin-barman-cloud",
+        "plugin-barman-cloud"
+      ],
+      "matchDatasources": [
+        "docker",
+        "github-releases"
+      ],
+      "group": {
+        "commitMessageTopic": "{{{groupName}}}"
+      },
+      "separateMinorPatch": true,
+      "sourceUrl": "https://github.com/cloudnative-pg/plugin-barman-cloud"
+    },
+    {
       description: 'Spegel Group',
       groupName: 'Spegel',
       matchDatasources: [
