@@ -32,7 +32,7 @@ spec:
               tag: "v0.8.9@sha256:b725e23f1abf40e9dcd7ea7ba31e23252542ccc3cb7c50ed9a843b8ef36cb444"
             env:
               TZ: ${TIMEZONE}
-              YTP_MAX_WORKERS: "1"
+              YTP_MAX_WORKERS: 1
             probes:
               liveness: &probes
                 enabled: true
