@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: ghcr.io/flcontainers/guacamole
-              tag: testing@sha256:ad6f0c606fbe9368d6b8ade0e284ed1e974b558ce98cc40bd49c95a49cf5f196
+              tag: testing@sha256:a819269df02e0d69e558d3e3bf657042a397a510d5c5643209485cd6afdef656
             env:
               TZ: ${TIMEZONE}
               EXTENSIONS: auth-sso-openid
