@@ -33,8 +33,6 @@ spec:
               tag: "3.5.5.0"
             env:
               TZ: ${TIMEZONE}
-              UID: 1044
-              GID: 100
             resources:
               requests:
                 cpu: 15m
@@ -47,9 +45,9 @@ spec:
               capabilities: { drop: ["ALL"], add: ["CHOWN SETUID SETGID KILL"] }
     defaultPodOptions:
       securityContext:
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 2999
+        runAsGroup: 2999
+        fsGroup: 2999
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
     service:
