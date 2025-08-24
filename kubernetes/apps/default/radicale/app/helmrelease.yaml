@@ -33,6 +33,8 @@ spec:
               tag: "3.5.5.0"
             env:
               TZ: ${TIMEZONE}
+              UID: 1044
+              GID: 100
             resources:
               requests:
                 cpu: 15m
