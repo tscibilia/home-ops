@@ -31,7 +31,7 @@ spec:
           app:
             image:
               repository: ghcr.io/immich-app/immich-server
-              tag: &tag v1.139.3
+              tag: &tag v1.139.4
             env:
               TZ: ${TIMEZONE}
               IMMICH_LOG_LEVEL: log
