@@ -8,11 +8,26 @@ metadata:
     vmalert-logs.io/enabled: "true"
 spec:
   groups:
-    - name: &name QbittorrentFastResumeRejected
+    - name: &alert1 QbittorrentFastResumeRejected
       type: vlogs
       interval: 5m
       rules:
-        - alert: *name
+        - alert: *alert1
           expr: '"fast resume rejected" | filter app := "qbittorrent" | count() rows | filter rows :> 0'
           annotations:
             description: '{{ $labels.app }} has a torrent with fast resume rejected'
+    - name: &alert2 QbittorrentFirewalled
+      type: vlogs
+      interval: 5m
+      rules:
+        - alert: *alert2
+          expr: |
+            (qbittorrent_connected{server="qbittorrent.media.svc.cluster.local:8080"}
+            - qbittorrent_firewalled{server="qbittorrent.media.svc.cluster.local:8080"}) == 0
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "qBittorrent is firewalled"
+            description: |
+              qBittorrent at {{ $labels.server }} is connected but reporting as firewalled on the BitTorrent network.
