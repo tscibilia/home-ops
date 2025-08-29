@@ -17,7 +17,6 @@ spec:
           annotations:
             description: '{{ $labels.app }} has a torrent with fast resume rejected'
     - name: &alert2 QbittorrentFirewalled
-      type: vlogs
       interval: 5m
       rules:
         - alert: *alert2
