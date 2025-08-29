@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./prometheusrule.yaml
   - ./vmrule.yaml
 configMapGenerator:
   - name: qbittorrent-config

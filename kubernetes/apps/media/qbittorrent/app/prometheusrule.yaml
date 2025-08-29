@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: qbittorrent-rules
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: qbittorrent.rules
+      rules:
+        - alert: QbittorrentFirewalled
+          annotations:
+            summary: "qBittorrent is firewalled"
+          expr: |
+            (qbittorrent_connected{server="qbittorrent.media.svc.cluster.local:8080"}
+            - qbittorrent_firewalled{server="qbittorrent.media.svc.cluster.local:8080"}) == 0
+          for: 2m
+          labels:
+            severity: warning
+            description: |
+              qBittorrent at {{ $labels.server }} is connected but reporting as firewalled on the BitTorrent network.
