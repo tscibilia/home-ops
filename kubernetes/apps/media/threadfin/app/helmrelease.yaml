@@ -33,7 +33,7 @@ spec:
             env:
               TZ: ${TIMEZONE}
               THREADFIN_BRANCH: main
-              THREADFIN_DEBUG: 1
+              THREADFIN_DEBUG: 0
               THREADFIN_PORT: &port 34400
             probes:
               liveness: &probes
