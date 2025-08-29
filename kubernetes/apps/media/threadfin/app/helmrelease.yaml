@@ -1,0 +1,97 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app threadfin
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  maxHistory: 2
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: docker.io/fyb3roptik/threadfin
+              tag: 1.2.37@sha256:0c4765c4871f1ffe848357e3f113891306e130703ae2f7c89f14844b19abf16f
+            env:
+              TZ: ${TIMEZONE}
+              THREADFIN_BRANCH: main
+              THREADFIN_DEBUG: 1
+              THREADFIN_PORT: &port 34400
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
+                  initialDelaySeconds: 120
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        className: internal
+        # annotations:
+        #   # See instructions at https://goauthentik.io/docs/providers/proxy/forward_auth
+        #   nginx.ingress.kubernetes.io/auth-url: |-
+        #     http://ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
+        #   nginx.ingress.kubernetes.io/auth-signin: |-
+        #     https://{{ .Release.Name }}.${SECRET_DOMAIN}/outpost.goauthentik.io/start?rd=$scheme://$http_host$escaped_request_uri
+        #   nginx.ingress.kubernetes.io/auth-response-headers: |-
+        #     Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid,X-authentik-entitlements
+        #   nginx.ingress.kubernetes.io/auth-snippet: |
+        #     proxy_set_header X-Forwarded-Host $http_host;
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    persistence:
+      config:
+        existingClaim: *app
+        globalMounts:
+          - path: /home/threadfin/conf
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
