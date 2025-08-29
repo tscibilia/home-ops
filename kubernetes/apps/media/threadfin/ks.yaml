@@ -25,6 +25,9 @@ spec:
       VOLSYNC_CAPACITY: 5Gi
       GATUS_SUBDOMAIN: iptv
       GATUS_PATH: /
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 1m
   sourceRef:
