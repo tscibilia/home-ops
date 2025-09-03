@@ -26,6 +26,21 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          01-fix-perms:
+            image:
+              repository: busybox
+              tag: 1.36
+            command:
+              - sh
+              - -c
+              - chown -R 2999:2999 /data
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              capabilities: { add: ["CHOWN"] }
+              allowPrivilegeEscalation: false
         containers:
           app:
             image:
@@ -45,9 +60,9 @@ spec:
               capabilities: { drop: ["ALL"], add: ["CHOWN SETUID SETGID KILL"] }
     defaultPodOptions:
       securityContext:
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 2999
+        runAsGroup: 2999
+        fsGroup: 2999
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
     service:
