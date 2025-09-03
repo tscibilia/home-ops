@@ -33,6 +33,8 @@ spec:
             env:
               TZ: ${TIMEZONE}
               YTP_MAX_WORKERS: 1
+            # Resolve deprecation warning in v0.9.0
+            args: ["--socket-timeout", "30", "--download-archive", "/config/archive.log"]
             probes:
               liveness: &probes
                 enabled: true
