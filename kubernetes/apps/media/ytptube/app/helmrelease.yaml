@@ -34,7 +34,6 @@ spec:
               TZ: ${TIMEZONE}
               YTP_MAX_WORKERS: 1
             # Resolve deprecation warning in v0.9.0
-            command: ["yt-dlp"]
             args: ["/opt/python/bin/python", "/app/app/main.py", "--ytp-process", "--socket-timeout", "30", "--download-archive", "/config/archive.log"]
             probes:
               liveness: &probes
