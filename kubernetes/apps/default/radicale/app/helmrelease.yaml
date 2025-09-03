@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: tomsquest/docker-radicale
-              tag: "3.5.4.0"
+              tag: "3.5.5.0"
             env:
               TZ: ${TIMEZONE}
             resources:
@@ -45,9 +45,9 @@ spec:
               capabilities: { drop: ["ALL"], add: ["CHOWN SETUID SETGID KILL"] }
     defaultPodOptions:
       securityContext:
-        runAsUser: 2999
-        runAsGroup: 2999
-        fsGroup: 2999
+        # runAsUser: 2999
+        # runAsGroup: 2999
+        # fsGroup: 2999
         runAsNonRoot: true
         fsGroupChangePolicy: OnRootMismatch
     service:
