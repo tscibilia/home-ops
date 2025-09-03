@@ -45,10 +45,10 @@ spec:
               capabilities: { drop: ["ALL"], add: ["CHOWN SETUID SETGID KILL"] }
     defaultPodOptions:
       securityContext:
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
-        runAsNonRoot: true
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+        runAsNonRoot: false
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
