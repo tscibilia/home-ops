@@ -23,4 +23,4 @@ resources:
   - ./tautulli/ks.yaml
   - ./threadfin/ks.yaml
   - ./tqm/ks.yaml
-  # - ./ytptube/ks.yaml
+  - ./ytptube/ks.yaml
