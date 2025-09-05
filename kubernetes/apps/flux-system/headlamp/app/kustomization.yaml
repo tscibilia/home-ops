@@ -6,5 +6,6 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ingress.yaml
+  - ./ocirepository.yaml
   - ./pushsecret.yaml
   - ./rbac.yaml

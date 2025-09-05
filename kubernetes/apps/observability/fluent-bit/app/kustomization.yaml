@@ -10,6 +10,7 @@ metadata:
     pod-security.kubernetes.io/warn: *ps
 resources:
   - ./helmrelease.yaml
+  - ./ocirepository.yaml
   - ./rbac.yaml
 configMapGenerator:
   - name: fluent-bit-config

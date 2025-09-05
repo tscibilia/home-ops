@@ -5,11 +5,6 @@ kind: Kustomization
 resources:
   - ./clusterissuer.yaml
   - ./helmrelease.yaml
+  - ./ocirepository.yaml
   - ./prometheusrule.yaml
   - ./secret.sops.yaml
-configMapGenerator:
-  - name: cert-manager-values
-    files:
-      - values.yaml=./helm/values.yaml
-configurations:
-  - ./helm/kustomizeconfig.yaml
