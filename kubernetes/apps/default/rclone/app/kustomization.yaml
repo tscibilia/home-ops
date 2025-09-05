@@ -5,6 +5,7 @@ kind: Component
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./ocirepository.yaml
 configMapGenerator:
   - name: rclone-config-tpl
     files:

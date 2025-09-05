@@ -5,6 +5,7 @@ kind: Component
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./ocirepository.yaml
   - ./scaledobject.yaml
   - ./vmrule.yaml
 configMapGenerator:

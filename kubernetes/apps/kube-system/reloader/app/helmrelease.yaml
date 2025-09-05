@@ -1,28 +1,14 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1.json
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
-metadata:
-  name: reloader
-spec:
-  interval: 1h
-  layerSelector:
-    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
-    operation: copy
-  ref:
-    tag: 2.2.2
-  url: oci://ghcr.io/stakater/charts/reloader
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: reloader
+  name: &app reloader
 spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: reloader
+    name: *app
   install:
     remediation:
       retries: 3
@@ -31,8 +17,8 @@ spec:
     remediation:
       retries: 3
   values:
-    fullnameOverride: reloader
-    reloader:
+    fullnameOverride: *app
+    *app :
       readOnlyRootFileSystem: true
       podMonitor:
         enabled: true
