@@ -32,7 +32,7 @@ spec:
           app:
             image:
               repository: ghcr.io/cross-seed/cross-seed
-              tag: 6.13.2-1@sha256:a17f53104765127d1b6fb8a4ab632d63c968952e7d5215fd69c24f0d532431dc
+              tag: 6.13.3-1@sha256:00bd2687a082e6537c8e70fb4d4dc2012ed3af3ba9d87f1477bc1039e438b532
             env:
               TZ: ${TIMEZONE}
               CROSS_SEED_PORT: &port 2468
