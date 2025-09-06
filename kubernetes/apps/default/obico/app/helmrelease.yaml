@@ -1,0 +1,71 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app obico
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  maxHistory: 2
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    server:
+      podAnnotations:
+        secret.reloader.stakater.com/reload: &secret obico-secret
+      image:
+        repository: ghcr.io/gabe565/obico/web
+        tag: latest@sha256:9a46050de877beaa6740c258a4c7bba2ed05c7046e567d3e8e8a9e28cd715629
+      env:
+        REDIS_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/4
+      envFrom:
+        - secretRef:
+            name: *secret
+    ingress:
+      app:
+        className: internal
+        hosts:
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+    ml-api:
+      image:
+        repository: ghcr.io/gabe565/obico/ml-api
+        tag: latest@sha256:cd2732311a3d1bc6cea18c8d96e664b0b4ec1b64809f0c2ae5be058e2bdb8b5c
+      runtimeClassName: nvidia
+      nodeSelector:
+        feature.node.kubernetes.io/pci-0300_10de.present: "true"
+      resources:
+        requests:
+          cpu: "1"
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 8Gi
+    redis:
+      enabled: false
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      media:
+        type: nfs
+        server: ${UNRAID_IP}
+        path: /mnt/user/backup
+        globalMounts:
+          - path: /media
+            subPath: obico
