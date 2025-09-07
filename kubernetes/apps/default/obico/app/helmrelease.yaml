@@ -39,11 +39,8 @@ spec:
         media:
           enabled: true
           type: nfs
-          server: ${UNRAID_IP}
-          path: /mnt/user/backup
-          globalMounts:
-            - path: /media
-              subPath: obico
+          server: ${NAS_IP}
+          path: /volume1/Media/torrents/obico
       ingress:
         app:
           className: internal
