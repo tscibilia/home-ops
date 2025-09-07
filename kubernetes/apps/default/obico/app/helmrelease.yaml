@@ -42,15 +42,12 @@ spec:
           server: ${NAS_IP}
           path: /volume1/Media/torrents/obico
       ingress:
-        app:
+        main:
           className: internal
           hosts:
             - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               paths:
                 - path: /
-                  service:
-                    identifier: app
-                    port: http
     ml-api:
       image:
         repository: ghcr.io/gabe565/obico/ml-api
