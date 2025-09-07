@@ -34,8 +34,10 @@ spec:
             name: *secret
       persistence:
         data:
+          enabled: true
           existingClaim: *app
         media:
+          enabled: true
           type: nfs
           server: ${UNRAID_IP}
           path: /mnt/user/backup
