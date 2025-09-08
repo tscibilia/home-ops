@@ -43,6 +43,7 @@ spec:
           path: /volume1/Media/torrents/obico
       ingress:
         main:
+          enabled: true
           className: internal
           hosts:
             - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
