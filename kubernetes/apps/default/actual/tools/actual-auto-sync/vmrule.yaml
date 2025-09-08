@@ -1,0 +1,20 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/operator.victoriametrics.com/vmrule_v1beta1.json
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: actual-auto-sync-alerts
+  labels:
+    vmalert-logs.io/enabled: "true"
+spec:
+  groups:
+    - name: &alert1 ActualAutoSyncError
+      type: vlogs
+      interval: 5m
+      rules:
+        - alert: *alert1
+          # Match log lines containing the error message and coming from the actual-auto-sync deployment
+          expr: '"Failed syncing account" | filter app := "actual-auto-sync" | count() rows | filter rows :> 0'
+          annotations:
+            description: '{{ $labels.app }} encountered a sync account {{ $labels.account }}'
+            summary: 'Sync error in {{ $labels.app }} for account {{ $labels.account }}'
