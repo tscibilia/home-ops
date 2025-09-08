@@ -170,6 +170,16 @@
       "sourceUrl": "https://github.com/cloudnative-pg/plugin-barman-cloud"
     },
     {
+      description: "Talos Group",
+      groupName: "talos",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/installer/", "/talosctl/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+      minimumGroupSize: 2,
+    },
+    {
       description: 'Spegel Group',
       groupName: 'Spegel',
       matchDatasources: [
