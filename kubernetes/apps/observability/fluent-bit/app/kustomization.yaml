@@ -11,10 +11,3 @@ metadata:
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
-  - ./rbac.yaml
-configMapGenerator:
-  - name: fluent-bit-config
-    files:
-      - ./config/fluent-bit.yaml
-generatorOptions:
-  disableNameSuffixHash: true

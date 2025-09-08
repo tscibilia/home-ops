@@ -19,70 +19,81 @@ spec:
       strategy: rollback
       retries: 3
   values:
-    controllers:
-      *app :
-        annotations:
-          reloader.stakater.com/auto: "true"
-        type: daemonset
-        serviceAccount:
-          name: *app
-        containers:
-          main:
-            image:
-              repository: cr.fluentbit.io/fluent/fluent-bit
-              tag: "4.0.9@sha256:0a207f7ae2341fdacf479c8300c4868ffecbc1eb382371fa75292f182c5ba920"
-            args: ["--config=/config/fluent-bit.yaml"]
-            env:
-              TZ: "${TIMEZONE}"
-              KUBE_NODE_IP:
-                valueFrom:
-                  fieldRef:
-                    fieldPath: status.hostIP
-            securityContext:
-              readOnlyRootFilesystem: true
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
-            resources:
-              requests:
-                cpu: 10m
-              limits:
-                cpu: 1
-                memory: 128Mi
-            #probes: # TODO: HTTP healthchecks via health API
-            #  liveness:
-            #    enabled: true
-            #  readiness:
-            #    enabled: true
-            #  #startup:
-            #  #  enabled: true
-    service:
-     fluent-bit:
-       controller: *app
-       ports:
-         http:
-           port: 8080
-           protocol: HTTP
-           appProtocol: http
-    persistence:
-      config:
-        type: configMap
-        name: "{{ .Release.Name }}-config"
-      logs-containers: # normal Talos disk mount
-        type: hostPath
-        hostPath: &path "/var/log/containers"
-        globalMounts:
-          - path: *path
-      logs-pods: # jank tmpfs bind mount from /run on Talos
-        type: hostPath
-        hostPath: &path "/var/log/pods"
-        globalMounts:
-          - path: *path
-    defaultPodOptions:
-      automountServiceAccountToken: true
-      enableServiceLinks: true
-      securityContext:
-        runAsUser: &uid 0 # logs are stored as root
-        runAsGroup: *uid
-        fsGroup: *uid
-        fsGroupChangePolicy: Always
-        seccompProfile: { type: "RuntimeDefault" }
+    ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/configuration-file
+    config:
+      service: |
+        [SERVICE]
+          Daemon Off
+          Flush {{ .Values.flush }}
+          Log_Level {{ .Values.logLevel }}
+          Parsers_File /fluent-bit/etc/parsers.conf
+          Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+          HTTP_Server On
+          HTTP_Listen 0.0.0.0
+          HTTP_Port {{ .Values.metricsPort }}
+          Health_Check On
+
+      ## https://docs.fluentbit.io/manual/pipeline/inputs
+      inputs: |
+        [INPUT]
+          name tail
+          alias kubernetes
+          path /var/log/containers/*.log
+          parser containerd
+          tag kubernetes.*
+
+      ## https://docs.fluentbit.io/manual/pipeline/filters
+      filters: |
+        [FILTER]
+          name kubernetes
+          alias kubernetes
+          match kubernetes.*
+          buffer_size 0
+          merge_log on
+
+          kube_tag_prefix kubernetes.var.log.containers.
+          k8s-logging.parser on
+          k8s-logging.exclude on
+          namespace_labels off
+          annotations on
+
+        [FILTER]
+          name modify
+          match kubernetes.*
+          add source home-ops
+
+        [FILTER]
+          name nest
+          match kubernetes.*
+          wildcard pod_name
+          operation lift
+          nested_under kubernetes
+          add_prefix k_
+
+        [FILTER]
+          name nest
+          match kubernetes.*
+          operation lift
+          nested_under k_labels
+          add_prefix k_labels_
+
+        [FILTER]
+          name modify
+          match kubernetes.*
+          rename k_labels_app.kubernetes.io/instance app
+          rename k_labels_app.kubernetes.io/name app
+          rename k_labels_app app
+          rename k_labels_k8s-app app
+          rename k_container_name app
+
+      ## https://docs.fluentbit.io/manual/pipeline/outputs
+      outputs: |
+        [OUTPUT]
+          Name http
+          Match kubernetes.*
+          host victoria-logs-server.observability.svc.cluster.local
+          port 9428
+          uri /insert/jsonline?_stream_fields=stream,k_namespace_name,k_pod_name,app&_msg_field=log&_time_field=date
+          format json_lines
+          json_date_format iso8601
+          compress gzip
