@@ -29,7 +29,7 @@ spec:
             env:
               TZ: ${TIMEZONE}
               ACTUAL_SERVER_URL: "http://actual.default.svc.cluster.local:5006"
-              CRON_SCHEDULE: "0 1 * * *"
+              CRON_SCHEDULE: "0 7 * * *"
               LOG_LEVEL: "info"
             envFrom:
               - secretRef:
@@ -37,6 +37,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
+                memory: 256Mi
               limits:
                 memory: 512Mi
     persistence:

@@ -14,7 +14,11 @@ spec:
       rules:
         - alert: *alert1
           # Match log lines containing the error message and coming from the actual-auto-sync deployment
-          expr: '"Failed syncing account" | filter app := "actual-auto-sync" | count() rows | filter rows :> 0'
+          expr: '_msg: "Failed syncing account"
+                 | filter app == "actual-auto-sync"
+                 | pattern "Failed syncing account “{{account}}.”"
+                 | count() by (account) rows
+                 | filter rows > 0'
           annotations:
-            description: '{{ $labels.app }} encountered a sync account {{ $labels.account }}'
             summary: 'Sync error in {{ $labels.app }} for account {{ $labels.account }}'
+            description: '{{ $labels.app }} failed to sync account {{ $labels.account }}'
