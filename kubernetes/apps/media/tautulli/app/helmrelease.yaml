@@ -116,6 +116,11 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/logs
+      plex-logs:
+        existingClaim: plex-logs
+        globalMounts:
+          - path: /logs
+            readOnly: true
       tmp:
         type: emptyDir
       scripts:
