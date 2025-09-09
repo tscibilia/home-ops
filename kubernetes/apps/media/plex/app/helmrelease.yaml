@@ -106,6 +106,10 @@ spec:
         existingClaim: "{{ .Release.Name }}-cache"
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Cache
+      logs:
+        existingClaim: "{{ .Release.Name }}-logs"
+        globalMounts:
+          - path: /config/Library/Application Support/Plex Media Server/Logs
       media:
         type: nfs
         server: ${NAS_IP}
@@ -118,8 +122,6 @@ spec:
         advancedMounts:
           *app :
             app:
-              - path: /config/Library/Application Support/Plex Media Server/Logs
-                subPath: logs
               - path: /transcode
                 subPath: transcode
               - path: /tmp
