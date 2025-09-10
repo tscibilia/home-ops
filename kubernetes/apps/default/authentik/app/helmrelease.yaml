@@ -96,7 +96,7 @@ spec:
           memory: 512Mi
         limits:
           cpu: "1"
-          memory: 1.25Gi
+          memory: 1Gi
       metrics:
         enabled: true
         serviceMonitor:
@@ -120,4 +120,4 @@ spec:
           cpu: 50m
           memory: 512Mi
         limits:
-          memory: 1Gi
+          memory: 1.25Gi
