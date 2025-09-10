@@ -33,7 +33,7 @@ spec:
               LOG_LEVEL: "info"
             envFrom:
               - secretRef:
-                  name: actual-auto-sync-secret
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 10m
