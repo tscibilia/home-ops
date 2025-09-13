@@ -3,28 +3,6 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app victoria-metrics-crds
-  namespace: &namespace observability
-spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
-  interval: 30m
-  path: ./kubernetes/apps/observability/victoria-metrics/crds
-  prune: true
-  retryInterval: 1m
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: *namespace
-  timeout: 15m
-  wait: false
----
-# yaml-language-server: $schema=https://kube-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: &app victoria-metrics-stack
   namespace: &namespace observability
 spec:
@@ -34,10 +12,8 @@ spec:
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
-    - name: victoria-metrics-crds
-      namespace: *namespace
   interval: 30m
-  path: ./kubernetes/apps/observability/victoria-metrics/stack
+  path: ./kubernetes/apps/observability/victoria-metrics/app
   postBuild:
     substitute:
       APP: vm
