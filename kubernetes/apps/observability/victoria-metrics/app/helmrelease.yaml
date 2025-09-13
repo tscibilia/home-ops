@@ -34,10 +34,6 @@ spec:
           value: 0
         - name: VM_VMALERTMANAGER_CONFIGRELOADERCPU
           value: 0
-      # try crds here, they are failing separately due to exceeding 1048576 bytes
-      crds:
-        enabled: true
-        plain: false
       operator:
         enable_converter_ownership: true # Required to allow VM to remove VM rules it imports if a prometheus rule is deleted
         useCustomConfigReloader: true # Bundled config-reloader, should reduce vmagent and vmauth config sync-time and make it predictable.
