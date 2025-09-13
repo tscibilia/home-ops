@@ -9,9 +9,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: victoria-metrics-k8s-stack
-  dependsOn:
-    - name: victoria-metrics-crds
-      namespace: observability
   interval: 30m
   maxHistory: 2
   install:
