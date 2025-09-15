@@ -57,19 +57,11 @@ spec:
         - name: custom-css
           configMap:
             name: authentik-customize
-        # Temp patch, remove on upgrade to v2025.8.2 https://github.com/goauthentik/authentik/issues/16386
-        - name: dshm
-          emptyDir:
-            medium: Memory
-            sizeLimit: 512Mi
       volumeMounts:
         - name: custom-css
           mountPath: /web/dist/custom.css
           subPath: custom.css
           readOnly: true
-        # Temp patch, remove on upgrade to v2025.8.2 https://github.com/goauthentik/authentik/issues/16386
-        - name: dshm
-          mountPath: /dev/shm
     *app :
       error_reporting:
         enabled: false
