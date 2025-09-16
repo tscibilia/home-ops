@@ -97,6 +97,10 @@ spec:
         limits:
           cpu: "1"
           memory: 1Gi
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
     worker:
       replicas: 1
       livenessProbe: &probes
