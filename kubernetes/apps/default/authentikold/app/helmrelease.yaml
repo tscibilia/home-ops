@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app authentik-old
+  name: &app authentikold
 spec:
   chartRef:
     kind: OCIRepository
@@ -24,7 +24,7 @@ spec:
     global:
       fullnameOverride: *app
       podAnnotations:
-        secret.reloader.stakater.com/reload: &secret authentik-old-secret
+        secret.reloader.stakater.com/reload: &secret authentikold-secret
       deploymentStrategy:
         type: RollingUpdate
       env:
@@ -41,12 +41,12 @@ spec:
         - name: AUTHENTIK_POSTGRESQL__PASSWORD
           valueFrom:
             secretKeyRef:
-              name: authentik-old-pguser-secret
+              name: authentikold-pguser-secret
               key: password
         - name: AUTHENTIK_POSTGRESQL__HOST
           valueFrom:
             secretKeyRef:
-              name: authentik-old-pguser-secret
+              name: authentikold-pguser-secret
               key: host
       envFrom:
         - secretRef:
@@ -56,7 +56,7 @@ spec:
       volumes:
         - name: custom-css
           configMap:
-            name: authentik-old-customize
+            name: authentikold-customize
       volumeMounts:
         - name: custom-css
           mountPath: /web/dist/custom.css
