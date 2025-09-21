@@ -9,8 +9,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../components/cnpg
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
