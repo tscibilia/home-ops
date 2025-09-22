@@ -41,12 +41,12 @@ spec:
         - name: AUTHENTIK_POSTGRESQL__PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-pguser-secret"
+              name: authentik-pguser-secret
               key: password
         - name: AUTHENTIK_POSTGRESQL__HOST
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-pguser-secret"
+              name: authentik-pguser-secret
               key: host
       envFrom:
         - secretRef:
