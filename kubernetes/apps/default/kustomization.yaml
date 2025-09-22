@@ -7,6 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./actual/ks.yaml
+  - ./authentik/ks.yaml
   - ./authentikold/ks.yaml
   - ./echo/ks.yaml
   # - ./guacamole/ks.yaml
