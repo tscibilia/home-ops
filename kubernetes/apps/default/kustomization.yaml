@@ -8,7 +8,6 @@ components:
 resources:
   - ./actual/ks.yaml
   - ./authentik/ks.yaml
-  - ./authentikold/ks.yaml
   - ./echo/ks.yaml
   # - ./guacamole/ks.yaml
   - ./homepage/ks.yaml
