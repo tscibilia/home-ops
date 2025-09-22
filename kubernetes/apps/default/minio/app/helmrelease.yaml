@@ -116,6 +116,10 @@ spec:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          nginx.ingress.kubernetes.io/configuration-snippet: |
+            if ($request_method !~ ^(GET|HEAD|POST|PUT)$ ) {
+                return 405;
+            }
         hosts:
           - host: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
