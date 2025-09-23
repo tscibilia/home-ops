@@ -6,6 +6,7 @@ resources:
   - ./blackbox-exporter/ks.yaml
   - ./dcgm-exporter/ks.yaml
   - ./jellyseerr-exporter/ks.yaml
+  - ./plex-exporter/ks.yaml
   - ./prowlarr-exporter/ks.yaml
   - ./qbittorrent-exporter/ks.yaml
   - ./radarr-exporter/ks.yaml

@@ -349,6 +349,9 @@ spec:
           datasource:
             - name: DS_PROMETHEUS
               value: Prometheus
+        plex-exporter:
+          url: https://raw.githubusercontent.com/jsclayton/prometheus-plex-exporter/main/examples/dashboards/Media%20Server.json
+          datasource: Prometheus
         jellyseerr-exporter:
           # url: https://raw.githubusercontent.com/WillFantom/overseerr-exporter/refs/heads/main/grafana/dashboard.json
           url: https://raw.githubusercontent.com/opspotes/jellyseerr-exporter/refs/heads/main/grafana/dashboard.json
