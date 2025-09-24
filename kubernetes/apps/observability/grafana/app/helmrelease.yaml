@@ -350,10 +350,12 @@ spec:
             - name: DS_PROMETHEUS
               value: Prometheus
         plex-exporter:
-          url: https://raw.githubusercontent.com/jsclayton/prometheus-plex-exporter/main/examples/dashboards/Media%20Server.json
+          url: https://raw.githubusercontent.com/timothystewart6/plex-monitoring-stack/main/grafana/provisioning/dashboards/Media%20Server.json
+          datasource: Prometheus
+        plex-dashboard:
+          url: https://raw.githubusercontent.com/timothystewart6/plex-monitoring-stack/main/grafana/provisioning/dashboards/media-server.json
           datasource: Prometheus
         jellyseerr-exporter:
-          # url: https://raw.githubusercontent.com/WillFantom/overseerr-exporter/refs/heads/main/grafana/dashboard.json
           url: https://raw.githubusercontent.com/opspotes/jellyseerr-exporter/refs/heads/main/grafana/dashboard.json
           datasource: Prometheus
         sonarr-exporter:
@@ -367,9 +369,7 @@ spec:
           revision: 1
           datasource: Prometheus
         dcgm-exporter:
-          # renovate: depName="Media / NVIDIA"
-          gnetId: 12239
-          revision: 2
+          url: https://raw.githubusercontent.com/timothystewart6/plex-monitoring-stack/main/grafana/provisioning/dashboards/gpu.json
           datasource: Prometheus
       victoria-metrics:
         backupmanager:
