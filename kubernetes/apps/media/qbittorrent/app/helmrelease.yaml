@@ -91,6 +91,7 @@ spec:
               tag: latest@sha256:99e8232915b7791a17a2067350f4380527fc082a4d792a0181ecb2e027ac088e
             env:
               PROXY_PORT: &socks5 8388
+              REQUIRE_AUTH: "false"
             resources:
               requests:
                 cpu: 5m
