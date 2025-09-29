@@ -139,6 +139,15 @@
       sourceUrl: "https://github.com/immich-app/immich",
     },
     {
+      description: "Obico Group",
+      groupName: "Obico",
+      matchPackageNames: ["/obico/"],
+      matchDatasources: ["docker"],
+      group: {commitMessageTopic: "{{{groupName}}}"},
+      separateMinorPatch: true,
+      sourceUrl: "https://github.com/gabe565/docker-obico",
+    },
+    {
       description: 'Rook-Ceph Group',
       groupName: 'Rook-Ceph',
       matchDatasources: [
