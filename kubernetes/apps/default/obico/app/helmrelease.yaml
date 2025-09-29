@@ -27,7 +27,7 @@ spec:
         secret.reloader.stakater.com/reload: &secret obico-secret
       image:
         repository: ghcr.io/gabe565/obico/web
-        tag: latest@sha256:9a46050de877beaa6740c258a4c7bba2ed05c7046e567d3e8e8a9e28cd715629
+        tag: latest@sha256:83d62882b989ba938661265910944a5378aac76e9026f12afa84938ca3dbad3b
       env:
         DJANGO_SITE_ID: "2"
         REDIS_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/4
