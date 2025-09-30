@@ -121,6 +121,7 @@
       matchPackageNames: [
         '/flux-operator/',
         '/flux-instance/',
+        '/flux-operator-manifests/'
       ],
       matchDatasources: [
         'docker',
@@ -128,6 +129,7 @@
       group: {
         commitMessageTopic: '{{{groupName}}} group',
       },
+      minimumGroupSize: 3,
     },
     {
       description: "Immich Group",
@@ -432,6 +434,17 @@
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+/(?<currentValue>(v|\\d)[^/]+)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+    },
+    {
+      customType: "regex",
+      description: "Process OCI dependencies",
+      managerFilePatterns: [
+        "/\\.yaml(?:\\.j2)?$/",
+      ],
+      matchStrings: [
+        "oci://(?<depName>[^:]+):(?<currentValue>\\S+)",
+      ],
+      datasourceTemplate: "docker",
     },
     {
       customType: "regex",
