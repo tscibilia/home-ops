@@ -71,9 +71,12 @@ One other gotcha is that when you use the [Full Mesh Network](https://pve.proxmo
 ### Prometheus TargetDown 'rook-ceph-mgr-external'
 After installing VictoriaMetrics (or Prometheus), I saw the general.rules firing an alert that 2/3 of my `mgr` were down. I thought this is because I declared all 3 as potential managers and there's only 1 at a time, it turns out that vmagent was scrapping based on the svc/rook-ceph-mgr-external and endpoints. I was able to "resolve" it by removing the default monitoring and prometheus settings in helmrelease.yaml and establishing [a custom rule](https://github.com/tscibilia/home-ops/blob/458c6aa923a31bfd9ec505a3d58f2b1b843c6da3/kubernetes/apps/rook-ceph/rook-ceph/cluster/prometheusrule.yaml#L527) that just checks for 1 mgr as well as a [custom scrape](https://github.com/tscibilia/home-ops/blob/458c6aa923a31bfd9ec505a3d58f2b1b843c6da3/kubernetes/apps/observability/victoria-metrics/stack/secret.yaml#L8) that was applied to [victoria-metrics/stack/helmrelease.yaml > spec.values.vmagent](https://github.com/tscibilia/home-ops/blob/458c6aa923a31bfd9ec505a3d58f2b1b843c6da3/kubernetes/apps/observability/victoria-metrics/stack/helmrelease.yaml#L184)
 
+### Bluestore slowops warnings
+I'm often getting Bluestore slowops warnings. Hopefully the pending upgrade to faster SSDs will get rid of this issue. However, in the interim, I found that Proxmox defaluts to a long 24hr warning if there is but a single slowops warning. So, in Proxmox, I set `ceph config set osd bluestore_slow_ops_warn_lifetime 300 ` and `ceph config set osd bluestore_slow_ops_warn_threshold 5`. Ceph was only warning me if a single BlueStore op stayed stuck for a whole day. Now, I should get alerted if there’s a persistent backlog, but you not get spammed by transient latency.
+
 ## Improvements for future me
 ### Made an attempt at automating
-I might try setting up the following yamls so I don't need to run `import-external-cluster.sh` on each  bootstrap:
+I might try setting up the following yamls so I don't need to run `import-external-cluster.sh` on each bootstrap:
  - `rbd-secrets.yaml`
  - `cephfs-secrets.yaml`
  - `storageclass.yaml`
