@@ -6,8 +6,8 @@ namespace: network
 components:
   - ../../components/common
 resources:
-  # - ./external/ks.yaml
-  # - ./internal/ks.yaml
+  - ./external/ks.yaml
+  - ./internal/ks.yaml
   - ./externalsecret.yaml
   - ./proxy/ks.yaml
   - ./tailscale/ks.yaml
