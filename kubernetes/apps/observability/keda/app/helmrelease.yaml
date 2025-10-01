@@ -8,17 +8,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
-  maxHistory: 2
   interval: 1h
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
-  uninstall:
-    keepHistory: false
   values:
     enableServiceLinks: false

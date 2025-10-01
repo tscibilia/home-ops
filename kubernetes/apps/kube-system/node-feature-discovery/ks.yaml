@@ -15,7 +15,6 @@ spec:
       name: *app
       namespace: *namespace
   interval: 1h
-  retryInterval: 2m
   path: ./kubernetes/apps/kube-system/node-feature-discovery/app
   prune: true
   sourceRef:
@@ -23,4 +22,3 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 5m

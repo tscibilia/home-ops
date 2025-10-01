@@ -25,11 +25,9 @@ spec:
       - name: cluster-secrets
         kind: Secret
   prune: true
-  retryInterval: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 15m
   wait: false

@@ -8,19 +8,9 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  interval: 1h
   driftDetection:
     mode: enabled
-  interval: 1h
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
-  uninstall:
-    keepHistory: false
   values:
     worker:
       config:

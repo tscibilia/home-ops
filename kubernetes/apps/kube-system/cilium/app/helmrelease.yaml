@@ -5,17 +5,10 @@ kind: HelmRelease
 metadata:
   name: &app cilium
 spec:
-  interval: 1h
   chartRef:
     kind: OCIRepository
     name: *app
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+  interval: 1h
   values:
     # yaml-language-server: $schema=https://github.com/cilium/cilium/raw/refs/tags/v1.18.0/install/kubernetes/cilium/values.schema.json
     autoDirectNodeRoutes: true
