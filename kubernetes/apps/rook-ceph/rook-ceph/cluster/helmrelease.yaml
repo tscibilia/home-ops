@@ -5,25 +5,13 @@ kind: HelmRelease
 metadata:
   name: &app rook-ceph-cluster
 spec:
-  interval: 30m
-  timeout: 15m
   chartRef:
     kind: OCIRepository
     name: *app
-  maxHistory: 2
-  install:
-    createNamespace: true
-    remediation:
-      retries: 3
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
+  interval: 30m
   dependsOn:
   - name: snapshot-controller
     namespace: kube-system
-  uninstall:
-    keepHistory: false
   values:
     operatorNamespace: rook-ceph
     cephClusterSpec:

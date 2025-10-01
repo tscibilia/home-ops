@@ -8,22 +8,9 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  interval: 1h
   driftDetection:
     mode: enabled
-  maxHistory: 2
-  interval: 1h
-  install:
-    crds: CreateReplace
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    crds: CreateReplace
-    remediation:
-      strategy: rollback
-      retries: 3
-  uninstall:
-    keepHistory: false
   dependsOn:
     - name: node-feature-discovery
       namespace: kube-system

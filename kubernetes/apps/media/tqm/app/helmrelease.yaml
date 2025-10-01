@@ -8,23 +8,12 @@ spec:
   chartRef:
     kind: OCIRepository
     name: *app
+  interval: 1h
   dependsOn:
     - name: qbittorrent
       namespace: media
   driftDetection:
     mode: enabled
-  maxHistory: 2
-  interval: 1h
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
-  uninstall:
-    keepHistory: false
   values:
     controllers:
       *app :

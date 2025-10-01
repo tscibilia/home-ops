@@ -15,11 +15,9 @@ spec:
   interval: 30m
   path: ./kubernetes/apps/media/flaresolverr/app
   prune: true
-  retryInterval: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 15m
   wait: false

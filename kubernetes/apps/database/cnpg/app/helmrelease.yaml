@@ -8,17 +8,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: cnpg-operator
-  maxHistory: 2
-  interval: 30m
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: false
-    remediation:
-      retries: 3
-  uninstall:
-    keepHistory: false
+  interval: 1h
   values:
     crds:
       create: true

@@ -8,18 +8,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: gha-runner-scale-set
-  maxHistory: 2
   interval: 1h
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
-  uninstall:
-    keepHistory: false
   values:
     githubConfigUrl: https://github.com/tscibilia/home-ops
     githubConfigSecret: home-ops-runner-secret

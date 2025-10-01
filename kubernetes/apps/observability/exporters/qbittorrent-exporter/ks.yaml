@@ -15,11 +15,9 @@ spec:
   interval: 30m
   path: ./kubernetes/apps/observability/exporters/qbittorrent-exporter/app
   prune: true
-  retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 3m
   wait: false

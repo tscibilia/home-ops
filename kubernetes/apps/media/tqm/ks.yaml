@@ -13,7 +13,6 @@ spec:
     - name: qbittorrent
       namespace: *namespace
   interval: 1h
-  retryInterval: 2m
   path: ./kubernetes/apps/media/tqm/app
   postBuild:
     substituteFrom:
@@ -25,5 +24,4 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: *namespace
-  timeout: 5m
   wait: false
