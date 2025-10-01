@@ -74,7 +74,6 @@ spec:
                     remediation:
                       remediateLastFailure: true
                       retries: 2
-                      rollback: true
                   maxHistory: 2
                   uninstall:
                     keepHistory: false
