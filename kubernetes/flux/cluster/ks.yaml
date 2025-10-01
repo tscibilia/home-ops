@@ -28,8 +28,6 @@ spec:
         spec:
           decryption:
             provider: sops
-            secretRef:
-              name: sops-age-secret
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
