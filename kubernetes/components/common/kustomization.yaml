@@ -3,6 +3,7 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 resources:
-  - ./alerts
+  # Notification dispatch failed, 401 Bad credentials, remove for now, fix later...
+  # - ./alerts
   - ./secrets
   - ./namespace.yaml
