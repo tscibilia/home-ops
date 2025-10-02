@@ -12,7 +12,7 @@ resources:
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
   - ./jellyseerr/ks.yaml
-  - ./kometa/ks.yaml
+  # - ./kometa/ks.yaml
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
   - ./prowlarr/ks.yaml
