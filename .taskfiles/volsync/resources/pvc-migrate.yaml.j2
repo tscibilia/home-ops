@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ ENV.APP }}
+  namespace: {{ ENV.NS }}
+spec:
+  accessModes: {{ ENV.ACCESS_MODES }}
+  resources:
+    requests:
+      storage: {{ ENV.SIZE }}
+  storageClassName: {{ ENV.STORAGE_CLASS_NAME }}
+  dataSourceRef:
+    apiGroup: volsync.backube
+    kind: ReplicationDestination
+    name: {{ ENV.APP }}-manual
