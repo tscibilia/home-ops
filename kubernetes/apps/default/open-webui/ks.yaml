@@ -23,6 +23,7 @@ spec:
   path: ./kubernetes/apps/default/open-webui/app
   postBuild:
     substitute:
+      APP: open-webui
       GATUS_SUBDOMAIN: gpt
       GATUS_PATH: /health
       VOLSYNC_CAPACITY: 2Gi
