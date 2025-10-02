@@ -6,13 +6,13 @@ namespace: media
 components:
   - ../../components/common
 resources:
-  # - ./bazarr/ks.yaml
+  - ./bazarr/ks.yaml
   - ./cross-seed/ks.yaml
   - ./flaresolverr/ks.yaml
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
   - ./jellyseerr/ks.yaml
-  # - ./kometa/ks.yaml
+  - ./kometa/ks.yaml
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
   - ./prowlarr/ks.yaml
