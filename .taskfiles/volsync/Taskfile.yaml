@@ -76,6 +76,13 @@ tasks:
   restore:
     desc: Restore an app [NS=default] [APP=required] [LOC=-b2] [PREVIOUS=required]
     cmds:
+      # Pause KEDA
+      - |
+        if kubectl --namespace {{.NS}} get scaledobject {{.APP}} &>/dev/null; then
+          kubectl --namespace {{.NS}} annotate scaledobject {{.APP}} autoscaling.keda.sh/paused="true" --overwrite
+        else
+          echo "No ScaledObject found for {{.APP}}, skipping pause."
+        fi
       # Suspend
       - flux --namespace {{.NS}} suspend kustomization {{.APP}}
       - flux --namespace {{.NS}} suspend helmrelease {{.APP}}
@@ -91,6 +98,13 @@ tasks:
       - flux --namespace {{.NS}} resume helmrelease {{.APP}}
       - flux --namespace {{.NS}} reconcile helmrelease {{.APP}} --force
       - kubectl --namespace {{.NS}} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{.APP}}" --timeout=5m
+      # Resume KEDA
+      - |
+        if kubectl --namespace {{.NS}} get scaledobject {{.APP}} &>/dev/null; then
+          kubectl --namespace {{.NS}} annotate scaledobject {{.APP}} autoscaling.keda.sh/paused- --overwrite
+        else
+          echo "No ScaledObject found for {{.APP}}, skipping resume."
+        fi
     vars:
       NS: '{{.NS | default "default"}}'
       LOC: '{{.LOC | default ""}}'
@@ -146,72 +160,3 @@ tasks:
     preconditions:
       - test -f {{.VOLSYNC_RESOURCES_DIR}}/unlock.yaml.j2
       - which kubectl minijinja-cli stern
-
-  migrate-pvc:
-    desc: Restore an app [NS=default] [APP=required] [LOC=-b2] [PREVIOUS=required] [STORAGE_CLASS_NAME=ceph-ssd]
-    cmds:
-      # Pause KEDA
-      - |
-        if kubectl --namespace {{.NS}} get scaledobject {{.APP}} &>/dev/null; then
-          kubectl --namespace {{.NS}} annotate scaledobject {{.APP}} autoscaling.keda.sh/paused="true" --overwrite
-        else
-          echo "No ScaledObject found for {{.APP}}, skipping pause."
-        fi
-      # Suspend
-      - flux --namespace {{.NS}} suspend kustomization {{.APP}}
-      - flux --namespace {{.NS}} suspend helmrelease {{.APP}}
-      - kubectl --namespace {{.NS}} scale {{.CONTROLLER}}/{{.APP}} --replicas 0
-      - kubectl --namespace {{.NS}} wait pod --for=delete --selector="app.kubernetes.io/name={{.APP}}" --timeout=5m
-      # Restore (ReplicationDestination with Snapshot)
-      - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/replicationdestinationmigration.yaml.j2 | kubectl apply --server-side --filename -
-      - until kubectl --namespace {{.NS}} get job/volsync-dst-{{.APP}}-manual &>/dev/null; do sleep 5; done
-      - kubectl --namespace {{.NS}} wait job/volsync-dst-{{.APP}}-manual --for=condition=complete --timeout=120m
-      # Delete old PVC (free the name, keep PV intact)
-      - kubectl --namespace {{.NS}} delete pvc {{.APP}}
-      - kubectl --namespace {{.NS}} wait --for=delete pvc/{{.APP}} --timeout=60s
-      # Create new PVC with same name but ceph-ssd + dataSourceRef
-      - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/pvc-migrate.yaml.j2 | kubectl create --filename -
-      # Clean up ReplicationDestination
-      - kubectl --namespace {{.NS}} delete replicationdestination {{.APP}}-manual
-      # Temporary patch until github change is committed and restart pods
-      - kubectl patch pvc {{.APP}} -n {{.NS}} --type merge -p '{"spec":{"storageClassName":"ceph-ssd"}}'
-      - flux --namespace {{.NS}} resume helmrelease {{.APP}}
-      - kubectl --namespace {{.NS}} scale {{.CONTROLLER}}/{{.APP}} --replicas 1
-      - kubectl --namespace {{.NS}} rollout restart {{.CONTROLLER}}/{{.APP}}
-      - kubectl --namespace {{.NS}} rollout status {{.CONTROLLER}}/{{.APP}} --timeout=5m
-      # Resume KEDA
-      - |
-        if kubectl --namespace {{.NS}} get scaledobject {{.APP}} &>/dev/null; then
-          kubectl --namespace {{.NS}} annotate scaledobject {{.APP}} autoscaling.keda.sh/paused- --overwrite
-        else
-          echo "No ScaledObject found for {{.APP}}, skipping resume."
-        fi
-
-    vars:
-      NS: '{{.NS | default "default"}}'
-      LOC: '{{.LOC | default ""}}'
-      STORAGE_CLASS_NAME: '{{.STORAGE_CLASS_NAME | default "ceph-ssd"}}'
-      CONTROLLER:
-        sh: kubectl --namespace {{.NS}} get deployment {{.APP}} &>/dev/null && echo deployment || echo statefulset
-    env:
-      NS: '{{.NS}}'
-      APP: '{{.APP}}'
-      LOC: '{{.LOC}}'
-      PREVIOUS: '{{.PREVIOUS}}'
-      CLAIM:
-        sh: kubectl --namespace {{.NS}} get replicationsources/{{.APP}} --output=jsonpath='{.spec.sourcePVC}'
-      ACCESS_MODES:
-        sh: kubectl --namespace {{.NS}} get replicationsources/{{.APP}} --output=jsonpath='{.spec.restic.accessModes}'
-      STORAGE_CLASS_NAME: '{{.STORAGE_CLASS_NAME}}'
-      SIZE:
-        sh: kubectl --namespace {{.NS}} get pvc {{.APP}} --output=jsonpath='{.spec.resources.requests.storage}'
-      PUID:
-        sh: kubectl --namespace {{.NS}} get replicationsources/{{.APP}} --output=jsonpath='{.spec.restic.moverSecurityContext.runAsUser}'
-      PGID:
-        sh: kubectl --namespace {{.NS}} get replicationsources/{{.APP}} --output=jsonpath='{.spec.restic.moverSecurityContext.runAsGroup}'
-    requires:
-      vars: [APP, PREVIOUS]
-    preconditions:
-      - test -f {{.VOLSYNC_RESOURCES_DIR}}/replicationdestinationmigration.yaml.j2
-      - test -f {{.VOLSYNC_RESOURCES_DIR}}/pvc-migrate.yaml.j2
-      - which flux kubectl minijinja-cli
