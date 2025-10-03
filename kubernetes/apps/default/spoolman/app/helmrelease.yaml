@@ -15,6 +15,26 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-perms:
+            image:
+              repository: ghcr.io/ghcr-library/busybox
+              tag: latest@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
+            command:
+              - sh
+              - -c
+              - |
+                # adjust /data (or whatever path your app uses)
+                echo "[$(date +'%Y-%m-%dT%H:%M:%SZ')] init: fixing ownership on /home/app/.local/share/spoolman"
+                chown -R 1000:100 /home/app/.local/share/spoolman
+                echo "[$(date +'%Y-%m-%dT%H:%M:%SZ')] init: ownership set to 1000:100 on /home/app/.local/share/spoolman"
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              readOnlyRootFilesystem: false
+              allowPrivilegeEscalation: true
+              capabilities: { add: ["CHOWN"] }
         containers:
           app:
             image:

@@ -45,7 +45,7 @@ spec:
           resources:
             requests:
               storage: 40Gi
-          storageClassName: ceph-rbd
+          storageClassName: ceph-ssd
         resources:
           requests:
             cpu: 500m
