@@ -62,13 +62,16 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [cloudflared](https://github.com/cloudflare/cloudflared): Enables Cloudflare secure access to my routes.
 - [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs ingress DNS records to a DNS provider.
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
+- [generic-device-plugin](https://github.com/squat/generic-device-plugin): Allocates linux devices to pods (squat.ai/tun).
 - [k8s-gateway](https://github.com/k8s-gateway/k8s_gateway): CoreDNS plugin to support internal ingress records.
 - [nginx](https://github.com/nginx/nginx): Ingress controller and reverse proxy.
+- [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery): Discovers hardware & applies node labels.
+- [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
 - [sops](https://github.com/getsops/sops): Managed secrets for Kubernetes which are commited to Git.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
-- [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller): Automatic Kubernetes and Talos upgrades.
+- [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
 - [volsync](https://github.com/backube/volsync): Backup and recovery of persistent volume claims.
 
 ### Observability
@@ -82,6 +85,7 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [keda](https://github.com/kedacore/keda): Autoscales containers on events (i.e. blackbox reports NFS share is down).
 - [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
 - [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
+- [unpoller](https://github.com/unpoller/unpoller): Collect UniFi Controller data for Prometheus.
 - [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
 - [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics): Time series database, drop-in replacement for Prometheus.
 
