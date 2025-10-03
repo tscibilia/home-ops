@@ -46,7 +46,7 @@ spec:
         tag: latest@sha256:846de5ce02ad29fc720bdabc88baefd3f56702f4b5aa5c2f7b938d0bb2d27073
       runtimeClassName: nvidia
       nodeSelector:
-        feature.node.kubernetes.io/pci-0300_10de.present: "true"
+        feature.node.kubernetes.io/pci-10de.present: "true"
       resources:
         requests:
           cpu: "1"
