@@ -14,7 +14,7 @@ spec:
       *app :
         type: cronjob
         cronjob:
-          schedule: "@daily"
+          schedule: 0 0 * * *
           backoffLimit: 0
           concurrencyPolicy: Forbid
           successfulJobsHistory: 1
@@ -52,7 +52,7 @@ spec:
         existingClaim: *app
       config-file:
         type: configMap
-        name: recyclarr-configmap
+        name: "{{ .Release.Name }}-configmap"
         globalMounts:
           - path: /config/recyclarr.yml
             subPath: recyclarr.yml
