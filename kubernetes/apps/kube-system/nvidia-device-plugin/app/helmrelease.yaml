@@ -22,7 +22,7 @@ spec:
         operator: Exists
         effect: NoSchedule
     nodeSelector:
-      feature.node.kubernetes.io/pci-0300_10de.present: "true"
+      feature.node.kubernetes.io/pci-10de.present: "true"
     affinity: []
     # Shared gpu access https://github.com/NVIDIA/k8s-device-plugin#shared-access-to-gpus
     config:
