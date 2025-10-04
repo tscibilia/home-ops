@@ -1,0 +1,27 @@
+---
+- # Apply targetNamespace to all Flux Kustomizations
+  source:
+    kind: Namespace
+    fieldPath: metadata.name
+  targets:
+    - select:
+        kind: Kustomization
+        group: kustomize.toolkit.fluxcd.io
+      fieldPaths:
+        - spec.targetNamespace
+      options:
+        create: true
+
+# Apply postBuild.substituteFrom to all Flux Kustomizations
+- source:
+    kind: Secret
+    name: cluster-secrets
+    fieldPath: metadata.name
+  targets:
+    - select:
+        kind: Kustomization
+        group: kustomize.toolkit.fluxcd.io
+      fieldPaths:
+        - spec.postBuild.substituteFrom.[].name
+      options:
+        create: true

@@ -4,70 +4,55 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app cnpg-operator
-  namespace: &namespace database
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/database/cnpg/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: true
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cnpg-cluster
-  namespace: &namespace database
+  name: &app cnpg-cluster
 spec:
   dependsOn:
     - name: cnpg-operator
-      namespace: *namespace
     - name: openebs
       namespace: openebs-system
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/database/cnpg/cluster
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: cluster-secrets
-      - kind: Secret
         name: cnpg-secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: true
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cnpg-barman-cloud
-  namespace: &namespace database
+  name: &app cnpg-barman-cloud
 spec:
   dependsOn:
     - name: cnpg-operator
-      namespace: *namespace
     - name: cnpg-cluster
-      namespace: *namespace
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/database/cnpg/barman-cloud
   postBuild:
     substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
       - kind: Secret
         name: cnpg-secret
   prune: true
@@ -75,5 +60,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: true

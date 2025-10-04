@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app gatus
-  namespace: &namespace observability
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/cnpg
   dependsOn:
@@ -16,16 +12,13 @@ spec:
       namespace: external-secrets
     - name: cnpg-cluster
       namespace: database
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/observability/gatus/app
   postBuild:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: status
       CNPG_NAME: &postgresAppName postgres16
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
@@ -41,5 +34,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
-  wait: false # no flux ks dependents
+  wait: false

@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app obico
-  namespace: &namespace default
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/guarded
     - ../../../../components/keda/nfs-scaler
@@ -24,20 +20,16 @@ spec:
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/default/obico/app
   postBuild:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: obico
       VOLSYNC_CAPACITY: 1Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

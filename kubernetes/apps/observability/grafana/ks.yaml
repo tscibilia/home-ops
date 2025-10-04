@@ -3,11 +3,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app grafana
-  namespace: &namespace observability
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/cnpg
     - ../../../../components/gatus/guarded
@@ -16,15 +12,12 @@ spec:
       namespace: external-secrets
     - name: cnpg-cluster
       namespace: database
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/observability/grafana/app
   postBuild:
     substitute:
       APP: *app
       CNPG_NAME: &postgresAppName postgres16
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
@@ -40,5 +33,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app komga
-  namespace: &namespace default
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
     - ../../../../components/keda/nfs-scaler
@@ -27,13 +23,9 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: rdr
       VOLSYNC_CAPACITY: 3Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

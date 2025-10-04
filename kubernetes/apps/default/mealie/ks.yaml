@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app mealie
-  namespace: &namespace default
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
     - ../../../../components/volsync
@@ -30,9 +26,6 @@ spec:
       GATUS_SUBDOMAIN: mp
       GATUS_PATH: /api/app/about
       CNPG_NAME: &postgresAppName postgres16
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
@@ -48,5 +41,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

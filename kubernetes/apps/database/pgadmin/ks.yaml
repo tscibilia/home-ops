@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app pgadmin
-  namespace: &namespace database
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/guarded
     - ../../../../components/volsync
@@ -18,21 +14,16 @@ spec:
     - name: volsync
       namespace: volsync-system
     - name: cnpg-cluster
-      namespace: database
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/database/pgadmin/app
   postBuild:
     substitute:
       APP: *app
       GATUS_PATH: /misc/ping
       VOLSYNC_CAPACITY: 1Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false
