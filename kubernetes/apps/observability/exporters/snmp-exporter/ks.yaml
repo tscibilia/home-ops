@@ -10,6 +10,10 @@ spec:
       namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/observability/exporters/snmp-exporter/synology
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

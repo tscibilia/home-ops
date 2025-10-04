@@ -26,6 +26,9 @@ spec:
       VOLSYNC_CAPACITY: 120Gi
       VOLSYNC_CACHE_CAPACITY: 40Gi
       VOLSYNC_SCHEDULE: "0 1 * * *"
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

@@ -12,17 +12,18 @@
       options:
         create: true
 
+# Not working as expected, so commenting out for now
 # Apply postBuild.substituteFrom to all Flux Kustomizations
-- source:
-    kind: Secret
-    name: cluster-secrets
-    fieldPath: metadata.name
-  targets:
-    - select:
-        kind: Kustomization
-        group: kustomize.toolkit.fluxcd.io
-      fieldPaths:
-        - spec.postBuild.substituteFrom.[kind=Secret].name
-      options:
-        create: true
-        merge: append
+# - source:
+#     kind: Secret
+#     name: cluster-secrets
+#     fieldPath: metadata.name
+#   targets:
+#     - select:
+#         kind: Kustomization
+#         group: kustomize.toolkit.fluxcd.io
+#       fieldPaths:
+#         - spec.postBuild.substituteFrom.[kind=Secret].name
+#       options:
+#         create: true
+#         merge: append

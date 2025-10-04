@@ -23,6 +23,9 @@ spec:
       GATUS_SUBDOMAIN: pw
       GATUS_PATH: /alive
       VOLSYNC_CAPACITY: 2Gi
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

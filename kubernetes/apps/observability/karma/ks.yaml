@@ -13,6 +13,9 @@ spec:
     substitute:
       GATUS_PATH: /health
       GATUS_SUBDOMAIN: am
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

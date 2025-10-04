@@ -9,7 +9,11 @@ spec:
     - name: qbittorrent
       namespace: media
   interval: 1h
-  path: ./kubernetes/apps/observability/exporters/qbittorrent-exporter/app
+  path: ./kubernetes/apps/observability/exporters/qbittorrent-exporter/appv
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

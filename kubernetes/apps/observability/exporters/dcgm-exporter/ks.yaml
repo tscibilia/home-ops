@@ -10,6 +10,10 @@ spec:
       namespace: kube-system
   interval: 1h
   path: ./kubernetes/apps/observability/exporters/dcgm-exporter/app
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

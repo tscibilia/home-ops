@@ -31,6 +31,8 @@ spec:
     substituteFrom:
       - name: tailscale-operator-secret
         kind: Secret
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

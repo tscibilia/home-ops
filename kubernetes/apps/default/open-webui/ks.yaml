@@ -23,6 +23,9 @@ spec:
       GATUS_SUBDOMAIN: gpt
       GATUS_PATH: /health
       VOLSYNC_CAPACITY: 2Gi
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

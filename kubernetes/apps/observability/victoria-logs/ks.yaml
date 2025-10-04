@@ -11,6 +11,9 @@ spec:
     substitute:
       APP: vm
       GATUS_SUBDOMAIN: logs
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

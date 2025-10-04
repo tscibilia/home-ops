@@ -33,6 +33,8 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cnpg-secret
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
@@ -55,6 +57,8 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cnpg-secret
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

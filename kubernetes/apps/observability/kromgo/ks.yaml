@@ -15,6 +15,9 @@ spec:
     substitute:
       APP: *app
       GATUS_PATH: /talos_version
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository

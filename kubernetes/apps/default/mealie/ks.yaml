@@ -26,6 +26,9 @@ spec:
       GATUS_SUBDOMAIN: mp
       GATUS_PATH: /api/app/about
       CNPG_NAME: &postgresAppName postgres16
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster

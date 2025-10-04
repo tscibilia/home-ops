@@ -19,6 +19,9 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: fil
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

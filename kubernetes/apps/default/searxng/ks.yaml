@@ -21,6 +21,9 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: search
       GATUS_PATH: /stats
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

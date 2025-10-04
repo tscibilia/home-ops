@@ -23,6 +23,9 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: rdr
       VOLSYNC_CAPACITY: 3Gi
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

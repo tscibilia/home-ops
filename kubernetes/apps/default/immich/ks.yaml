@@ -27,6 +27,9 @@ spec:
       GATUS_PATH: /api/server/ping
       CNPG_NAME: &postgresAppName immich17
       PG_VER: "17"
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster

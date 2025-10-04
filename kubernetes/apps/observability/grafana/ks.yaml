@@ -18,6 +18,9 @@ spec:
     substitute:
       APP: *app
       CNPG_NAME: &postgresAppName postgres16
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster

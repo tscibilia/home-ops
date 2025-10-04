@@ -22,6 +22,9 @@ spec:
       APP: *app
       VOLSYNC_CAPACITY: 15Gi
       VOLSYNC_CACHE_CAPACITY: 5Gi
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

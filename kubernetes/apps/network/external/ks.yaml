@@ -7,6 +7,10 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/network/external/external-dns
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
@@ -22,6 +26,10 @@ metadata:
 spec:
   interval: 1h
   path: ./kubernetes/apps/network/external/cloudflared
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
@@ -40,6 +48,10 @@ spec:
       namespace: cert-manager
   interval: 1h
   path: ./kubernetes/apps/network/external/ingress-nginx
+  postBuild:
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
