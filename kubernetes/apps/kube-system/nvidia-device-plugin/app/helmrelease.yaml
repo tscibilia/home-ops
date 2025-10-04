@@ -11,9 +11,6 @@ spec:
   interval: 1h
   driftDetection:
     mode: enabled
-  dependsOn:
-    - name: node-feature-discovery
-      namespace: kube-system
   # https://github.com/NVIDIA/k8s-device-plugin/blob/main/deployments/helm/nvidia-device-plugin/values.yaml
   values:
     runtimeClassName: nvidia
