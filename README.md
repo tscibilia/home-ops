@@ -65,7 +65,6 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [generic-device-plugin](https://github.com/squat/generic-device-plugin): Allocates linux devices to pods (squat.ai/tun).
 - [k8s-gateway](https://github.com/k8s-gateway/k8s_gateway): CoreDNS plugin to support internal ingress records.
 - [nginx](https://github.com/nginx/nginx): Ingress controller and reverse proxy.
-- [node-feature-discovery](https://github.com/kubernetes-sigs/node-feature-discovery): Discovers hardware & applies node labels.
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
