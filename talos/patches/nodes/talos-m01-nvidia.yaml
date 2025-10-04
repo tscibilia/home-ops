@@ -1,4 +1,9 @@
 machine:
+    nodeLabels:
+      nvidia.com/gpu.present: "true"
+      nvidia.com/gpu.product: "Quadro-P400"
+      nvidia.com/gpu.memory.total: "2048"
+      nvidia.com/gpu.count: "1"
     kernel:
       modules:
         - name: nvidia
