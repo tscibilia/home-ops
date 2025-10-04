@@ -5,6 +5,8 @@ kind: Kustomization
 namespace: observability
 components:
   - ../../components/common
+replacements:
+  - path: ../../components/replacements/ks.yaml
 resources:
   - ./exporters
   - ./fluent-bit/ks.yaml

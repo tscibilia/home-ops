@@ -6,14 +6,6 @@ metadata:
   name: &app snapshot-controller
   namespace: &namespace kube-system
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: *app
-      namespace: *namespace
   interval: 1h
   path: ./kubernetes/apps/kube-system/snapshot-controller/app
   prune: true
@@ -21,4 +13,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
+  wait: true

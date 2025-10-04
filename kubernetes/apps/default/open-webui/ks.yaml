@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app open-webui
-  namespace: &namespace default
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
     - ../../../../components/volsync
@@ -19,7 +15,7 @@ spec:
       namespace: volsync-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/default/open-webui/app
   postBuild:
     substitute:
@@ -27,13 +23,9 @@ spec:
       GATUS_SUBDOMAIN: gpt
       GATUS_PATH: /health
       VOLSYNC_CAPACITY: 2Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

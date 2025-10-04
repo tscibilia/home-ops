@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app jellyfin
-  namespace: &namespace media
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/guarded
     - ../../../../components/keda/nfs-scaler
@@ -28,15 +24,11 @@ spec:
       GATUS_PATH: /health
       GATUS_SUBDOMAIN: plx
       VOLSYNC_CAPACITY: 5Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
@@ -44,16 +36,11 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app jellyfin-tools
-  namespace: &namespace media
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
     - name: jellyfin
-      namespace: *namespace
   interval: 1h
   path: ./kubernetes/apps/media/jellyfin/tools
   prune: true
@@ -61,5 +48,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

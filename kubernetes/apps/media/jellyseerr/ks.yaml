@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app jellyseerr
-  namespace: &namespace media
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
     - ../../../../components/volsync
@@ -27,12 +23,8 @@ spec:
       GATUS_PATH: /api/v1/status
       GATUS_SUBDOMAIN: req
       VOLSYNC_CAPACITY: 1Gi
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace

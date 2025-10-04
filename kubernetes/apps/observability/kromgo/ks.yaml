@@ -4,29 +4,20 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app kromgo
-  namespace: &namespace observability
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
   dependsOn:
     - name: victoria-metrics-stack
-      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/observability/kromgo/app
   postBuild:
     substitute:
       APP: *app
       GATUS_PATH: /talos_version
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false

@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app plex
-  namespace: &namespace media
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/gatus/external
     - ../../../../components/keda/nfs-scaler
@@ -20,7 +16,7 @@ spec:
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/media/plex/app
   postBuild:
     substitute:
@@ -30,12 +26,8 @@ spec:
       VOLSYNC_CAPACITY: 120Gi
       VOLSYNC_CACHE_CAPACITY: 40Gi
       VOLSYNC_SCHEDULE: "0 1 * * *"
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace

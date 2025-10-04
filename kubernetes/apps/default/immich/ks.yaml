@@ -4,11 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app immich
-  namespace: &namespace default
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   components:
     - ../../../../components/cnpg
     - ../../../../components/gatus/external
@@ -22,7 +18,7 @@ spec:
       namespace: external-secrets
     - name: keda
       namespace: observability
-  interval: 30m
+  interval: 1h
   path: ./kubernetes/apps/default/immich/app
   postBuild:
     substitute:
@@ -31,9 +27,6 @@ spec:
       GATUS_PATH: /api/server/ping
       CNPG_NAME: &postgresAppName immich17
       PG_VER: "17"
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
@@ -49,5 +42,4 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: *namespace
   wait: false
