@@ -5,12 +5,12 @@ kind: Kustomization
 metadata:
   name: &app proxy
 spec:
-  interval: 1h
   dependsOn:
     - name: cert-manager-tls
       namespace: cert-manager
     - name: external-secrets
       namespace: external-secrets
+  interval: 1h
   path: ./kubernetes/apps/network/proxy/apps
   postBuild:
     substituteFrom:
