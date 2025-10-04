@@ -22,6 +22,7 @@
         kind: Kustomization
         group: kustomize.toolkit.fluxcd.io
       fieldPaths:
-        - spec.postBuild.substituteFrom.[kind=Secret,name=cluster-secrets].name
+        - spec.postBuild.substituteFrom.[kind=Secret].name
       options:
         create: true
+        merge: append
