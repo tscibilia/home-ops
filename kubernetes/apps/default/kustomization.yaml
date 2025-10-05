@@ -15,7 +15,7 @@ resources:
   - ./immich/ks.yaml
   - ./komga/ks.yaml
   - ./mealie/ks.yaml
-  # - ./minio/ks.yaml
+  - ./minio/ks.yaml
   - ./obico/ks.yaml
   - ./open-webui/ks.yaml
   - ./pairdrop/ks.yaml
