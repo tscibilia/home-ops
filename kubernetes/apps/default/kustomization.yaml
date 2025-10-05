@@ -13,14 +13,14 @@ resources:
   - ./echo/ks.yaml
   - ./homepage/ks.yaml
   - ./immich/ks.yaml
-  # - ./komga/ks.yaml
+  - ./komga/ks.yaml
   - ./mealie/ks.yaml
   - ./minio/ks.yaml
-  # - ./obico/ks.yaml
+  - ./obico/ks.yaml
   - ./open-webui/ks.yaml
   - ./pairdrop/ks.yaml
   - ./radicale/ks.yaml
-  # - ./rclone/ks.yaml
+  - ./rclone/ks.yaml
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
   - ./vaultwarden/ks.yaml
