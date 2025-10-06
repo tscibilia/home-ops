@@ -11,6 +11,7 @@ filters:
   default:
     MapHardlinksFor:
       - retag
+      - clean
     ignore:
       - IsTrackerDown()
       - Downloaded == false && !IsUnregistered()
@@ -27,7 +28,7 @@ filters:
     remove:
       - IsUnregistered()
       # Remove non-private torrents that meet ratio/seed time criteria
-      - IsPrivate == false && (Ratio > 2.0 || SeedingDays >= 7.0)
+      - IsPrivate == false && (Ratio > 2.0 || SeedingDays >= 15.0)
       # Remove private torrents that meet 3.0 ratio/24d seed time criteria
       - (
           HasAnyTag(
@@ -62,6 +63,7 @@ filters:
       - { name: site:fl,      mode: full, update: ['TrackerName in ["filelist.io", "thefl.org"]'] }
       - { name: site:fnp,     mode: full, update: ['TrackerName == "fearnopeer.com"'] }
       - { name: site:hdt,     mode: full, update: ['TrackerName == "hdts-announce.ru"'] }
+      - { name: site:hdsp,    mode: full, update: ['TrackerName == "hd-space.pw"'] }
       - { name: site:huno,    mode: full, update: ['TrackerName == "hawke.uno"'] }
       - { name: site:ipt,     mode: full, update: ['TrackerName in ["bgp.technology", "empirehost.me", "stackoverflow.tech"]'] }
       - { name: site:lst,     mode: full, update: ['TrackerName == "lst.gg"'] }
@@ -79,5 +81,6 @@ filters:
       - { name: site:uhd,     mode: full, update: ['TrackerName == "uhdbits.org"'] }
       - { name: site:ulcx,    mode: full, update: ['TrackerName == "upload.cx"'] }
       - { name: permaseed,    mode: full, update: ['Label == "manual"'] }
+      - { name: cross-seed,   mode: full, update: ['Label == "cross-seed"'] }
       - { name: tracker-down, mode: full, update: ['IsTrackerDown()'] }
       - { name: unregistered, mode: full, update: ['IsUnregistered()'] }
