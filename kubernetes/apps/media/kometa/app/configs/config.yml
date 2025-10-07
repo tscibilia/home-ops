@@ -15,10 +15,10 @@ libraries:
           collection_section: 09
           collection_mode: show_items
     # metadata_files:
-    #   - repo: Metadata - Anime Posters.yaml
+    #   - repo: Metadata--AnimePosters.yaml
     overlay_files:
       - remove_overlays: false
-      - repo: Overlays - ShowStatus.yml
+      - repo: Overlays--ShowStatus.yml
       - default: ratings
         template_variables:
           rating1: audience
@@ -57,9 +57,9 @@ libraries:
     #   - repo: Metadata - Movie Posters.yaml
     overlay_files:
       - remove_overlays: false
-      - repo: Overlays - Resolution.yml
-      - repo: Overlays - Audio.yml
-      - repo: Overlays - Special.yml
+      - repo: Overlays--Resolution.yml
+      - repo: Overlays--Audio.yml
+      - repo: Overlays--Special.yml
       - default: ratings
         template_variables:
           rating1: critic
@@ -90,12 +90,12 @@ libraries:
   TV Shows:
     report_path: /config/logs/TV_report.yml
     collection_files:
-      - repo: TV Shows.yml
+      - repo: TVShows.yml
     metadata_files:
-      - repo: Metadata - TV Posters.yaml
+      - repo: Metadata--TVPosters.yaml
     overlay_files:
       - remove_overlays: false
-      - repo: Overlays - ShowStatus.yml
+      - repo: Overlays--ShowStatus.yml
       - default: ratings
         template_variables:
           rating1: critic
@@ -121,7 +121,7 @@ libraries:
       #     vertical_offset: 15
       #     vertical_align: bottom
       #     addon_position: right
-      # - repo: Overlays - Audio.yml
+      # - repo: Overlays--Audio.yml
       #   template_variables:
       #     builder_level: episode
       #     horizontal_offset: 0
@@ -206,7 +206,7 @@ settings:
   playlist_sync_to_users: all
   playlist_report: false
   verify_ssl: true
-  custom_repo: https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/plex/kometa/resources/
+  custom_repo: https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/kometa/app/resources
   show_unconfigured: true
   playlist_exclude_users:
 
