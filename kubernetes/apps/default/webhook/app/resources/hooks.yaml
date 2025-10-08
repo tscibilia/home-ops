@@ -1,0 +1,32 @@
+- id: kometa-pushover
+  execute-command: /config/kometa-pushover.sh
+  command-working-directory: /config
+  pass-environment-to-command:
+    # Pushover URL – pulled from an environment variable (e.g., in your container)
+    - envname: KOMETA_PUSHOVER_URL
+      source: string
+      name: '{{ getenv "KOMETA_PUSHOVER_URL" }}'
+    # Kometa event type (e.g. "collection_error", "global_error")
+    - envname: KOMETA_EVENT_TYPE
+      source: payload
+      name: event
+    # Global error message text
+    - envname: KOMETA_MESSAGE
+      source: payload
+      name: message
+    # Library context (used by library_error, collection_error)
+    - envname: KOMETA_LIBRARY_NAME
+      source: payload
+      name: library_name
+    # Collection context (used by collection_error)
+    - envname: KOMETA_COLLECTION_NAME
+      source: payload
+      name: collection_name
+    # Playlist context (used by playlist_error)
+    - envname: KOMETA_PLAYLIST_NAME
+      source: payload
+      name: playlist_name
+    # Optional — the Kometa app URL if your webhook payload includes it
+    - envname: KOMETA_APPLICATION_URL
+      source: payload
+      name: application_url

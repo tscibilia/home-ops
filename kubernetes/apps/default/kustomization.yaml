@@ -24,3 +24,4 @@ resources:
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
   - ./vaultwarden/ks.yaml
+  - ./webhook/ks.yaml
