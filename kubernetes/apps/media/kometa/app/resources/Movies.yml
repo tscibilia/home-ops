@@ -175,9 +175,9 @@ collections:
     schedule: range(11/24-12/31)
     template: {name: Holiday, poster: https://theposterdb.com/api/assets/69443}
     trakt_list:
-      - https://trakt.tv/users/movistapp/lists/christmas-movies
-      - https://trakt.tv/users/pualani78/lists/christmas-2020
-      - https://trakt.tv/users/veninjak/lists/complete-christmas-2021-copy
+      # - https://trakt.tv/users/movistapp/lists/christmas-movies
+      # - https://trakt.tv/users/pualani78/lists/christmas-2020
+      # - https://trakt.tv/users/veninjak/lists/complete-christmas-2021-copy
     imdb_list:
       - https://www.imdb.com/list/ls025976544/
       - https://www.imdb.com/list/ls003863000/
@@ -190,10 +190,12 @@ collections:
   Halloween Horror Movies:
     schedule: range(10/01-10/31)
     template: {name: Holiday, poster: https://theposterdb.com/api/assets/51475}
-    letterboxd_list: https://letterboxd.com/brumder/list/top-1000-horror-movies-aggregated-from-over/
-    trakt_list:
-      - https://trakt.tv/users/donxy/lists/horror-1274158
-      - https://trakt.tv/users/garycrawfordgc/lists/horror
+    letterboxd_list:
+      - https://letterboxd.com/brumder/list/top-1000-horror-movies-aggregated-from-over/
+      - https://letterboxd.com/cbrunner11/list/fangoria-top-100-horror-movies/
+      - https://letterboxd.com/darrencb/list/letterboxds-top-250-horror-films/
+    mdblist_list:
+      - https://mdblist.com/lists/hdlists/latest-hd-horror-movies-top-rated-from-1980-to-today
     imdb_list:
       - https://www.imdb.com/list/ls000091321/
     filter:
@@ -224,9 +226,6 @@ collections:
     imdb_list:
       - https://www.imdb.com/list/ls052352935/
       - https://www.imdb.com/list/ls025783055/
-    trakt_list:
-      - https://trakt.tv/users/krissykk/lists/halloween-trick-or-treat-family-friendly-movies-3of3
-      - https://trakt.tv/users/crazymanincincy/lists/family-halloween-movies
   Thanksgiving Movies:
     schedule: range(11/01-11/25)
     template: {name: Holiday, poster: https://theposterdb.com/api/assets/112252}
