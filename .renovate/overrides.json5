@@ -1,0 +1,44 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  packageRules: [
+    {
+      description: "Override Helmfile Dependency Name",
+      matchDatasources: ["docker"],
+      matchManagers: ["helmfile"],
+      overrideDepName: "{{packageName}}",
+    },
+    {
+      description: "Override Talos Installer Package Name",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/factory\\.talos\\.dev/"],
+      overridePackageName: "ghcr.io/siderolabs/installer",
+    },
+    {
+      description: "Allow postgres versions <17",
+      matchDatasources: ["docker"],
+      allowedVersions: "<17",
+      matchPackageNames: ["cdpgvectorchord", "/postgresql/", "/postgres-backup-local/"],
+    },
+    {
+      description: "Loose versioning for non-semver packages",
+      matchDatasources: ["docker"],
+      versioning: "loose",
+      matchPackagePatterns: ["changedetection", "plex", "searxng"]
+    },
+    {
+      description: "Custom versioning for minio",
+      matchDatasources: ["docker"],
+      versioning: "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$",
+      matchPackagePatterns: ["minio"]
+    },
+    {
+      description: "Don't open PRs for SMA images at all",
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "ghcr.io/mdhiggins/sonarr-sma",
+        "ghcr.io/mdhiggins/radarr-sma",
+      ],
+      enabled: false,
+    },
+  ],
+}
