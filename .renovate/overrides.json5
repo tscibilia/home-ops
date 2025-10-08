@@ -20,16 +20,17 @@
       matchPackageNames: ["cdpgvectorchord", "/postgresql/", "/postgres-backup-local/"],
     },
     {
+      description: "Custom versioning for minio with upper bound",
+      matchDatasources: ["docker"],
+      versioning: "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$",
+      matchPackagePatterns: ["minio"],
+      allowedVersions: "<=RELEASE.2025-04-22T22-12-26Z"
+    },
+    {
       description: "Loose versioning for non-semver packages",
       matchDatasources: ["docker"],
       versioning: "loose",
       matchPackagePatterns: ["changedetection", "plex", "searxng"]
-    },
-    {
-      description: "Custom versioning for minio",
-      matchDatasources: ["docker"],
-      versioning: "regex:^RELEASE\\.(?<major>\\d+)-(?<minor>\\d+)-(?<patch>\\d+)T.*Z$",
-      matchPackagePatterns: ["minio"]
     },
     {
       description: "Don't open PRs for SMA images at all",
