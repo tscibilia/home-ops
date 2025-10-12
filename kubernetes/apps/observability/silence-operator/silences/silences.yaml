@@ -119,7 +119,7 @@ spec:
   matchers:
     - name: alertname
       value: RecordingRulesNoData
-    - name: alertname
+    - name: alertgroup
       value: vmalert
     - name: severity
       value: info
