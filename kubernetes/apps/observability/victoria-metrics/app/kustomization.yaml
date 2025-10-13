@@ -6,3 +6,12 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/groups/0/rules/0/expr
+        value: 'container_memory_swap{job="kubelet",metrics_path="/metrics/cadvisor",image!=""} * on(cluster,namespace,pod) group_left(node) topk(1,max(kube_pod_info{node!=""}) by(cluster,namespace,pod,node)) by(cluster,namespace,pod) or vector(0)'
+    target:
+      kind: VMRule
+      name: stack-k8s.rules.containermemoryswap
+      namespace: observability
