@@ -26,9 +26,9 @@ spec:
   patches:
     - patch: |
         - op: replace
-          path: /spec/groups/0/rules/3/expr
-          value: 'sum(vmalert_recording_rules_last_evaluation_samples) without(id) < 1 or vector(0)'
+          path: /spec/groups/0/rules/0/expr
+          value: 'container_memory_working_set_bytes{container!="",container!="POD"} * on(cluster,namespace,pod) group_left(node) topk(1,max(kube_pod_info{node!=""}) by(cluster,namespace,pod,node)) by(cluster,namespace,pod)'
       target:
         kind: VMRule
-        name: stack-vmalert
+        name: stack-k8s.rules.containermemoryswap
         namespace: observability
