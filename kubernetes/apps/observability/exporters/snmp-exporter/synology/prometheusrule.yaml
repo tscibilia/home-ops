@@ -6,7 +6,7 @@ metadata:
   labels:
     prometheus: k8s
     role: alert-rules
-  name: synolgy-rules
+  name: synology-rules
 spec:
   groups:
     - name: synology.rules
