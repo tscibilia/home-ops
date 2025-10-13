@@ -22,3 +22,13 @@ spec:
     name: flux-system
     namespace: flux-system
   wait: false
+  # Since 0.6.1 update, some rules are not matching correctly
+  patches:
+    - patch: |
+        - op: replace
+          path: /spec/groups/0/rules/3/expr
+          value: 'sum(vmalert_recording_rules_last_evaluation_samples) without(id) < 1 or vector(0)'
+      target:
+        kind: VMRule
+        name: stack-vmalert
+        namespace: observability

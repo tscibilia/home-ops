@@ -35,18 +35,6 @@ spec:
       value: TargetDown
     - name: job
       value: rook-ceph-mgr-external
-# ---
-# # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
-# apiVersion: observability.giantswarm.io/v1alpha2
-# kind: Silence
-# metadata:
-#   name: ceph-mgr-toomanyscrapeerrors
-# spec:
-#   matchers:
-#     - name: alertname
-#       value: TooManyScrapeErrors
-#     - name: job
-#       value: vmagent-stack
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
 apiVersion: observability.giantswarm.io/v1alpha2
@@ -108,29 +96,3 @@ spec:
       value: PersistentVolumeUsageNearFull
     - name: persistentvolumeclaim
       value: volsync-plex-src
-# After VM 0.6.1 I started receiving RecordingRulesNoData alerts
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
-apiVersion: observability.giantswarm.io/v1alpha2
-kind: Silence
-metadata:
-  name: recording-rules-no-data-vmalert-silence
-spec:
-  matchers:
-    - name: alertname
-      value: RecordingRulesNoData
-    - name: alertgroup
-      value: vmalert
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
-apiVersion: observability.giantswarm.io/v1alpha2
-kind: Silence
-metadata:
-  name: recording-rules-no-data-infoinhibitor-silence
-  namespace: observability
-spec:
-  matchers:
-    - name: alertname
-      value: infoInhibitor
-    - name: exported_alertname
-      value: RecordingRulesNoData
