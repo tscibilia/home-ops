@@ -9,15 +9,25 @@ spec:
   groups:
     - name: proxmox-infrastructure
       rules:
-        - alert: ProxmoxNodeDown
-          expr: pve_up == 0
+        - alert: ProxmoxVMDown
+          expr: pve_up{id!~"qemu/[1-9][0-9]{3,}|lxc/[1-9][0-9]{3,}"} == 0
           for: 15m
           labels:
             severity: critical
             component: proxmox
           annotations:
+            summary: "Proxmox VM/Container is unreachable"
+            description: "VM/Container {{ $labels.instance }} has been unreachable for more than 5 minutes"
+
+        - alert: ProxmoxNodeDown
+          expr: pve_node_info == 0 or absent(pve_node_info)
+          for: 5m
+          labels:
+            severity: critical
+            component: proxmox-infrastructure
+          annotations:
             summary: "Proxmox node is unreachable"
-            description: "Proxmox node {{ $labels.instance }} has been unreachable for more than 5 minutes"
+            description: "Proxmox node {{ $labels.node }} on {{ $labels.instance }} is unreachable or not reporting metrics"
 
         - alert: ProxmoxNodeStorageFull
           expr: (pve_storage_size_bytes - pve_storage_available_bytes) / pve_storage_size_bytes * 100 > 90
@@ -49,6 +59,9 @@ spec:
             summary: "Proxmox node high I/O wait"
             description: "Node {{ $labels.instance }} has high I/O wait ({{ $value | humanizePercentage }}) indicating storage bottleneck"
 
+        # Consider adding alerts for: proxmox update via `pve_version_info`, high CPU/memory usage
+
+    # Might remove some of these since Ceph has its own monitoring via Rook-Ceph-External
     - name: ceph-storage
       rules:
         - alert: CephClusterUnhealthy
