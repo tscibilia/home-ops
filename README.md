@@ -40,7 +40,7 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 
 </div>
 
-👋 Welcome to my Home Operations repository. This is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Infrastructure as Code (IaC) and GitOps practices using tools like [Ansible](https://www.ansible.com/), [Terraform](https://www.terraform.io/), [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate) and [GitHub Actions](https://github.com/features/actions).
+👋 Welcome to my Home Operations repository. This is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Infrastructure as Code (IaC) and GitOps practices using tools like [Ansible](https://www.ansible.com/),  [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate) and [GitHub Actions](https://github.com/features/actions).
 
 ---
 
@@ -52,7 +52,7 @@ If you like this project, please consider supporting the work of [onedr0p](https
 
 ### <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/kubernetes.svg" alt="☸️" width="20" height="20"> Kubernetes
 
-My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a semi-hyper-converged cluster, workloads and block storage are sharing the same available resources on my nodes while I have a separate server with for NFS shares, bulk file storage and backups.
+My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](https://www.talos.dev) on three [Proxmox](https://proxmox.com/) nodes. Workloads and block storage share the same available resources on my nodes backed by Ceph, while I have a separate server with NFS shares, bulk file storage, and backups.
 
 ### Core Components
 
@@ -96,6 +96,30 @@ My Kubernetes cluster is deployed with [Talos](https://www.talos.dev). This is a
 - [Backblaze B2](https://www.backblaze.com/): Daily backups from volsync and cnpg.
 - [Amazon SES](https://aws.amazon.com/ses/): Sending system emails.
 - [Pushover](https://pushover.net/): Sending push notifications to mobile.
+
+---
+
+### GitOps
+
+[Flux](https://github.com/fluxcd/flux2) watches the clusters in my [kubernetes](./kubernetes/) folder (see Directories below) and makes the changes to my clusters based on the state of my Git repository.
+
+The way Flux works for me here is it will recursively search the `kubernetes/apps` folder until it finds the most top level `kustomization.yaml` per directory and then apply all the resources listed in it. That aforementioned `kustomization.yaml` will generally only have a namespace resource and one or many Flux kustomizations (`ks.yaml`). Under the control of those Flux kustomizations there will be a `HelmRelease` or other resources related to the application which will be applied.
+
+[Renovate](https://github.com/renovatebot/renovate) watches my **entire** repository looking for dependency updates, when they are found a PR is automatically created. When I merge those PRs, Flux applies the changes to my cluster.
+
+### Directories
+
+This Git repository contains the following directories.
+
+```sh
+📁 bootstrap      # exactly what it sounds like
+📁 kubernetes
+├── 📁 apps       # applications
+├── 📁 components # re-useable kustomize components
+└── 📁 flux       # flux system configuration
+📁 scripts        # some janky hacks for my setup
+📁 talos          # node OS configurations
+```
 
 ---
 
