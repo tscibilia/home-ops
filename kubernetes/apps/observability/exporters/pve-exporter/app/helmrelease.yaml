@@ -45,6 +45,11 @@ spec:
         globalMounts:
           - path: /etc/prometheus/pve.yml
             subPath: pve.yml
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
     service:
       app:
         controller: *app
