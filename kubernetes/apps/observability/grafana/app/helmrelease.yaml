@@ -218,7 +218,9 @@ spec:
         pve-exporter:
           gnetId: 10347
           revision: 5
-          datasource: Prometheus
+          datasource:
+            - name: DS_PROMETHEUS
+              value: Prometheus
         synology-nas-details:
           # renovate: depName="Synology NAS Details"
           gnetId: 14284
