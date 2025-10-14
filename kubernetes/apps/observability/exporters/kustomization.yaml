@@ -8,6 +8,7 @@ resources:
   - ./jellyseerr-exporter/ks.yaml
   - ./plex-exporter/ks.yaml
   - ./prowlarr-exporter/ks.yaml
+  - ./pve-exporter/ks.yaml
   - ./qbittorrent-exporter/ks.yaml
   - ./radarr-exporter/ks.yaml
   - ./snmp-exporter/ks.yaml
