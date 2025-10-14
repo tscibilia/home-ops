@@ -215,6 +215,10 @@ spec:
         external-secrets:
           url: https://raw.githubusercontent.com/external-secrets/external-secrets/main/docs/snippets/dashboard.json
           datasource: Prometheus
+        pve-exporter:
+          gnetId: 10347
+          revision: 5
+          datasource: Prometheus
         synology-nas-details:
           # renovate: depName="Synology NAS Details"
           gnetId: 14284

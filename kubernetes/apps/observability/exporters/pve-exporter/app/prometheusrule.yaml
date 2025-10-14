@@ -1,0 +1,112 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pve-exporter-alerts
+  namespace: observability
+spec:
+  groups:
+    - name: proxmox-infrastructure
+      rules:
+        - alert: ProxmoxNodeDown
+          expr: pve_up == 0
+          for: 15m
+          labels:
+            severity: critical
+            component: proxmox
+          annotations:
+            summary: "Proxmox node is unreachable"
+            description: "Proxmox node {{ $labels.instance }} has been unreachable for more than 5 minutes"
+
+        - alert: ProxmoxNodeStorageFull
+          expr: (pve_storage_size_bytes - pve_storage_available_bytes) / pve_storage_size_bytes * 100 > 90
+          for: 10m
+          labels:
+            severity: critical
+            component: proxmox-storage
+          annotations:
+            summary: "Proxmox node storage critically full"
+            description: "Storage {{ $labels.storage }} on {{ $labels.instance }} is {{ $value | humanizePercentage }} full"
+
+        - alert: ProxmoxVMUnexpectedlyStopped
+          expr: increase(pve_vm_status{status="stopped"}[5m]) > 0
+          for: 0m
+          labels:
+            severity: warning
+            component: proxmox-vm
+          annotations:
+            summary: "Proxmox VM stopped unexpectedly"
+            description: "VM {{ $labels.name }} on {{ $labels.instance }} has stopped"
+
+        - alert: ProxmoxHighIOWait
+          expr: pve_node_iowait_ratio > 0.5
+          for: 15m
+          labels:
+            severity: warning
+            component: proxmox-performance
+          annotations:
+            summary: "Proxmox node high I/O wait"
+            description: "Node {{ $labels.instance }} has high I/O wait ({{ $value | humanizePercentage }}) indicating storage bottleneck"
+
+    - name: ceph-storage
+      rules:
+        - alert: CephClusterUnhealthy
+          expr: ceph_health_status != 0
+          for: 2m
+          labels:
+            severity: critical
+            component: ceph
+          annotations:
+            summary: "Ceph cluster health is not OK"
+            description: "Ceph cluster health status is {{ $value }} (0=OK, 1=WARN, 2=ERR)"
+
+        - alert: CephOSDDown
+          expr: ceph_osd_up == 0
+          for: 5m
+          labels:
+            severity: critical
+            component: ceph-osd
+          annotations:
+            summary: "Ceph OSD is down"
+            description: "OSD {{ $labels.ceph_daemon }} is down on {{ $labels.instance }}"
+
+        - alert: CephPGsNotActiveClean
+          expr: ceph_pg_total - ceph_pg_active_clean > 0
+          for: 10m
+          labels:
+            severity: warning
+            component: ceph-pgs
+          annotations:
+            summary: "Ceph PGs are not active+clean"
+            description: "{{ $value }} placement groups are not in active+clean state"
+
+        - alert: CephPoolHighUtilization
+          expr: ceph_pool_percent_used > 50
+          for: 10m
+          labels:
+            severity: warning
+            component: ceph-pool
+          annotations:
+            summary: "Ceph pool utilization high"
+            description: "Pool {{ $labels.name }} is {{ $value | humanizePercentage }} full"
+
+        - alert: CephPoolCriticalUtilization
+          expr: ceph_pool_percent_used > 80
+          for: 5m
+          labels:
+            severity: critical
+            component: ceph-pool
+          annotations:
+            summary: "Ceph pool utilization critical"
+            description: "Pool {{ $labels.name }} is {{ $value | humanizePercentage }} full - immediate action required"
+
+        - alert: CephSlowOps
+          expr: ceph_osd_op_w_latency_sum / ceph_osd_op_w_latency_count > 1
+          for: 10m
+          labels:
+            severity: warning
+            component: ceph-performance
+          annotations:
+            summary: "Ceph slow operations detected"
+            description: "OSD {{ $labels.ceph_daemon }} average write latency is {{ $value }}s"

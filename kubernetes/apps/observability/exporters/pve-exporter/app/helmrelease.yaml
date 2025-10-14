@@ -1,0 +1,77 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app pve-exporter
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/prometheus-pve/prometheus-pve-exporter
+              tag: 3.5.5@sha256:79a5598906697b1a5a006d09f0200528a77c6ff1568faf018539ac65824454df
+            env:
+              PYTHONWARNINGS: once
+            resources:
+              requests:
+                cpu: 10m
+                memory: 40Mi
+              limits:
+                memory: 80Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        fsGroupChangePolicy: OnRootMismatch
+    persistence:
+      pve-config:
+        type: secret
+        name: pve-exporter-secret
+        globalMounts:
+          - path: /etc/prometheus/pve.yml
+            subPath: pve.yml
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: 9221
+    serviceMonitor:
+      app:
+        serviceName: *app
+        enabled: true
+        endpoints: &endpoints
+          - path: /pve
+            params:
+              cluster:
+                - "1"
+              module:
+                - default
+              node:
+                - "1"
+              target:
+                - pxmx1.local.${SECRET_DOMAIN}
+            port: http
+            scheme: http
+            relabelings:
+              - sourceLabels: [__param_target]
+                targetLabel: instance
+      ext:
+        serviceName: *app
+        enabled: true
+        endpoints: *endpoints
