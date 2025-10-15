@@ -12,17 +12,16 @@ spec:
   values:
     controllers:
       *app :
-        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          # 01-init-db:
-          #   image:
-          #     repository: ghcr.io/home-operations/postgres-init
-          #     tag: "17"
-          #   envFrom:
-          #     - secretRef:
-          #         name: "{{ .Release.Name }}-initdb-secret"
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "17"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
           gatus-sidecar:
             image:
               repository: ghcr.io/home-operations/gatus-sidecar
@@ -48,11 +47,11 @@ spec:
               GATUS_CONFIG_PATH: /config
               GATUS_DELAY_START_SECONDS: 5
               GATUS_WEB_PORT: &port 80
-              # DB_URI:
-              #   valueFrom:
-              #     secretKeyRef:
-              #       name: "{{ .Release.Name }}-pguser-secret"
-              #       key: uri
+              DB_URI:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}-pguser-secret"
+                    key: uri
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
@@ -79,12 +78,6 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              storageClass: ceph-ssd
-              accessMode: ReadWriteOnce
-              size: 5Gi
         serviceAccount:
           identifier: *app
     defaultPodOptions:
@@ -119,8 +112,8 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      # config:
-      #   type: emptyDir
+      config:
+        type: emptyDir
       config-file:
         type: configMap
         name: "{{ .Release.Name }}-configmap"
