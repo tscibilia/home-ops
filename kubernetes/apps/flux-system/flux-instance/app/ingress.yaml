@@ -6,7 +6,10 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
     gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 404"]
+      conditions: ["[STATUS] == 404"]
+      client:
+        dns-resolver: tcp://1.1.1.1:53
+      group: external
 spec:
   ingressClassName: external
   rules:

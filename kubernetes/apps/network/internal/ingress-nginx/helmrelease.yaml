@@ -15,12 +15,6 @@ spec:
       service:
         annotations:
           lbipam.cilium.io/ips: "192.168.5.230"
-          gatus.home-operations.com/endpoint: |-
-            group: internal
-            guarded: true
-            ui:
-              hide-hostname: true
-              hide-url: true
         externalTrafficPolicy: Cluster
       ingressClassResource:
         name: internal

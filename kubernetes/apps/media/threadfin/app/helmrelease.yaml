@@ -58,6 +58,13 @@ spec:
     ingress:
       app:
         className: internal
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: internal
+            guarded: true
+            ui:
+              hide-hostname: true
+              hide-url: true
         hosts:
           - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
