@@ -4,4 +4,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ./alertmanager
-  - ./github-status
+  # Notification dispatch failed, 401 Bad credentials, remove for now, fix later...
+  # - ./github-status

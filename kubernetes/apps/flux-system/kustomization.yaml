@@ -5,9 +5,8 @@ kind: Kustomization
 namespace: flux-system
 components:
   - ../../components/common
-replacements:
-  - path: ../../components/replacements/ks.yaml
 resources:
+  - ./namespace.yaml
   - ./flux-instance/ks.yaml
   - ./flux-operator/ks.yaml
   - ./headlamp/ks.yaml

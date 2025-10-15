@@ -5,9 +5,8 @@ kind: Kustomization
 namespace: kube-system
 components:
   - ../../components/common
-replacements:
-  - path: ../../components/replacements/ks.yaml
 resources:
+  - ./namespace.yaml
   - ./cilium/ks.yaml
   - ./coredns/ks.yaml
   - ./csi-driver-nfs/ks.yaml

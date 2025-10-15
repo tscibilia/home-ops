@@ -5,7 +5,6 @@ kind: Kustomization
 namespace: cert-manager
 components:
   - ../../components/common
-replacements:
-  - path: ../../components/replacements/ks.yaml
 resources:
+  - ./namespace.yaml
   - ./cert-manager/ks.yaml
