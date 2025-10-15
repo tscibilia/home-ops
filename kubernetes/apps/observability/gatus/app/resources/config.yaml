@@ -19,31 +19,27 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
-  # - name: flux-webhook
-  #   group: external
-  #   url: https://flux-webhook.t0m.co
-  #   interval: 1m
-  #   client:
-  #     dns-resolver: tcp://1.1.1.1:53
-  #   conditions: [ "[STATUS] == 404" ]
-
 metrics: true
 
 storage:
-  type: postgres
-  path: ${DB_URI}
+  type: sqlite
   caching: true
+  path: /config/gatus.db
+  # type: postgres
+  # path: ${DB_URI}
+  # caching: true
 
 ui:
   title: Status | Gatus
   header: Status
   logo: https://avatars.githubusercontent.com/u/585808
-  link: https://github.com/tscibilia
+  link: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
   buttons:
     - name: Home-Ops
       link: https://github.com/tscibilia/home-ops
 
 web:
-  port: ${GATUS_WEB_PORT}
+  port: 80
+  # port: ${GATUS_WEB_PORT}
 
 debug: false
