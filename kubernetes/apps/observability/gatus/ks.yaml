@@ -25,7 +25,7 @@ spec:
         kind: Secret
       - name: gatus-secret
         kind: Secret
-      - name: gatus--pguser-secret
+      - name: gatus-pguser-secret
         kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
