@@ -33,6 +33,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
+                memory: 32Mi
               limits:
                 memory: 64Mi
             restartPolicy: Always
@@ -70,6 +71,7 @@ spec:
             resources:
               requests:
                 cpu: 100m
+                memory: 128Mi
               limits:
                 memory: 256Mi
             securityContext:
@@ -117,8 +119,10 @@ spec:
         globalMounts:
           - path: /config/buddy.yaml
             subPath: buddy.yaml
+            readOnly: true
           - path: /config/config.yaml
             subPath: config.yaml
+            readOnly: true
     rbac:
       roles:
         *app :
@@ -127,8 +131,8 @@ spec:
             - apiGroups: [""]
               resources: ["configmaps", "secrets", "services"]
               verbs: ["get", "watch", "list"]
-            - apiGroups: ["gateway.networking.k8s.io"]
-              resources: ["gateways","httproutes"]
+            - apiGroups: ["networking.k8s.io"]
+              resources: ["ingresses"]
               verbs: ["get","watch","list"]
       bindings:
         *app :
