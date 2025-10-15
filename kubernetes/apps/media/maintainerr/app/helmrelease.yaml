@@ -65,7 +65,6 @@ spec:
             ui:
               hide-hostname: true
               hide-url: true
-        annotations:
           # # See instructions at https://goauthentik.io/docs/providers/proxy/forward_auth
           # nginx.ingress.kubernetes.io/auth-url: |-
           #   http://ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx

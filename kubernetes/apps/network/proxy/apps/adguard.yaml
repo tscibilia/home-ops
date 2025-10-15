@@ -33,6 +33,13 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: "ag.${SECRET_DOMAIN}"
 spec:
   ingressClassName: internal
+  annotations:
+    gatus.home-operations.com/endpoint: |-
+      group: internal
+      guarded: true
+      ui:
+        hide-hostname: true
+        hide-url: true
   rules:
     - host: "ag.${SECRET_DOMAIN}"
       http:
