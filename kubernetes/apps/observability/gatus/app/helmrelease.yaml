@@ -47,6 +47,10 @@ spec:
               GATUS_CONFIG_PATH: /config
               GATUS_DELAY_START_SECONDS: 5
               GATUS_WEB_PORT: &port 80
+              # Add KS subsituteFrom as enviornment variables
+              GATUS_SUBDOMAIN: ${GATUS_SUBDOMAIN}
+              GATUS_DOMAIN: ${SECRET_DOMAIN}
+              GATUS_PATH: ${GATUS_PATH}
               DB_URI:
                 valueFrom:
                   secretKeyRef:
