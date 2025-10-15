@@ -16,7 +16,7 @@ alerting:
 endpoints:
   - name: Ping
     group: buddy
-    url: icmp://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/${GATUS_PATH}
+    url: icmp://${GATUS_SUBDOMAIN:-${APP}}${GATUS_ROOTDOMAIN:-.}${SECRET_DOMAIN}${GATUS_PATH:-/}
     interval: 1m
     ui:
       hide-url: true

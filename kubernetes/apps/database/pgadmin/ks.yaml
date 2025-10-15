@@ -6,7 +6,6 @@ metadata:
   name: &app pgadmin
 spec:
   components:
-    - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
     - name: external-secrets

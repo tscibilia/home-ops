@@ -6,7 +6,6 @@ metadata:
   name: &app spoolman
 spec:
   components:
-    - ../../../../components/gatus/guarded
     - ../../../../components/volsync
   dependsOn:
     - name: volsync

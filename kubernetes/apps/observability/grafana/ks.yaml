@@ -6,7 +6,6 @@ metadata:
 spec:
   components:
     - ../../../../components/cnpg
-    - ../../../../components/gatus/guarded
   dependsOn:
     - name: external-secrets
       namespace: external-secrets

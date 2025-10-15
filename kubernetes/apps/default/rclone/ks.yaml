@@ -7,7 +7,6 @@ metadata:
 spec:
   components:
     - ../../../../components/keda/nfs-bkup-scaler
-    - ../../../../components/gatus/guarded
   dependsOn:
     - name: keda
       namespace: observability
