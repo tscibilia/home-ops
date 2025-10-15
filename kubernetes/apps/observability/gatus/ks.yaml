@@ -23,7 +23,7 @@ spec:
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
-      - name: "{{ .Release.Name }}-secret"
+      - name: gatus-secret
         kind: Secret
   healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
