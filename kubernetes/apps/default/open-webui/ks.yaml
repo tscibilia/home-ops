@@ -6,7 +6,6 @@ metadata:
   name: &app open-webui
 spec:
   components:
-    - ../../../../components/gatus/external
     - ../../../../components/volsync
   dependsOn:
     - name: external-secrets

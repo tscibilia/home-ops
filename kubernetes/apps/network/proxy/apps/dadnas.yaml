@@ -23,6 +23,10 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "dad.${SECRET_DOMAIN}"
     external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+    gatus.home-operations.com/endpoint: |-
+      client:
+        dns-resolver: tcp://1.1.1.1:53
+      group: external
 spec:
   ingressClassName: external
   rules:

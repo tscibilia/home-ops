@@ -94,6 +94,10 @@ spec:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          gatus.home-operations.com/endpoint: |-
+            client:
+              dns-resolver: tcp://1.1.1.1:53
+            group: external
         hosts:
           - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:
@@ -105,6 +109,7 @@ spec:
         className: external
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          gatus.home-operations.com/enabled: "false"
         hosts:
           - host: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
             paths:

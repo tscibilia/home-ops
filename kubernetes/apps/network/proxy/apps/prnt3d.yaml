@@ -31,6 +31,12 @@ metadata:
   name: &name prnt3d
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "3dp.${SECRET_DOMAIN}"
+    gatus.home-operations.com/endpoint: |-
+      group: internal
+      guarded: true
+      ui:
+        hide-hostname: true
+        hide-url: true
 spec:
   ingressClassName: internal
   rules:

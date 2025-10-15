@@ -6,7 +6,6 @@ metadata:
   name: &app vaultwarden
 spec:
   components:
-    - ../../../../components/gatus/external
     - ../../../../components/volsync
   dependsOn:
     - name: external-secrets

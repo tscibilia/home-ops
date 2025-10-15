@@ -6,7 +6,6 @@ metadata:
   name: &app homepage
 spec:
   components:
-    - ../../../../components/gatus/guarded
   dependsOn:
     - name: external-secrets
       namespace: external-secrets

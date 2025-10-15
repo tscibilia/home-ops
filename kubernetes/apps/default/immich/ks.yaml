@@ -7,7 +7,6 @@ metadata:
 spec:
   components:
     - ../../../../components/cnpg
-    - ../../../../components/gatus/external
     # Uses separate keda scaledobject.yaml
   dependsOn:
     - name: cnpg-cluster

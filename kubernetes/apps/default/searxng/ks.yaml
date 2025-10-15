@@ -6,7 +6,6 @@ metadata:
   name: &app searxng
 spec:
   components:
-    - ../../../../components/gatus/external
   dependsOn:
     - name: dragonfly-cluster
       namespace: database

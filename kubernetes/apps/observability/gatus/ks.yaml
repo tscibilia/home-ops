@@ -17,6 +17,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_PATH: /health
       GATUS_SUBDOMAIN: status
       CNPG_NAME: &postgresAppName postgres16
     substituteFrom:
