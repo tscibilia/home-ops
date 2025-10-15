@@ -5,9 +5,8 @@ kind: Kustomization
 namespace: database
 components:
   - ../../components/common
-replacements:
-  - path: ../../components/replacements/ks.yaml
 resources:
+  - ./namespace.yaml
   - ./cnpg/ks.yaml
   - ./dragonfly/ks.yaml
   - ./pgadmin/ks.yaml
