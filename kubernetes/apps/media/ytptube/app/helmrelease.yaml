@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/arabcoders/ytptube
-              tag: "v1.0.0@sha256:1aa68d7b89ce961377347759723685bf11c09c76627aae3ed2caa6c6e4cf70af"
+              tag: "v1.0.1@sha256:0052762b4f1f0e2679a6a48c3112506271f1a923de4348ac0ddad9bf228df347"
             env:
               TZ: ${TIMEZONE}
               YTP_MAX_WORKERS: 1
