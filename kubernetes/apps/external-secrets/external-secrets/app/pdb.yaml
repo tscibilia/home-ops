@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/poddisruptionbudget.json
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: external-secrets-webhook
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: external-secrets
+      app.kubernetes.io/name: external-secrets-webhook
