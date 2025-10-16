@@ -5,21 +5,25 @@
       description: "Changelog URL for Cloudflared",
       matchPackageNames: ["/cloudflared/"],
       changelogUrl: "https://github.com/cloudflare/cloudflared/blob/master/RELEASE_NOTES",
+      sourceUrl: "https://github.com/cloudflare/cloudflared",
     },
     {
       description: "Changelog URL for Spegel",
       matchPackageNames: ["/spegel/"],
       changelogUrl: "https://github.com/spegel-org/spegel/blob/main/CHANGELOG.md",
+      sourceUrl: "https://github.com/spegel-org/spegel",
     },
     {
       description: "Changelog URL for VictoriaMetrics Stack",
       matchPackageNames: ["/victoria-metrics-k8s-stack/"],
       changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/CHANGELOG.md",
+      sourceUrl: "https://github.com/VictoriaMetrics/helm-charts",
     },
     {
       description: "Changelog URL for VictoriaMetrics Logs",
       matchPackageNames: ["/victoria-logs-single/"],
       changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-logs-single/CHANGELOG.md",
+      sourceUrl: "https://github.com/VictoriaMetrics/helm-charts",
     },
   ],
 }
