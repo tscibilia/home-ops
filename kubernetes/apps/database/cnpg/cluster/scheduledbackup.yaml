@@ -10,6 +10,7 @@ spec:
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
-  schedule: "@daily"
+  # Runs at ~1 AM America/New_York (6 AM UTC during EDT, 5 AM UTC during EST)
+  schedule: "0 6 * * *"
   immediate: true
   backupOwnerReference: self
