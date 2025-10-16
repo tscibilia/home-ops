@@ -11,5 +11,15 @@
       matchPackageNames: ["/spegel/"],
       changelogUrl: "https://github.com/spegel-org/spegel/blob/main/CHANGELOG.md",
     },
+    {
+      description: "Changelog URL for VictoriaMetrics Stack",
+      matchPackageNames: ["/victoria-metrics-k8s-stack/"],
+      changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/CHANGELOG.md",
+    },
+    {
+      description: "Changelog URL for VictoriaMetrics Logs",
+      matchPackageNames: ["/victoria-logs-single/"],
+      changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-logs-single/CHANGELOG.md",
+    },
   ],
 }
