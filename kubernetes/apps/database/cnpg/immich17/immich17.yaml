@@ -30,7 +30,7 @@ spec:
     recovery:
       source: source
       recoveryTarget:
-        targetTime: "2025-10-15T20:01:00Z"
+        targetTime: "2025-10-15 20:01:00+00"
   externalClusters:
     - name: source
       plugin:
