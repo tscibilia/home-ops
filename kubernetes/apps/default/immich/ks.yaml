@@ -9,7 +9,7 @@ spec:
     - ../../../../components/cnpg
     # Uses separate keda scaledobject.yaml
   dependsOn:
-    - name: cnpg-cluster
+    - name: cnpg-immich17
       namespace: database
     - name: dragonfly-cluster
       namespace: database

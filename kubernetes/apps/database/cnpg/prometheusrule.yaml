@@ -47,28 +47,7 @@ spec:
           for: 1m
           labels:
             severity: warning
-        # Rewrite WAL archive alert after switching to barman-cloud plugin
-        - alert: NoWALPluginActivity
-          annotations:
-            description: No log entries seen from the WAL archiving plugin for {{ $labels.pod }} in the last 5 minutes.
-            summary: Checks the logs for No WAL archiving in the last 5 mins. Will be < 0 when it has not failed.
-          expr: |-
-            sum by (pod) (
-              count_over_time({container="plugin-barman-cloud", namespace="database"}[5m])
-            ) == 0
-          for: 1m
-          labels:
-            severity: warning
-        # Not working since switching to barman-cloud plugin
-        # - alert: LastFailedArchiveTime
-        #   annotations:
-        #     description: Archiving failed for {{ $labels.pod }}
-        #     summary: Checks the last time archiving failed. Will be < 0 when it has not failed.
-        #   expr: |-
-        #     (cnpg_pg_stat_archiver_last_failed_time - cnpg_pg_stat_archiver_last_archived_time) > 1
-        #   for: 1m
-        #   labels:
-        #     severity: warning
+        # Removed NoWALPluginActivity & LastFailedArchiveTime alert after switching to barman-cloud plugin
         - alert: DatabaseDeadlockConflicts
           annotations:
             description: There are over 10 deadlock conflicts in {{ $labels.pod }}
