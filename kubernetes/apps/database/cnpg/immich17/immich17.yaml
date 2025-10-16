@@ -77,4 +77,4 @@ spec:
         name: barman-cloud.cloudnative-pg.io
         parameters:
           barmanObjectName: *name
-          serverName: immich17
+          serverName: main-immich17
