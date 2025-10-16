@@ -14,7 +14,10 @@ spec:
   storage:
     size: 20Gi
     storageClass: openebs-hostpath
-  # bootstrap:
+
+  # Note: this is needed when recovering from an existing cnpg cluster
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  bootstrap:
   #   initdb:
   #     postInitSQL:
   #       - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
@@ -24,6 +27,18 @@ spec:
   #       source:
   #         externalCluster: &previousCluster immich-v1
   #       type: monolith
+    recovery:
+      source: source
+      recoveryTarget:
+        targetTime: "2025-10-15T20:01:00Z"
+  externalClusters:
+    - name: source
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: *name
+          serverName: *name
+
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
@@ -57,24 +72,9 @@ spec:
       value: when_required
     - name: TZ
       value: ${TIMEZONE}
-
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
       parameters:
         barmanObjectName: *name
         serverName: *name
-  # Note: this is needed when recovering from an existing cnpg cluster
-  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
-  bootstrap:
-    recovery:
-      source: source
-      recoveryTarget:
-        targetTime: "2025-10-15T20:01:00Z"
-  externalClusters:
-    - name: source
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          barmanObjectName: *name
-          serverName: main-immich17
