@@ -66,13 +66,15 @@ spec:
         serverName: *name
   # Note: this is needed when recovering from an existing cnpg cluster
   # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
-  # bootstrap:
-  #   recovery:
-  #     source: source
-  # externalClusters:
-  #   - name: source
-  #     plugin:
-  #       name: barman-cloud.cloudnative-pg.io
-  #       parameters:
-  #         barmanObjectName: *name
-  #         serverName: main-immich17
+  bootstrap:
+    recovery:
+      source: immich17-backup
+      recoveryTarget:
+        targetTime: "2025-10-15T20:01:00Z"
+  externalClusters:
+    - name: immich17-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: *name
+          serverName: immich17
