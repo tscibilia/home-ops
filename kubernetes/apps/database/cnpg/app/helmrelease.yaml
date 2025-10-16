@@ -20,4 +20,4 @@ spec:
         annotations:
           grafana_folder: "Database"
         labels:
-          grafana_dashboard: "1"
+          name: grafana_dashboard
