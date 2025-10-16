@@ -93,8 +93,6 @@ metadata:
 spec:
   dependsOn:
     - name: cnpg-operator
-    - name: cnpg-cluster
-    - name: cnpg-immich17
   interval: 1h
   path: ./kubernetes/apps/database/cnpg/barman-cloud
   postBuild:
