@@ -52,9 +52,9 @@ spec:
   # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
   # bootstrap:
   #   recovery:
-  #     source: postgres16-backup
+  #     source: source
   # externalClusters:
-  #   - name: postgres16-backup
+  #   - name: source
   #     plugin:
   #       name: barman-cloud.cloudnative-pg.io
   #       parameters:

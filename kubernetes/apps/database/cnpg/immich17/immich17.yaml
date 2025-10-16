@@ -68,11 +68,11 @@ spec:
   # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
   bootstrap:
     recovery:
-      source: immich17-backup
+      source: source
       recoveryTarget:
         targetTime: "2025-10-15T20:01:00Z"
   externalClusters:
-    - name: immich17-backup
+    - name: source
       plugin:
         name: barman-cloud.cloudnative-pg.io
         parameters:
