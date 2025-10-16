@@ -31,6 +31,10 @@ spec:
       enabled: false
     dashboards:
       enabled: true
+      annotations:
+        grafana_folder: "Networking"
+      labels:
+        grafana_dashboard: "1"
     hubble:
       enabled: false
     ipam:

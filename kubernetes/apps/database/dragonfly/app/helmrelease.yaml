@@ -12,6 +12,10 @@ spec:
   values:
     grafanaDashboard:
       enabled: true
+      annotations:
+        grafana_folder: "Database"
+      labels:
+        grafana_dashboard: "2"
     serviceMonitor:
       enabled: true
     prometheusRule:

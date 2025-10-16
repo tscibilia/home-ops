@@ -17,3 +17,7 @@ spec:
       podMonitorEnabled: true
       grafanaDashboard:
         create: true
+        annotations:
+          grafana_folder: "Database"
+        labels:
+          grafana_dashboard: "1"
