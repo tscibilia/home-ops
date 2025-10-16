@@ -15,8 +15,11 @@ spec:
     leaderElect: true
     image: &img
       repository: ghcr.io/external-secrets/external-secrets
+    grafanaDashboard:
+      enabled: true
     webhook:
       image: *img
+      replicaCount: 2
       serviceMonitor: &svcMon
         enabled: true
         interval: 1m
