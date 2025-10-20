@@ -23,5 +23,7 @@ spec:
       fsGroup: ${VOLSYNC_PGID:=100}
     pruneIntervalDays: 14
     retain:
-      hourly: 4
+      hourly: 8
       daily: 7
+      weekly: 4
+      monthly: 1
