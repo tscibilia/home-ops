@@ -46,6 +46,7 @@ spec:
                 cpu: "1"
               limits:
                 nvidia.com/gpu: "1"
+                cpu: "6"
                 memory: 8Gi
             securityContext:
               allowPrivilegeEscalation: false
