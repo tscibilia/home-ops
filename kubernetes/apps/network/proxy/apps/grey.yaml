@@ -40,11 +40,7 @@ metadata:
   name: &name grey
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "grey.${SECRET_DOMAIN}"
-    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-    gatus.home-operations.com/endpoint: |-
-      client:
-        dns-resolver: tcp://1.1.1.1:53
-      group: external
+    gatus.home-operations.com/enabled: "false"
 spec:
   ingressClassName: external
   rules:

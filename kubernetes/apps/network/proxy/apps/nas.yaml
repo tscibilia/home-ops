@@ -36,6 +36,9 @@ metadata:
       client:
         dns-resolver: tcp://1.1.1.1:53
       group: external
+      ui:
+        hide-hostname: true
+        hide-url: true
 spec:
   ingressClassName: external
   rules:
