@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/main/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: external
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  description: External GatewayClass for public-facing services
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/main/config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: internal
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  description: Internal GatewayClass for internal services
