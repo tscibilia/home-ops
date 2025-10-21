@@ -1,5 +1,4 @@
 ---
-# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliumloadbalancerippool_v2alpha1.json
 apiVersion: cilium.io/v2alpha1
 kind: CiliumLoadBalancerIPPool
 metadata:
@@ -7,22 +6,10 @@ metadata:
 spec:
   allowFirstLastIPs: "No"
   blocks:
-    - cidr: "192.168.5.0/24"
+    - cidr: "192.168.5.220/29"  # IPs: 192.168.5.221-226 (6 usable)
+# REMOVE L2 announcements - using BGP instead!
+# Delete the CiliumL2AnnouncementPolicy
 ---
-# yaml-language-server: $schema=https://datreeio.github.io/CRDs-catalog/cilium.io/ciliuml2announcementpolicy_v2alpha1.json
-apiVersion: cilium.io/v2alpha1
-kind: CiliumL2AnnouncementPolicy
-metadata:
-  name: l2-policy
-spec:
-  loadBalancerIPs: true
-  # NOTE: interfaces might need to be set if you have more than one active NIC on your hosts
-  # interfaces: ["ens18"]
-  nodeSelector:
-    matchLabels:
-      kubernetes.io/os: linux
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumbgpadvertisement_v2alpha1.json
 apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPAdvertisement
 metadata:
@@ -35,10 +22,8 @@ spec:
       service:
         addresses: ["LoadBalancerIP"]
       selector:
-        matchExpressions:
-          - { key: somekey, operator: NotIn, values: ["never-used-value"] }
+        matchLabels: {key: somekey, operator: NotIn, values: ["never-used-value"]}
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumbgppeerconfig_v2alpha1.json
 apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPPeerConfig
 metadata:
@@ -51,7 +36,6 @@ spec:
         matchLabels:
           advertise: bgp
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumbgpclusterconfig_v2alpha1.json
 apiVersion: cilium.io/v2alpha1
 kind: CiliumBGPClusterConfig
 metadata:
@@ -62,11 +46,11 @@ spec:
       kubernetes.io/os: linux
   bgpInstances:
     - name: cilium
-      localASN: 65444
+      localASN: 64514          # ← Changed to standard private ASN
       peers:
         - name: unifi
-          peerASN: 65401
-          peerAddress: 192.168.5.1
+          peerASN: 64513       # ← Must match UniFi BGP config!
+          peerAddress: 192.168.5.1  # Your UniFi gateway
           peerConfigRef:
             name: l3-bgp-peer-config
 ---
@@ -75,7 +59,7 @@ kind: Service
 metadata:
   name: kube-api
   annotations:
-    lbipam.cilium.io/ips: 192.168.5.200
+    lbipam.cilium.io/ips: 192.168.5.221  # ← In the pool range
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Cluster
