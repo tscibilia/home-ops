@@ -1,0 +1,37 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/main/config/crd/standard/gateway.networking.k8s.io_gateways.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: external
+  annotations:
+    # Configure Cilium LBIPAM for external gateway
+    # Using a different IP from nginx to allow parallel operation
+    lbipam.cilium.io/ips: "192.168.5.241"
+    # external-dns will automatically pick up this annotation
+    external-dns.alpha.kubernetes.io/hostname: "external-gw.${SECRET_DOMAIN}"
+spec:
+  gatewayClassName: external
+  listeners:
+    # HTTP listener (for ACME challenges and redirects)
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    # HTTPS listener for secure traffic
+    - name: https
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          # Reference to cert-manager managed certificate
+          # Note: Gateway API uses different reference format than Ingress
+          - kind: Secret
+            name: ${SECRET_DOMAIN/./-}-production-tls
+            namespace: cert-manager

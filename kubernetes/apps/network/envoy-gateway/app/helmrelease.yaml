@@ -1,0 +1,50 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app envoy-gateway
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    config:
+      envoyGateway:
+        gateway:
+          controllerName: gateway.envoyproxy.io/gatewayclass-controller
+        logging:
+          level:
+            default: info
+        provider:
+          type: Kubernetes
+          kubernetes:
+            # Use Cilium L2 announcements for LoadBalancer services
+            # This allows Envoy Gateway to work with Cilium LBIPAM
+            envoyService:
+              type: LoadBalancer
+              annotations:
+                # Will be set per-Gateway, not globally
+              externalTrafficPolicy: Cluster
+            # Enable shutdown manager for graceful shutdown
+            shutdownManager:
+              image: envoyproxy/gateway-dev:latest
+    deployment:
+      envoyGateway:
+        replicas: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            memory: 512Mi
+      kubeRbacProxy:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
+    # Install Gateway API CRDs
+    createNamespace: false

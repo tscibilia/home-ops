@@ -1,0 +1,36 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/main/config/crd/standard/gateway.networking.k8s.io_httproutes.yaml
+# HTTPRoute equivalent of the headlamp Ingress
+# This file demonstrates the Gateway API migration path
+# To activate: uncomment this file in kustomization.yaml
+# To deactivate old Ingress: comment out ingress.yaml in kustomization.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: &name headlamp
+  annotations:
+    # Gatus monitoring - same as Ingress version
+    gatus.home-operations.com/endpoint: |-
+      group: internal
+      guarded: true
+      ui:
+        hide-hostname: true
+        hide-url: true
+spec:
+  # Reference the internal Gateway
+  parentRefs:
+    - name: internal
+      namespace: network
+      sectionName: https
+  # Hostname matching
+  hostnames:
+    - "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+  # Routing rules
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: *name
+          port: 80
