@@ -114,8 +114,7 @@ jobs:
     steps:
       - name: Install talosctl
         run: |-
-          TALOS_VERSION="v1.11.3"
-          curl -fsSL "https://raw.githubusercontent.com/siderolabs/talos/${TALOS_VERSION}/website/static/install" | sh
+          curl -fsSL "https://www.talos.dev/install" | sh
           echo "$HOME/.talos/bin" >> $GITHUB_PATH
 
       - name: Pull Image
