@@ -10,10 +10,12 @@ KUBERNETES_DIR = "{{config_root}}/kubernetes"
 ROOT_DIR = "{{config_root}}"
 SCRIPTS_DIR = "{{config_root}}/scripts"
 TALOS_DIR = "{{config_root}}/talos"
+LEFTHOOK_OUTPUT = "false"
 
 [tools]
 "python" = "3.14.0"
 "pipx:makejinja" = "2.8.1"
+"lefthook" = "latest"
 "aqua:budimanjojo/talhelper" = "3.0.38"
 "aqua:cilium/cilium-cli" = "0.18.7"
 "aqua:cli/cli" = "2.82.1"
