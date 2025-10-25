@@ -11,7 +11,7 @@ spec:
   interval: 1h
   values:
     controllers:
-      *app :
+      *app:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -33,9 +33,16 @@ spec:
                     port: &port 32400
                   initialDelaySeconds: 0
                   periodSeconds: 10
-                  timeoutSeconds: 1
+                  timeoutSeconds: 10
                   failureThreshold: 3
-              readiness: *probes
+              readiness:
+                <<: *probes
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
+                  timeoutSeconds: 5
+                  failureThreshold: 3
               startup:
                 enabled: true
                 spec:
@@ -44,6 +51,7 @@ spec:
             resources:
               requests:
                 cpu: "1"
+                memory: 2Gi
               limits:
                 nvidia.com/gpu: "1"
                 cpu: "6"
@@ -51,7 +59,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              capabilities: {drop: ["ALL"]}
         pod:
           runtimeClassName: nvidia
           nodeSelector:
@@ -115,7 +123,7 @@ spec:
       tmpfs:
         type: emptyDir
         advancedMounts:
-          *app :
+          *app:
             app:
               - path: /transcode
                 subPath: transcode
