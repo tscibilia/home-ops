@@ -11,7 +11,7 @@ spec:
   interval: 1h
   values:
     controllers:
-      *app:
+      *app :
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -123,8 +123,8 @@ spec:
       tmpfs:
         type: emptyDir
         advancedMounts:
-          *app:
-            app:
+          *app :
+            app :
               - path: /transcode
                 subPath: transcode
               - path: /tmp
