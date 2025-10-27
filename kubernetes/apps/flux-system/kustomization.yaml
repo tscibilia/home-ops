@@ -5,8 +5,8 @@ kind: Kustomization
 namespace: flux-system
 components:
   - ../../components/common
-resources:
   - ../../../components/common/alerts/github-status
+resources:
   - ./namespace.yaml
   - ./flux-instance/ks.yaml
   - ./flux-operator/ks.yaml
