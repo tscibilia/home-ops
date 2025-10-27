@@ -14,7 +14,7 @@ spec:
     # filters:
     #   ingressClasses: ["internal"]
     debug:
-      enabled: false
+      enabled: true
     domain: "${SECRET_DOMAIN}"
     ttl: 1
     service:
