@@ -11,6 +11,10 @@ spec:
   interval: 1h
   values:
     fullnameOverride: *app
+    # filters:
+    #   ingressClasses: ["internal"]
+    debug:
+      enabled: false
     domain: "${SECRET_DOMAIN}"
     ttl: 1
     service:
