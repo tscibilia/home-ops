@@ -11,8 +11,6 @@ spec:
   interval: 1h
   values:
     fullnameOverride: *app
-    filters:
-      ingressClasses: ["internal"]
     debug:
       enabled: true
     domain: "${SECRET_DOMAIN}"
