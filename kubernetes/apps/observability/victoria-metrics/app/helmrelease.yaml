@@ -377,3 +377,15 @@ spec:
                   long: 3d
                   severity: warning
                   short: 6h
+              - alert: KubePodFailed
+                expr: |
+                  sum(max(kube_pod_status_phase{namespace=~".*",job="kube-state-metrics",phase=~"Failed"})
+                  by(namespace,pod,cluster) * on(namespace,pod,cluster) group_left(owner_kind)
+                  topk(1, max(kube_pod_owner{owner_kind!="Job"}) by(namespace,pod,owner_kind,cluster))
+                  by(namespace,pod,cluster)) by(namespace,pod,cluster) > 0
+                for: 15m
+                labels:
+                  severity: warning
+                annotations:
+                  summary: Pod has been in Failed state for more than 15 minutes
+                  description: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in Failed state for longer than 15 minutes on cluster {{ $labels.cluster }}.
