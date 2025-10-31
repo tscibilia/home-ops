@@ -30,7 +30,7 @@
       description: "Loose versioning for non-semver packages",
       matchDatasources: ["docker"],
       versioning: "loose",
-      matchPackagePatterns: ["changedetection", "plex", "searxng"],
+      matchPackagePatterns: ["changedetection", "plex"],
     },
     {
       description: "Cal-commit versioning for SearXNG (monthly updates only)",
