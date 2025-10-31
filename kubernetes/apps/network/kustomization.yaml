@@ -12,3 +12,6 @@ resources:
   - ./externalsecret.yaml
   - ./proxy/ks.yaml
   - ./tailscale/ks.yaml
+  # Gateway API with Envoy Gateway (parallel to ingress-nginx)
+  # Uncomment to enable Gateway API migration
+  # - ./envoy-gateway/ks.yaml
