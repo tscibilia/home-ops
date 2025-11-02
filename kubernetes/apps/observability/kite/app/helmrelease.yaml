@@ -1,0 +1,115 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kite
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "17"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/zxh326/kite
+              tag: v0.7.1@sha256:bcb3ed55a46a9aec4ebce421c4ba8f810b36931e0bdf8ec2e51997fde776fa1c
+            env:
+              HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
+              ENABLE_ANALYTICS: true
+              DB_TYPE: postgres
+              DB_DSN:
+                valueFrom:
+                  secretKeyRef:
+                    name: &pg "{{ .Release.Name }}-pguser-secret"
+                    key: dsn
+              DEBUG: false
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: &port 8080
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+        serviceAccount:
+          identifier: *app
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    serviceMonitor:
+      app:
+        serviceName: *app
+        endpoints:
+          - port: http
+    ingress:
+      app:
+        className: internal
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            group: internal
+            guarded: true
+            ui:
+              hide-hostname: true
+              hide-url: true
+        hosts:
+          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+    persistence:
+      config:
+        type: emptyDir
+    serviceAccount:
+      *app : {}
+    rbac:
+      bindings:
+        *app :
+          type: ClusterRoleBinding
+          roleRef:
+            kind: ClusterRole
+            name: *app
+          subjects:
+            - kind: ServiceAccount
+              name: *app
+              namespace: "{{ .Release.Namespace }}"
