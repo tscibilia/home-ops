@@ -36,7 +36,7 @@ spec:
                   secretKeyRef:
                     name: &pg "{{ .Release.Name }}-pguser-secret"
                     key: dsn
-              DEBUG: false
+              DEBUG: true
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
