@@ -10,7 +10,11 @@ spec:
     - name: proxmox-infrastructure
       rules:
         - alert: ProxmoxVMDown
-          expr: pve_up{id!~"qemu/[1-9][0-9]{3,}|lxc/[1-9][0-9]{3,}"} == 0
+          expr: |
+            (pve_guest_info{tags!~"^\\s*$"}
+            * on(id) group_left(name)
+            pve_up{id!~"qemu/[1-9][0-9]{3,}|lxc/[1-9][0-9]{3,}"}
+            ) == 0
           for: 15m
           labels:
             severity: critical
