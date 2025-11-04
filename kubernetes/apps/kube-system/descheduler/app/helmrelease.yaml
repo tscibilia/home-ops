@@ -22,6 +22,18 @@ spec:
                 evictFailedBarePods: true
                 evictLocalStoragePods: true
                 evictSystemCriticalPods: true
+            - name: LowNodeUtilization
+              args:
+                metricsUtilization:
+                  source: KubernetesMetrics
+                thresholds:
+                  cpu: 20
+                  memory: 20
+                  pods: 20
+                targetThresholds:
+                  cpu: 50
+                  memory: 50
+                  pods: 50
             - name: RemoveFailedPods
               args:
                 reasons:
@@ -41,17 +53,11 @@ spec:
                   - requiredDuringSchedulingIgnoredDuringExecution
             - name: RemovePodsViolatingNodeTaints
             - name: RemovePodsViolatingTopologySpreadConstraint
-            - name: LowNodeUtilization
-              args:
-                thresholds:
-                  pods: 50
-                targetThresholds:
-                  pods: 90
           plugins:
             balance:
               enabled:
-                - RemovePodsViolatingTopologySpreadConstraint
                 - LowNodeUtilization
+                - RemovePodsViolatingTopologySpreadConstraint
             deschedule:
               enabled:
                 - RemoveFailedPods
