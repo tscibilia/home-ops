@@ -34,9 +34,10 @@
       },
     "sops.defaults.ageKeyFile": "age.key",
     "vs-kubernetes": {
-        "vs-kubernetes.kubeconfig": "./kubeconfig",
-        "vs-kubernetes.knownKubeconfigs": [
-          "./kubeconfig"
+      "vs-kubernetes.kubeconfig": "/home/sysadmin/home-ops/kubeconfig",
+      "vs-kubernetes.knownKubeconfigs": [
+        "./kubeconfig",
+        "/home/sysadmin/home-ops/kubeconfig"
       ]
     },
     "yaml.schemaStore.enable": true,
