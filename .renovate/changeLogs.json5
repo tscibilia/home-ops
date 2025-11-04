@@ -2,6 +2,12 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   packageRules: [
     {
+      description: "Changelog URL for ActualBudget Logs",
+      matchPackageNames: ["/actualbudget/"],
+      changelogUrl: "https://www.actualbudget.com/blog/tags/release",
+      sourceUrl: "https://github.com/actualbudget/actual",
+    },
+    {
       description: "Changelog URL for Cloudflared",
       matchPackageNames: ["/cloudflared/"],
       changelogUrl: "https://github.com/cloudflare/cloudflared/blob/master/RELEASE_NOTES",
