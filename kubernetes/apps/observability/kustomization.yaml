@@ -13,7 +13,7 @@ resources:
   - ./grafana/ks.yaml
   - ./karma/ks.yaml
   - ./keda/ks.yaml
-  # - ./kite/ks.yaml
+  - ./kite/ks.yaml
   - ./kromgo/ks.yaml
   - ./silence-operator/ks.yaml
   - ./unpoller/ks.yaml
