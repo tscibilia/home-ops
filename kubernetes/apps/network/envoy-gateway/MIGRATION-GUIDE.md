@@ -167,9 +167,20 @@ This allows testing via Gateway IP (192.168.5.241/231) without affecting product
 
 ### 3.1 External-DNS Configuration
 
-**Good news**: external-dns is already configured to watch **both** Ingress and Gateway API resources simultaneously!
+**Current State**: external-dns is ready for Gateway API but sources are currently commented out until envoy-gateway is deployed.
 
 Check the configuration in `kubernetes/apps/network/external/external-dns/helmrelease.yaml`:
+```yaml
+sources:
+  - crd
+  - ingress
+  # Gateway API sources are commented out until envoy-gateway is deployed
+  # - gateway-httproute
+  # - gateway-grpcroute
+```
+
+**Action Required**: After completing Phase 1 (Envoy Gateway installation), uncomment the Gateway API sources:
+
 ```yaml
 sources:
   - crd
@@ -178,10 +189,10 @@ sources:
   - gateway-grpcroute
 ```
 
-This means:
+This configuration allows:
 - ✅ Both Ingress and HTTPRoute will create DNS records automatically
 - ✅ No manual switching required during migration
-- ✅ After migration completes, simply remove `ingress` from sources list
+- ✅ After migration completes, remove `ingress` from sources list
 
 Verify external-dns is watching Gateway API:
 ```bash
