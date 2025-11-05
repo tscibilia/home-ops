@@ -7,15 +7,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: &name headlamp
-  annotations:
-    # Gatus monitoring - same as Ingress version
-    gatus.home-operations.com/endpoint: |-
-      group: internal
-      guarded: true
-      ui:
-        hide-hostname: true
-        hide-url: true
+  name: &name kite
 spec:
   # Reference the internal Gateway
   parentRefs:
@@ -24,7 +16,7 @@ spec:
       sectionName: https
   # Hostname matching
   hostnames:
-    - "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+    - "${GATUS_SUBDOMAIN}-gw.${SECRET_DOMAIN}"
   # Routing rules
   rules:
     - matches:
