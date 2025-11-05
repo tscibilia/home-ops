@@ -5,7 +5,8 @@ kind: Kustomization
 namespace: network
 resources:
   - ./certificate.yaml
-  - ./envoy.yaml
+  # Temporarily commented - will uncomment after HelmRelease installs Gateway API CRDs
+  # - ./envoy.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./pushsecret.yaml
