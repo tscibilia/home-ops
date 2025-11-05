@@ -39,21 +39,19 @@ This directory contains the Gateway API configuration for migrating from NGINX I
 ### Files
 
 ```
-gateway/
+envoy-gateway/
 ├── README.md                      # This file
 ├── MIGRATION-GUIDE.md             # Detailed migration steps
 ├── CLOUDFLARED-INTEGRATION.md     # Cloudflared strategies
-├── gatewayclass.yaml              # GatewayClass definitions
-├── gateway-external.yaml          # External Gateway (192.168.5.241)
-├── gateway-internal.yaml          # Internal Gateway (192.168.5.231)
-├── rbac.yaml                      # ReferenceGrant for cert-manager
-└── kustomization.yaml             # Kustomize config
-
-../envoy-gateway/
+├── ks.yaml                        # Flux Kustomization
 └── app/
     ├── helmrelease.yaml           # Envoy Gateway Helm chart
     ├── ocirepository.yaml         # Chart source
-    └── kustomization.yaml
+    ├── gatewayclass.yaml          # GatewayClass definitions
+    ├── gateway-external.yaml      # External Gateway (192.168.5.241)
+    ├── gateway-internal.yaml      # Internal Gateway (192.168.5.231)
+    ├── rbac.yaml                  # ReferenceGrant for cert-manager
+    └── kustomization.yaml         # Kustomize config
 ```
 
 ## IP Allocation

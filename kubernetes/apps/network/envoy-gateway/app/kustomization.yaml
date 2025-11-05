@@ -6,3 +6,7 @@ namespace: network
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./gatewayclass.yaml
+  - ./gateway-external.yaml
+  - ./gateway-internal.yaml
+  - ./rbac.yaml

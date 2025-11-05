@@ -90,27 +90,27 @@ kubectl describe gateway internal -n network
 
 For each Ingress resource, create a corresponding HTTPRoute. Examples are provided:
 
-**Internal Service Example** (see `kubernetes/apps/flux-system/headlamp/app/httproute.yaml`):
+**Internal Service Example** (see `kubernetes/apps/observability/kite/app/httproute.yaml`):
 
 ```yaml
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: headlamp
+  name: kite
 spec:
   parentRefs:
     - name: internal
       namespace: network
       sectionName: https
   hostnames:
-    - "headlamp.${SECRET_DOMAIN}"
+    - "kite.${SECRET_DOMAIN}"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: headlamp
+        - name: kite
           port: 80
 ```
 
