@@ -28,17 +28,17 @@ This migration uses a phased approach to ensure zero downtime and safe rollback 
 ## Target Architecture
 
 ### External Traffic
-- **Gateway**: Envoy Gateway on 192.168.5.241 (`external` GatewayClass)
+- **Gateway**: `envoy-external` on 192.168.5.241 (uses `envoy` GatewayClass)
 - **Routes**: HTTPRoute resources
 - **Tunnel**: Cloudflared → Envoy Gateway (see Cloudflared section)
 - **DNS**: external-dns (watches HTTPRoute resources)
-- **TLS**: cert-manager wildcard certificate
+- **TLS**: cert-manager wildcard certificate (in network namespace)
 
 ### Internal Traffic
-- **Gateway**: Envoy Gateway on 192.168.5.231 (`internal` GatewayClass)
+- **Gateway**: `envoy-internal` on 192.168.5.231 (uses `envoy` GatewayClass)
 - **Routes**: HTTPRoute resources
 - **DNS**: k8s-gateway (no changes needed)
-- **TLS**: cert-manager wildcard certificate
+- **TLS**: cert-manager wildcard certificate (in network namespace)
 
 ## Phase 1: Install Envoy Gateway
 
@@ -74,15 +74,23 @@ Expected output:
 - External Gateway should have IP 192.168.5.241
 - Internal Gateway should have IP 192.168.5.231
 
-### 1.3 Verify TLS Certificate Access
+### 1.3 Verify TLS Certificate
 
-Check that the ReferenceGrant allows Gateways to access cert-manager secrets:
+The TLS certificate is managed by cert-manager in the network namespace. Verify:
 
 ```bash
-kubectl get referencegrant -n cert-manager
-kubectl describe gateway external -n network
-kubectl describe gateway internal -n network
+# Check certificate is ready
+kubectl get certificate -n network
+
+# Check certificate secret exists
+kubectl get secret -n network | grep production-tls
+
+# Check Gateways reference the certificate
+kubectl describe gateway envoy-external -n network
+kubectl describe gateway envoy-internal -n network
 ```
+
+**Note**: The certificate is created in the `network` namespace (same as Gateways), eliminating the need for cross-namespace ReferenceGrants. This follows community best practices.
 
 ## Phase 2: Create Parallel HTTPRoute Resources
 
@@ -99,7 +107,7 @@ metadata:
   name: kite
 spec:
   parentRefs:
-    - name: internal
+    - name: envoy-internal
       namespace: network
       sectionName: https
   hostnames:
@@ -126,7 +134,7 @@ metadata:
     external-dns.alpha.kubernetes.io/target: "external-gw.${SECRET_DOMAIN}"
 spec:
   parentRefs:
-    - name: external
+    - name: envoy-external
       namespace: network
       sectionName: https
   hostnames:
@@ -145,12 +153,12 @@ spec:
 
 | Aspect | Ingress | HTTPRoute |
 |--------|---------|-----------|
-| Class selection | `ingressClassName: external` | `parentRefs[].name: external` |
+| Class selection | `ingressClassName: external` | `parentRefs[].name: envoy-external` |
 | Hostname | `spec.rules[].host` | `spec.hostnames[]` |
 | Path matching | `spec.rules[].http.paths[]` | `spec.rules[].matches[].path` |
 | Backend | `backend.service` | `backendRefs[]` |
 | TLS | `spec.tls[]` | Configured on Gateway |
-| Namespace | Same namespace only | Cross-namespace via ReferenceGrant |
+| Namespace | Same namespace only | Cross-namespace allowed |
 
 ### 2.3 Test Strategy
 
@@ -356,9 +364,10 @@ git commit -m "feat(myapp): Remove Ingress after Gateway API migration"
   ```
 
 **Issue**: TLS certificate not working
-- **Solution**: Verify ReferenceGrant allows cross-namespace secret access
+- **Solution**: Verify certificate exists in network namespace
   ```bash
-  kubectl get referencegrant -n cert-manager
+  kubectl get certificate -n network
+  kubectl get secret -n network | grep production-tls
   kubectl describe gateway <name> -n network
   ```
 
