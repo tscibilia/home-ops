@@ -132,10 +132,11 @@ spec:
 2. **Phase 2: Parallel Routes**
    - Create HTTPRoutes alongside Ingress
    - Test with test subdomains
+   - external-dns already watches both Ingress and HTTPRoute simultaneously
 
-3. **Phase 3: Enable external-dns**
-   - Update external-dns to watch HTTPRoutes
-   - See: `../external/external-dns/helmrelease-gateway-api.yaml`
+3. **Phase 3: DNS and Cloudflared**
+   - Configure Cloudflared routing strategy
+   - Verify external-dns creates HTTPRoute DNS records
 
 4. **Phase 4: Migrate Applications**
    - One app at a time
@@ -143,8 +144,9 @@ spec:
    - Monitor and verify
 
 5. **Phase 5: Cleanup**
+   - Remove "ingress" source from external-dns
    - Remove NGINX Ingress controllers
-   - Archive old configurations
+   - Clean up old Ingress resources
 
 ## Testing
 

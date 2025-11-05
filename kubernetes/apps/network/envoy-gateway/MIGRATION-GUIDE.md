@@ -163,28 +163,32 @@ hostnames:
 
 This allows testing via Gateway IP (192.168.5.241/231) without affecting production traffic.
 
-## Phase 3: External-DNS and Cloudflared Integration
+## Phase 3: DNS and Cloudflared Integration
 
-### 3.1 Enable Gateway API in external-dns
+### 3.1 External-DNS Configuration
 
-Update external-dns to watch Gateway API resources:
+**Good news**: external-dns is already configured to watch **both** Ingress and Gateway API resources simultaneously!
 
-1. Backup current configuration:
-   ```bash
-   cp kubernetes/apps/network/external/external-dns/helmrelease.yaml \
-      kubernetes/apps/network/external/external-dns/helmrelease-ingress-only.yaml.bak
-   ```
+Check the configuration in `kubernetes/apps/network/external/external-dns/helmrelease.yaml`:
+```yaml
+sources:
+  - crd
+  - ingress              # Existing Ingress resources
+  - gateway-httproute    # New HTTPRoute resources
+  - gateway-grpcroute
+```
 
-2. Replace with Gateway API enabled version:
-   ```bash
-   mv kubernetes/apps/network/external/external-dns/helmrelease-gateway-api.yaml \
-      kubernetes/apps/network/external/external-dns/helmrelease.yaml
-   ```
+This means:
+- ✅ Both Ingress and HTTPRoute will create DNS records automatically
+- ✅ No manual switching required during migration
+- ✅ After migration completes, simply remove `ingress` from sources list
 
-3. Wait for external-dns to reconcile:
-   ```bash
-   kubectl logs -n network -l app.kubernetes.io/name=external-dns -f
-   ```
+Verify external-dns is watching Gateway API:
+```bash
+kubectl logs -n network -l app.kubernetes.io/name=external-dns -f
+```
+
+You should see logs indicating it's watching gateway-httproute sources.
 
 ### 3.2 Cloudflared Integration
 
@@ -266,31 +270,53 @@ If issues occur:
    # - ./envoy-gateway/ks.yaml
    ```
 
-## Phase 5: Deprecate Ingress Resources
+## Phase 5: Cleanup and Finalization
 
 Once all applications are migrated and stable:
 
-### 5.1 Remove Ingress Resources
-```bash
-# Archive Ingress files
-mkdir -p kubernetes/apps/network/archived/ingress
-mv kubernetes/apps/network/external/ingress-nginx kubernetes/apps/network/archived/ingress/
-mv kubernetes/apps/network/internal/ingress-nginx kubernetes/apps/network/archived/ingress/
-```
+### 5.1 Update external-dns (Remove Ingress Source)
 
-### 5.2 Update Kustomizations
-Remove ingress-nginx references from:
-- `kubernetes/apps/network/external/ks.yaml`
-- `kubernetes/apps/network/internal/ks.yaml`
+Edit `kubernetes/apps/network/external/external-dns/helmrelease.yaml`:
 
-### 5.3 Update external-dns
-Remove Ingress-specific configuration from external-dns:
 ```yaml
 sources:
+  - crd
   - gateway-httproute
   - gateway-grpcroute
-  - crd
-# Remove: - ingress
+  # Remove "ingress" - no longer needed
+```
+
+Commit this change to Git and let Flux apply it:
+```bash
+git add kubernetes/apps/network/external/external-dns/helmrelease.yaml
+git commit -m "feat(external-dns): Remove Ingress source after Gateway API migration"
+```
+
+### 5.2 Remove NGINX Ingress Controllers
+
+After confirming all traffic flows through Gateway API and external-dns no longer watches Ingress:
+
+1. Comment out ingress-nginx in kustomizations:
+   ```yaml
+   # In kubernetes/apps/network/external/ks.yaml and internal/ks.yaml
+   # - ./ingress-nginx/ks.yaml
+   ```
+
+2. (Optional) Archive Ingress controller configs:
+   ```bash
+   mkdir -p kubernetes/apps/network/archived/ingress
+   mv kubernetes/apps/network/external/ingress-nginx kubernetes/apps/network/archived/ingress/
+   mv kubernetes/apps/network/internal/ingress-nginx kubernetes/apps/network/archived/ingress/
+   ```
+
+### 5.3 Remove Individual Ingress Resources
+
+Delete Ingress resources from application directories as you confirm HTTPRoutes are working.
+
+**GitOps best practice**: Commit each removal separately:
+```bash
+git rm kubernetes/apps/default/myapp/app/ingress.yaml
+git commit -m "feat(myapp): Remove Ingress after Gateway API migration"
 ```
 
 ## Monitoring and Troubleshooting
