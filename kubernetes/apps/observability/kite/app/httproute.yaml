@@ -11,7 +11,7 @@ metadata:
 spec:
   # Reference the internal Gateway
   parentRefs:
-    - name: internal
+    - name: envoy-internal
       namespace: network
       sectionName: https
   # Hostname matching
