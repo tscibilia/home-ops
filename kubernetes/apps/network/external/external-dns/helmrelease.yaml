@@ -33,8 +33,9 @@ spec:
     sources:
       - crd
       - ingress
-      - gateway-httproute
-      - gateway-grpcroute
+      # Only enable the Gateway API resources when envoy-gateway is actually deployed
+      # - gateway-httproute
+      # - gateway-grpcroute
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters: ["${SECRET_DOMAIN}"]
