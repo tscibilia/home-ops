@@ -3,13 +3,10 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app envoy-gateway
+  name: &app certificates-import
 spec:
-  dependsOn:
-    - name: cert-manager-tls
-      namespace: cert-manager
   interval: 1h
-  path: ./kubernetes/apps/network/envoy-gateway/app
+  path: ./kubernetes/apps/network/certificates/import
   postBuild:
     substituteFrom:
       - name: cluster-secrets
@@ -21,22 +18,18 @@ spec:
     namespace: flux-system
   targetNamespace: network
   wait: true
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: *app
-      namespace: network
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app envoy-gateway-config
+  name: &app certificates-export
 spec:
   dependsOn:
-    - name: envoy-gateway
+    - name: cert-manager-tls
+      namespace: cert-manager
   interval: 1h
-  path: ./kubernetes/apps/network/envoy-gateway/config
+  path: ./kubernetes/apps/network/certificates/export
   postBuild:
     substituteFrom:
       - name: cluster-secrets
@@ -47,4 +40,4 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: network
-  wait: false
+  wait: true
