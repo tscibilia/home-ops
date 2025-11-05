@@ -28,7 +28,13 @@ spec:
       - --ingress-class=external
     # managedRecordTypes: ["CNAME", "TXT"]
     policy: sync
-    sources: ["crd", "ingress"]
+    # Watch both Ingress and Gateway API resources during migration
+    # Remove "ingress" from sources after completing Gateway API migration
+    sources:
+      - crd
+      - ingress
+      - gateway-httproute
+      - gateway-grpcroute
     txtPrefix: k8s.
     txtOwnerId: default
     domainFilters: ["${SECRET_DOMAIN}"]
