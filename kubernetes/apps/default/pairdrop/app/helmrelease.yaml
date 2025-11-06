@@ -42,7 +42,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: 3000
+            port: &port 3000
     route:
       app:
         annotations:
@@ -55,7 +55,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: http
+                port: *port
     persistence:
       cache:
         type: emptyDir

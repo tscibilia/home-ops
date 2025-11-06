@@ -23,7 +23,7 @@ spec:
             args: ["rcd", "--rc-web-gui", "--rc-web-gui-update", "--rc-web-gui-force-update", "--rc-web-gui-no-open-browser", "--rc-addr=:$(HTTP_PORT)", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)", "--log-level=INFO"]
             env: &env
               TZ: ${TIMEZONE}
-              HTTP_PORT: &http 8080
+              HTTP_PORT: &port 8080
               METRICS_PORT: &metrics 9090
               RCLONE_URL: http://rclone.default.svc.cluster.local/
               RCLONE_MULTI_THREAD_CUTOFF: "0"
@@ -83,8 +83,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: 80
-            targetPort: *http
+            port: *port
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
@@ -94,7 +93,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: http
+                port: *port
     persistence:
       config:
         type: secret

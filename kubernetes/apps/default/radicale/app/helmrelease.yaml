@@ -44,7 +44,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: 5232
+            port: &port 5232
     route:
       app:
         annotations:
@@ -57,7 +57,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: http
+                port: *port
     persistence:
       data:
         existingClaim: *app

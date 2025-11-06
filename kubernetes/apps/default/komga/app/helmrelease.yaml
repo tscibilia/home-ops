@@ -58,7 +58,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: http
+                port: *port
     persistence:
       media:
         type: nfs

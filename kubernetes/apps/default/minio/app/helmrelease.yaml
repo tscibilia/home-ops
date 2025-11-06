@@ -45,7 +45,7 @@ spec:
                 spec:
                   httpGet:
                     path: ${GATUS_PATH}
-                    port: 9000
+                    port: &port 9000
                   initialDelaySeconds: 30
                   periodSeconds: 30
                   timeoutSeconds: 10
@@ -77,9 +77,9 @@ spec:
         controller: *app
         ports:
           http:
-            port: 9001
+            port: &http 9001
           s3:
-            port: 9000
+            port: *port
     serviceMonitor:
       app:
         serviceName: *app
@@ -101,7 +101,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: http
+                port: *http
       s3:
         annotations:
           gatus.home-operations.com/enabled: "false"
@@ -112,7 +112,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: s3
+                port: *port
     persistence:
       data:
         type: nfs

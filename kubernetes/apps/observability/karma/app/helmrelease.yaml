@@ -50,16 +50,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 568
         runAsGroup: 568
-    route:
-      app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: http
     service:
       app:
         controller: *app
@@ -70,6 +60,16 @@ spec:
       app:
         endpoints:
           - port: http
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       config-file:
         type: configMap

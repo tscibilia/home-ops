@@ -79,7 +79,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: http
+                port: *port
     persistence:
       config-file:
         type: configMap
