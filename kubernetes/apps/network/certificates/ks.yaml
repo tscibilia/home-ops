@@ -5,6 +5,9 @@ kind: Kustomization
 metadata:
   name: &app certificates-import
 spec:
+  dependsOn:
+    - name: external-secrets
+      namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/network/certificates/import
   postBuild:
@@ -26,8 +29,14 @@ metadata:
   name: &app certificates-export
 spec:
   dependsOn:
-    - name: cert-manager-tls
+    - name: certificates-import
+    - name: cert-manager
       namespace: cert-manager
+  healthCheckExprs:
+    - apiVersion: cert-manager.io/v1
+      kind: Certificate
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   interval: 1h
   path: ./kubernetes/apps/network/certificates/export
   postBuild:
@@ -40,4 +49,4 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: network
-  wait: true
+  wait: false

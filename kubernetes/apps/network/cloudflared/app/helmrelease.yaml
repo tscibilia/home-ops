@@ -18,14 +18,14 @@ spec:
         containers:
           app:
             image:
-              repository: docker.io/cloudflare/cloudflared
-              tag: 2025.10.0
+              repository: mirror.gcr.io/cloudflare/cloudflared
+              tag: 2025.10.1@sha256:21f3607baf2384c54d592b0efe76dd5f548c0dbc083e62fa22c7fac3923d077f
             env:
               NO_AUTOUPDATE: true
               TUNNEL_METRICS: 0.0.0.0:8080
               TUNNEL_ORIGIN_ENABLE_HTTP2: true
-              TUNNEL_POST_QUANTUM: true
-              TUNNEL_TRANSPORT_PROTOCOL: quic
+              TUNNEL_POST_QUANTUM: true # disable when using http2
+              TUNNEL_TRANSPORT_PROTOCOL: quic # http2
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
@@ -72,12 +72,22 @@ spec:
             scheme: http
             path: /metrics
             interval: 1m
-            scrapeTimeout: 10s
+            scrapeTimeout: 30s
+    configMaps:
+      config:
+        data:
+          config.yaml: |-
+            ingress:
+              - hostname: "*.${SECRET_DOMAIN}"
+                originRequest:
+                  http2Origin: true
+                  originServerName: "external.${SECRET_DOMAIN}"
+                service: https://envoy-external.{{ .Release.Namespace }}.svc.cluster.local:443
+              - service: http_status:404
     persistence:
       config:
         type: configMap
-        name: "{{ .Release.Name }}-configmap"
+        identifier: config
         globalMounts:
           - path: /etc/cloudflared/config.yaml
             subPath: config.yaml
-            readOnly: true
