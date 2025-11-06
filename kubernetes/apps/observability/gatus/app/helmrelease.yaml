@@ -95,28 +95,18 @@ spec:
         serviceName: *app
         endpoints:
           - port: http
-    ingress:
+    route:
       app:
-        className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-          nginx.ingress.kubernetes.io/configuration-snippet: "proxy_method GET;"
           gatus.home-operations.com/enabled: "false"
-          gatus.home-operations.com/endpoint: |-
-            client:
-              dns-resolver: tcp://1.1.1.1:53
-            group: external
-        hosts:
-          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
-              - path: ${GATUS_PATH}
-                service:
-                  identifier: app
-                  port: http
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
     persistence:
       config:
         type: emptyDir

@@ -55,23 +55,16 @@ spec:
         ports:
           http:
             port: *port
-    ingress:
+    route:
       app:
-        className: internal
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            group: internal
-            guarded: true
-            ui:
-              hide-hostname: true
-              hide-url: true
-        hosts:
-          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
     persistence:
       config:
         existingClaim: *app
