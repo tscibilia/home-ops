@@ -89,17 +89,13 @@ spec:
       auth.anonymous:
         enabled: false
 
-    ingress:
-      enabled: true
-      ingressClassName: internal
-      annotations:
-        gatus.home-operations.com/endpoint: |-
-          group: internal
-          guarded: true
-          ui:
-            hide-hostname: true
-            hide-url: true
-      hosts: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+    route:
+      main:
+        enabled: true
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
 
     serviceMonitor:
       enabled: true
