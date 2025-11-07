@@ -12,10 +12,15 @@ spec:
   values:
     # yaml-language-server: $schema=https://github.com/cilium/cilium/raw/refs/tags/v1.18.0/install/kubernetes/cilium/values.schema.json
     autoDirectNodeRoutes: true
+    bandwidthManager:
+      enabled: true
+      bbr: true
     bpf:
+      datapathMode: netkit
       masquerade: true
-      # Ref: https://github.com/siderolabs/talos/issues/10002
-      hostLegacyRouting: true
+      preallocateMaps: true
+      tproxy: true
+    bpfClockProbe: true
     cni:
       # Required for pairing with Multus CNI
       exclusive: false
