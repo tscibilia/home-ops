@@ -1,0 +1,6 @@
+machine:
+  features:
+    hostDNS:
+      enabled: true
+      forwardKubeDNSToHost: false # https://github.com/siderolabs/talos/issues/10002
+      resolveMemberNames: true
