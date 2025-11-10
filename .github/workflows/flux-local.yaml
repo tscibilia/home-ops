@@ -111,20 +111,46 @@ jobs:
       - name: Generate Diff
         id: diff
         run: |-
-          echo 'diff<<EOF' >> $GITHUB_OUTPUT
-          cat diff.patch >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          if [ -s diff.patch ]; then
+            # Check diff size (GitHub comment limit is ~65KB)
+            DIFF_SIZE=$(wc -c < diff.patch)
+            if [ "$DIFF_SIZE" -gt 60000 ]; then
+              echo "has-diff=true" >> $GITHUB_OUTPUT
+              {
+                echo "## Flux Diff Too Large"
+                echo ""
+                echo "The diff output is too large to display in a comment (${DIFF_SIZE} bytes)."
+                echo ""
+                echo "**Summary:** ${{ matrix.resource }} changes detected"
+                echo ""
+                echo "<details><summary>Show first 500 lines</summary>"
+                echo ""
+                echo '```diff'
+                head -n 500 diff.patch
+                echo '```'
+                echo ""
+                echo "*... diff truncated ...*"
+                echo "</details>"
+              } > comment.txt
+            else
+              echo "has-diff=true" >> $GITHUB_OUTPUT
+              {
+                echo '```diff'
+                cat diff.patch
+                echo '```'
+              } > comment.txt
+            fi
+          else
+            echo "has-diff=false" >> $GITHUB_OUTPUT
+          fi
 
-      - if: ${{ steps.diff.outputs.diff != '' }}
+      - if: ${{ steps.diff.outputs.has-diff == 'true' }}
         name: Add Comment
         uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2.9.4
         with:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           header: ${{ github.event.pull_request.number }}/kubernetes/${{ matrix.resource }}
-          message: |-
-            ```diff
-            ${{ steps.diff.outputs.diff }}
-            ```
+          path: comment.txt
 
   success:
     if: ${{ !cancelled() }}
