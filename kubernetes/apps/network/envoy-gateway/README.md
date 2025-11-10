@@ -1,182 +1,81 @@
-# Gateway API with Envoy Gateway
+# Envoy Gateway with Gateway API
 
-This directory contains the Gateway API configuration for migrating from NGINX Ingress to Envoy Gateway.
+Gateway API implementation using Envoy Gateway as the ingress controller, replacing nginx-ingress.
 
-## Quick Start
+## Status: ✅ **Migration Complete**
 
-### To Enable Gateway API (Phase 1)
-
-1. Uncomment in `../kustomization.yaml`:
-   ```yaml
-   resources:
-     - ./envoy-gateway/ks.yaml  # Uncomment this
-   ```
-
-2. Wait for Flux to reconcile:
-   ```bash
-   flux reconcile kustomization network --with-source
-   ```
-
-3. Verify installation:
-   ```bash
-   kubectl get gateways -n network
-   kubectl get svc -n network | grep envoy
-   ```
-
-   Expected:
-   - External Gateway: 192.168.5.241
-   - Internal Gateway: 192.168.5.231
+All 30 bjw-s app-template applications migrated from nginx Ingress to Envoy Gateway HTTPRoute.
 
 ## Architecture
 
+```
+External: Internet → Cloudflare → Cloudflared → envoy-external (192.168.5.241) → Apps
+Internal: LAN → k8s-gateway → envoy-internal (192.168.5.231) → Apps
+```
+
 ### Components
 
-- **Envoy Gateway**: Gateway API controller
-- **GatewayClasses**: `external` and `internal`
-- **Gateways**: External (241) and Internal (231) with TLS termination
-- **HTTPRoutes**: Application routing rules (replaces Ingress)
+| Component | Purpose | IP |
+|-----------|---------|-----|
+| **envoy-external** | External Gateway (HTTPS) | 192.168.5.241 |
+| **envoy-internal** | Internal Gateway (HTTPS) | 192.168.5.231 |
+| **external-dns** | DNS automation (watches HTTPRoute) | - |
+| **k8s-gateway** | Internal DNS (watches HTTPRoute) | 192.168.5.199 |
+| **cloudflared** | Cloudflare tunnel | - |
 
-### Files
+## HTTPRoute Pattern
 
-```
-envoy-gateway/
-├── README.md                      # This file
-├── MIGRATION-GUIDE.md             # Detailed migration steps
-├── CLOUDFLARED-INTEGRATION.md     # Cloudflared strategies
-├── ks.yaml                        # Flux Kustomization
-└── app/
-    ├── helmrelease.yaml           # Envoy Gateway Helm chart
-    ├── ocirepository.yaml         # Chart source
-    ├── gatewayclass.yaml          # GatewayClass definitions
-    ├── gateway-external.yaml      # External Gateway (192.168.5.241)
-    ├── gateway-internal.yaml      # Internal Gateway (192.168.5.231)
-    ├── rbac.yaml                  # ReferenceGrant for cert-manager
-    └── kustomization.yaml         # Kustomize config
-```
+All apps use inline `route:` blocks in HelmRelease:
 
-## IP Allocation
-
-| Service | IP | Purpose |
-|---------|-----|---------|
-| NGINX External (current) | 192.168.5.240 | External traffic via cloudflared |
-| NGINX Internal (current) | 192.168.5.230 | Internal traffic via k8s-gateway |
-| **Gateway External (new)** | **192.168.5.241** | **External traffic via cloudflared** |
-| **Gateway Internal (new)** | **192.168.5.231** | **Internal traffic via k8s-gateway** |
-
-Parallel IPs allow zero-downtime migration.
-
-## Example: Ingress → HTTPRoute Conversion
-
-### Before (Ingress)
+**Internal Apps:**
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: myapp
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: "myapp.domain.com"
-spec:
-  ingressClassName: external
-  rules:
-    - host: "myapp.domain.com"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: myapp
-                port:
-                  number: 80
+route:
+  app:
+    hostnames: ["app.${SECRET_DOMAIN}"]
+    parentRefs:
+      - name: envoy-internal
+        namespace: network
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: *port  # Variable reference from service definition
 ```
 
-### After (HTTPRoute)
+**External Apps:**
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: myapp
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: "myapp.domain.com"
-    external-dns.alpha.kubernetes.io/target: "external-gw.domain.com"
-spec:
-  parentRefs:
-    - name: external
-      namespace: network
-      sectionName: https
-  hostnames:
-    - "myapp.domain.com"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: myapp
-          port: 80
+route:
+  app:
+    annotations:
+      gatus.home-operations.com/endpoint: |-
+        conditions: ["[STATUS] == 200"]
+    hostnames: ["app.${SECRET_DOMAIN}"]
+    parentRefs:
+      - name: envoy-external
+        namespace: network
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: *port  # Variable reference from service definition
 ```
 
-### Key Changes
-- `ingressClassName` → `parentRefs[].name`
-- `spec.rules[].host` → `spec.hostnames[]`
-- `backend.service` → `backendRefs[]`
-- Add `target` annotation for external-dns
+## Authentication (Authentik)
 
-## Migration Phases
+For apps requiring authentication, use the `ext-auth` component:
 
-1. **Phase 1: Install** (You are here)
-   - Deploy Envoy Gateway
-   - Create GatewayClasses and Gateways
-   - Verify LoadBalancer IPs
-
-2. **Phase 2: Parallel Routes**
-   - Create HTTPRoutes alongside Ingress
-   - Test with test subdomains
-   - external-dns already watches both Ingress and HTTPRoute simultaneously
-
-3. **Phase 3: DNS and Cloudflared**
-   - Configure Cloudflared routing strategy
-   - Verify external-dns creates HTTPRoute DNS records
-
-4. **Phase 4: Migrate Applications**
-   - One app at a time
-   - Delete Ingress, keep HTTPRoute
-   - Monitor and verify
-
-5. **Phase 5: Cleanup**
-   - Remove "ingress" source from external-dns
-   - Remove NGINX Ingress controllers
-   - Clean up old Ingress resources
-
-## Testing
-
-### Test HTTPRoute without DNS
-```bash
-# Direct IP test
-curl -H "Host: myapp.domain.com" https://192.168.5.241 -k
-
-# Check route status
-kubectl describe httproute myapp -n namespace
-
-# Check Gateway listeners
-kubectl describe gateway external -n network
+**In app's kustomization.yaml:**
+```yaml
+components:
+  - ../../../../components/ext-auth
 ```
 
-### Verify external-dns
-```bash
-# Check DNS records created
-kubectl logs -n network -l app.kubernetes.io/name=external-dns -f
-
-# Verify in Cloudflare dashboard
-# Should see: myapp.domain.com → CNAME → external-gw.domain.com
+**In app's ks.yaml:**
+```yaml
+postBuild:
+  substitute:
+    APP: app-name  # Must match HelmRelease/HTTPRoute name
 ```
 
-## Rollback
-
-If issues occur:
-
-1. **Quick**: Re-enable Ingress resource
-2. **Full**: Comment out `./envoy-gateway/ks.yaml` in kustomization
+See `kubernetes/components/ext-auth/` for SecurityPolicy configuration.
 
 ## Monitoring
 
@@ -187,67 +86,65 @@ kubectl get gateways -n network
 # HTTPRoute status
 kubectl get httproutes -A
 
-# Envoy Gateway controller logs
+# Envoy controller logs
 kubectl logs -n network -l control-plane=envoy-gateway -f
 
-# Envoy proxy logs (created per-Gateway)
-kubectl logs -n network -l gateway.envoyproxy.io/owning-gateway-name=external -f
+# Envoy proxy logs
+kubectl logs -n network -l gateway.envoyproxy.io/owning-gateway-name=envoy-external -f
 ```
 
 ## Documentation
 
-- **[MIGRATION-GUIDE.md](./MIGRATION-GUIDE.md)**: Complete migration walkthrough
-- **[CLOUDFLARED-INTEGRATION.md](./CLOUDFLARED-INTEGRATION.md)**: Cloudflared strategies
+- **[MIGRATION.md](./MIGRATION.md)**: Complete migration guide and cloudflared integration strategies
+- **[ext-auth component](../../../components/ext-auth/)**: Authentik SecurityPolicy for forward auth
 
-## Differences from Reference Implementation
+## Key Differences from nginx
 
-This implementation differs from onedr0p/home-ops:
+- ✅ Kubernetes Gateway API standard (vendor-neutral)
+- ✅ Cross-namespace routing with ReferenceGrants
+- ✅ Better traffic management (timeouts, retries, filters)
+- ✅ Native HTTP/2, gRPC, TCP/UDP support
+- ✅ SecurityPolicy for external authorization (Authentik)
+- ✅ Envoy's advanced observability
 
-1. **Dual Ingress Controllers**: We have both external and internal
-2. **Cilium without Envoy**: Our Cilium doesn't use built-in Envoy
-3. **Cloudflared**: External traffic tunnels through Cloudflare
-4. **Parallel Operation**: Designed to run alongside NGINX during migration
+## Special Cases Handled
 
-## Benefits
+- **Plex**: Custom Range header removal for subtitle streaming (401 health check)
+- **Minio**: Dual routes (app + s3)
+- **Gatus**: Self-monitoring disabled
+- **Kromgo**: 404 health check status
 
-- ✅ **Vendor Neutral**: Kubernetes SIG standard
-- ✅ **Better Routing**: Advanced traffic management
-- ✅ **Cross-Namespace**: Route across namespaces safely
-- ✅ **Multiple Protocols**: HTTP, gRPC, TCP, UDP, TLS
-- ✅ **Future Proof**: Industry direction for ingress
+## Manual Migration Remaining
+
+The following apps use native Helm charts and require manual HTTPRoute creation:
+
+- `victoria-metrics`, `grafana`, `victoria-logs` (observability)
+- `authentik` (auth server)
+- `flux-webhook` (flux system)
 
 ## Troubleshooting
 
-### Gateway not getting IP
+**Gateway not ready:**
 ```bash
+kubectl describe gateway envoy-external -n network
 kubectl get svc -n network | grep envoy
-kubectl describe gateway external -n network
 ```
-Check: Cilium LBIPAM pool has available IPs
 
-### HTTPRoute not binding
+**HTTPRoute not binding:**
 ```bash
 kubectl describe httproute <name> -n <namespace>
+# Check: parentRefs.name, parentRefs.namespace, sectionName
 ```
-Check: parentRefs namespace, name, and sectionName
 
-### TLS errors
+**Authentik auth not working:**
 ```bash
-kubectl get referencegrant -n cert-manager
-kubectl describe gateway external -n network
+kubectl get securitypolicy -A
+kubectl get referencegrant -n default
+# Verify ext-auth component is applied and APP variable is set
 ```
-Check: ReferenceGrant allows access to cert-manager secrets
 
-## Next Steps
+## References
 
-1. Read [MIGRATION-GUIDE.md](./MIGRATION-GUIDE.md)
-2. Verify Gateway installation
-3. Test with a non-critical application
-4. Plan external-dns update
-5. Migrate applications gradually
-
-## Support
-
-- Gateway API: https://gateway-api.sigs.k8s.io/
-- Envoy Gateway: https://gateway.envoyproxy.io/
-- Cilium Load Balancing: https://docs.cilium.io/en/stable/network/lb-ipam/
+- [Gateway API](https://gateway-api.sigs.k8s.io/)
+- [Envoy Gateway](https://gateway.envoyproxy.io/)
+- [external-dns Gateway Support](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/gateway-api.md)

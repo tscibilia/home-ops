@@ -7,10 +7,12 @@ components:
   - ../../components/common
 resources:
   - ./namespace.yaml
-  - ./external/ks.yaml
-  - ./internal/ks.yaml
   - ./externalsecret.yaml
+  - ./certificates/ks.yaml
+  - ./cloudflared/ks.yaml
+  - ./echo/ks.yaml
+  - ./envoy-gateway/ks.yaml
+  - ./external-dns/ks.yaml
+  - ./k8s-gateway/ks.yaml
   - ./proxy/ks.yaml
   - ./tailscale/ks.yaml
-  - ./certificates/ks.yaml
-  - ./envoy-gateway/ks.yaml

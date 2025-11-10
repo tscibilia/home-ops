@@ -13,10 +13,3 @@ spec:
     alertmanagerAddress: http://vmalertmanager-stack.observability.svc.cluster.local:9093
     networkPolicy:
       enabled: false
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 100m
-        memory: 128Mi

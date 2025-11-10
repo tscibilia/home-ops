@@ -50,23 +50,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 568
         runAsGroup: 568
-    ingress:
-      app:
-        className: internal
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            group: internal
-            guarded: true
-            ui:
-              hide-hostname: true
-              hide-url: true
-        hosts:
-          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
     service:
       app:
         controller: *app
@@ -77,6 +60,12 @@ spec:
       app:
         endpoints:
           - port: http
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
     persistence:
       config-file:
         type: configMap

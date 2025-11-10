@@ -13,6 +13,6 @@ spec:
       interval: 5m
       rules:
         - alert: *name
-          expr: '_time:5m | "write against a read only replica" | filter app := "immich" | count() rows | filter rows :> 0'
+          expr: '"write against a read only replica" | filter app := "immich" | count() rows | filter rows :> 0'
           annotations:
-            description: 'Immich is trying to write against a read only replica instead of the primary Redis database'
+            description: '{{ $labels.app }} is database is in read only mode'

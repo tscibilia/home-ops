@@ -28,8 +28,9 @@ spec:
               repository: ghcr.io/home-operations/gatus-sidecar
               tag: 0.0.9@sha256:31a52dd0e579c1f865b2580a4bb715d2a893deb1351fedeaba73598e9a578cbe
             args:
-              - --auto-ingress
-              - --enable-ingress
+              - --auto-httproute
+              - --enable-httproute
+              - --enable-service
             resources:
               requests:
                 cpu: 10m
@@ -41,7 +42,7 @@ spec:
           app:
             image:
               repository: ghcr.io/twin/gatus
-              tag: v5.31.0@sha256:3a432fcc2826b8eb2b38caceb83e7777fda139b8058b1d022c73a82be7342682
+              tag: v5.30.0@sha256:bab5a31cb3cfde7fd9913a5ff97652883e4db08f3b429a62a7a188c746df4219
             env:
               TZ: ${TIMEZONE}
               GATUS_CONFIG_PATH: /config
@@ -95,28 +96,14 @@ spec:
         serviceName: *app
         endpoints:
           - port: http
-    ingress:
+    route:
       app:
-        className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-          nginx.ingress.kubernetes.io/configuration-snippet: "proxy_method GET;"
           gatus.home-operations.com/enabled: "false"
-          gatus.home-operations.com/endpoint: |-
-            client:
-              dns-resolver: tcp://1.1.1.1:53
-            group: external
-        hosts:
-          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
-              - path: ${GATUS_PATH}
-                service:
-                  identifier: app
-                  port: http
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
     persistence:
       config:
         type: emptyDir
@@ -133,10 +120,10 @@ spec:
           type: ClusterRole
           rules:
             - apiGroups: [""]
-              resources: ["configmaps", "secrets", "services"]
+              resources: ["services"]
               verbs: ["get", "watch", "list"]
-            - apiGroups: ["networking.k8s.io"]
-              resources: ["ingresses"]
+            - apiGroups: ["gateway.networking.k8s.io"]
+              resources: ["gateways","httproutes"]
               verbs: ["get","watch","list"]
       bindings:
         *app :

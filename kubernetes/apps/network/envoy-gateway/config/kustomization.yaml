@@ -5,3 +5,5 @@ kind: Kustomization
 namespace: network
 resources:
   - ./envoy.yaml
+  # - ./grafanadashboard.yaml
+  - ./observability.yaml

@@ -23,7 +23,7 @@ spec:
           app:
             image:
               repository: ghcr.io/kashalls/kromgo
-              tag: "v0.7.4@sha256:464dfa398fc0d032cffbd8396a1993f2690917b847f6628159c6d9fe3cba9055"
+              tag: "v0.7.2@sha256:85911307e779c799d5a6f37da58281f617030f7fd512910e630d768d2ef2b8e8"
             env:
               PROMETHEUS_URL: http://vmsingle-stack.observability.svc.cluster.local:8428
               SERVER_PORT: &port 80
@@ -67,23 +67,19 @@ spec:
             port: *port
           health:
             port: *healthPort
-    ingress:
+    route:
       app:
-        className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 404"]
-            client:
-              dns-resolver: tcp://1.1.1.1:53
-            group: external
-        hosts:
-          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       config-file:
         type: configMap

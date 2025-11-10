@@ -3,7 +3,7 @@
 clusterName: kubernetes
 
 # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
-talosVersion: v1.11.5
+talosVersion: v1.11.3
 # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
 kubernetesVersion: v1.34.1
 
@@ -119,7 +119,6 @@ nodes:
 
 # Global patches
 patches:
-  - "@./patches/global/machine-features.yaml"
   - "@./patches/global/machine-files.yaml"
   - "@./patches/global/machine-kubelet.yaml"
   - "@./patches/global/machine-network.yaml"
