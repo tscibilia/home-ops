@@ -19,17 +19,21 @@ spec:
         size: 10Gi
       serviceMonitor:
         enabled: true
-      ingress:
+      route:
         enabled: true
-        pathType: Prefix
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            group: internal
-            guarded: true
-            ui:
-              hide-hostname: true
-              hide-url: true
-        hosts:
-          - name: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            path: /
-            port: http
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        extraRules:
+          - filters:
+              - type: RequestRedirect
+                requestRedirect:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /select/vmui/
+                  statusCode: 302
+            matches:
+              - path:
+                  type: Exact
+                  value: /

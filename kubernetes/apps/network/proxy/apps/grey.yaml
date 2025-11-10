@@ -33,34 +33,36 @@ subsets:
         port: 1196
         protocol: UDP
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/ingress.json
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: &name grey
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "grey.${SECRET_DOMAIN}"
-    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
     gatus.home-operations.com/enabled: "false"
 spec:
-  ingressClassName: external
+  hostnames: ["grey.${SECRET_DOMAIN}"]
+  parentRefs:
+    - name: envoy-external
+      namespace: &ns network
   rules:
-    - host: "grey.${SECRET_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: *name
-                port:
-                  name: http
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: *name
+          namespace: *ns
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/configmap.json
-# Tell the nginx controller to open and proxy UDP 1196
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grey-udp-service
-data:
-  "1196": "network/grey:1196"
+# NOTE: UDP port 1196 was previously handled via nginx ConfigMap
+# Envoy Gateway requires a UDPRoute or separate gateway configuration for UDP traffic
+# This ConfigMap is commented out and UDP routing needs to be configured separately
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: grey-udp-service
+# data:
+#   "1196": "network/grey:1196"

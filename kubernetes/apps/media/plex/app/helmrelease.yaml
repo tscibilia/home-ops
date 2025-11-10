@@ -78,29 +78,36 @@ spec:
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.5.235
+        externalTrafficPolicy: Local
         ports:
           http:
             port: *port
-    ingress:
+    route:
       app:
-        className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 401"]
-            client:
-              dns-resolver: tcp://1.1.1.1:53
-            group: external
-          # Extended timeouts for Plex streaming
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-        hosts:
-          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+          - # Ref: https://forums.plex.tv/t/external-srt-subtitles-are-not-working-w-reverse-proxy/886540
+            backendRefs:
+              - identifier: app
+                port: *port
+            filters:
+              - type: RequestHeaderModifier
+                requestHeaderModifier:
+                  remove:
+                    - Range
+            matches:
+              - path:
+                  type: PathPrefix
+                  value: /library/streams
     persistence:
       config:
         existingClaim: *app

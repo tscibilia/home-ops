@@ -6,8 +6,12 @@ metadata:
   name: &app envoy-gateway
 spec:
   dependsOn:
-    - name: cert-manager-tls
-      namespace: cert-manager
+    - name: certificates-import
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: *app
+      namespace: network
   interval: 1h
   path: ./kubernetes/apps/network/envoy-gateway/app
   postBuild:
@@ -21,11 +25,6 @@ spec:
     namespace: flux-system
   targetNamespace: network
   wait: true
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: *app
-      namespace: network
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
