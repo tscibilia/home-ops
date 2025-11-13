@@ -19,6 +19,13 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
+  - name: heartbeat
+    group: connectivity
+    url: ""  # Push-based monitoring
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
 metrics: true
 
 storage:
