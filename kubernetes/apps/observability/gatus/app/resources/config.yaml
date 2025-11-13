@@ -19,6 +19,17 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
+external-endpoints:
+  - name: heartbeat
+    group: internal
+    token: "${ALERTMANAGER_HEARTBEAT_TOKEN}"
+    interval: 2m
+    alerts:
+      - type: pushover
+        description: "Alertmanager heartbeat not received"
+        failure-threshold: 1
+        success-threshold: 1
+
 metrics: true
 
 storage:
@@ -40,16 +51,16 @@ web:
 
 debug: false
 
-# alerting:
-#   pushover:
-#     application-token: ${PUSHOVER_ALERTMANAGER_TOKEN}
-#     default-alert:
-#       description: health-check failed
-#       failure-threshold: 3
-#       minimum-reminder-interval: 1h
-#       send-on-resolved: true
-#       success-threshold: 2
-#     priority: 1
-#     resolved-priority: 0
-#     title: Gatus
-#     user-key: ${PUSHOVER_USER_KEY}
+alerting:
+  pushover:
+    application-token: ${PUSHOVER_ALERTMANAGER_TOKEN}
+    default-alert:
+      description: health-check failed
+      failure-threshold: 3
+      minimum-reminder-interval: 1h
+      send-on-resolved: true
+      success-threshold: 2
+    priority: 1
+    resolved-priority: 0
+    title: Gatus
+    user-key: ${PUSHOVER_USER_KEY}

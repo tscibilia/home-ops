@@ -91,7 +91,7 @@ spec:
             - receiver: "null"
               matchers:
                 - alertname=InfoInhibitor
-            - receiver: "null" #heartbeat
+            - receiver: heartbeat
               group_interval: 15s
               group_wait: 0s
               repeat_interval: 5m
@@ -113,6 +113,10 @@ spec:
               - url_secret:
                   name: &secret alertmanager-secret
                   key: ALERTMANAGER_HEARTBEAT_URL
+                http_config:
+                  bearer_token_secret:
+                    name: *secret
+                    key: ALERTMANAGER_HEARTBEAT_TOKEN
           - name: pushover
             pushover_configs:
               - html: true
