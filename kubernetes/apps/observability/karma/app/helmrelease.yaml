@@ -62,7 +62,7 @@ spec:
           - port: http
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network

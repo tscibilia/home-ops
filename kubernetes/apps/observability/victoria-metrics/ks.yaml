@@ -5,6 +5,8 @@ kind: Kustomization
 metadata:
   name: &app victoria-metrics-stack
 spec:
+  components:
+    - ../../../../components/ext-auth
   dependsOn:
     - name: external-secrets
       namespace: external-secrets

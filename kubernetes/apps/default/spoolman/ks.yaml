@@ -6,6 +6,7 @@ metadata:
   name: &app spoolman
 spec:
   components:
+    - ../../../../components/ext-auth
     - ../../../../components/volsync
   dependsOn:
     - name: volsync

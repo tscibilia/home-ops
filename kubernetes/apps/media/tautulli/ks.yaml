@@ -6,6 +6,7 @@ metadata:
   name: &app tautulli
 spec:
   components:
+    - ../../../../components/ext-auth
     - ../../../../components/volsync
   dependsOn:
     - name: rook-ceph-cluster
