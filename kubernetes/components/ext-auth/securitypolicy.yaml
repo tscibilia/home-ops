@@ -9,12 +9,7 @@ spec:
   extAuth:
     failOpen: false
     headersToExtAuth:
-      - accept
       - cookie
-      - authorization
-      - x-forwarded-proto
-      - x-forwarded-host
-      - x-forwarded-uri
     http:
       backendRefs:
         - name: ak-outpost-authentik-embedded-outpost
