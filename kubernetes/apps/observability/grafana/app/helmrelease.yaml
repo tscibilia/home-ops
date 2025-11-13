@@ -15,7 +15,7 @@ spec:
       tag: 12.2.1
     extraInitContainers:
       - name: init-db
-        image: ghcr.io/home-operations/postgres-init:17
+        image: ghcr.io/home-operations/postgres-init:18
         imagePullPolicy: IfNotPresent
         envFrom:
           - secretRef:
