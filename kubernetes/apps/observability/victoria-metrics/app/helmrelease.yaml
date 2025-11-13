@@ -91,7 +91,7 @@ spec:
             - receiver: "null"
               matchers:
                 - alertname=InfoInhibitor
-            - receiver: heartbeat
+            - receiver: "null" #heartbeat
               group_interval: 15s
               group_wait: 0s
               repeat_interval: 5m
