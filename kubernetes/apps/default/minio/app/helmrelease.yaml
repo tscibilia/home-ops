@@ -45,7 +45,7 @@ spec:
                 spec:
                   httpGet:
                     path: ${GATUS_PATH}
-                    port: 9000
+                    port: &port 9000
                   initialDelaySeconds: 30
                   periodSeconds: 30
                   timeoutSeconds: 10
@@ -77,9 +77,9 @@ spec:
         controller: *app
         ports:
           http:
-            port: 9001
+            port: &http 9001
           s3:
-            port: 9000
+            port: *port
     serviceMonitor:
       app:
         serviceName: *app
@@ -89,34 +89,30 @@ spec:
             path: /minio/v2/metrics/cluster
             interval: 1m
             scrapeTimeout: 10s
-    ingress:
+    route:
       app:
-        className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           gatus.home-operations.com/endpoint: |-
-            client:
-              dns-resolver: tcp://1.1.1.1:53
-            group: external
-        hosts:
-          - host: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *http
       s3:
-        className: external
         annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           gatus.home-operations.com/enabled: "false"
-        hosts:
-          - host: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: s3
+        hostnames: ["${S3_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       data:
         type: nfs

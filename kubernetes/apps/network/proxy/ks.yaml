@@ -6,8 +6,8 @@ metadata:
   name: &app proxy
 spec:
   dependsOn:
-    - name: cert-manager-tls
-      namespace: cert-manager
+    - name: envoy-gateway-config
+      namespace: network
     - name: external-secrets
       namespace: external-secrets
   interval: 1h

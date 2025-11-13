@@ -15,31 +15,26 @@ spec:
       targetPort: 5000
       protocol: TCP
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/ingress.json
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: &name dadnas
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "dad.${SECRET_DOMAIN}"
-    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-    gatus.home-operations.com/endpoint: |-
-      client:
-        dns-resolver: tcp://1.1.1.1:53
-      group: external
-      ui:
-        hide-hostname: true
-        hide-url: true
+    gatus.home-operations.com/enabled: "false"
 spec:
-  ingressClassName: external
+  hostnames: ["dad.${SECRET_DOMAIN}"]
+  parentRefs:
+    - name: envoy-external
+      namespace: &ns network
   rules:
-    - host: "dad.${SECRET_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: *name
-                port:
-                  name: http
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: *name
+          namespace: *ns
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

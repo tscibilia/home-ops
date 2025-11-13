@@ -4,8 +4,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: &name adguard
-  labels:
-    app: *name
 spec:
   ports:
     - name: http
@@ -22,31 +20,28 @@ subsets:
   - addresses:
       - ip: ${ADGUARD_IP}
     ports:
-      - port: 80
+      - name: http
+        port: 80
+        protocol: TCP
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/ingress.json
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: &name adguard
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: "ag.${SECRET_DOMAIN}"
-    gatus.home-operations.com/endpoint: |-
-      group: internal
-      guarded: true
-      ui:
-        hide-hostname: true
-        hide-url: true
 spec:
-  ingressClassName: internal
+  hostnames: ["ag.${SECRET_DOMAIN}"]
+  parentRefs:
+    - name: envoy-internal
+      namespace: &ns network
   rules:
-    - host: "ag.${SECRET_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: *name
-                port:
-                  name: http
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: *name
+          namespace: *ns
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

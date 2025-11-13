@@ -22,31 +22,28 @@ subsets:
   - addresses:
       - ip: 192.168.1.104
     ports:
-      - port: 80
+      - name: http
+        port: 80
+        protocol: TCP
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/ingress.json
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: &name prnt3d
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: "3dp.${SECRET_DOMAIN}"
-    gatus.home-operations.com/endpoint: |-
-      group: internal
-      guarded: true
-      ui:
-        hide-hostname: true
-        hide-url: true
 spec:
-  ingressClassName: internal
+  hostnames: ["3dp.${SECRET_DOMAIN}"]
+  parentRefs:
+    - name: envoy-internal
+      namespace: &ns network
   rules:
-    - host: "3dp.${SECRET_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: *name
-                port:
-                  name: http
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: *name
+          namespace: *ns
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
