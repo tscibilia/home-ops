@@ -76,6 +76,7 @@ spec:
         annotations:
           # gatus.home-operations.com/enabled: "false"
           gatus.home-operations.com/endpoint: |
+            url: "http://{{ .Release.Name }}.media.svc.cluster.local:7878"
             path: "/ping"
             conditions:
               - "[STATUS] == 200"
