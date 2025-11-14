@@ -66,10 +66,11 @@ spec:
     route:
       app:
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        annotations:
+          gatus.home-operations.com/enabled: "false"
         parentRefs:
           - name: envoy-internal
             namespace: network
-            sectionName: https
         rules:
           - backendRefs:
               - identifier: app

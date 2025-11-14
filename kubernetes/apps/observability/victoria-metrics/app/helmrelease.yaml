@@ -74,10 +74,11 @@ spec:
       route:
         enabled: true
         hostnames: ["${APP}.${SECRET_DOMAIN}"]
+        annotations:
+          gatus.home-operations.com/enabled: "false"
         parentRefs:
           - name: envoy-internal
             namespace: network
-            sectionName: https
 
     alertmanager:
       useManagedConfig: true
