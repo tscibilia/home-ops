@@ -93,7 +93,13 @@ spec:
             - receiver: "null"
               matchers:
                 - alertname=InfoInhibitor
-            - receiver: heartbeat
+            - receiver: heartbeat-gatus
+              group_interval: 15s
+              group_wait: 0s
+              repeat_interval: 5m
+              matchers:
+                - alertname=Watchdog
+            - receiver: heartbeat-healthchecksio
               group_interval: 15s
               group_wait: 0s
               repeat_interval: 5m
@@ -110,7 +116,7 @@ spec:
             equal: ["alertname", "namespace"]
         receivers:
           - name: "null"
-          - name: heartbeat
+          - name: heartbeat-gatus
             webhook_configs:
               - url_secret:
                   name: &secret alertmanager-secret
@@ -119,6 +125,11 @@ spec:
                   bearer_token_secret:
                     name: *secret
                     key: ALERTMANAGER_HEARTBEAT_TOKEN
+          - name: heartbeat-healthchecksio
+            webhook_configs:
+              - url_secret:
+                  name: &secret alertmanager-secret
+                  key: ALERTMANAGER_HEALTHCHECKSIO_URL
           - name: pushover
             pushover_configs:
               - html: true

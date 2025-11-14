@@ -22,8 +22,8 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 
 <div align="center">
 
-[![Status Page](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fbadge%2F47d5c08e-21a9-41f1-b7fd-48092e%2FpXy582uA-2.shields&style=for-the-badge&logo=statuspage&logoColor=white&label=Status%20Page)](https://status.t0m.co)&nbsp;&nbsp;
-[![Alertmanager](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F2%2Fd1cd3b92-cf69-4144-b5f2-9d044e983cff.shields&style=for-the-badge&logo=prometheus&logoColor=white&label=Alertmanager)](https://status.t0m.co)&nbsp;&nbsp;
+[![Home-Internet](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F3%2F725515d4-5fdc-41ab-9e25-6c2b90732fb2.shields&style=for-the-badge&logo=ubiquiti&logoColor=white&label=Home%20Internet)](https://status.t0m.co)&nbsp;&nbsp;
+[![Alertmanager](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F3%2F69edc917-4cd9-491b-ae51-18a25e193964.shields&style=for-the-badge&logo=prometheus&logoColor=white&label=Alertmanager)](https://status.t0m.co)&nbsp;&nbsp;
 [![renovate](https://img.shields.io/badge/renovate-enabled-brightgreen?style=for-the-badge&logo=renovatebot&logoColor=white)](https://github.com/renovatebot/renovate)
 
 </div>
