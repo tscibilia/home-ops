@@ -74,7 +74,11 @@ spec:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         annotations:
-          gatus.home-operations.com/enabled: "false"
+          # gatus.home-operations.com/enabled: "false"
+          gatus.home-operations.com/endpoint: |
+            path: "/ping"
+            conditions:
+              - "[STATUS] == 200"
         parentRefs:
           - name: envoy-internal
             namespace: network
