@@ -19,17 +19,6 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
-external-endpoints:
-  - name: heartbeat
-    group: internal
-    token: "${ALERTMANAGER_HEARTBEAT_TOKEN}"
-    interval: 2m
-    alerts:
-      - type: pushover
-        description: "Alertmanager heartbeat not received"
-        failure-threshold: 1
-        success-threshold: 1
-
 metrics: true
 
 storage:
