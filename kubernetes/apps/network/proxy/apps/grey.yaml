@@ -29,9 +29,10 @@ subsets:
       - name: http
         port: 5000
         protocol: TCP
-      - name: ovpn
-        port: 1196
-        protocol: UDP
+      # Does not work with Cloudflare Tunnel (cloudflared)
+      # - name: ovpn
+      #   port: 1196
+      #   protocol: UDP
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
 apiVersion: gateway.networking.k8s.io/v1
@@ -56,13 +57,32 @@ spec:
         - path:
             type: PathPrefix
             value: /
----
-# NOTE: UDP port 1196 was previously handled via nginx ConfigMap
-# Envoy Gateway requires a UDPRoute or separate gateway configuration for UDP traffic
-# This ConfigMap is commented out and UDP routing needs to be configured separately
-# apiVersion: v1
-# kind: ConfigMap
+# ---
+# Cloudflare Tunnel (cloudflared) does NOT support UDP traffic. This means:
+# - ✅ Works from local network: Direct connection to 192.168.5.241:1196
+# - ❌ Won't work externally: Cloudflare Tunnel only supports TCP/HTTP/HTTPS
+
+# If you want external OpenVPN access through Cloudflare, you'd need to use
+# Cloudflare Spectrum (paid feature) or expose the Gateway LoadBalancer IP
+# directly to the internet (not recommended for security). You also need to
+# add UDPRoute support in your `envoy-external` Gateway setup.
+
+# # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/udproute_v1alpha2.json
+# apiVersion: gateway.networking.k8s.io/v1alpha2
+# kind: UDPRoute
 # metadata:
-#   name: grey-udp-service
-# data:
-#   "1196": "network/grey:1196"
+#   name: &name grey
+#   annotations:
+#     gatus.home-operations.com/enabled: "false"
+# spec:
+#   parentRefs:
+#     - name: envoy-external
+#       namespace: &ns network
+#       sectionName: openvpn
+#   rules:
+#     - backendRefs:
+#         - group: ''
+#           kind: Service
+#           name: *name
+#           namespace: *ns
+#           port: 1196
