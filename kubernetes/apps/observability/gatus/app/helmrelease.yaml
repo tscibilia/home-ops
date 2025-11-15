@@ -25,8 +25,8 @@ spec:
           gatus-sidecar:
             dependsOn: 01-init-db
             image:
-              repository: ghcr.io/tscibilia/gatus-sidecar # ghcr.io/home-operations/gatus-sidecar
-              tag: path-append-test # 0.0.9@sha256:31a52dd0e579c1f865b2580a4bb715d2a893deb1351fedeaba73598e9a578cbe
+              repository: ghcr.io/home-operations/gatus-sidecar
+              tag: 0.0.9@sha256:31a52dd0e579c1f865b2580a4bb715d2a893deb1351fedeaba73598e9a578cbe
             args:
               - --auto-httproute
               - --enable-httproute

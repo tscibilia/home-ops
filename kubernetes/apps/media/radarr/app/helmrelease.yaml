@@ -70,16 +70,13 @@ spec:
         ports:
           http:
             port: *port
+        annotations:
+          gatus.home-operations.com/enabled: "true"
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         annotations:
-          # gatus.home-operations.com/enabled: "false"
-          gatus.home-operations.com/endpoint: |
-            url: "http://{{ .Release.Name }}.media.svc.cluster.local:7878"
-            path: "/ping"
-            conditions:
-              - "[STATUS] == 200"
+          gatus.home-operations.com/enabled: "false"
         parentRefs:
           - name: envoy-internal
             namespace: network
