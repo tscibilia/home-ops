@@ -6,7 +6,7 @@ metadata:
   name: &app unifi
 spec:
   components:
-    - ../../../components/volsync
+    - ../../../../components/volsync
   dependsOn:
     - name: rook-ceph-cluster
       namespace: rook-ceph
