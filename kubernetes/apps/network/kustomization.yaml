@@ -16,4 +16,3 @@ resources:
   - ./k8s-gateway/ks.yaml
   - ./proxy/ks.yaml
   - ./tailscale/ks.yaml
-  - ./unifi/ks.yaml
