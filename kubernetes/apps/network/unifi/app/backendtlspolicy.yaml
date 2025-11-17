@@ -1,0 +1,14 @@
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTLSPolicy
+metadata:
+  name: &app unifi
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: *app
+      sectionName: http  # References the service port named "http" (which is actually HTTPS on 8443)
+  validation:
+    wellKnownCACertificates: System
+    hostname: unifi.network.svc.cluster.local
