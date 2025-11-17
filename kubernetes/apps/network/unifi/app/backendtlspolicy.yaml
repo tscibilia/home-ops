@@ -10,6 +10,8 @@ spec:
       kind: Service
       name: *app
       sectionName: http  # References the service port named "http" (which is actually HTTPS on 8443)
+  options:
+    gateway.envoyproxy.io/skip-verify: "true"
   validation:
     wellKnownCACertificates: System
     hostname: unifi.network.svc.cluster.local
