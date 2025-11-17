@@ -11,14 +11,12 @@ spec:
   interval: 1h
   values:
     fullnameOverride: *app
-    retentionPeriod: 1 # months
     server:
       persistentVolume:
         enabled: true
         storageClassName: openebs-hostpath
         size: 10Gi
-      serviceMonitor:
-        enabled: true
+      retentionPeriod: 21d
       route:
         enabled: true
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
@@ -37,3 +35,5 @@ spec:
               - path:
                   type: Exact
                   value: /
+      serviceMonitor:
+        enabled: true
