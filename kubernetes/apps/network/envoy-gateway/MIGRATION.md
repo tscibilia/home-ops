@@ -1,11 +1,10 @@
 # Envoy Gateway Migration Guide
 
-Complete migration guide from nginx Ingress to Envoy Gateway with Gateway API, including cloudflared integration strategies.
+Migration reference from nginx Ingress to Envoy Gateway with Gateway API.
 
 ## Status
 
-✅ **Phase 1-4 Complete**: 30 bjw-s app-template applications migrated
-⏳ **Remaining**: Manual migration of native Helm chart apps (victoria-metrics, grafana, victoria-logs, authentik, flux-webhook)
+✅ Migration completed November 2025
 
 ## Architecture Comparison
 
@@ -30,11 +29,11 @@ Internal: LAN → k8s-gateway → envoy-internal (192.168.5.231) → Apps
 
 ---
 
-## Phase 1: Installation ✅ Complete
+## Installation
 
-Envoy Gateway is installed and both Gateways are operational with LoadBalancer IPs assigned via Cilium IPAM.
+Envoy Gateway installed with dual Gateways (external/internal) using Cilium IPAM for LoadBalancer IPs.
 
-**Verify:**
+**Verification:**
 ```bash
 kubectl get gateways -n network
 # envoy-external: 192.168.5.241
@@ -43,9 +42,9 @@ kubectl get gateways -n network
 
 ---
 
-## Phase 2: Application Migration ✅ Complete
+## Application Migration
 
-All bjw-s app-template applications converted from `ingress:` blocks to `route:` blocks.
+Converting bjw-s app-template applications from `ingress:` blocks to `route:` blocks.
 
 ### Conversion Pattern
 
@@ -91,6 +90,34 @@ route:
 - `paths[]` → `rules[].backendRefs[]`
 - Removed `external-dns.alpha.kubernetes.io/target` annotation (not needed)
 - Added `rules:` section with `backendRefs` (required for Gateway API)
+- Gatus annotations remain on HTTPRoute (for per-route monitoring config)
+- Gateway-level annotations (timeouts, CORS, etc.) applied at Gateway resource level
+
+**Gatus Monitoring with Authentik:**
+
+For internal apps behind Authentik forward auth, gatus HTTPRoute monitoring fails due to 302 redirects. Workaround:
+
+```yaml
+# Disable HTTPRoute monitoring, enable Service monitoring
+service:
+  app:
+    annotations:
+      gatus.home-operations.com/enabled: "true"
+route:
+  app:
+    annotations:
+      gatus.home-operations.com/enabled: "false"
+    hostnames: ["app.${SECRET_DOMAIN}"]
+    parentRefs:
+      - name: envoy-internal
+        namespace: network
+    rules:
+      - backendRefs:
+          - identifier: app
+            port: *port
+```
+
+This monitors the backend ClusterIP service directly, bypassing Gateway and authentication layers.
 
 ### Special Cases
 
@@ -169,7 +196,7 @@ route:
 
 ---
 
-## Phase 3: DNS Configuration ✅ Complete
+## DNS Configuration
 
 ### external-dns
 
@@ -198,9 +225,9 @@ Internal DNS resolution works automatically for all HTTPRoutes.
 
 ---
 
-## Phase 4: Cloudflared Integration ✅ Complete
+## Cloudflared Integration
 
-Cloudflared continues tunneling to the same hostname pattern. No configuration changes required.
+Cloudflared continues tunneling to the same hostname pattern with no configuration changes required.
 
 ### Current Setup
 
@@ -225,25 +252,13 @@ configMaps:
 3. Cloudflared tunnel → `envoy-external.network.svc.cluster.local:443`
 4. Envoy Gateway routes via HTTPRoute to backend service
 
-### Alternative Strategies (Not Used)
-
-**Strategy B: Direct IP Routing**
-```yaml
-service: https://192.168.5.241  # Direct to Gateway LoadBalancer IP
-```
-- Pros: Simpler config
-- Cons: Harder to debug, no service discovery
-
-**Strategy C: DNS-Based Gradual Migration**
-- Use separate DNS targets during transition
-- Allows parallel operation of nginx and Envoy
-- **Not needed** - we completed migration in one phase
+**Note:** Alternative strategies like direct IP routing or DNS-based gradual migration were considered but not used. ClusterIP service routing provides better debuggability and service discovery.
 
 ---
 
-## Phase 5: Authentik Integration (ext-auth Component)
+## Authentik Integration (ext-auth Component)
 
-For applications requiring authentication, use the reusable `ext-auth` component.
+The reusable `ext-auth` component provides forward authentication via SecurityPolicy.
 
 ### Component Structure
 
@@ -337,31 +352,6 @@ This creates a SecurityPolicy in the app's namespace targeting its HTTPRoute, us
 
 ---
 
-## Phase 6: Cleanup and Finalization ⏳ Pending
-
-### Remaining Tasks
-
-1. **Migrate Native Helm Chart Apps**
-   - victoria-metrics, grafana, victoria-logs
-   - authentik
-   - flux-webhook
-   - These require separate HTTPRoute YAML files (not inline in HelmRelease)
-
-2. **Remove nginx Ingress Controllers** (After all apps migrated)
-   ```yaml
-   # Comment out in kubernetes/apps/network/kustomization.yaml
-   # - ./external/ks.yaml  # nginx-external
-   # - ./internal/ks.yaml  # nginx-internal
-   ```
-
-3. **Archive Old Configuration** (Optional)
-   ```bash
-   mkdir -p kubernetes/apps/network/archived
-   mv kubernetes/apps/network/{external,internal} kubernetes/apps/network/archived/
-   ```
-
----
-
 ## Monitoring and Troubleshooting
 
 ### Check Gateway Status
@@ -414,17 +404,6 @@ dig app.${SECRET_DOMAIN}
 - Verify SecurityPolicy exists: `kubectl get securitypolicy -n <namespace>`
 - Check ReferenceGrant: `kubectl get referencegrant -n default`
 - Verify APP variable is set in Flux Kustomization
-
----
-
-## Benefits Achieved
-
-✅ **Vendor-neutral standard** - Kubernetes SIG Gateway API
-✅ **Better routing** - Advanced traffic management, filters, retries
-✅ **Cross-namespace routing** - Secure with ReferenceGrants
-✅ **External authorization** - Native SecurityPolicy for Authentik
-✅ **Multi-protocol** - HTTP, gRPC, TCP, UDP support
-✅ **Future-proof** - Industry direction for ingress
 
 ---
 

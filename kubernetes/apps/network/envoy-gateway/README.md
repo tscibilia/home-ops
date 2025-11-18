@@ -1,10 +1,10 @@
 # Envoy Gateway with Gateway API
 
-Gateway API implementation using Envoy Gateway as the ingress controller, replacing nginx-ingress.
+Gateway API implementation using Envoy Gateway for application routing and ingress.
 
-## Status: ✅ **Migration Complete**
+## Status
 
-All 30 bjw-s app-template applications migrated from nginx Ingress to Envoy Gateway HTTPRoute.
+✅ Migration from nginx Ingress completed November 2025
 
 ## Architecture
 
@@ -93,34 +93,12 @@ kubectl logs -n network -l control-plane=envoy-gateway -f
 kubectl logs -n network -l gateway.envoyproxy.io/owning-gateway-name=envoy-external -f
 ```
 
-## Documentation
-
-- **[MIGRATION.md](./MIGRATION.md)**: Complete migration guide and cloudflared integration strategies
-- **[ext-auth component](../../../components/ext-auth/)**: Authentik SecurityPolicy for forward auth
-
-## Key Differences from nginx
-
-- ✅ Kubernetes Gateway API standard (vendor-neutral)
-- ✅ Cross-namespace routing with ReferenceGrants
-- ✅ Better traffic management (timeouts, retries, filters)
-- ✅ Native HTTP/2, gRPC, TCP/UDP support
-- ✅ SecurityPolicy for external authorization (Authentik)
-- ✅ Envoy's advanced observability
-
-## Special Cases Handled
+## Special Cases
 
 - **Plex**: Custom Range header removal for subtitle streaming (401 health check)
 - **Minio**: Dual routes (app + s3)
 - **Gatus**: Self-monitoring disabled
 - **Kromgo**: 404 health check status
-
-## Manual Migration Remaining
-
-The following apps use native Helm charts and require manual HTTPRoute creation:
-
-- `victoria-metrics`, `grafana`, `victoria-logs` (observability)
-- `authentik` (auth server)
-- `flux-webhook` (flux system)
 
 ## Troubleshooting
 
@@ -142,6 +120,11 @@ kubectl get securitypolicy -A
 kubectl get referencegrant -n default
 # Verify ext-auth component is applied and APP variable is set
 ```
+
+## Additional Documentation
+
+- **[MIGRATION.md](./MIGRATION.md)**: Migration guide with cloudflared integration and conversion patterns
+- **[ext-auth component](../../../components/ext-auth/)**: Authentik SecurityPolicy configuration
 
 ## References
 
