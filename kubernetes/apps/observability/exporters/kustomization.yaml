@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - ./blackbox-exporter/ks.yaml
   - ./dcgm-exporter/ks.yaml
-  - ./jellyseerr-exporter/ks.yaml
+  - ./seerr-exporter/ks.yaml
   - ./plex-exporter/ks.yaml
   - ./prowlarr-exporter/ks.yaml
   - ./pve-exporter/ks.yaml

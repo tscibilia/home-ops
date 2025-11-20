@@ -12,7 +12,6 @@ resources:
   - ./flaresolverr/ks.yaml
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
-  - ./jellyseerr/ks.yaml
   - ./kometa/ks.yaml
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
@@ -20,6 +19,7 @@ resources:
   - ./qbittorrent/ks.yaml
   - ./radarr/ks.yaml
   - ./recyclarr/ks.yaml
+  - ./seerr/ks.yaml
   - ./sonarr/ks.yaml
   - ./tautulli/ks.yaml
   - ./threadfin/ks.yaml

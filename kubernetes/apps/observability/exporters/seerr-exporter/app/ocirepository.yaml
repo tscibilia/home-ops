@@ -3,7 +3,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: jellyseerr-exporter
+  name: seerr-exporter
 spec:
   interval: 15m
   layerSelector:

@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app jellyseerr-exporter
+  name: &app seerr-exporter
 spec:
   chartRef:
     kind: OCIRepository
@@ -17,13 +17,13 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/opspotes/jellyseerr-exporter # ghcr.io/willfantom/overseerr-exporter
+              repository: ghcr.io/opspotes/jellyseerr-exporter
               tag: 1.4.0@sha256:2667a7bed7aabfc2b08dac71cd14e352644c9e1ca7b4f9dd6f6687997c5fc825
             args:
               - --jellyseerr.address
-              - http://jellyseerr.media.svc.cluster.local:80
+              - http://seerr.media.svc.cluster.local:80
               - --jellyseerr.apiKey
-              - $(JELLYSEERR_API_KEY)
+              - $(SEERR_API_KEY)
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"

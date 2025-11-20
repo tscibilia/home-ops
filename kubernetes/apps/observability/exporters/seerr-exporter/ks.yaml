@@ -3,15 +3,15 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app jellyseerr-exporter
+  name: &app seerr-exporter
 spec:
   dependsOn:
     - name: external-secrets
       namespace: external-secrets
-    - name: jellyseerr
+    - name: seerr
       namespace: media
   interval: 1h
-  path: ./kubernetes/apps/observability/exporters/jellyseerr-exporter/app
+  path: ./kubernetes/apps/observability/exporters/seerr-exporter/app
   postBuild:
     substituteFrom:
       - name: cluster-secrets

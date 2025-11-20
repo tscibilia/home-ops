@@ -80,14 +80,14 @@ data:
               type: tautulli
               url: http://tautulli.media.svc.cluster.local:8181
               key: {{HOMEPAGE_VAR_TAUTULLI_TOKEN}}
-        - Jellyseerr:
+        - Seerr:
             icon: jellyseerr.png
             href: https://req.t0m.co/
             description: Plex Request
             widget:
               type: jellyseerr
-              url: http://jellyseerr.media.svc.cluster.local:80
-              key: {{HOMEPAGE_VAR_JELLYSEERR_TOKEN}}
+              url: http://seerr.media.svc.cluster.local:80
+              key: {{HOMEPAGE_VAR_SEERR_TOKEN}}
 
     - Network:
         # - Gluetun:
