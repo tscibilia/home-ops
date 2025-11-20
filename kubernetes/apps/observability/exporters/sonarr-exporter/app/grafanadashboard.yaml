@@ -14,5 +14,6 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Exporters
   # renovate: depName="Media / Sonarr"
-  gnetId: 12530
-  revision: 2
+  grafanaCom:
+    id: 12530
+    revision: 2

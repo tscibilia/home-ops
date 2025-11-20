@@ -14,5 +14,6 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Exporters
   # renovate: depName="Synology NAS Details"
-  gnetId: 14284
-  revision: 10
+  grafanaCom:
+    id: 14284
+    revision: 10

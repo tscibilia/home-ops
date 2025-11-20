@@ -13,5 +13,6 @@ spec:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
   folder: Exporters
-  gnetId: 10347
-  revision: 5
+  grafanaCom:
+    id: 10347
+    revision: 5

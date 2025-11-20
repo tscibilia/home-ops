@@ -14,8 +14,9 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: Client Insights - Prometheus"
-  gnetId: 11315
-  revision: 9
+  grafanaCom:
+    id: 11315
+    revision: 9
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -32,8 +33,9 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: Network Sites - Prometheus"
-  gnetId: 11311
-  revision: 5
+  grafanaCom:
+    id: 11311
+    revision: 5
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -50,8 +52,9 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: Client DPI - Prometheus"
-  gnetId: 11310
-  revision: 5
+  grafanaCom:
+    id: 11310
+    revision: 5
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -68,8 +71,9 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: UAP Insights - Prometheus"
-  gnetId: 11314
-  revision: 10
+  grafanaCom:
+    id: 11314
+    revision: 10
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -86,8 +90,9 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: USW Insights - Prometheus"
-  gnetId: 11312
-  revision: 9
+  grafanaCom:
+    id: 11312
+    revision: 9
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -104,5 +109,6 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: USG Insights - Prometheus"
-  gnetId: 11313
-  revision: 9
+  grafanaCom:
+    id: 11313
+    revision: 9

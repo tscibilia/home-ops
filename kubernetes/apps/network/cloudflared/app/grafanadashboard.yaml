@@ -14,5 +14,6 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Networking
   # renovate: depName="Cloudflare Tunnels (cloudflared)"
-  gnetId: 17457
-  revision: 6
+  grafanaCom:
+    id: 17457
+    revision: 6

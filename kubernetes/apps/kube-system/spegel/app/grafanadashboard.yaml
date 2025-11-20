@@ -14,5 +14,6 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Networking
   # renovate: depName="Spegel"
-  gnetId: 18089
-  revision: 1
+  grafanaCom:
+    id: 18089
+    revision: 1

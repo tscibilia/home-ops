@@ -13,5 +13,6 @@ spec:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
   # renovate: depName="VolSync Dashboard"
-  gnetId: 21356
-  revision: 3
+  grafanaCom:
+    id: 21356
+    revision: 3

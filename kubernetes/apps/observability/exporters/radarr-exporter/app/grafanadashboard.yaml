@@ -14,5 +14,6 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Exporters
   # renovate: depName="Media / Radarr"
-  gnetId: 12896
-  revision: 1
+  grafanaCom:
+    id: 12896
+    revision: 1
