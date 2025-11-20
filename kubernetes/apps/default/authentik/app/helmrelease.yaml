@@ -10,38 +10,28 @@ spec:
     name: *app
   interval: 1h
   values:
+    *app :
+      outposts:
+        container_image_base: ghcr.io/goauthentik/%(type)s:%(version)s
+        # For development builds, uncomment the line below and comment the line above
+        # container_image_base: ghcr.io/goauthentik/dev-%(type)s:gh-%(build_hash)s
+      error_reporting:
+        enabled: false
     global:
       fullnameOverride: *app
-      podAnnotations:
+      deploymentAnnotations:
         secret.reloader.stakater.com/reload: &secret authentik-secret
       deploymentStrategy:
         type: RollingUpdate
-      env:
-        - name: AUTHENTIK_REDIS__HOST
-          value: "dragonfly-cluster.database.svc.cluster.local"
-        - name: AUTHENTIK_REDIS__DB
-          value: "1"
-        - name: AUTHENTIK_POSTGRESQL__NAME
-          value: *app
-        - name: AUTHENTIK_POSTGRESQL__USER
-          value: *app
-        - name: AUTHENTIK_HOST
-          value: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-        - name: AUTHENTIK_POSTGRESQL__PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: authentik-pguser-secret
-              key: password
-        - name: AUTHENTIK_POSTGRESQL__HOST
-          valueFrom:
-            secretKeyRef:
-              name: authentik-pguser-secret
-              key: host
+      image:
+        repository: ghcr.io/goauthentik/server
+        tag: 2025.10.0
+        # For development builds, uncomment the lines below and comment the two lines above
+        # repository: ghcr.io/goauthentik/dev-server
+        # tag: gh-cab3834f6da1fdd1fb3ab294a3d9d157f2c4679f
       envFrom:
         - secretRef:
             name: *secret
-      outposts:
-        container_image_base: ghcr.io/goauthentik/%(type)s:%(version)s
       volumes:
         - name: custom-css
           configMap:
@@ -51,9 +41,6 @@ spec:
           mountPath: /web/dist/custom.css
           subPath: custom.css
           readOnly: true
-    *app :
-      error_reporting:
-        enabled: false
     server:
       replicas: 1
       initContainers:
@@ -69,18 +56,6 @@ spec:
           parentRefs:
             - name: envoy-external
               namespace: network
-            - name: envoy-internal
-              namespace: network
-      livenessProbe: &probes
-        enabled: true
-        custom: true
-        initialDelaySeconds: 10
-        timeoutSeconds: 5
-        periodSeconds: 10
-        failureThreshold: 3
-      readinessProbe: *probes
-      startupProbe:
-        enabled: false
       resources:
         requests:
           cpu: 100m
@@ -98,18 +73,6 @@ spec:
         minReplicas: 1
         maxReplicas: 3
         targetCPUUtilizationPercentage: 85
-      livenessProbe: &probes
-        enabled: true
-        custom: true
-        exec:
-          command: ["ak", "healthcheck"]
-        initialDelaySeconds: 30
-        timeoutSeconds: 5
-        periodSeconds: 30
-        failureThreshold: 5
-      readinessProbe: *probes
-      startupProbe:
-        enabled: false
       resources:
         requests:
           cpu: 250m
