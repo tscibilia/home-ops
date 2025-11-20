@@ -36,9 +36,6 @@ spec:
       enabled: false
     dashboards:
       enabled: true
-      annotations:
-        grafana_folder: "Networking"
-      label: "grafana_dashboard"
     hubble:
       enabled: false
     ipam:
@@ -57,9 +54,6 @@ spec:
     operator:
       dashboards:
         enabled: true
-      annotations:
-        grafana_folder: "Networking"
-      label: "grafana_dashboard"
       prometheus:
         enabled: true
         serviceMonitor:
