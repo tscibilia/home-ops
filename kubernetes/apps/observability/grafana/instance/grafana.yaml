@@ -1,0 +1,110 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafana_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: &app grafana
+  labels:
+    grafana.internal/instance: *app
+spec:
+  config:
+    analytics:
+      check_for_updates: "false"
+      check_for_plugin_updates: "false"
+      reporting_enabled: "false"
+    auth:
+      signout_redirect_url: "https://auth.${SECRET_DOMAIN}/application/o/grafana/end-session/"
+      oauth_auto_login: "true"
+    "auth.generic_oauth":
+      enabled: "true"
+      name: Authentik
+      scopes: "openid profile email groups"
+      empty_scopes: "false"
+      auth_url: "https://auth.${SECRET_DOMAIN}/application/o/authorize/"
+      token_url: "https://auth.${SECRET_DOMAIN}/application/o/token/"
+      api_url: "https://auth.${SECRET_DOMAIN}/application/o/userinfo/"
+      login_attribute_path: preferred_username
+      groups_attribute_path: groups
+      name_attribute_path: name
+    "auth.generic_oauth.group_mapping":
+      role_attribute_path: "contains(groups, 'authentik-Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
+      org_id: "1"
+    "auth.basic":
+      enabled: "true"
+    "auth.anonymous":
+      enabled: "false"
+    dashboards:
+      min_refresh_interval: 2s
+    database:
+      name: *app
+      host: "${CNPG_NAME}-rw.database.svc.cluster.local:5432"
+      ssl_mode: disable
+      type: postgres
+    log:
+      mode: console
+      filters: "rendering:debug"
+    news:
+      news_feed_enabled: "false"
+    panels:
+      disable_sanitize_html: "true"
+    security:
+      allow_embedding: "true"
+    server:
+      enable_gzip: "true"
+      root_url: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+  deployment:
+    spec:
+      replicas: 1
+      strategy:
+        type: Recreate
+      template:
+        spec:
+          initContainers:
+            - name: init-db
+              image: ghcr.io/home-operations/postgres-init:18
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: grafana-initdb-secret
+          containers:
+            - name: *app
+              env:
+                - name: GF_EXPLORE_ENABLED
+                  value: "true"
+                - name: GF_DISABLE_SANITIZE_HTML
+                  value: "true"
+                - name: GF_DATABASE_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-pguser-secret
+                      key: user
+                - name: GF_DATABASE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-pguser-secret
+                      key: password
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-admin
+                      key: admin-password
+                - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-secret
+                      key: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
+                - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-secret
+                      key: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities: {drop: ["ALL"]}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
