@@ -10,6 +10,16 @@
       minimumGroupSize: 2,
     },
     {
+      description: "Authentik Group",
+      groupName: "authentik",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/goauthentik/"],
+      group: {commitMessageTopic: "{{{groupName}}} group"},
+      separateMinorPatch: true,
+      sourceUrl: "https://github.com/goauthentik/authentik",
+      minimumGroupSize: 2,
+    },
+    {
       description: "Barman Cloud Group",
       groupName: "barman-cloud",
       matchDatasources: ["docker", "github-releases"],
