@@ -69,6 +69,13 @@ spec:
           enabled: true
     worker:
       replicas: 2
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: server
+              topologyKey: kubernetes.io/hostname
       # Disable autoscaling, it is resource intensive and not very useful for workers
       # If re-enabled, remove the `replicas` field above
       # autoscaling:
