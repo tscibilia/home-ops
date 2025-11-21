@@ -79,10 +79,6 @@ spec:
           memory: 512Mi
         limits:
           memory: 1.25Gi
-      metrics:
-        enabled: true
-        serviceMonitor:
-          enabled: true
     prometheus:
       rules:
         enabled: true
