@@ -81,4 +81,4 @@ spec:
           memory: 1.25Gi
     prometheus:
       rules:
-        enabled: true
+        enabled: false # Lots of Django alerts firing, disable for now
