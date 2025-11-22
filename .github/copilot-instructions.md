@@ -2,6 +2,8 @@
 
 This is a **Kubernetes-based home infrastructure monorepo** managed with Flux CD, Talos OS, and Helm. The architecture separates concerns into Talos (node management), Kubernetes manifests (apps), and Infrastructure as Code patterns.
 
+**📋 Before reading:** Check [`copilot-activework.md`](./copilot-activework.md) for current development initiatives, known issues, and blocked work. This document covers architecture & patterns; the active work doc covers current momentum.
+
 ## Architecture Overview
 
 **Three-layer stack:**
