@@ -16,8 +16,11 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
+- Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - UDM-Pro VLAN and Proxmox setup
 
 ## Resolved
+- ✅ Jellyseerr to Seerr Migration - 2025-11-20 (See commit[fbb9ecf](https://github.com/tscibilia/home-ops/commit/fbb9ecf927855b748dc9586188f91a0c89a04f9c) & [`seerr/README.md`](../kubernetes/apps/media/seerr/README.md))
+- ✅ Grafana Operator Migration - 2025-11-19 (See PR[#1157](https://github.com/tscibilia/home-ops/pull/1157))
 - ✅ HTTPRoute instead of Ingress - 2025-11-13 (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
 ## Unresolved
