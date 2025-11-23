@@ -198,12 +198,6 @@ cluster:
   {% endif %}
 ---
 apiVersion: v1alpha1
-kind: UserVolumeConfig
-name: local-hostpath
-provisioning:
-  disk: /dev/sda
----
-apiVersion: v1alpha1
 kind: WatchdogTimerConfig
 device: /dev/watchdog0
 timeout: 5m
