@@ -1,0 +1,209 @@
+---
+version: v1alpha1
+debug: false
+persist: true
+machine:
+  ca:
+    crt: ak://talos/MACHINE_CA_CRT
+    {% if ENV.IS_CONTROLLER %}
+    key: ak://talos/MACHINE_CA_KEY
+    {% endif %}
+  features:
+    apidCheckExtKeyUsage: true
+    diskQuotaSupport: true
+    # https://github.com/siderolabs/talos/issues/8836#issuecomment-2159127683
+    hostDNS:
+      enabled: true
+      forwardKubeDNSToHost: false
+      resolveMemberNames: true
+    kubePrism:
+      enabled: true
+      port: 7445
+    {% if ENV.IS_CONTROLLER %}
+    kubernetesTalosAPIAccess:
+      allowedKubernetesNamespaces:
+        - actions-runner-system
+        - kube-system
+        - system-upgrade
+      allowedRoles:
+        - os:admin
+      enabled: true
+    {% endif %}
+    rbac: true
+    stableHostname: true
+  files:
+    - op: create
+      path: /etc/cri/conf.d/20-customization.part
+      content: |
+        [plugins."io.containerd.cri.v1.images"]
+          discard_unpacked_layers = false
+        [plugins."io.containerd.cri.v1.runtime"]
+          cdi_spec_dirs = ["/var/cdi/static", "/var/cdi/dynamic"]
+          device_ownership_from_security_context = true
+    - op: overwrite
+      path: /etc/nfsmount.conf
+      permissions: 0o644
+      content: |
+        [ NFSMount_Global_Options ]
+        nfsvers=4
+        hard=True
+        nconnect=16
+        noatime=True
+  install:
+    disk: /dev/sda
+    image: factory.talos.dev/metal-installer/cc720ffb8efc8f12637b8660a86448a88b3f89f516995fb9c67bf80564e723b1:v1.11.5
+    wipe: false
+  kernel:
+    modules:
+      - name: nbd
+  kubelet:
+    defaultRuntimeSeccompProfileEnabled: true
+    disableManifestsDirectory: true
+    extraConfig:
+      featureGates:
+        ImageVolume: true # New
+        ResourceHealthStatus: true # New
+      serializeImagePulls: false
+    extraMounts:
+      - destination: /var/mnt
+        type: bind
+        source: /var/mnt
+        options:
+          - bind
+          - rshared
+          - rw
+    image: ghcr.io/siderolabs/kubelet:v1.34.1
+    nodeIP:
+      validSubnets:
+        - 192.168.5.0/24
+  nodeLabels:
+    topology.kubernetes.io/region: main
+  sysctls:
+    fs.inotify.max_user_instances: "8192"
+    fs.inotify.max_user_watches: "1048576"
+    net.core.default_qdisc: fq
+    net.core.rmem_max: "67108864"
+    net.core.wmem_max: "67108864"
+    net.ipv4.neigh.default.gc_thresh1: "4096"
+    net.ipv4.neigh.default.gc_thresh2: "8192"
+    net.ipv4.neigh.default.gc_thresh3: "16384"
+    net.ipv4.tcp_congestion_control: bbr
+    net.ipv4.tcp_fastopen: "3"
+    net.ipv4.tcp_mtu_probing: "1"
+    net.ipv4.tcp_rmem: 4096 87380 33554432
+    net.ipv4.tcp_window_scaling: "1"
+    net.ipv4.tcp_wmem: 4096 65536 33554432
+    sunrpc.tcp_max_slot_table_entries: "128"
+    sunrpc.tcp_slot_table_entries: "128"
+    user.max_user_namespaces: "11255"
+    vm.nr_hugepages: "1024" # New
+  time:
+    disabled: false
+    servers:
+      - 162.159.200.1
+      - 162.159.200.123
+  token: ak://talos/MACHINE_TOKEN
+cluster:
+  ca:
+    crt: ak://talos/CLUSTER_CA_CRT
+    {% if ENV.IS_CONTROLLER %}
+    key: ak://talos/CLUSTER_CA_KEY
+    {% endif %}
+  clusterName: kubernetes
+  controlPlane:
+    endpoint: https://192.168.5.200:6443
+  discovery:
+    enabled: true
+    registries:
+      kubernetes:
+        disabled: true
+      service:
+        disabled: false
+  id: ak://talos/CLUSTER_ID
+  network:
+    cni:
+      name: none
+    dnsDomain: cluster.local
+    podSubnets:
+      - 10.42.0.0/16
+    serviceSubnets:
+      - 10.43.0.0/16
+  secret: ak://talos/CLUSTER_SECRET
+  token: ak://talos/CLUSTER_TOKEN
+  {% if ENV.IS_CONTROLLER %}
+  aggregatorCA:
+    crt: ak://talos/CLUSTER_AGGREGATORCA_CRT
+    key: ak://talos/CLUSTER_AGGREGATORCA_KEY
+  allowSchedulingOnControlPlanes: true
+  apiServer:
+    auditPolicy:
+      apiVersion: audit.k8s.io/v1
+      kind: Policy
+      rules:
+        - level: Metadata
+    certSANs:
+      - k8s.internal
+      - 192.168.5.200
+    disablePodSecurityPolicy: true
+    extraArgs:
+      enable-aggregator-routing: "true"
+      feature-gates: ImageVolume=true,MutatingAdmissionPolicy=true,ResourceHealthStatus=true
+      runtime-config: admissionregistration.k8s.io/v1beta1=true
+      oidc-client-id: ak://talos/OIDC_CLIENT_ID
+      oidc-issuer-url: ak://talos/OIDC_ISSUER_URL
+      oidc-groups-claim: groups
+      oidc-username-claim: preferred_username
+    image: registry.k8s.io/kube-apiserver:v1.34.1
+  controllerManager:
+    extraArgs:
+      bind-address: 0.0.0.0
+    image: registry.k8s.io/kube-controller-manager:v1.34.1
+  coreDNS:
+    disabled: true
+  etcd:
+    advertisedSubnets:
+      - 192.168.5.0/24
+    ca:
+      crt: ak://talos/CLUSTER_ETCD_CA_CRT
+      key: ak://talos/CLUSTER_ETCD_CA_KEY
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
+  proxy:
+    disabled: true
+    image: registry.k8s.io/kube-proxy:v1.34.1
+  scheduler:
+    config:
+      apiVersion: kubescheduler.config.k8s.io/v1
+      kind: KubeSchedulerConfiguration
+      profiles:
+        - schedulerName: default-scheduler
+          plugins:
+            score:
+              disabled:
+                - name: ImageLocality
+          pluginConfig:
+            - name: PodTopologySpread
+              args:
+                defaultingType: List
+                defaultConstraints:
+                  - maxSkew: 1
+                    topologyKey: kubernetes.io/hostname
+                    whenUnsatisfiable: ScheduleAnyway
+    extraArgs:
+      bind-address: 0.0.0.0
+    image: registry.k8s.io/kube-scheduler:v1.34.1
+  secretboxEncryptionSecret: ak://talos/CLUSTER_SECRETBOXENCRYPTIONSECRET
+  serviceAccount:
+    key: ak://talos/CLUSTER_SERVICEACCOUNT_KEY
+  {% endif %}
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-hostpath
+provisioning:
+  disk: /dev/sda
+---
+apiVersion: v1alpha1
+kind: WatchdogTimerConfig
+device: /dev/watchdog0
+timeout: 5m

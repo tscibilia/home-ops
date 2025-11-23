@@ -52,10 +52,7 @@ function log() {
     fi
 
     # Determine output stream based on log level
-    local output_stream="/dev/stdout"
-    if [[ "$level" == "error" ]]; then
-        output_stream="/dev/stderr"
-    fi
+    local output_stream="/dev/stderr"
 
     # Print the log message
     printf "%s %b%s%b %s %b\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \

@@ -1,0 +1,30 @@
+---
+machine:
+  network:
+    hostname: talos-m03
+    interfaces:
+      - # USW-Flex8-Port6-MGMT
+        deviceSelector:
+          hardwareAddr: bc:24:11:07:31:f1
+        addresses:
+          - 192.168.5.203/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.5.1
+        mtu: 1500
+        dhcp: true
+        vip:
+          ip: 192.168.5.200
+      - # USW-Flex8-Port3-CEPH
+        deviceSelector:
+          hardwareAddr: bc:24:11:ff:bf:0a
+        addresses:
+          - 10.10.10.10/32
+        routes:
+          - network: 10.10.10.0/28
+            metric: 2048
+        dhcp: false
+        mtu: 1500
+  nodeLabels:
+    topology.kubernetes.io/zone: m
+  type: controlplane

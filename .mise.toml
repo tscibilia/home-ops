@@ -1,6 +1,5 @@
 [env]
 _.python.venv = { path = "{{config_root}}/.venv", create = true }
-_.file = [ "{{config_root}}/kubernetes/apps/system-upgrade/versions.env" ]
 KUBECONFIG = "{{config_root}}/kubeconfig"
 MINIJINJA_CONFIG_FILE = "{{config_root}}/.minijinja.toml"
 SOPS_AGE_KEY_FILE = "{{config_root}}/age.key"
@@ -8,12 +7,18 @@ TALOSCONFIG = "{{config_root}}/talos/clusterconfig/talosconfig"
 BOOTSTRAP_DIR = "{{config_root}}/bootstrap"
 KUBERNETES_DIR = "{{config_root}}/kubernetes"
 ROOT_DIR = "{{config_root}}"
-SCRIPTS_DIR = "{{config_root}}/scripts"
+SCRIPTS_DIR = "{{config_root}}/bootstrap/scripts"
 TALOS_DIR = "{{config_root}}/talos"
+
+_.file = [
+  "{{config_root}}/.secrets.env",
+]
 
 [tools]
 "python" = "3.14.0"
+"just" = "1.43.1"
 "pipx:makejinja" = "2.8.1"
+"pipx:flux-local" = "8.0.1"
 "aqua:budimanjojo/talhelper" = "3.0.39"
 "aqua:cilium/cilium-cli" = "0.18.8"
 "aqua:cli/cli" = "2.83.1"
@@ -23,8 +28,8 @@ TALOS_DIR = "{{config_root}}/talos"
 "aqua:fluxcd/flux2" = "2.7.3"
 "aqua:getsops/sops" = "3.11.0"
 "aqua:helm/helm" = "4.0.0"
-"aqua:go-task/task" = "3.45.5"
 "aqua:helmfile/helmfile" = "1.2.0"
+"aqua:go-task/task" = "3.45.5"
 "aqua:jqlang/jq" = "1.7.1"
 "aqua:kubernetes-sigs/kustomize" = "5.6.0"
 "aqua:kubernetes/kubectl" = "1.33.1"

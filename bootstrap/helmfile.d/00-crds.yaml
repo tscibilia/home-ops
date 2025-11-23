@@ -1,0 +1,36 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile
+
+# This helmfile is for extracting and installing Custom Resource Definitions (CRDs) from Helm charts.
+# It is not intended to be used with helmfile apply or helmfile sync.
+
+helmDefaults:
+  args: ['--include-crds', '--no-hooks'] # Prevent helmfile apply or sync
+  postRenderer: bash
+  postRendererArgs: [-c, "yq ea -e 'select(.kind == \"CustomResourceDefinition\")'"]
+
+releases:
+  - name: cloudflare-dns
+    namespace: network
+    chart: oci://ghcr.io/home-operations/charts-mirror/external-dns
+    version: 1.19.0
+
+  - name: envoy-gateway
+    namespace: network
+    chart: oci://mirror.gcr.io/envoyproxy/gateway-helm
+    version: v1.6.0
+
+  - name: grafana-operator
+    namespace: observability
+    chart: oci://ghcr.io/grafana/helm-charts/grafana-operator
+    version: v5.20.0
+
+  - name: keda
+    namespace: observability
+    chart: oci://ghcr.io/home-operations/charts-mirror/keda
+    version: 2.18.1
+
+  - name: victoria-metrics-k8s-stack
+    namespace: observability
+    chart: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-k8s-stack
+    version: 0.63.6
