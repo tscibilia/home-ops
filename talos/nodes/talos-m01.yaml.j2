@@ -1,0 +1,43 @@
+---
+machine:
+  network:
+    hostname: talos-m01
+    interfaces:
+      - # USW-Flex8-Port4-MGMT
+        deviceSelector:
+          hardwareAddr: bc:24:11:a9:a3:43
+        addresses:
+          - 192.168.5.201/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.5.1
+        mtu: 1500
+        dhcp: true
+        vip:
+          ip: 192.168.5.200
+      - # USW-Flex8-Port1-CEPH
+        deviceSelector:
+          hardwareAddr: bc:24:11:10:d2:28
+        addresses:
+          - 10.10.10.8/32
+        routes:
+          - network: 10.10.10.0/28
+            metric: 2048
+        dhcp: false
+        mtu: 1500
+  nodeLabels:
+    topology.kubernetes.io/zone: m
+    node.kubernetes.io/exclude-from-external-load-balancers: ""
+    nvidia.com/gpu.count: "1"
+    nvidia.com/gpu.memory.total: "2048"
+    nvidia.com/gpu.present: "true"
+    nvidia.com/gpu.product: Quadro-P400
+  type: controlplane
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+  sysctls:
+    net.core.bpf_jit_harden: 1

@@ -1,4 +1,7 @@
 # Secrets
+*.env
+*.iso
+*.crt
 *.pub
 *.key
 *.decrypted~*.yaml
@@ -7,9 +10,6 @@
 /github-deploy.key
 /github-deploy.key.pub
 /github-push-token.txt
-# Template config files
-/cluster.yaml
-/nodes.yaml
 # Kubernetes
 kubeconfig
 talosconfig
@@ -22,5 +22,3 @@ talosconfig
 .venv/
 .DS_Store
 Thumbs.db
-# Local overrides
-values.override.sh
