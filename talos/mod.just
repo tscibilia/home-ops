@@ -70,7 +70,7 @@ machine-controller node:
 
 [private]
 machine-nvidia node:
-    just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.nodeLabels.nvidia.com/gpu.product == "Quadro-P400") // ""'
+    just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.nodeLabels["nvidia.com/gpu.product"] == "Quadro-P400") // ""'
 
 [private]
 machine-image:

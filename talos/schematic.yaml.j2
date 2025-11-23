@@ -15,8 +15,8 @@ customization:
   systemExtensions:
     officialExtensions:
       - siderolabs/nfsrahead # NFS Performance
-      - siderolabs/qemu-guest-agent # QEMU Guest Agent
       {% if ENV.IS_NVIDIA %}
-      - siderolabs/nvidia-container-toolkit-lts # NVIDIA Container Toolkit LTS
       - siderolabs/nonfree-kmod-nvidia-lts # NVIDIA Driver LTS
+      - siderolabs/nvidia-container-toolkit-lts # NVIDIA Container Toolkit LTS
       {% endif %}
+      - siderolabs/qemu-guest-agent # QEMU Guest Agent

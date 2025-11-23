@@ -1,4 +1,4 @@
-kubernetes-talos-m01.yaml
-kubernetes-talos-m02.yaml
-kubernetes-talos-m03.yaml
+*talos-m01.yaml
+*talos-m02.yaml
+*talos-m03.yaml
 talosconfig
