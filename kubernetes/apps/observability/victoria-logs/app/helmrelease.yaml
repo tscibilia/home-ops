@@ -29,7 +29,7 @@ spec:
                 requestRedirect:
                   path:
                     type: ReplaceFullPath
-                    replaceFullPath: /vmui/
+                    replaceFullPath: /select/vmui/
                   statusCode: 302
             matches:
               - path:
