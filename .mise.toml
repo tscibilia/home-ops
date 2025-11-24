@@ -19,7 +19,6 @@ _.file = [
 "just" = "1.43.1"
 "pipx:makejinja" = "2.8.1"
 "pipx:flux-local" = "8.0.1"
-"aqua:budimanjojo/talhelper" = "3.0.39"
 "aqua:cilium/cilium-cli" = "0.18.8"
 "aqua:cli/cli" = "2.83.1"
 "aqua:cloudflare/cloudflared" = "2025.11.1"
