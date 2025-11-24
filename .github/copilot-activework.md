@@ -7,7 +7,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 - [ ] Add multus and revise qbit deployment - **Impact:** Better network isolation for qBittorrent; simplifies deployment (See [#1168](https://github.com/tscibilia/home-ops/issues/1168))
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - [ ] Migrate from minio to Garage/OpenMaxIO - (See [#842](https://github.com/tscibilia/home-ops/issues/842))
-- [ ] Update bootstrap and talos config - (See [#804](https://github.com/tscibilia/home-ops/issues/804))
 - [ ] Add autobrr and thelounge - (See [#803](https://github.com/tscibilia/home-ops/issues/803))
 
 ## Known Issues
@@ -19,8 +18,10 @@ This document is intended to supplement and connect with GitHub issues and meant
 - Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - UDM-Pro VLAN and Proxmox setup
 
 ## Resolved
+`Descending order, newest on top`
+- ✅ Update bootstrap and talos config - (See PR [#1173](https://github.com/tscibilia/home-ops/pull/1173) & issue [#804](https://github.com/tscibilia/home-ops/issues/804))
 - ✅ Jellyseerr to Seerr Migration - 2025-11-20 (See commit[fbb9ecf](https://github.com/tscibilia/home-ops/commit/fbb9ecf927855b748dc9586188f91a0c89a04f9c) & [`seerr/README.md`](../kubernetes/apps/media/seerr/README.md))
-- ✅ Grafana Operator Migration - 2025-11-19 (See PR[#1157](https://github.com/tscibilia/home-ops/pull/1157))
+- ✅ Grafana Operator Migration - 2025-11-19 (See PR [#1157](https://github.com/tscibilia/home-ops/pull/1157))
 - ✅ HTTPRoute instead of Ingress - 2025-11-13 (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
 ## Unresolved

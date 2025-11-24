@@ -30,6 +30,35 @@ hr-restart:
         flux resume helmrelease "$name" -n "$namespace" &; \
     done
 
+[doc('Restart network stack in dependency order')]
+restart-network:
+    just check-tools kubectl
+    just log info "Restarting CoreDNS..."
+    kubectl rollout restart deployment/coredns -n kube-system
+    kubectl rollout status deployment/coredns -n kube-system --timeout=120s
+    just log info "Restarting Cilium..."
+    kubectl rollout restart daemonset/cilium -n kube-system
+    kubectl rollout restart deployment/cilium-operator -n kube-system
+    kubectl rollout status daemonset/cilium -n kube-system --timeout=180s
+    kubectl rollout status deployment/cilium-operator -n kube-system --timeout=60s
+    just log info "Restarting Cloudflared..."
+    kubectl rollout restart deployment/cloudflared -n network
+    kubectl rollout status deployment/cloudflared -n network --timeout=120s
+    just log info "Restarting External-DNS..."
+    kubectl rollout restart deployment/external-dns -n network
+    kubectl rollout status deployment/external-dns -n network --timeout=120s
+    just log info "Restarting k8s-gateway..."
+    kubectl rollout restart deployment/k8s-gateway -n network
+    kubectl rollout status deployment/k8s-gateway -n network --timeout=120s
+    just log info "Restarting Envoy-Gateway..."
+    kubectl rollout restart deployment/envoy-gateway -n network
+    kubectl rollout status deployment/envoy-gateway -n network --timeout=120s
+    just log info "Restarting Envoy gateways..."
+    kubectl rollout restart deployment/envoy-internal deployment/envoy-external -n network
+    kubectl rollout status deployment/envoy-internal -n network --timeout=120s
+    kubectl rollout status deployment/envoy-external -n network --timeout=120s
+    just log info "Network stack restart complete"
+
 [doc('Force Flux to reconcile from Git')]
 reconcile:
     just check-tools flux
