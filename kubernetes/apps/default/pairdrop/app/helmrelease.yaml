@@ -24,7 +24,6 @@ spec:
               TZ: ${TIMEZONE:-UTC}
               RTC_CONFIG: /app/rtc_config.json
               IPV6_LOCALIZE: "false"
-              WS_FALLBACK: "true"
               DEBUG_MODE: "true"
             securityContext:
               allowPrivilegeEscalation: false
@@ -36,26 +35,54 @@ spec:
                 memory: 128M
               limits:
                 memory: 256M
+          coturn:
+            image:
+              repository: coturn/coturn
+              tag: 4.7.0@sha256:203b9bf51e84199f91025d411a7bcc7358d50c43a4d9c588079e282a3bbf4ba1
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              runAsUser: 65534
+              runAsGroup: 65534
+            env:
+              TURN_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: coturn-secret
+                    key: username
+              TURN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: coturn-secret
+                    key: password
+            args:
+              - --log-file=stdout
+              - --listening-ip=0.0.0.0
+              - --listening-port=3478
+              - --min-port=10000
+              - --max-port=20000
+              - --fingerprint
+              - --lt-cred-mech
+              - --user=$(TURN_USER):$(TURN_PASSWORD)
+              - --realm=${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
+              - --server-name=pairdrop
+              - --no-dtls
+              - --no-tls
+              - --no-cli
+              - --no-multicast-peers
+              - --no-software-attribute
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64M
+              limits:
+                memory: 128M
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
-    configMaps:
-      rtc-config:
-        data:
-          rtc_config.json: |
-            {
-              "sdpSemantics": "unified-plan",
-              "iceServers": [
-                {
-                  "urls": "stun:stun.l.google.com:19302"
-                },
-                {
-                  "urls": "stun:stun1.l.google.com:19302"
-                }
-              ]
-            }
     service:
       app:
         controller: *app
@@ -78,18 +105,35 @@ spec:
     persistence:
       cache:
         type: emptyDir
-        globalMounts:
-          - path: /root/.npm/_cacache
+        advancedMounts:
+          *app :
+            app:
+              - path: /root/.npm/_cacache
       logs:
         type: emptyDir
-        globalMounts:
-          - path: /root/.npm/_logs
+        advancedMounts:
+          *app :
+            app:
+              - path: /root/.npm/_logs
       rtc-config:
-        type: configMap
-        identifier: rtc-config
-        globalMounts:
-          - path: /app/rtc_config.json
-            subPath: rtc_config.json
-            readOnly: true
+        type: secret
+        name: coturn-secret
+        advancedMounts:
+          *app :
+            app:
+              - path: /app/rtc_config.json
+                subPath: rtc_config.json
+                readOnly: true
       tmp:
         type: emptyDir
+        advancedMounts:
+          *app :
+            coturn:
+              - path: /tmp
+      coturn:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            coturn:
+              - path: /var/tmp
+              - path: /var/run
