@@ -25,3 +25,14 @@ metadata:
 stringData:
   CLOUDFLARE_TUNNEL_ID: ak://external-dns/CLOUDFLARE_TUNNEL_ID
   TUNNEL_TOKEN: ak://external-dns/CLOUDFLARED_TUNNEL_TOKEN
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cluster-secrets
+  namespace: flux-system
+stringData:
+  SECRET_DOMAIN: ak://cluster-secrets/SECRET_DOMAIN
+  TIMEZONE: ak://cluster-secrets/TIMEZONE
+  NAS_IP: ak://nginx-proxy/NAS_IP
+  UNRAID_IP: ak://nginx-proxy/UNRAID_IP
