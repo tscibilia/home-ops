@@ -116,7 +116,7 @@ spec:
     persistence:
       data:
         type: nfs
-        server: ${NAS_IP}
+        server: nas.internal
         path: /volume1/Media
         globalMounts:
           - path: /data

@@ -109,7 +109,7 @@ spec:
           - path: /config/log
       media:
         type: nfs
-        server: ${NAS_IP}
+        server: nas.internal
         path: /volume1/Media/library
         globalMounts:
           - path: /Media/library

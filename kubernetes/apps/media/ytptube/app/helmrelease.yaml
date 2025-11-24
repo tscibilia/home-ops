@@ -84,7 +84,7 @@ spec:
         existingClaim: *app
       media:
         type: nfs
-        server: ${NAS_IP}
+        server: nas.internal
         path: /volume1/Media/library
         globalMounts:
           - path: /downloads/library

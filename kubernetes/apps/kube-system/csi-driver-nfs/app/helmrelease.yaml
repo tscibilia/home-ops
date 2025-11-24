@@ -16,7 +16,7 @@ spec:
       create: true
       name: nfs-media
       parameters:
-        server: ${NAS_IP}
+        server: nas.internal
         share: /volume1/Media
       mountOptions:
         - nfsvers=4    # or vers=3 if your server supports NFSv3

@@ -219,7 +219,7 @@ spec:
                 readOnly: true
       media:
         type: nfs
-        server: ${NAS_IP}
+        server: nas.internal
         path: /volume1/Media/torrents
         globalMounts:
           - path: /Media/torrents

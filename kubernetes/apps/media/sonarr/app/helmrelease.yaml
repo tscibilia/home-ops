@@ -95,7 +95,7 @@ spec:
           - path: /config/MediaCover
       media:
         type: nfs
-        server: ${NAS_IP}
+        server: nas.internal
         path: /volume1/Media
         globalMounts:
           - path: /Media
