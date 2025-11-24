@@ -20,7 +20,7 @@ spec:
               repository: docker.io/alexfozor/flaresolverr
               tag: "pr-1300@sha256:6cbd506462cc85a2ce1dfc0033e35129c21405f042eb9f136dbec88ddb1470b9"
             env:
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               CAPTCHA_SOLVER: none
               LOG_LEVEL: info
               LOG_HTML: false

@@ -17,7 +17,7 @@ spec:
         type: cronjob
         cronjob:
           schedule: "30 2 * * *"
-          timeZone: &TZ ${TIMEZONE}
+          timeZone: &TZ ${TIMEZONE:-UTC}
           concurrencyPolicy: Forbid
           successfulJobsHistory: 1
           failedJobsHistory: 1

@@ -22,7 +22,7 @@ spec:
               repository: ghcr.io/immich-app/immich-server
               tag: &tag v2.3.1
             env:
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               IMMICH_LOG_LEVEL: log
               IMMICH_ENV: production
               REDIS_HOSTNAME: dragonfly-cluster.database.svc.cluster.local

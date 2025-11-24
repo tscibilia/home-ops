@@ -41,7 +41,7 @@ spec:
               repository: ghcr.io/donkie/spoolman
               tag: "0.22.1@sha256:238ea5bfb2eeda4436c39f54e73df5fef4ee904fb7c291617588b856786fe0ef"
             env:
-              TZ: "${TIMEZONE}"
+              TZ: "${TIMEZONE:-UTC}"
               SPOOLMAN_PORT: &port 8000
               SPOOLMAN_METRICS_ENABLED: "true"
             probes:

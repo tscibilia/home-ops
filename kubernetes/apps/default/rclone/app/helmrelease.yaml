@@ -22,7 +22,7 @@ spec:
               tag: 1.72.0@sha256:0eb18825ac9732c21c11d654007170572bbd495352bb6dbb624f18e4f462c496
             args: ["rcd", "--rc-web-gui", "--rc-web-gui-update", "--rc-web-gui-force-update", "--rc-web-gui-no-open-browser", "--rc-addr=:$(HTTP_PORT)", "--rc-enable-metrics", "--metrics-addr=:$(METRICS_PORT)", "--log-level=INFO"]
             env: &env
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               HTTP_PORT: &port 8080
               METRICS_PORT: &metrics 9090
               RCLONE_URL: http://rclone.default.svc.cluster.local:8080/

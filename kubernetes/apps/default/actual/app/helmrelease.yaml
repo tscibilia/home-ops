@@ -20,7 +20,7 @@ spec:
               repository: ghcr.io/actualbudget/actual
               tag: 25.11.0
             env:
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               ACTUAL_PORT: &port 5006
               ACTUAL_TOKEN_EXPIRATION: "never"
               ACTUAL_LOGIN_METHOD: openid

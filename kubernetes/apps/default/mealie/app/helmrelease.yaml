@@ -52,7 +52,7 @@ spec:
               API_DOCS: "false"
               BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               MAX_WORKERS: "1"
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               WORKERS_PER_CORE: "1"
               WEB_CONCURRENCY: "1"
               # OIDC Values

@@ -20,6 +20,7 @@ spec:
               repository: ghcr.io/seerr-team/seerr
               tag: develop@sha256:1f562fb32eeb765f58661e3cee1001a573f038c5e981bee85539b9aa85473dfe
             env:
+              TZ: ${TIMEZONE:-UTC}
               LOG_LEVEL: 'info'
               PORT: &port 80
             envFrom:

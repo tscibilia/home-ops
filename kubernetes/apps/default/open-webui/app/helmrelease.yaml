@@ -21,7 +21,7 @@ spec:
               repository: ghcr.io/open-webui/open-webui
               tag: v0.6.36@sha256:dfe43b30a5474164b1a81e1cce298a6769bb22144f74df556beefee4ccca5394
             env:
-              TZ: "${TIMEZONE}"
+              TZ: "${TIMEZONE:-UTC}"
               OLLAMA_BASE_URLS: http://p1g6.local:11434;http://ts-p1g6-xnm8p.network.svc.cluster.local:11434
               ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: "searxng"

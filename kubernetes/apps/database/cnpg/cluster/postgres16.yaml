@@ -54,7 +54,7 @@ spec:
     - name: AWS_RESPONSE_CHECKSUM_VALIDATION
       value: when_required
     - name: TZ
-      value: ${TIMEZONE}
+      value: ${TIMEZONE:-UTC}
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true

@@ -40,7 +40,7 @@ spec:
               PLEX_BASEURL: http://plex.media.svc.cluster.local:32400
               SSL_BYPASS: "True"
               RUN_ONLY_ONCE: "True"
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               WHITELIST_LIBRARY: Movies,Shows
             resources:
               requests:

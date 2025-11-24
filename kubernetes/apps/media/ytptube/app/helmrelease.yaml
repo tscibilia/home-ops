@@ -20,7 +20,7 @@ spec:
               repository: ghcr.io/arabcoders/ytptube
               tag: "v1.0.8@sha256:5fa72ce123ccce409fbe63bc5b406882e7722dbc0dab4acfc717aaab383129e0"
             env:
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               YTP_MAX_WORKERS: 1
             # Resolve deprecation warning in v0.9.0
             args: ["/opt/python/bin/python", "/app/app/main.py", "--ytp-process", "--socket-timeout", "30", "--download-archive", "/config/archive.log"]

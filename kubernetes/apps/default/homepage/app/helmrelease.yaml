@@ -20,7 +20,7 @@ spec:
               repository: ghcr.io/gethomepage/homepage
               tag: v1.7.0
             env:
-              TZ: ${TIMEZONE}
+              TZ: ${TIMEZONE:-UTC}
               HOMEPAGE_ALLOWED_HOSTS: "*"
             envFrom:
               - secretRef:
