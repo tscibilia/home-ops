@@ -10,6 +10,10 @@ spec:
       namespace: media
   interval: 1h
   path: ./kubernetes/apps/media/flaresolverr/app
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
