@@ -57,18 +57,18 @@ My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](ht
 ### Core Components
 
 - [actions-runner-controller](https://github.com/actions/actions-runner-controller): Self-hosted Github runners using [Renovate](https://github.com/renovatebot/renovate).
-- [cert-manager](https://github.com/cert-manager/cert-manager): Creates SSL certificates for services in my cluster.
-- [cilium](https://github.com/cilium/cilium): Kubernetes CNI.
-- [cloudflared](https://github.com/cloudflare/cloudflared): Enables Cloudflare secure access to my routes.
-- [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs ingress DNS records to a DNS provider.
+- [cert-manager](https://github.com/cert-manager/cert-manager): Automates SSL/TLS certificate management.
+- [cilium](https://github.com/cilium/cilium): eBPF-based Kubernetes CNI.
+- [cloudflared](https://github.com/cloudflare/cloudflared): Enables Cloudflare's Zero Trust Network Access.
+- [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs DNS records to my DNS provider.
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
 - [generic-device-plugin](https://github.com/squat/generic-device-plugin): Allocates linux devices to pods (squat.ai/tun).
 - [k8s-gateway](https://github.com/k8s-gateway/k8s_gateway): CoreDNS plugin to support internal ingress records.
-- [nginx](https://github.com/nginx/nginx): Ingress controller and reverse proxy.
+- [envoy-gateway](https://github.com/envoyproxy/gateway): Envoy Proxy to manage service-to-service communication and proxying.
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
-- [sops](https://github.com/getsops/sops): Managed secrets for Kubernetes which are commited to Git.
+- [sops](https://github.com/getsops/sops): Stores and manages encrypted secrets which are commited to Git.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
 - [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
 - [volsync](https://github.com/backube/volsync): Backup and recovery of persistent volume claims.
@@ -85,8 +85,8 @@ My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](ht
 - [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
 - [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
 - [unpoller](https://github.com/unpoller/unpoller): Collect UniFi Controller data for Prometheus.
-- [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
-- [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics): Time series database, drop-in replacement for Prometheus.
+- [victoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
+- [victoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics): Time series database, drop-in replacement for Prometheus.
 
 ### Cloud Services
 
@@ -107,17 +107,19 @@ The way Flux works for me here is it will recursively search the `kubernetes/app
 
 [Renovate](https://github.com/renovatebot/renovate) watches my **entire** repository looking for dependency updates, when they are found a PR is automatically created. When I merge those PRs, Flux applies the changes to my cluster.
 
+[Just](https://github.com/casey/just) files are used to call on repetative commands or batches of commands, grouped into receipes. The root directory has a `.justfile` which imports three modules (bootstrap, kube, and talos) while providing shared logging utilities and enforces bash error handling.
+
 ### Directories
 
 This Git repository contains the following directories.
 
 ```sh
 📁 bootstrap      # exactly what it sounds like
+└── 📁 scripts    # some janky hacks for my setup
 📁 kubernetes
-├── 📁 apps       # applications
+├── 📁 apps       # applications organized by namespace
 ├── 📁 components # re-useable kustomize components
 └── 📁 flux       # flux system configuration
-📁 scripts        # some janky hacks for my setup
 📁 talos          # node OS configurations
 ```
 
