@@ -17,6 +17,7 @@ _.file = [
 [tools]
 "python" = "3.14.0"
 "just" = "1.43.1"
+"gum" = "0.17.0"
 "pipx:makejinja" = "2.8.1"
 "pipx:flux-local" = "8.0.1"
 "aqua:cilium/cilium-cli" = "0.18.8"
