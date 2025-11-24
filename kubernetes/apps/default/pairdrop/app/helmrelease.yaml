@@ -22,6 +22,10 @@ spec:
               tag: v1.11.2@sha256:c4b30977264a76e335740089e693a52a0d0d616330dec7f93c7b96beef7b4a02
             env:
               TZ: ${TIMEZONE:-UTC}
+              TRUST_PROXY: "true"
+              RTC_CONFIG: /app/rtc_config.json
+              IPV6_LOCALIZE: "false"
+              WS_FALLBACK: "true"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -37,6 +41,21 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
+    configMaps:
+      rtc-config:
+        data:
+          rtc_config.json: |
+            {
+              "sdpSemantics": "unified-plan",
+              "iceServers": [
+                {
+                  "urls": "stun:stun.l.google.com:19302"
+                },
+                {
+                  "urls": "stun:stun1.l.google.com:19302"
+                }
+              ]
+            }
     service:
       app:
         controller: *app
@@ -65,3 +84,12 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /root/.npm/_logs
+      rtc-config:
+        type: configMap
+        identifier: rtc-config
+        globalMounts:
+          - path: /app/rtc_config.json
+            subPath: rtc_config.json
+            readOnly: true
+      tmp:
+        type: emptyDir
