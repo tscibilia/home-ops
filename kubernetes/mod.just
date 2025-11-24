@@ -69,6 +69,13 @@ volsync state:
     flux -n volsync-system {{ state }} helmrelease volsync
     kubectl -n volsync-system scale deployment volsync --replicas {{ if state != "suspend" { "1" } else { "0" } }}
 
+[doc('Unlock all VolSync restic source repos')]
+volsync-unlock:
+    just check-tools kubectl
+    kubectl get replicationsources --all-namespaces --no-headers -o jsonpath='{range .items[*]}{.metadata.namespace},{.metadata.name}{"\n"}{end}' | while IFS=',' read -r ns name; do \
+        kubectl -n "$ns" patch --field-manager=flux-client-side-apply replicationsources "$name" --type merge -p "{\"spec\":{\"restic\":{\"unlock\":\"$(date +%s)\"}}}"; \
+    done
+
 [doc('Sync ExternalSecrets')]
 sync-es:
     just check-tools kubectl
