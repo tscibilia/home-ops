@@ -8,7 +8,7 @@ spec:
   components:
     - ../../../../components/volsync
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph

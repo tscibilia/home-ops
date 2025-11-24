@@ -6,6 +6,8 @@ metadata:
   name: &app dcgm-exporter
 spec:
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: nvidia-device-plugin
       namespace: kube-system
   interval: 1h

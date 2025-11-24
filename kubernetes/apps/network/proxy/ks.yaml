@@ -8,7 +8,7 @@ spec:
   dependsOn:
     - name: envoy-gateway-config
       namespace: network
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/network/proxy/apps

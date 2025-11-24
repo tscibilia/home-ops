@@ -9,6 +9,8 @@ spec:
     - ../../../../components/ext-auth
     - ../../../../components/volsync
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: volsync
       namespace: volsync-system
     - name: rook-ceph-cluster

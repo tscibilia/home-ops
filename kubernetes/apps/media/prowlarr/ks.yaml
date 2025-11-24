@@ -9,7 +9,7 @@ spec:
     - ../../../../components/ext-auth
     - ../../../../components/volsync
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
     - name: volsync
       namespace: volsync-system

@@ -5,11 +5,10 @@ kind: Kustomization
 metadata:
   name: &app searxng
 spec:
-  components:
   dependsOn:
     - name: dragonfly-cluster
       namespace: database
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
     - name: volsync
       namespace: volsync-system

@@ -41,7 +41,7 @@ metadata:
   name: &app jellyfin-tools
 spec:
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
     - name: jellyfin
   interval: 1h

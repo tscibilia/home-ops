@@ -13,7 +13,7 @@ spec:
       namespace: database
     - name: dragonfly-cluster
       namespace: database
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
     - name: keda
       namespace: observability

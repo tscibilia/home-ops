@@ -10,7 +10,7 @@ spec:
     - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
     - name: keda
       namespace: observability

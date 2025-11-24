@@ -8,6 +8,8 @@ spec:
   components:
     - ../../../../components/keda/nfs-bkup-scaler
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: keda
       namespace: observability
   interval: 1h

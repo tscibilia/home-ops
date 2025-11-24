@@ -5,9 +5,9 @@ kind: Kustomization
 metadata:
   name: &app kromgo
 spec:
-  components:
   dependsOn:
-    - name: victoria-metrics-stack
+    - name: secret-stores
+      namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/observability/kromgo/app
   postBuild:

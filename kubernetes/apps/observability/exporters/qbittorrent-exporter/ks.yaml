@@ -6,6 +6,8 @@ metadata:
   name: &app qbittorrent-exporter
 spec:
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: qbittorrent
       namespace: media
   interval: 1h

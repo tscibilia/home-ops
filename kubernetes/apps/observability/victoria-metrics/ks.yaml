@@ -8,7 +8,7 @@ spec:
   components:
     - ../../../../components/ext-auth
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/observability/victoria-metrics/app

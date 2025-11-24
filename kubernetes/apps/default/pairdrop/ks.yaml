@@ -5,7 +5,9 @@ kind: Kustomization
 metadata:
   name: &app pairdrop
 spec:
-  components:
+  dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/default/pairdrop/app
   postBuild:

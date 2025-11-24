@@ -5,9 +5,8 @@ kind: Kustomization
 metadata:
   name: &app homepage
 spec:
-  components:
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/default/homepage/app

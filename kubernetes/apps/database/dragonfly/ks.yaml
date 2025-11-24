@@ -23,7 +23,7 @@ metadata:
 spec:
   dependsOn:
     - name: dragonfly-operator
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
   healthCheckExprs:
     - apiVersion: dragonflydb.io/v1alpha1

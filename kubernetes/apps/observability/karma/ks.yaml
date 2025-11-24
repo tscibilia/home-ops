@@ -6,6 +6,8 @@ metadata:
   name: &app karma
 spec:
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: victoria-metrics-stack
   interval: 1h
   path: ./kubernetes/apps/observability/karma/app

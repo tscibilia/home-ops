@@ -6,7 +6,7 @@ metadata:
   name: &app snmp-exporter-synology
 spec:
   dependsOn:
-    - name: external-secrets
+    - name: secret-stores
       namespace: external-secrets
   interval: 1h
   path: ./kubernetes/apps/observability/exporters/snmp-exporter/synology
