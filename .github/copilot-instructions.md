@@ -49,7 +49,7 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 - Snapshot CRD defines backup schedule, ReplicationDestination handles data transfer to cloud storage
 - Restores via Volume Populator: new PVC with `dataSourceRef` auto-populates from latest backup
 - Requires `RESTIC_PASSWORD` and cloud storage credentials (B2, S3, etc.) managed via aKeyless
-- Commands: `task volsync:restore --APP=<app-name>` to restore from backup to new PVC
+- Commands: `just kube volsync-restore <namespace> <app-name>` to restore from backup to new PVC
 
 ## Cluster Networking Architecture
 
@@ -94,8 +94,8 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 - Helm chart credentials: Encrypted in helmrelease values or via PullSecrets
 
 **Commands:**
-- `task sops:encrypt` / `task sops:decrypt` - Manage SOPS-encrypted files
-- `task k8s:sync-secrets` - Force ExternalSecret synchronization (triggers aKeyless sync)
+- `just kube sync-es` - Sync ExternalSecret
+- `just kube view-secret <namespace> <secret>` - Force ExternalSecret synchronization (triggers aKeyless sync)
 
 ## Critical Dependencies & Integration Points
 
@@ -209,10 +209,10 @@ Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's fo
 ## Flux Reconciliation & HelmRelease Management
 
 **Flux operations:**
-- `task k8s:reconcile` - Force Flux to pull Git changes (reconcile flux-system kustomization)
+- `just kube reconcile` - Force Flux to pull Git changes (reconcile flux-system kustomization)
 - `flux suspend hr <name> -n <namespace>` - Pause a HelmRelease (prevents auto-reconciliation)
 - `flux resume hr <name> -n <namespace>` - Resume a HelmRelease
-- `task k8s:hr:restart` - Restart all failed HelmReleases (suspend/resume pattern)
+- `just kube hr-restart` - Restart all failed HelmReleases (suspend/resume pattern)
 
 **HelmRelease troubleshooting:**
 If a HelmRelease is stuck: delete it to allow Flux to redeploy
@@ -265,7 +265,7 @@ flux reconcile kustomization <name> -n <namespace> --with-source
 - Platform automerge enabled for Renovate PRs that pass flux-local tests
 
 **Common GitOps Operations:**
-- **Manual cluster update**: Push changes to Git, Flux auto-reconciles (or force with `task k8s:reconcile`)
+- **Manual cluster update**: Push changes to Git, Flux auto-reconciles (or force with `just kube reconcile`)
 - **Emergency rollback**: Revert Git commit, Flux reverts cluster state
 - **Bypass Flux drift correction**: `kubectl edit` or `helm upgrade` changes don't persist (Flux resets them)
 - **Fast-track dependency update**: Approve Renovate PR → tests pass → auto-merge → Flux deploys immediately
@@ -297,8 +297,8 @@ The observability namespace (`/kubernetes/apps/observability`) provides monitori
 **Common tasks (from `/kubernetes/README.md`):**
 - `kubectl logs -n <ns> deployment/<dep> -f` - Stream logs
 - `kubectl describe helmrelease <hr> -n <ns>` - Check HelmRelease status
-- `task k8s:browse-pvc --CLAIM=<pvc>` - Mount PVC to debug pod
-- `task k8s:cleanse-pods` - Delete Failed/Pending/Succeeded pods
+- `just kube browse-pvc <namespace> <claim>` - Mount PVC to debug pod
+- `just kube prune-pods` - Delete Failed/Pending/Succeeded pods
 
 ## Project-Specific Conventions
 
@@ -310,8 +310,8 @@ The observability namespace (`/kubernetes/apps/observability`) provides monitori
 
 ## Task Runner Usage
 
-Commands via `task` (Taskfile.yaml):
-- Namespace tasks: `task k8s:*` (kubernetes), `task talos:*` (talos), `task sops:*` (secrets), etc.
+Commands via `just` (.justfile with 3 modules loaded from bootstrap, kube, & talos):
+- Namespace commands: `just kube *` (kubernetes), `just talos *` (talos), `just bootstrap *` (bootstrap), etc.
 - Always check preconditions (e.g., `test -f {{.KUBECONFIG}}`)
 - Interactive tasks use `interactive: true` for shell access
 
@@ -328,8 +328,7 @@ Commands via `task` (Taskfile.yaml):
 
 - Age key stored in `age.key` (must match `$SOPS_AGE_KEY_FILE` env var)
 - `.sops.yaml` config file defines encryption rules per path
-- Encrypted files marked with `ENC[AES256_GCM` prefix
-- Always run `task sops:encrypt` before committing `*.sops.yaml` files
+- Encrypted files marked with `ENC[AES256_GCM` prefix, but deprecated in favor of ExternalSecrets
 
 ## Troubleshooting Common Failure Modes
 
@@ -386,7 +385,7 @@ kubectl get secret -n external-secrets external-secrets-secret -o yaml | grep to
 kubectl get secret cluster-secrets -n default -o yaml
 
 # 2. Force ExternalSecret resync (add timestamp annotation)
-task k8s:sync-secrets
+just kube sync-es
 
 # 3. Check if SecretStore is Ready
 kubectl get secretstore -A
@@ -451,7 +450,7 @@ kubectl top nodes
 **Recovery steps:**
 ```bash
 # 1. Browse PVC contents to diagnose space/permission issues
-task k8s:browse-pvc --CLAIM=<pvc-name> --NS=<namespace>
+just kube browse-pvc <namespace> <claim>
 
 # 2. Check mounted filesystem usage inside pod
 kubectl exec -it -n <namespace> deployment/<app> -- df -h /mnt/data
