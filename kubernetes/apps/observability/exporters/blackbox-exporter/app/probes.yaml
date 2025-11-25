@@ -11,8 +11,8 @@ spec:
   targets:
     staticConfig:
       static:
-        - ${NAS_IP}
-        - ${UNRAID_IP}
+        - nas.internal
+        - unraid.internal
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/probe_v1.json
 apiVersion: monitoring.coreos.com/v1
@@ -26,5 +26,5 @@ spec:
   targets:
     staticConfig:
       static:
-        - ${NAS_IP}:2049
-        - ${UNRAID_IP}:2049
+        - nas.internal:2049
+        - unraid.internal:2049

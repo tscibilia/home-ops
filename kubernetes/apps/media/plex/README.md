@@ -34,7 +34,7 @@ spec:
       claimName: plex
   - name: nfs
     nfs:
-      server: "192.168.5.10"
+      server: "nas.internal"
       path: /volume1/Media
 ```
 6. exec into that pod `kubectl exec -it -n media plex-migrate -- sh`; and run the following commands:

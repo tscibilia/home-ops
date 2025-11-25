@@ -27,7 +27,7 @@ spec:
       params:
         - name: nas
           module: ["synology"]
-          target: "${NAS_IP}"
+          target: "nas.internal"
           auth: ["public_v2"]
       path: /snmp
       scrapeTimeout: 10s

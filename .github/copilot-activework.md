@@ -12,13 +12,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## Known Issues
 `- Task name - impact & workaround`
 - Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - update talos machineconfig and VM NIC
-- Verify NAS_IP to nas.internal migration for monitoring - Swapped NFS mounts to `nas.internal`, but need to verify these still work:
-  - `kubernetes/apps/observability/exporters/snmp-exporter/synology/helmrelease.yaml` - SNMP target
-  - `kubernetes/apps/observability/exporters/snmp-exporter/synology/prometheusrule.yaml` - Prometheus instance match
-  - `kubernetes/apps/observability/exporters/blackbox-exporter/app/probes.yaml` - ICMP ping & port 2049 check (NAS & Unraid)
-  - `kubernetes/apps/network/externalsecret.yaml` - SYNO_IP for Synology DDNS updater (may require IP)
-- Verify UNRAID_IP to unraid.internal migration - Swapped NFS mounts, but need to verify:
-  - `kubernetes/apps/default/homepage/app/configmap.yaml` - host for widgets & href links (lines 26, 185, 190)
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`

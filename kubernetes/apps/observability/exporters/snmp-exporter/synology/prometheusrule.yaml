@@ -29,7 +29,7 @@ spec:
             summary: Low disk space on Synology NAS
             description: Less than 10% disk space remaining on {{ $labels.instance }}.
         - alert: SynologyNASDown
-          expr: up{instance="${NAS_IP}"} == 0
+          expr: up{instance="nas.internal"} == 0
           for: 2m
           labels:
             severity: critical
