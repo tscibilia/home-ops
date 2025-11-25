@@ -62,9 +62,17 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
           dry-run: true
 
-      - name: Create Release
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
-        with:
-          body: "${{ steps.release-notes.outputs.release-notes }}"
-          tag: "${{ steps.determine-next-tag.outputs.result }}"
-          token: "${{ secrets.PAT_WORKFLOW }}"
+      - name: Print Release Info (Dry Run)
+        run: |
+          echo "## Dry Run - Release Preview"
+          echo "**Next Tag:** ${{ steps.determine-next-tag.outputs.result }}"
+          echo ""
+          echo "**Release Notes:**"
+          echo "${{ steps.release-notes.outputs.release-notes }}"
+
+      # - name: Create Release
+      #   uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+      #   with:
+      #     body: "${{ steps.release-notes.outputs.release-notes }}"
+      #     tag: "${{ steps.determine-next-tag.outputs.result }}"
+      #     token: "${{ secrets.PAT_WORKFLOW }}"
