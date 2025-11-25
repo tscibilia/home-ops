@@ -24,7 +24,6 @@ spec:
               TZ: ${TIMEZONE:-UTC}
               RTC_CONFIG: /app/rtc_config.json
               IPV6_LOCALIZE: "false"
-              DEBUG_MODE: "true"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -41,7 +40,8 @@ spec:
               tag: 4.7.0@sha256:203b9bf51e84199f91025d411a7bcc7358d50c43a4d9c588079e282a3bbf4ba1
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
               runAsNonRoot: true
               runAsUser: 65534
               runAsGroup: 65534
