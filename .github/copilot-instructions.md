@@ -11,6 +11,81 @@ This is a **Kubernetes-based home infrastructure monorepo** managed with Flux CD
 2. **Kubernetes** (`/kubernetes`): Flux-driven GitOps. Apps organized by namespace in `/kubernetes/apps/*/{namespace}/{app-name}/`.
 3. **Bootstrap** (`/bootstrap`): Helmfile deployment for initial cluster setup (cilium, coredns, spegel, cert-manager, external-secrets).
 
+## Task Runner Usage
+
+Commands via `just` (main `.justfile` with 3 modules from `bootstrap`, `kubernetes`, and `talos`):
+
+### Bootstrap Module (`just bootstrap`)
+**Cluster Installation & Setup:**
+- `talos` - Install Talos on all configured nodes
+- `k8s` - Bootstrap Kubernetes cluster
+- `kubeconfig [lb]` - Fetch kubeconfig (optional: set load balancer, default: cilium)
+- `wait` - Wait for nodes to be ready
+- `namespaces` - Apply all Kubernetes namespaces
+- `resources` - Apply Kubernetes resources from templates (uses akeyless-inject)
+- `crds` - Apply CRDs from Helmfile
+- `apps` - Sync all apps from Helmfile
+- `default` - Run full bootstrap sequence (all stages above)
+
+### Kubernetes Module (`just kube`)
+**Resource Management:**
+- `browse-pvc <namespace> <claim>` - Mount PVC to debug pod for inspection
+- `node-shell <node>` - Open interactive shell on a node
+- `prune-pods` - Delete all pods in Failed, Pending, or Succeeded state
+- `view-secret <namespace> <secret>` - View decoded secret contents
+
+**Flux Operations:**
+- `sync-git` - Sync all GitRepositories (force reconcile)
+- `sync-oci` - Sync all OCIRepositories (force reconcile)
+- `sync-es <ns> <name>` - Force sync a single ExternalSecret
+- `sync-hr <ns> <name>` - Force sync a single HelmRelease
+- `sync-ks <ns> <name>` - Force sync a single Kustomization
+- `sync-all-es` - Sync all ExternalSecrets across cluster
+- `sync-all-hr` - Sync all HelmReleases across cluster
+- `sync-all-ks` - Sync all Kustomizations across cluster
+- `ks-restart` - Restart all failed Kustomizations (suspend/resume)
+- `hr-restart` - Restart all failed HelmReleases (suspend/resume)
+- `ks-reconcile <ns> <name>` - Force Kustomization reconcile from source
+- `hr-reconcile <ns> <name>` - Force HelmRelease reconcile from source
+- `ks-reconcile-all` - Force all Kustomizations to reconcile from source
+- `hr-reconcile-all` - Force all HelmReleases to reconcile from source
+- `apply-ks <ns> <ks>` - Apply local Kustomization (using flux-local)
+- `delete-ks <ns> <ks>` - Delete local Kustomization
+
+**VolSync Backups:**
+- `snapshot <ns> <name>` - Trigger manual snapshot for single PVC
+- `snapshot-all` - Trigger snapshots for all VolSync PVCs
+- `volsync <state>` - Suspend or resume VolSync (state: suspend/resume)
+- `volsync-unlock` - Unlock all restic repositories
+- `volsync-list <ns> <name>` - List available snapshots for app
+- `volsync-restore <ns> <name> <previous>` - Restore from backup snapshot
+
+**KEDA Auto-scaling:**
+- `keda <state> <ns> <name>` - Suspend or resume ScaledObject (state: suspend/resume)
+- `keda-all <state>` - Suspend or resume all ScaledObjects
+
+**Network Stack:**
+- `restart-network` - Restart network components in dependency order (CoreDNS → Cilium → Cloudflared → External-DNS → k8s-gateway → Envoy)
+
+### Talos Module (`just talos`)
+**Node Management:**
+- `apply-node <node> [args]` - Apply Talos config to specific node
+- `render-config <node>` - Render Talos config for node (with patches)
+- `reboot-node <node>` - Reboot node with confirmation
+- `shutdown-node <node>` - Shutdown node with confirmation
+- `reset-node <node>` - Factory reset node with confirmation
+
+**Upgrades & Images:**
+- `upgrade-k8s <version>` - Upgrade Kubernetes version on cluster
+- `upgrade-node <node>` - Upgrade Talos version on node
+- `download-image <version> <schematic>` - Download Talos ISO image
+- `gen-schematic-id` - Generate schematic ID from template
+
+**Common Patterns:**
+- All commands check for required tools (talosctl, kubectl, flux, etc.) before execution
+- Interactive operations (reboot, reset, shutdown) require confirmation via gum
+- Template-based configs support variable injection via minijinja and akeyless
+
 ## App Structure Pattern
 
 Each app follows a strict directory structure:
@@ -49,7 +124,7 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 - Snapshot CRD defines backup schedule, ReplicationDestination handles data transfer to cloud storage
 - Restores via Volume Populator: new PVC with `dataSourceRef` auto-populates from latest backup
 - Requires `RESTIC_PASSWORD` and cloud storage credentials (B2, S3, etc.) managed via aKeyless
-- Commands: `just kube volsync-restore <namespace> <app-name>` to restore from backup to new PVC
+- **Commands:** See [Task Runner Usage](#task-runner-usage) section for all VolSync commands (snapshot, restore, list, unlock)
 
 ## Cluster Networking Architecture
 
@@ -93,9 +168,7 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 - Cluster bootstrap secrets: `cluster-secrets` ConfigMap injected via `postBuild.substituteFrom`
 - Helm chart credentials: Encrypted in helmrelease values or via PullSecrets
 
-**Commands:**
-- `just kube sync-es` - Sync ExternalSecret
-- `just kube view-secret <namespace> <secret>` - Force ExternalSecret synchronization (triggers aKeyless sync)
+**Commands:** See [Task Runner Usage](#task-runner-usage) section for ExternalSecret and secret management commands
 
 ## Critical Dependencies & Integration Points
 
@@ -208,17 +281,17 @@ Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's fo
 
 ## Flux Reconciliation & HelmRelease Management
 
-**Flux operations:**
-- `just kube reconcile` - Force Flux to pull Git changes (reconcile flux-system kustomization)
-- `flux suspend hr <name> -n <namespace>` - Pause a HelmRelease (prevents auto-reconciliation)
-- `flux resume hr <name> -n <namespace>` - Resume a HelmRelease
-- `just kube hr-restart` - Restart all failed HelmReleases (suspend/resume pattern)
+**Key Patterns:**
+- Flux controller continuously reconciles cluster state against Git repository
+- Reconciliation interval: `interval: 1h` in `ks.yaml` (checks Git every hour)
+- Direct flux CLI commands (suspend, resume) can be used alongside just commands
+- See **Task Runner Usage** section below for all Flux sync, reconcile, and restart commands
 
 **HelmRelease troubleshooting:**
 If a HelmRelease is stuck: delete it to allow Flux to redeploy
 ```bash
 kubectl delete helmrelease <name> -n <namespace>
-flux reconcile kustomization <name> -n <namespace> --with-source
+just kube ks-reconcile <namespace> <name>
 ```
 
 ## GitOps Workflows: Flux & Renovate
@@ -265,10 +338,11 @@ flux reconcile kustomization <name> -n <namespace> --with-source
 - Platform automerge enabled for Renovate PRs that pass flux-local tests
 
 **Common GitOps Operations:**
-- **Manual cluster update**: Push changes to Git, Flux auto-reconciles (or force with `just kube reconcile`)
-- **Emergency rollback**: Revert Git commit, Flux reverts cluster state
+- **Manual cluster update**: Push changes to Git, Flux auto-reconciles (or force with `just kube ks-reconcile-all` or `just kube sync-all-ks`)
+- **Emergency rollback**: Revert Git commit, Flux reverts cluster state (force with `just kube ks-reconcile-all`)
 - **Bypass Flux drift correction**: `kubectl edit` or `helm upgrade` changes don't persist (Flux resets them)
 - **Fast-track dependency update**: Approve Renovate PR → tests pass → auto-merge → Flux deploys immediately
+- **Sync specific resource**: Use `just kube sync-hr <ns> <name>` for HelmReleases or `just kube sync-ks <ns> <name>` for Kustomizations
 
 ## Observability Stack
 
@@ -294,11 +368,15 @@ The observability namespace (`/kubernetes/apps/observability`) provides monitori
 
 ## Kubernetes Debugging Essentials
 
-**Common tasks (from `/kubernetes/README.md`):**
-- `kubectl logs -n <ns> deployment/<dep> -f` - Stream logs
-- `kubectl describe helmrelease <hr> -n <ns>` - Check HelmRelease status
-- `just kube browse-pvc <namespace> <claim>` - Mount PVC to debug pod
-- `just kube prune-pods` - Delete Failed/Pending/Succeeded pods
+**Native kubectl commands:**
+- `kubectl logs -n <ns> deployment/<dep> -f` - Stream logs from deployment
+- `kubectl describe helmrelease <hr> -n <ns>` - Check HelmRelease status and events
+
+**Just commands for debugging:**
+See [Task Runner Usage](#task-runner-usage) section for full reference. Key debugging commands include:
+- Resource inspection: `browse-pvc`, `node-shell`, `view-secret`
+- Cleanup: `prune-pods`
+- Network: `restart-network`
 
 ## Project-Specific Conventions
 
@@ -308,13 +386,6 @@ The observability namespace (`/kubernetes/apps/observability`) provides monitori
 4. **Renovate integration:** Image tags marked with `# renovate: datasource=docker` for auto-updates
 5. **Language servers:** YAML files include JSON schema references for IDE validation
 
-## Task Runner Usage
-
-Commands via `just` (.justfile with 3 modules loaded from bootstrap, kube, & talos):
-- Namespace commands: `just kube *` (kubernetes), `just talos *` (talos), `just bootstrap *` (bootstrap), etc.
-- Always check preconditions (e.g., `test -f {{.KUBECONFIG}}`)
-- Interactive tasks use `interactive: true` for shell access
-
 ## When Modifying Apps
 
 1. **New app:** Copy existing app directory, update namespace/name in YAML anchors
@@ -322,7 +393,8 @@ Commands via `just` (.justfile with 3 modules loaded from bootstrap, kube, & tal
 3. **Secrets:** Add to aKeyless, reference in `externalsecret.yaml` (auto-synced to Secret)
 4. **Environment-specific values:** Use `postBuild.substituteFrom` in `ks.yaml` to inject cluster secrets
 5. **Dependencies:** Always declare `dependsOn` in `ks.yaml` to ensure resource order
-6. **Test locally:** Use `flux reconcile kustomization <app> -n <ns>` to validate before pushing
+6. **Test locally:** Use `just kube apply-ks <namespace> <app>` to validate before pushing (uses flux-local)
+7. **Force reconcile:** Use `just kube ks-reconcile <namespace> <app>` to trigger immediate sync from Git
 
 ## File Encryption & SOPS
 
@@ -356,7 +428,7 @@ kubectl delete deployment <name> -n <namespace>
 kubectl delete service <name> -n <namespace>
 
 # 3. Force Flux to reconcile and redeploy from Git
-flux reconcile kustomization <app-name> -n <namespace> --with-source
+just kube ks-reconcile <namespace> <app-name>
 
 # 4. Monitor rollout progress
 kubectl rollout status deployment/<name> -n <namespace> -w
@@ -385,7 +457,9 @@ kubectl get secret -n external-secrets external-secrets-secret -o yaml | grep to
 kubectl get secret cluster-secrets -n default -o yaml
 
 # 2. Force ExternalSecret resync (add timestamp annotation)
-just kube sync-es
+just kube sync-es <namespace> <secret-name>
+# Or sync all:
+just kube sync-all-es
 
 # 3. Check if SecretStore is Ready
 kubectl get secretstore -A
@@ -492,7 +566,7 @@ kubectl rollout restart deployment/<app> -n <namespace>
 # Update: resources.requests/limits
 
 # 4. Force reconcile to apply new resource specs
-flux reconcile kustomization <app> -n <namespace> --with-source
+just kube ks-reconcile <namespace> <app>
 ```
 
 ### Dependency Resolution Failures
@@ -515,12 +589,14 @@ kubectl describe crd | grep <resource-kind>
 kubectl get kustomization -A | grep False
 
 # 2. Check bootstrap order (Flux deploys in dependency order)
-# See: /bootstrap/helmfile.yaml for correct order
+# See: /bootstrap/helmfile.d/01-apps.yaml for correct order
 
 # 3. If health check references missing CRD, ensure Operator deployed first
 # Example: apps depending on postgresql.cnpg.io/v1 Cluster
 # must have: dependsOn: [{name: cnpg-cluster, namespace: database}]
 
 # 4. Force retry dependency check
-flux reconcile kustomization <dependent-app> -n flux-system --with-source
+just kube ks-reconcile flux-system <dependent-app>
+# Or reconcile all:
+just kube ks-reconcile-all
 ```
