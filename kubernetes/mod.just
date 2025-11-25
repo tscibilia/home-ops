@@ -121,14 +121,17 @@ hr-reconcile-all:
     just check-tools flux
     flux reconcile helmrelease --all --with-source
 
-[doc('Suspend or resume Keda ScaledObjects')]
+[doc('Suspend or resume a Keda ScaledObject')]
 keda state ns name:
-  kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite so "{{ name }}" autoscaling.keda.sh/paused{{ if state != "suspend" { "-" } else { "=true" } }}; \
+    just check-tools kubectl
+    kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite so "{{ name }}" autoscaling.keda.sh/paused{{ if state != "suspend" { "-" } else { "=true" } }}
 
-[doc('Suspend or resume Keda ScaledObjects')]
+[doc('Suspend or resume all Keda ScaledObjects')]
 keda-all state:
-  kubectl get scaledobjects --no-headers -A | while read -r ns name _; do \
-    just k8s keda "{{ state }}" "$ns" "$name"; \
+    just check-tools kubectl
+    kubectl get scaledobjects --no-headers -A | while read -r ns name _; do \
+        just kube keda "{{ state }}" "$ns" "$name"; \
+    done
 
 [doc('Snapshot a single VolSync PVC')]
 snapshot ns name:
@@ -156,54 +159,40 @@ volsync-unlock:
         kubectl -n "$ns" patch --field-manager=flux-client-side-apply replicationsources "$name" --type merge -p "{\"spec\":{\"restic\":{\"unlock\":\"$(date +%s)\"}}}"; \
     done
 
-[doc('List VolSync snapshots for a deployment')]
+[doc('List VolSync snapshots for an application')]
 volsync-list ns name:
     just check-tools kubectl envsubst
     @echo "Listing snapshots for {{ name }} in {{ ns }} namespace..."
     @export NS="{{ ns }}" APP="{{ name }}" && \
-        envsubst < {{ kubernetes_dir }}/components/volsync/resources/list.yaml | kubectl apply -f -
-    @echo "Waiting for job to complete..."
-    kubectl -n {{ ns }} wait job/{{ name }}-list-snapshots --for=condition=complete --timeout=5m
-    @echo "Snapshot list:"
-    kubectl -n {{ ns }} logs job/{{ name }}-list-snapshots
-    kubectl -n {{ ns }} delete job {{ name }}-list-snapshots
+        envsubst < {{ kubernetes_dir }}/components/volsync/resources/list.yaml.j2 | kubectl apply -f -
+    @kubectl -n {{ ns }} wait job/{{ name }}-list-snapshots --for=condition=complete --timeout=5m
+    @kubectl -n {{ ns }} logs job/{{ name }}-list-snapshots
+    @kubectl -n {{ ns }} delete job {{ name }}-list-snapshots
 
-[doc('Restore VolSync backup for a deployment')]
+[doc('Restore VolSync backup for an application')]
 volsync-restore ns name previous:
-    just check-tools kubectl flux envsubst
+    just check-tools kubectl flux envsubst jq
     @echo "Starting restore for {{ name }} in {{ ns }} namespace from snapshot {{ previous }}..."
     @if kubectl -n {{ ns }} get scaledobject {{ name }} &>/dev/null; then \
         echo "Pausing KEDA ScaledObject..."; \
-        just kube keda suspend "{{ ns }}" "{{ name }}" \
+        just kube keda suspend "{{ ns }}" "{{ name }}"; \
     fi
-    @echo "Suspending Flux resources..."
-    flux suspend kustomization {{ name }} -n {{ ns }}
-    flux suspend helmrelease {{ name }} -n {{ ns }}
-    @echo "Scaling down application..."
-    @CONTROLLER=$(kubectl -n {{ ns }} get deployment {{ name }} &>/dev/null && echo deployment || echo statefulset)
-    kubectl -n {{ ns }} scale $CONTROLLER/{{ name }} --replicas 0
-    kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ name }}" --timeout=5m || true
+    @echo "Suspending Flux & scaling down application..."
+    just kube flux-suspend "{{ ns }}" "{{ name }}"
+    just kube app-scale-down "{{ ns }}" "{{ name }}"
     @echo "Creating ReplicationDestination for restore..."
-    @CLAIM=$(kubectl -n {{ ns }} get replicationsources/{{ name }} -o jsonpath='{.spec.sourcePVC}')
-    @STORAGE_CLASS=$(kubectl -n {{ ns }} get replicationsources/{{ name }} -o jsonpath='{.spec.restic.storageClassName}')
-    @ACCESS_MODES=$(kubectl -n {{ ns }} get replicationsources/{{ name }} -o jsonpath='{.spec.restic.accessModes[0]}')
-    @PUID=$(kubectl -n {{ ns }} get replicationsources/{{ name }} -o jsonpath='{.spec.restic.moverSecurityContext.runAsUser}')
-    @PGID=$(kubectl -n {{ ns }} get replicationsources/{{ name }} -o jsonpath='{.spec.restic.moverSecurityContext.runAsGroup}')
-    @export NS="{{ ns }}" APP="{{ name }}" PREVIOUS="{{ previous }}" CLAIM="${CLAIM}" STORAGE_CLASS="${STORAGE_CLASS}" ACCESS_MODES="${ACCESS_MODES}" PUID="${PUID}" PGID="${PGID}" && \
-        envsubst < {{ kubernetes_dir }}/components/volsync/resources/replicationdestination.yaml | kubectl apply -f -
-    @echo "Waiting for restore to complete..."
-    kubectl -n {{ ns }} wait job/volsync-dst-{{ name }}-manual --for=condition=complete --timeout=120m
-    @echo "Cleaning up ReplicationDestination..."
-    kubectl -n {{ ns }} delete replicationdestination {{ name }}-manual
-    @echo "Resuming Flux resources..."
-    flux resume kustomization {{ name }} -n {{ ns }}
-    flux resume helmrelease {{ name }} -n {{ ns }}
-    flux reconcile helmrelease {{ name }} -n {{ ns }} --force
-    @echo "Waiting for pods to be ready..."
-    kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ name }}" --timeout=5m || true
+    @eval $(kubectl -n {{ ns }} get replicationsources/{{ name }} -o json | jq -r '"export CLAIM=\(.spec.sourcePVC) STORAGE_CLASS=\(.spec.restic.storageClassName) ACCESS_MODES=\(.spec.restic.accessModes[0]) PUID=\(.spec.restic.moverSecurityContext.runAsUser) PGID=\(.spec.restic.moverSecurityContext.runAsGroup)"') && \
+        export NS="{{ ns }}" APP="{{ name }}" PREVIOUS="{{ previous }}" && \
+        envsubst < {{ kubernetes_dir }}/components/volsync/resources/replicationdestination.yaml.j2 | kubectl apply -f -
+    @echo "Waiting for completion and cleaning up..."
+    @kubectl -n {{ ns }} wait job/volsync-dst-{{ name }}-manual --for=condition=complete --timeout=120m
+    @kubectl -n {{ ns }} delete replicationdestination {{ name }}-manual
+    @echo "Resuming Flux resources & wating for 'ready' pod status..."
+    just kube flux-resume "{{ ns }}" "{{ name }}"
+    @kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ name }}" --timeout=5m || true
     @if kubectl -n {{ ns }} get scaledobject {{ name }} &>/dev/null; then \
         echo "Resuming KEDA ScaledObject..."; \
-        just kube keda resume "{{ ns }}" "{{ name }}" \
+        just kube keda resume "{{ ns }}" "{{ name }}"; \
     fi
     @echo "Restore complete!"
 
@@ -244,3 +233,23 @@ restart-network:
 [private]
 render-local-ks ns ks:
     flux-local build ks --namespace "{{ ns }}" --path "{{ kubernetes_dir }}/flux/cluster" "{{ ks }}"
+
+[private]
+[doc('Suspend Flux resources for an app')]
+flux-suspend ns name:
+    @flux suspend kustomization {{ name }} -n {{ ns }}
+    @flux suspend helmrelease {{ name }} -n {{ ns }}
+
+[private]
+[doc('Resume Flux resources for an app')]
+flux-resume ns name:
+    @flux resume kustomization {{ name }} -n {{ ns }}
+    @flux resume helmrelease {{ name }} -n {{ ns }}
+    @flux reconcile helmrelease {{ name }} -n {{ ns }} --force
+
+[private]
+[doc('Scale down an app (deployment or statefulset)')]
+app-scale-down ns name:
+    @CONTROLLER=$(kubectl -n {{ ns }} get deployment {{ name }} &>/dev/null && echo deployment || echo statefulset); \
+        kubectl -n {{ ns }} scale $CONTROLLER/{{ name }} --replicas 0
+    @kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ name }}" --timeout=5m || true
