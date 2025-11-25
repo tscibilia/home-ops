@@ -23,7 +23,7 @@ data:
               href: https://logs.t0m.co/
   docker.yaml: | # https://gethomepage.dev/configs/docker/
     tower:
-        host: ${UNRAID_IP}
+        host: unraid.internal
         port: 2375
   kubernetes.yaml: | # https://gethomepage.dev/configs/kubernetes/
     mode: cluster
