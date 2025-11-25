@@ -11,7 +11,7 @@ resources:
   - ./cross-seed/ks.yaml
   - ./flaresolverr/ks.yaml
   - ./imagemaid/ks.yaml
-  # - ./jellyfin/ks.yaml
+  - ./jellyfin/ks.yaml
   - ./kometa/ks.yaml
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
