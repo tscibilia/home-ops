@@ -29,7 +29,7 @@ jobs:
 
       - name: Determine CalVer Tag
         id: calver
-        uses: mirceanton/action-calver-release@2025.4.1 # 2025.11.4
+        uses: mirceanton/action-calver-release@e34e40c96ed4998c9a0adb0c8d3d821b49d789a3 # 2025.11.4
         with:
           github-token: ${{ secrets.PAT_WORKFLOW }}
           dry-run: true
