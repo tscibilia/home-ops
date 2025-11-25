@@ -71,6 +71,7 @@ spec:
               - --no-cli
               - --no-multicast-peers
               - --no-software-attribute
+              - --prometheus
             resources:
               requests:
                 cpu: 10m
@@ -88,6 +89,20 @@ spec:
         ports:
           http:
             port: &port 3000
+      coturn:
+        controller: *app
+        ports:
+          metrics:
+            port: 9641
+    serviceMonitor:
+      coturn:
+        serviceName: coturn
+        endpoints:
+          - port: metrics
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 30s
     route:
       app:
         annotations:
