@@ -71,11 +71,12 @@ spec:
           limits:
             cpu: 3000m
             memory: 6Gi
-        service:
-          annotations:
-            gatus.home-operations.com/enabled: "true"
-            gatus.home-operations.com/endpoint: |
-              group: "services"
+        serviceSpec:
+          metadata:
+            annotations:
+              gatus.home-operations.com/enabled: "true"
+              gatus.home-operations.com/endpoint: |
+                group: "services"
       route:
         enabled: true
         hostnames: ["${APP}.${SECRET_DOMAIN}"]
