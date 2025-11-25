@@ -20,6 +20,8 @@ spec:
       route:
         enabled: true
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        annotations:
+          gatus.home-operations.com/enabled: "false"
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -35,5 +37,10 @@ spec:
               - path:
                   type: Exact
                   value: /
+      service:
+        annotations:
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |
+            group: "services"
       serviceMonitor:
         enabled: true

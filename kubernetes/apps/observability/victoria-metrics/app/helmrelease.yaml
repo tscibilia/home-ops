@@ -71,6 +71,11 @@ spec:
           limits:
             cpu: 3000m
             memory: 6Gi
+        service:
+          annotations:
+            gatus.home-operations.com/enabled: "true"
+            gatus.home-operations.com/endpoint: |
+              group: "services"
       route:
         enabled: true
         hostnames: ["${APP}.${SECRET_DOMAIN}"]
@@ -79,6 +84,18 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+        extraRules:
+          - filters:
+              - type: RequestRedirect
+                requestRedirect:
+                  path:
+                    type: ReplaceFullPath
+                    replaceFullPath: /vmui/
+                  statusCode: 302
+            matches:
+              - path:
+                  type: Exact
+                  value: /
 
     alertmanager:
       useManagedConfig: true
