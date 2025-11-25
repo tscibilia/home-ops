@@ -5,6 +5,8 @@ kind: Kustomization
 metadata:
   name: &app victoria-logs
 spec:
+  components:
+    - ../../../../components/ext-auth
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -12,7 +14,7 @@ spec:
   path: ./kubernetes/apps/observability/victoria-logs/app
   postBuild:
     substitute:
-      APP: vm
+      APP: logs
       EXT_AUTH_TARGET: victoria-logs-server
       GATUS_SUBDOMAIN: logs
     substituteFrom:
