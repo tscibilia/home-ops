@@ -15,6 +15,7 @@ spec:
   postBuild:
     substitute:
       APP: vm
+      EXT_AUTH_TARGET: vmsingle-stack
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
