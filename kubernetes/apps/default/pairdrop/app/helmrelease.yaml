@@ -96,7 +96,7 @@ spec:
             port: 9641
     serviceMonitor:
       coturn:
-        serviceName: coturn
+        serviceName: pairdrop-coturn
         endpoints:
           - port: metrics
             scheme: http
