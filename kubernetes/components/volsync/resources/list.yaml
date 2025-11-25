@@ -1,0 +1,27 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ${APP}-list-snapshots
+  namespace: ${NS}
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      containers:
+        - name: list
+          image: docker.io/restic/restic:0.17.3
+          args: ["snapshots"]
+          envFrom:
+            - secretRef:
+                name: ${APP}-volsync-secret
+          volumeMounts:
+            - name: repository
+              mountPath: /repository
+      volumes:
+        - name: repository
+          nfs:
+            server: unraid.internal
+            path: /mnt/user/backup/kubernetes/volsync
