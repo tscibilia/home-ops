@@ -13,6 +13,7 @@ spec:
   postBuild:
     substitute:
       APP: vm
+      EXT_AUTH_TARGET: victoria-logs-server
       GATUS_SUBDOMAIN: logs
     substituteFrom:
       - name: cluster-secrets
