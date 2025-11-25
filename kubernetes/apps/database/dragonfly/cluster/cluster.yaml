@@ -40,7 +40,7 @@ spec:
         secretKeyRef:
           key: AWS_REDIS_BUCKET
           name: dragonfly-secret
-  image: ghcr.io/dragonflydb/dragonfly:v1.35.0
+  image: ghcr.io/dragonflydb/dragonfly:v1.35.1
   labels:
     dragonflydb.io/cluster: *app
   replicas: 3
