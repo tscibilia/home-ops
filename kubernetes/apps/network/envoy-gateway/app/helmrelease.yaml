@@ -19,4 +19,5 @@ spec:
               type: GatewayNamespace
         extensionApis:
           enableBackend: true
+          enableEnvoyPatchPolicy: true
     createNamespace: false

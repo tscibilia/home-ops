@@ -164,17 +164,44 @@ spec:
   timeout:
     http:
       requestReceivedTimeout: 0s
-      # Set HTTP idle timeout shorter than cloudflared's 60s timeout
+      # Set HTTP & TCP idle timeout shorter than cloudflared's 60s timeout
       idleTimeout: 300s
       streamIdleTimeout: 300s
     tcp:
-      # Set TCP idle timeout to prevent connection drops
       idleTimeout: 300s
   tls:
     minVersion: "1.2"
     alpnProtocols:
       - h2
       - http/1.1
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/envoyproxy/gateway/refs/heads/main/charts/gateway-helm/crds/generated/gateway.envoyproxy.io_envoypatchpolicies.yaml
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyPatchPolicy
+metadata:
+  name: http2-keepalive
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: envoy-external
+  type: JSONPatch
+  jsonPatches:
+    # Add HTTP/2 keepalive to prevent cloudflared timeout errors
+    - type: "type.googleapis.com/envoy.config.listener.v3.Listener"
+      name: network/envoy-external/https
+      operation:
+        op: replace
+        path: "/filter_chains/0/filters/0/typed_config/http2_protocol_options"
+        value:
+          max_concurrent_streams: 100
+          initial_stream_window_size: 2097152
+          initial_connection_window_size: 33554432
+          override_stream_error_on_invalid_http_message: true
+          connection_keepalive:
+            interval: "30s"
+            timeout: "10s"
+            connection_idle_interval: "30s"
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
 apiVersion: gateway.networking.k8s.io/v1
