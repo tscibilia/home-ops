@@ -1,0 +1,119 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app guacamole
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "18"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+          02-initdb:
+            image:
+              repository: docker.io/guacamole/guacamole
+              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+            envFrom:
+              - secretRef:
+                  name: guacamole-secret
+            command:
+              - /bin/sh
+              - -c
+              - /opt/guacamole/bin/initdb.sh --postgresql > /migrations/initdb.sql
+          03-changeowner:
+            image:
+              repository: docker.io/guacamole/guacamole
+              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+            envFrom:
+              - secretRef:
+                  name: guacamole-secret
+            command:
+              - /bin/sh
+              - -c
+              - psql postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOSTNAME:$POSTGRES_PORT/$POSTGRES_DATABASE -c "ALTER SCHEMA public OWNER TO $POSTGRES_USER;" || true
+          04-migrate:
+            image:
+              repository: docker.io/guacamole/guacamole
+              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+            envFrom:
+              - secretRef:
+                  name: guacamole-secret
+            command:
+              - /bin/sh
+              - -c
+              - psql postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOSTNAME:$POSTGRES_PORT/$POSTGRES_DATABASE -f /migrations/initdb.sql || true
+        containers:
+          app:
+            image:
+              repository: docker.io/guacamole/guacamole
+              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+            env:
+              TZ: ${TIMEZONE:-UTC}
+              GUACAMOLE_HOME: /config
+              TOTP_ENABLED: "true"
+            envFrom:
+              - secretRef:
+                  name: guacamole-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 250m
+                memory: 128Mi
+              limits:
+                memory: 2Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: &port 8080
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      config:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /config
+      migrations:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            02-initdb:
+              - path: /migrations
+            04-migrate:
+              - path: /migrations
