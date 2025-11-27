@@ -50,6 +50,7 @@ spec:
               - qb
         pod:
           restartPolicy: Never
+          terminationGracePeriodSeconds: 120
       orphaned:
         type: cronjob
         cronjob:
@@ -65,6 +66,7 @@ spec:
               - --dry-run
         pod:
           restartPolicy: Never
+          terminationGracePeriodSeconds: 120
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
