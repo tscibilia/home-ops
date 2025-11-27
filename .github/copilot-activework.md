@@ -19,6 +19,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Cloudflared tunnel connection error - 2025-11-27 (See commit [db25bb3](https://github.com/tscibilia/home-ops/commit/db25bb37607dfbd6020511fd7254e6b980e5f819) & issue [#1189](https://github.com/tscibilia/home-ops/issues/1189))
 - ✅ Update bootstrap and talos config - (See PR [#1173](https://github.com/tscibilia/home-ops/pull/1173) & issue [#804](https://github.com/tscibilia/home-ops/issues/804))
 - ✅ Jellyseerr to Seerr Migration - 2025-11-20 (See commit[fbb9ecf](https://github.com/tscibilia/home-ops/commit/fbb9ecf927855b748dc9586188f91a0c89a04f9c) & [`seerr/README.md`](../kubernetes/apps/media/seerr/README.md))
 - ✅ Grafana Operator Migration - 2025-11-19 (See PR [#1157](https://github.com/tscibilia/home-ops/pull/1157))
