@@ -25,3 +25,9 @@ spec:
     - group: ''
       kind: Service
       name: ak-outpost-authentik-embedded-outpost
+    - group: ''
+      kind: Service
+      name: authentik-outpost-internal
+    - group: ''
+      kind: Service
+      name: authentik-outpost-external
