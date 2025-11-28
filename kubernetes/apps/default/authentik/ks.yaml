@@ -52,6 +52,10 @@ spec:
     - name: authentik
   interval: 1h
   path: ./kubernetes/apps/default/authentik/outposts
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

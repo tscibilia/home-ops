@@ -27,6 +27,8 @@ kind: Deployment
 metadata:
   name: authentik-outpost-external
   namespace: default
+  annotations:
+    secret.reloader.stakater.com/reload: &secret authentik-secret
   labels:
     app.kubernetes.io/name: authentik-outpost-external
     app.kubernetes.io/component: outpost
@@ -46,7 +48,7 @@ spec:
           image: ghcr.io/goauthentik/proxy:2025.10.2
           env:
             - name: AUTHENTIK_HOST
-              value: "http://authentik-server:9000"
+              value: "http://authentik-server.default.svc.cluster.local"
             - name: AUTHENTIK_INSECURE
               value: "true"
             - name: AUTHENTIK_TOKEN
@@ -54,6 +56,9 @@ spec:
                 secretKeyRef:
                   name: authentik-outpost-external-token
                   key: token
+          envFrom:
+            - secretRef:
+                name: *secret
           ports:
             - name: http
               containerPort: 9000
