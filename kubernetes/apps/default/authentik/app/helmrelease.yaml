@@ -54,6 +54,8 @@ spec:
           enabled: true
           hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
           parentRefs:
+            - name: envoy-internal
+              namespace: network
             - name: envoy-external
               namespace: network
       resources:
