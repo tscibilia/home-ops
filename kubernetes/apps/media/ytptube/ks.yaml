@@ -6,7 +6,7 @@ metadata:
   name: &app ytptube
 spec:
   components:
-    - ../../../../components/ext-auth
+    - ../../../../components/ext-auth-external
     - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:

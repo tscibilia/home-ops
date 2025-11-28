@@ -6,7 +6,7 @@ metadata:
   name: &app spoolman
 spec:
   components:
-    - ../../../../components/ext-auth
+    - ../../../../components/ext-auth-internal
     - ../../../../components/volsync
   dependsOn:
     - name: secret-stores

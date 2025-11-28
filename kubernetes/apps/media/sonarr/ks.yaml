@@ -6,7 +6,7 @@ metadata:
   name: &app sonarr
 spec:
   components:
-    - ../../../../components/ext-auth
+    - ../../../../components/ext-auth-internal
     - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
