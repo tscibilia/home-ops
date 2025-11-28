@@ -60,12 +60,20 @@ route:
 
 ## Authentication (Authentik)
 
-For apps requiring authentication, use the `ext-auth` component:
+For apps requiring authentication, use the appropriate `ext-auth` component:
 
-**In app's kustomization.yaml:**
+**For internal apps (envoy-internal):**
 ```yaml
+# In app's kustomization.yaml
 components:
-  - ../../../../components/ext-auth
+  - ../../../../components/ext-auth-internal
+```
+
+**For external apps (envoy-external):**
+```yaml
+# In app's kustomization.yaml
+components:
+  - ../../../../components/ext-auth-external
 ```
 
 **In app's ks.yaml:**
@@ -75,7 +83,7 @@ postBuild:
     APP: app-name  # Must match HelmRelease/HTTPRoute name
 ```
 
-See `kubernetes/components/ext-auth/` for SecurityPolicy configuration.
+See `kubernetes/components/ext-auth-internal/` and `kubernetes/components/ext-auth-external/` for SecurityPolicy configuration.
 
 ## Monitoring
 

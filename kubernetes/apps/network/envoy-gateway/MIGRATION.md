@@ -256,19 +256,23 @@ configMaps:
 
 ---
 
-## Authentik Integration (ext-auth Component)
+## Authentik Integration (ext-auth Components)
 
-The reusable `ext-auth` component provides forward authentication via SecurityPolicy.
+Reusable `ext-auth-internal` and `ext-auth-external` components provide forward authentication via SecurityPolicy.
 
 ### Component Structure
 
 ```
-kubernetes/components/ext-auth/
+kubernetes/components/ext-auth-internal/
+├── kustomization.yaml
+└── securitypolicy.yaml
+
+kubernetes/components/ext-auth-external/
 ├── kustomization.yaml
 └── securitypolicy.yaml
 ```
 
-**securitypolicy.yaml:**
+**securitypolicy.yaml (ext-auth-internal):**
 ```yaml
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
@@ -277,23 +281,37 @@ metadata:
 spec:
   extAuth:
     failOpen: false
-    headersToExtAuth:
-      - accept
-      - cookie
-      - authorization
-      - x-forwarded-proto
-      - x-forwarded-host
-      - x-forwarded-uri
+    headersToExtAuth: ["cookie"]
     http:
       backendRefs:
-        - name: ak-outpost-authentik-embedded-outpost
+        - name: authentik-outpost-internal
           namespace: default
           port: 9000
       path: /outpost.goauthentik.io/auth/envoy
-      headersToBackend:
-        - set-cookie
-        - x-authentik-*  # Wildcard pattern for all Authentik headers
-        - authorization
+      headersToBackend: ["set-cookie", "x-authentik-*", "authorization"]
+  targetRefs:
+    - group: ${EXT_AUTH_GROUP:-gateway.networking.k8s.io}
+      kind: ${EXT_AUTH_KIND:-HTTPRoute}
+      name: ${EXT_AUTH_TARGET:-${APP}}  # Defaults to ${APP} if not specified
+```
+
+**securitypolicy.yaml (ext-auth-external):**
+```yaml
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: ${APP}  # Substituted by Flux to match HelmRelease/HTTPRoute name
+spec:
+  extAuth:
+    failOpen: false
+    headersToExtAuth: ["cookie"]
+    http:
+      backendRefs:
+        - name: authentik-outpost-external
+          namespace: default
+          port: 9000
+      path: /outpost.goauthentik.io/auth/envoy
+      headersToBackend: ["set-cookie", "x-authentik-*", "authorization"]
   targetRefs:
     - group: ${EXT_AUTH_GROUP:-gateway.networking.k8s.io}
       kind: ${EXT_AUTH_KIND:-HTTPRoute}
@@ -302,7 +320,7 @@ spec:
 
 ### ReferenceGrant
 
-Allows SecurityPolicy from other namespaces to reference the Authentik service:
+Allows SecurityPolicy from other namespaces to reference the Authentik outpost services:
 
 ```yaml
 # kubernetes/apps/default/authentik/app/referencegrant.yaml
@@ -330,25 +348,39 @@ spec:
   to:
     - group: ""
       kind: Service
-      name: ak-outpost-authentik-embedded-outpost
+      name: authentik-outpost-internal
+    - group: ""
+      kind: Service
+      name: authentik-outpost-external
 ```
 
 ### Usage Example
 
-**App's kustomization.yaml:**
+**For internal apps (envoy-internal gateway):**
 ```yaml
+# App's kustomization.yaml
 components:
-  - ../../../../components/ext-auth
+  - ../../../../components/ext-auth-internal
+
+# App's ks.yaml
+postBuild:
+  substitute:
+    APP: qbittorrent  # Must match HelmRelease/HTTPRoute name
 ```
 
-**App's ks.yaml:**
+**For external apps (envoy-external gateway):**
 ```yaml
+# App's kustomization.yaml
+components:
+  - ../../../../components/ext-auth-external
+
+# App's ks.yaml
 postBuild:
   substitute:
     APP: victoria-metrics  # Must match HelmRelease/HTTPRoute name
 ```
 
-This creates a SecurityPolicy in the app's namespace targeting its HTTPRoute, using Authentik's embedded outpost for authentication.
+This creates a SecurityPolicy in the app's namespace targeting its HTTPRoute, using the appropriate Authentik outpost for authentication.
 
 ---
 
