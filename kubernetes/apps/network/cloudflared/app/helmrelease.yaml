@@ -79,14 +79,6 @@ spec:
         data:
           config.yaml: |-
             ingress:
-              - hostname: "air.${SECRET_DOMAIN}"
-                originRequest:
-                  http2Origin: false
-                  originServerName: "external.${SECRET_DOMAIN}"
-                  noHappyEyeballs: true
-                  connectTimeout: 60s
-                  tcpKeepAlive: 60s
-                service: https://envoy-external.{{ .Release.Namespace }}.svc.cluster.local:443
               - hostname: "*.${SECRET_DOMAIN}"
                 originRequest:
                   http2Origin: true

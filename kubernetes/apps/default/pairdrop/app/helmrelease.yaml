@@ -105,12 +105,11 @@ spec:
             scrapeTimeout: 30s
     route:
       app:
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            conditions: ["[STATUS] == 200"]
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        annotations:
+          gatus.home-operations.com/enabled: "false"
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: network
         rules:
           - backendRefs:
