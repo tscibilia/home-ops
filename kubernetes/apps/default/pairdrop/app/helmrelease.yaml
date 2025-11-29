@@ -91,16 +91,7 @@ spec:
             port: &port 3000
       coturn:
         controller: *app
-        type: LoadBalancer
-        annotations:
-          io.cilium/lb-ipam-ips: "192.168.5.240"
         ports:
-          turn-tcp:
-            port: 3478
-            protocol: TCP
-          turn-udp:
-            port: 3478
-            protocol: UDP
           metrics:
             port: 9641
     serviceMonitor:
