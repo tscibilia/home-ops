@@ -54,8 +54,7 @@ spec:
               TZ: ${TIMEZONE:-UTC}
               GUACAMOLE_HOME: /guacamole
               WEBAPP_CONTEXT: ROOT
-              TOTP_ENABLED: "true"
-              EXTENSION_PRIORITY: "*, openid"
+              EXTENSION_PRIORITY: "openid, postgresql, ban"
             envFrom:
               - secretRef:
                   name: guacamole-secret
