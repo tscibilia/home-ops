@@ -47,10 +47,6 @@ spec:
         - name: outpost
           image: ghcr.io/goauthentik/proxy:2025.10.2
           env:
-            - name: AUTHENTIK_HOST
-              value: "http://authentik-server.default.svc.cluster.local"
-            - name: AUTHENTIK_INSECURE
-              value: "true"
             - name: AUTHENTIK_TOKEN
               valueFrom:
                 secretKeyRef:
