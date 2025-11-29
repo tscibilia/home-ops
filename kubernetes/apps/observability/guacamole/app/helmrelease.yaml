@@ -34,28 +34,17 @@ spec:
               - /bin/sh
               - -c
               - /opt/guacamole/bin/initdb.sh --postgresql > /migrations/initdb.sql
-          03-changeowner:
+          03-migrate:
             image:
-              repository: docker.io/guacamole/guacamole
-              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "18"
             envFrom:
               - secretRef:
                   name: guacamole-secret
             command:
               - /bin/sh
               - -c
-              - psql postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOSTNAME:$POSTGRES_PORT/$POSTGRES_DATABASE -c "ALTER SCHEMA public OWNER TO $POSTGRES_USER;" || true
-          04-migrate:
-            image:
-              repository: docker.io/guacamole/guacamole
-              tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
-            envFrom:
-              - secretRef:
-                  name: guacamole-secret
-            command:
-              - /bin/sh
-              - -c
-              - psql postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOSTNAME:$POSTGRES_PORT/$POSTGRES_DATABASE -f /migrations/initdb.sql || true
+              - psql postgresql://$POSTGRESQL_USERNAME:$POSTGRESQL_PASSWORD@$POSTGRESQL_HOSTNAME:5432/$POSTGRESQL_DATABASE -f /migrations/initdb.sql
         containers:
           app:
             image:
@@ -63,8 +52,10 @@ spec:
               tag: 1.6.0@sha256:f344085e618bb05e22b964b0208dbd06d3468275bac70206f93805245e067b40
             env:
               TZ: ${TIMEZONE:-UTC}
-              GUACAMOLE_HOME: /config
+              GUACAMOLE_HOME: /guacamole
+              WEBAPP_CONTEXT: ROOT
               TOTP_ENABLED: "true"
+              EXTENSION_PRIORITY: "*, openid"
             envFrom:
               - secretRef:
                   name: guacamole-secret
@@ -108,12 +99,12 @@ spec:
         advancedMounts:
           *app :
             app:
-              - path: /config
+              - path: /guacamole
       migrations:
         type: emptyDir
         advancedMounts:
           *app :
             02-initdb:
               - path: /migrations
-            04-migrate:
+            03-migrate:
               - path: /migrations
