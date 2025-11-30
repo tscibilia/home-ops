@@ -44,7 +44,7 @@ filters:
             "site:nbl", "site:oe", "site:phd", "site:rfx", "site:sp",
             "site:st", "site:td", "site:tl", "site:uhd", "site:ulcx"
           ) &&
-          SeedingDays > 60
+          SeedingDays > 30
         )
       # Remove torrents that are not linked and seeding for more than 24 days
       - HasAnyTag("not-linked") && SeedingDays > 24
