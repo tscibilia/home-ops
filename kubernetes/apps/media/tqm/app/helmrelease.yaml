@@ -48,6 +48,8 @@ spec:
             args:
               - clean
               - qb
+            env:
+              LOG_LEVEL: debug
         pod:
           restartPolicy: Never
           terminationGracePeriodSeconds: 120
