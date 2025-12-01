@@ -5,7 +5,7 @@ name: "Release"
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 6" # 1st of every month at midnight
+    - cron: "0 0 1 * *" # 1st of every month at midnight
 
 permissions:
   contents: write
@@ -20,10 +20,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate & Publish Release Notes
+      - name: Generate Release Notes
         id: release-notes
-        uses: release-drafter/release-drafter@b1476f6e6eb133afa41ed8589daba6dc69b4d3f5 # v6.1.0
+        uses: mirceanton/action-semver-release@908a5194d92d851fa6363ffaf705e05bca925795 # v2.1.0
         with:
-          config-name: release.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: true
+
+      - name: Determine CalVer Tag
+        id: calver
+        uses: mirceanton/action-calver-release@e34e40c96ed4998c9a0adb0c8d3d821b49d789a3 # 2025.11.4
+        with:
+          github-token: ${{ secrets.PAT_WORKFLOW }}
+          dry-run: true
+
+      - name: Create Release
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
+        with:
+          body: ${{ steps.release-notes.outputs.release-notes }}
+          tag: ${{ steps.calver.outputs.release-tag }}
+          token: ${{ secrets.PAT_WORKFLOW }}
