@@ -23,8 +23,8 @@ spec:
               TZ: ${TIMEZONE:-UTC}
             probes:
               liveness: &probes
-                enabled: false
-                # custom: true
+                enabled: true
+                custom: true
                 spec:
                   httpGet:
                     path: ${GATUS_PATH}
@@ -35,9 +35,11 @@ spec:
                   failureThreshold: 3
               readiness: *probes
               startup:
-                enabled: false
-                # custom: true
+                <<: *probes
                 spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
                   failureThreshold: 30
                   periodSeconds: 10
             securityContext:
