@@ -29,7 +29,7 @@ spec:
                   httpGet:
                     path: ${GATUS_PATH}
                     port: &port 8096
-                  initialDelaySeconds: 240
+                  initialDelaySeconds: 480
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 3
