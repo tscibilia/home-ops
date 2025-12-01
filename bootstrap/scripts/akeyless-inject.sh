@@ -6,7 +6,7 @@ set -Eeuo pipefail
 ################################################################################
 # This is a Work in Progress (WIP), and only limited tests by myself.
 # Please review and test before using. Feedback and contributions are welcome!
-# Inspired by https://github.com/brunnels/
+# Inspired by https://github.com/brunnels/talos-cluster/blob/ms01/scripts/lib/akeyless.sh
 ################################################################################
 #
 # Description:
