@@ -15,11 +15,13 @@ sonarr:
       - template: sonarr-v4-quality-profile-anime
     quality_profiles:
       - name: WEB-1080p
+        min_upgrade_format_score: 100
         upgrade:
           allowed: true
           until_quality: WEB 720p
       - name: Remux-1080p - Anime
         min_format_score: 2000
+        min_upgrade_format_score: 100
         upgrade:
           allowed: true
           until_quality: WEB 720p
@@ -73,6 +75,7 @@ radarr:
     quality_profiles:
       - name: SQP-1 WEB (1080p)
       - name: UHD Bluray + WEB
+        min_upgrade_format_score: 100
         upgrade:
           allowed: true
           until_quality: WEB 2160p
