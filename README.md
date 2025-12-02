@@ -136,3 +136,11 @@ There is a template over at [onedr0p/cluster-template](https://github.com/onedr0
 ### 🔏 License
 
 See [LICENSE](https://github.com/tscibilia/home-ops/blob/main/LICENSE)
+
+___
+
+<div align="center">
+
+[![DeepWiki](https://img.shields.io/badge/deepwiki-purple?label=&logo=deepl&style=for-the-badge&logoColor=white)](https://deepwiki.com/tscibilia/home-ops)
+
+</div>
