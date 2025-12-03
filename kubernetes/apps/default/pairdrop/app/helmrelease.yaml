@@ -59,6 +59,7 @@ spec:
               - --log-file=stdout
               - --listening-ip=0.0.0.0
               - --listening-port=3478
+              - --external-ip=192.168.5.234
               - --min-port=10000
               - --max-port=20000
               - --fingerprint
@@ -94,6 +95,20 @@ spec:
         ports:
           metrics:
             port: 9641
+      coturn-lb:
+        controller: *app
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.5.234
+        ports:
+          turn-tcp:
+            port: 3478
+            protocol: TCP
+            targetPort: 3478
+          turn-udp:
+            port: 3478
+            protocol: UDP
+            targetPort: 3478
     serviceMonitor:
       coturn:
         serviceName: pairdrop-coturn
