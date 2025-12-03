@@ -8,7 +8,7 @@ sonarr:
     replace_existing_custom_formats: true
     quality_definition:
       type: series
-      preferred_ratio: 0.05
+      preferred_ratio: 0.04
     include:
       - template: sonarr-v4-quality-profile-web-1080p-alternative # Use for older LQ shows
       - template: sonarr-v4-custom-formats-web-1080p
@@ -66,7 +66,7 @@ radarr:
     replace_existing_custom_formats: true
     quality_definition:
       type: movie
-      preferred_ratio: 0.1
+      preferred_ratio: 0.08
     include:
       - template: radarr-quality-profile-sqp-1-web-1080p
       - template: radarr-custom-formats-sqp-1-web-1080p
@@ -74,6 +74,7 @@ radarr:
       - template: radarr-custom-formats-uhd-bluray-web
     quality_profiles:
       - name: SQP-1 WEB (1080p)
+        min_upgrade_format_score: 100
       - name: UHD Bluray + WEB
         min_upgrade_format_score: 100
         upgrade:
