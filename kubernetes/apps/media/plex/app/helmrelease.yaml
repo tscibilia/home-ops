@@ -35,14 +35,7 @@ spec:
                   periodSeconds: 10
                   timeoutSeconds: 10
                   failureThreshold: 3
-              readiness:
-                <<: *probes
-                spec:
-                  httpGet:
-                    path: ${GATUS_PATH}
-                    port: *port
-                  timeoutSeconds: 5
-                  failureThreshold: 3
+              readiness: *probes
               startup:
                 enabled: true
                 spec:
