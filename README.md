@@ -63,7 +63,6 @@ My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](ht
 - [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs DNS records to my DNS provider.
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
 - [generic-device-plugin](https://github.com/squat/generic-device-plugin): Allocates linux devices to pods (squat.ai/tun).
-- [k8s-gateway](https://github.com/k8s-gateway/k8s_gateway): CoreDNS plugin to support internal ingress records.
 - [envoy-gateway](https://github.com/envoyproxy/gateway): Envoy Proxy to manage service-to-service communication and proxying.
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
@@ -71,6 +70,7 @@ My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](ht
 - [sops](https://github.com/getsops/sops): Stores and manages encrypted secrets which are commited to Git.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
 - [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
+- [unifi-dns](https://github.com/kashalls/external-dns-unifi-webhook): External-DNS Webhook to manage UniFi DNS Records.
 - [volsync](https://github.com/backube/volsync): Backup and recovery of persistent volume claims.
 
 ### Observability

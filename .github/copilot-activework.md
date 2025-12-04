@@ -23,6 +23,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Switch from k8s-gateway -> unifi-dns - **2025-12-04** (See [#1229](https://github.com/tscibilia/home-ops/issues/1229))
 - ✅ (Not Planned) Migrate vaultwarden to postgres - **2025-12-01** (See [#1212](https://github.com/tscibilia/home-ops/issues/1212))
 - ✅ Internal Apps Inaccessible from LAN - **2025-11-28** (See PR [#1194](https://github.com/tscibilia/home-ops/pull/1194) & issue [#1196](https://github.com/tscibilia/home-ops/issues/1196))
 - ✅ Cloudflared tunnel connection error - **2025-11-27** (See commit [db25bb3](https://github.com/tscibilia/home-ops/commit/db25bb3) & issue [#1189](https://github.com/tscibilia/home-ops/issues/1189))
