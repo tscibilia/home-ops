@@ -23,6 +23,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Tailscale Split DNS after unifi-dns Migration - **2025-12-04** (See [#1235](https://github.com/tscibilia/home-ops/issues/1235))
 - ✅ Jellyfin 10.11.x trickplay path changed - **2025-12-04** (See [#1234](https://github.com/tscibilia/home-ops/issues/1234))
 - ✅ Switch from k8s-gateway -> unifi-dns - **2025-12-04** (See [#1229](https://github.com/tscibilia/home-ops/issues/1229))
 - ✅ Fix Plex & allow remote access - **2025-12-03** (See [#1227](https://github.com/tscibilia/home-ops/issues/1227))
