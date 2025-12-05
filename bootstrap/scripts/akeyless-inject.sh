@@ -91,7 +91,6 @@ resolve_secret() {
   log debug "Resolving secret reference" "ref=$ref" "path=$path"
 
   # Try as full path first (plain text or nested secret)
-  log info "Fetching secret" "path=$path"
   local secret_value
   if secret_value=$(akeyless get-secret-value --name "$path" 2>&1); then
     log debug "Resolved as full-path secret" "name=$path"
