@@ -183,7 +183,7 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 - Apps using secrets depend on `external-secrets` namespace
 - Dragonfly cache dependencies for certain apps
 
-**Example:** Authentik depends on postgres16 CNPG cluster:
+**Example:** Authentik depends on pgsql-cluster CNPG cluster:
 ```yaml
 dependsOn:
   - name: cnpg-cluster
@@ -191,7 +191,7 @@ dependsOn:
 healthChecks:
   - apiVersion: postgresql.cnpg.io/v1
     kind: Cluster
-    name: postgres16
+    name: pgsql-cluster
 ```
 
 ## App Communication & Integration Patterns
@@ -240,7 +240,7 @@ Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's fo
 **Key Components:**
 1. **Authentik Server** (`default` namespace):
    - Main application deployed via HelmRelease with embedded outpost sidecar
-   - Stores user credentials, application configurations, and policies in postgres16 database
+   - Stores user credentials, application configurations, and policies in pgsql-cluster database
    - Exposes SSO interface at `/auth/` endpoint (e.g., `auth.t0m.co`)
    - Worker replicas (2x) handle background tasks and policy evaluation
 
@@ -384,7 +384,7 @@ See [Task Runner Usage](#task-runner-usage) section for full reference. Key debu
 ## Project-Specific Conventions
 
 1. **Naming:** Anchors (`&app`) used in YAML for consistency (e.g., `name: &app authentik` referenced as `*app`)
-2. **Substitutions:** Flux postBuild substitutions inject dynamic values (e.g., `CNPG_NAME: postgres16`)
+2. **Substitutions:** Flux postBuild substitutions inject dynamic values (e.g., `CNPG_NAME: pgsql-cluster`)
 3. **ConfigMaps from files:** Apps use `configMapGenerator` to embed custom configs (e.g., custom.css)
 4. **Renovate integration:** Image tags marked with `# renovate: datasource=docker` for auto-updates
 5. **Language servers:** YAML files include JSON schema references for IDE validation
@@ -476,10 +476,10 @@ kubectl rollout restart deployment/external-secrets -n external-secrets
 **Diagnosis:**
 ```bash
 # Check Cluster status
-kubectl describe cluster postgres16 -n database
+kubectl describe cluster pgsql-cluster -n database
 
 # View CNPG pod logs
-kubectl logs -n database cnpg-postgres16-1 -f
+kubectl logs -n database pgsql-cluster-1 -f
 
 # Check persistent volumes
 kubectl get pv,pvc -n database
@@ -491,20 +491,20 @@ kubectl get backup -n database
 **Recovery steps:**
 ```bash
 # 1. Check cluster readiness condition
-kubectl get cluster postgres16 -n database -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
+kubectl get cluster pgsql-cluster -n database -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
 
 # 2. If cluster is degraded, check pod status
-kubectl get pods -n database -l cnpg.io/cluster=postgres16
+kubectl get pods -n database -l cnpg.io/cluster=pgsql-cluster
 
 # 3. Retrieve superuser credentials for manual recovery
-kubectl get secret -n database postgres16-superuser -o jsonpath='{.data.password}' | base64 -d
+kubectl get secret -n database pgsql-cluster-superuser -o jsonpath='{.data.password}' | base64 -d
 
 # 4. Connect directly to test database
-psql -h postgres16-rw.database.svc.cluster.local -U postgres -d postgres -W
+psql -h pgsql-cluster-rw.database.svc.cluster.local -U postgres -d postgres -W
 
 # 5. If PVC is full, scale down app and clean data, then restart cluster
 kubectl scale deployment <app> --replicas=0 -n <app-namespace>
-kubectl rollout restart statefulset/cnpg-postgres16 -n database
+kubectl rollout restart statefulset/cnpg-pgsql-cluster -n database
 ```
 
 ### PVC Mounting & Storage Issues

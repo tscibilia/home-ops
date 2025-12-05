@@ -19,7 +19,7 @@ spec:
       APP: *app
       GATUS_PATH: /health
       GATUS_SUBDOMAIN: status
-      CNPG_NAME: &postgresAppName postgres16
+      CNPG_NAME: &postgresAppName pgsql-cluster
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

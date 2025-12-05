@@ -11,4 +11,4 @@ akeyless update-secret-val \
   --custom-field "${APP}_postgres_password=${PASSWORD}"
 ```
 
-`${CNPG_NAME:=postgres16}` comes from each app's ks.yaml postBuild > substitute schema
+`${CNPG_NAME:=pgsql-cluster}` comes from each app's ks.yaml postBuild > substitute schema

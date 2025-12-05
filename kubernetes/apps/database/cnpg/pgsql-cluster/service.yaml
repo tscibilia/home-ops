@@ -3,13 +3,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres16
+  name: pgsql-cluster
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "postgres16.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/hostname: "pgsql-cluster.${SECRET_DOMAIN}"
 spec:
   type: LoadBalancer
   selector:
-    cnpg.io/cluster: postgres16
+    cnpg.io/cluster: pgsql-cluster
     cnpg.io/instanceRole: primary
   ports:
     - name: postgres

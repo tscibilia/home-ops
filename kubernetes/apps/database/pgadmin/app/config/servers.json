@@ -1,9 +1,9 @@
 {
     "Servers": {
         "1": {
-            "Name": "postgres16",
+            "Name": "pgsql-cluster",
             "Group": "Servers",
-            "Host": "postgres16-rw.database.svc.cluster.local",
+            "Host": "pgsql-cluster-rw.database.svc.cluster.local",
             "Port": 5432,
             "MaintenanceDB": "postgres",
             "Username": "postgres",

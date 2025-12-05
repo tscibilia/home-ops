@@ -24,7 +24,7 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: mp
       GATUS_PATH: /api/app/about
-      CNPG_NAME: &postgresAppName postgres16
+      CNPG_NAME: &postgresAppName pgsql-cluster
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

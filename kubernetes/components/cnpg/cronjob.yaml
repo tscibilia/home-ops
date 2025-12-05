@@ -29,7 +29,7 @@ spec:
                 - /backup.sh
               env:
                 - name: POSTGRES_HOST
-                  value: ${CNPG_NAME:=postgres16}-rw.database.svc.cluster.local
+                  value: ${CNPG_NAME:=pgsql-cluster}-rw.database.svc.cluster.local
                 - name: POSTGRES_DB
                   value: ${APP}
                 - name: POSTGRES_USER

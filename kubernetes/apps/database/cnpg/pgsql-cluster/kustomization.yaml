@@ -5,6 +5,5 @@ kind: Kustomization
 resources:
   - ./cluster.yaml
   - ./grafanadashboard.yaml
-  - ./postgres16.yaml
   - ./scheduledbackup.yaml
   - ./service.yaml

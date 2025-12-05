@@ -39,7 +39,7 @@ spec:
     failed: status.conditions.filter(e, e.type == 'Ready' && e.status == 'False').size() > 0
     current: status.conditions.filter(e, e.type == 'Ready' && e.status == 'True').size() > 0
   interval: 1h
-  path: ./kubernetes/apps/database/cnpg/cluster
+  path: ./kubernetes/apps/database/cnpg/pgsql-cluster
   postBuild:
     substituteFrom:
       - kind: Secret
