@@ -1,0 +1,63 @@
+---
+# yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: &name pgsql-cluster
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+  primaryUpdateStrategy: unsupervised
+  primaryUpdateMethod: switchover
+  storage:
+    size: 20Gi
+    storageClass: openebs-hostpath
+
+  # Note: this is needed when recovering from an existing cnpg cluster
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  bootstrap:
+    recovery:
+      source: source
+  externalClusters:
+    - name: source
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: postgres16
+          serverName: postgres16
+
+  superuserSecret:
+    name: cnpg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      max_connections: '400'
+      shared_buffers: '512MB'
+    pg_hba:
+    - host all all 10.42.0.0/16 scram-sha-256
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 2Gi
+  monitoring:
+    enablePodMonitor: true
+  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
+  enablePDB: true
+  # Fix for non AWS backup https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
+  env:
+    - name: AWS_REQUEST_CHECKSUM_CALCULATION
+      value: when_required
+    - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+      value: when_required
+    - name: TZ
+      value: ${TIMEZONE:-UTC}
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: *name
+        serverName: *name
