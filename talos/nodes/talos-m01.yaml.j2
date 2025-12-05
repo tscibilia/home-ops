@@ -11,7 +11,7 @@ machine:
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
-        mtu: 1500
+        mtu: 9000
         dhcp: true
         vip:
           ip: 192.168.5.200
@@ -24,7 +24,7 @@ machine:
           - network: 10.10.10.0/28
             metric: 2048
         dhcp: false
-        mtu: 1500
+        mtu: 9000
   nodeLabels:
     topology.kubernetes.io/zone: m
     node.kubernetes.io/exclude-from-external-load-balancers: ""
