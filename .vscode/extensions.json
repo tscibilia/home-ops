@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "anthropic.claude-code",
+    "samuelcolvin.jinjahtml",
     "bluebrown.yamlfmt",
     "blueglassblock.better-json5",
     "irongeek.vscode-env",
