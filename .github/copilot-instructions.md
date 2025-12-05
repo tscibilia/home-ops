@@ -65,7 +65,7 @@ Commands via `just` (main `.justfile` with 3 modules from `bootstrap`, `kubernet
 - `keda-all <state>` - Suspend or resume all ScaledObjects
 
 **Network Stack:**
-- `restart-network` - Restart network components in dependency order (CoreDNS → Cilium → Cloudflared → External-DNS → k8s-gateway → Envoy)
+- `restart-network` - Restart network components in dependency order (CoreDNS → Cilium → Cloudflared → External-DNS → unifi-dns → Envoy)
 
 ### Talos Module (`just talos`)
 **Node Management:**
@@ -136,9 +136,12 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 
 **DNS & Service Discovery (Split DNS):**
 - **CoreDNS**: Internal cluster DNS (10.43.0.10) handles *.cluster.local and resolves via /etc/resolv.conf fallthrough
-- **k8s-gateway**: CoreDNS plugin + LoadBalancer service (192.168.5.199) watches Ingress/HTTPRoute to expose internal services
-  - Example: `homepage.t0m.co` resolves to k8s-gateway, which routes to the homepage service
-  - Bridges internal DNS (cluster.local) with external domain (t0m.co) via split-DNS
+- **unifi-dns**: external-dns deployment with UniFi webhook provider syncs DNS records from Kubernetes to UniFi Controller
+  - Watches HTTPRoute and Service resources for DNS changes
+  - Automatically creates/updates/deletes DNS A records in UniFi controller based on Kubernetes resources
+  - Integrated with Cloudflare Zero Trust DNS over HTTPS for enhanced security
+  - Domain filter: `${SECRET_DOMAIN}` (t0m.co)
+  - TXT record prefix: `k8s.main.` for ownership tracking
 - **external-dns**: Syncs Gateway HTTPRoute resources to Cloudflare DNS, marking external-only routes as `--cloudflare-proxied`
   - Watches `envoy-external` gateway for routes to expose externally
   - Monitors CRDs (DNSEndpoint) and Gateway HTTPRoutes for updates
@@ -151,13 +154,13 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 
 **Ingress Gateway (Envoy Gateway):**
 - `envoy-external`: Routes traffic from cloudflared tunnel, handles mTLS termination via cert-manager
-- `envoy-internal`: (if present) Routes internal-only traffic from k8s-gateway
+- `envoy-internal`: (if present) Routes internal-only traffic
 - Gateway resources define routing rules, SecurityPolicies enforce cross-namespace access (ReferenceGrant)
 - HTTPRoute resources automatically synced by external-dns to update Cloudflare DNS
 
 **Traffic Flow Summary:**
 1. **Internal**: Pod → CoreDNS (10.43.0.10) → Cilium load balancer → Service pods
-2. **Internal from LAN**: Client (192.168.5.0/24) → k8s-gateway (192.168.5.199) → CoreDNS lookup → Cilium LB → Service
+2. **Internal from LAN**: Client (192.168.5.0/24) → UniFi DNS → Cloudflare DoH → CoreDNS lookup → Cilium LB → Service
 3. **External**: Internet → Cloudflare tunnel → cloudflared → envoy-external → Service pods
 
 ## Secrets Management

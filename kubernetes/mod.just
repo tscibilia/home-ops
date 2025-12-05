@@ -218,9 +218,9 @@ restart-network:
     just log info "Restarting External-DNS..."
     kubectl rollout restart deployment/external-dns -n network
     kubectl rollout status deployment/external-dns -n network --timeout=120s
-    just log info "Restarting k8s-gateway..."
-    kubectl rollout restart deployment/k8s-gateway -n network
-    kubectl rollout status deployment/k8s-gateway -n network --timeout=120s
+    just log info "Restarting unifi-dns..."
+    kubectl rollout restart deployment/unifi-dns -n network
+    kubectl rollout status deployment/unifi-dns -n network --timeout=120s
     just log info "Restarting Envoy-Gateway..."
     kubectl rollout restart deployment/envoy-gateway -n network
     kubectl rollout status deployment/envoy-gateway -n network --timeout=120s
