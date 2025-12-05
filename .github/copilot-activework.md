@@ -23,8 +23,11 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Jellyfin 10.11.x trickplay path changed - **2025-12-04** (See [#1234](https://github.com/tscibilia/home-ops/issues/1234))
 - ✅ Switch from k8s-gateway -> unifi-dns - **2025-12-04** (See [#1229](https://github.com/tscibilia/home-ops/issues/1229))
-- ✅ (Not Planned) Migrate vaultwarden to postgres - **2025-12-01** (See [#1212](https://github.com/tscibilia/home-ops/issues/1212))
+- ✅ Fix Plex & allow remote access - **2025-12-03** (See [#1227](https://github.com/tscibilia/home-ops/issues/1227))
+- ✅ Add guacamole container - **2025-11-29** (See [#524](https://github.com/tscibilia/home-ops/issues/524))
+- ✅ Authentik Application Icons Not Displaying from MinIO S3 - **2025-11-28** (See [#1197](https://github.com/tscibilia/home-ops/issues/1197))
 - ✅ Internal Apps Inaccessible from LAN - **2025-11-28** (See PR [#1194](https://github.com/tscibilia/home-ops/pull/1194) & issue [#1196](https://github.com/tscibilia/home-ops/issues/1196))
 - ✅ Cloudflared tunnel connection error - **2025-11-27** (See commit [db25bb3](https://github.com/tscibilia/home-ops/commit/db25bb3) & issue [#1189](https://github.com/tscibilia/home-ops/issues/1189))
 - ✅ Update bootstrap and talos config - **2025-11-23** (See PR [#1173](https://github.com/tscibilia/home-ops/pull/1173) & issue [#804](https://github.com/tscibilia/home-ops/issues/804))
@@ -33,4 +36,5 @@ This document is intended to supplement and connect with GitHub issues and meant
 - ✅ HTTPRoute instead of Ingress - **2025-11-13** (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
 ## Unresolved
+- ⛔ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
 - ⛔ Migrate unifi aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**
