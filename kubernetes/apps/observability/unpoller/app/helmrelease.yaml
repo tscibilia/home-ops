@@ -24,6 +24,7 @@ spec:
               UP_PROMETHEUS_HTTP_LISTEN: 0.0.0.0:80
               UP_UNIFI_DEFAULT_SAVE_DPI: true
               UP_INFLUXDB_DISABLE: true
+              UP_POLLER_DEBUG: "true"
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
