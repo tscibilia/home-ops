@@ -21,6 +21,7 @@ spec:
               tag: RELEASE.2025-04-22T22-12-26Z
             env:
               TZ: ${TIMEZONE:-UTC}
+              MINIO_BROWSER: "on"
               MINIO_API_CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},https://${S3_SUBDOMAIN}.${SECRET_DOMAIN},https://auth.${SECRET_DOMAIN}"
               MINIO_BROWSER_REDIRECT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               MINIO_PROMETHEUS_JOB_ID: minio
@@ -121,8 +122,3 @@ spec:
         globalMounts:
           - path: /data
             subPath: Minio
-      tmp:
-        type: emptyDir
-        medium: Memory
-        globalMounts:
-          - path: /tmp
