@@ -121,3 +121,8 @@ spec:
         globalMounts:
           - path: /data
             subPath: Minio
+      tmp:
+        type: emptyDir
+        medium: Memory
+        globalMounts:
+          - path: /tmp
