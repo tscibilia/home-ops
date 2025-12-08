@@ -15,30 +15,30 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
 
-  # Note: this is needed when recovering from an existing cnpg cluster
-  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
-  bootstrap:
-  #   initdb:
-  #     postInitSQL:
-  #       - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
-  #     import:
-  #       databases: ["*"]
-  #       roles: ["*"]
-  #       source:
-  #         externalCluster: &previousCluster immich-v1
-  #       type: monolith
-    recovery:
-      source: source
-      # Only needed for point-in-time recovery
-      recoveryTarget:
-        backupID: 20251208T035401
-  externalClusters:
-    - name: source
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          barmanObjectName: *name
-          serverName: *name
+  # # Note: this is needed when recovering from an existing cnpg cluster
+  # # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  # bootstrap:
+  # #   initdb:
+  # #     postInitSQL:
+  # #       - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+  # #     import:
+  # #       databases: ["*"]
+  # #       roles: ["*"]
+  # #       source:
+  # #         externalCluster: &previousCluster immich-v1
+  # #       type: monolith
+  #   recovery:
+  #     source: source
+  #     # Only needed for point-in-time recovery
+  #     recoveryTarget:
+  #       backupID: 20251208T035401
+  # externalClusters:
+  #   - name: source
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         barmanObjectName: *name
+  #         serverName: *name
 
   superuserSecret:
     name: cnpg-secret
