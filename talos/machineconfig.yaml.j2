@@ -149,10 +149,10 @@ cluster:
       enable-aggregator-routing: "true"
       feature-gates: ImageVolume=true,MutatingAdmissionPolicy=true,ResourceHealthStatus=true
       runtime-config: admissionregistration.k8s.io/v1beta1=true
-      oidc-client-id: ak://talos/OIDC_CLIENT_ID
+      {# oidc-client-id: ak://talos/OIDC_CLIENT_ID
       oidc-issuer-url: ak://talos/OIDC_ISSUER_URL
       oidc-groups-claim: groups
-      oidc-username-claim: preferred_username
+      oidc-username-claim: preferred_username #}
     image: registry.k8s.io/kube-apiserver:v1.34.2
   controllerManager:
     extraArgs:

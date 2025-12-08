@@ -104,7 +104,7 @@ resolve_secret() {
     local json_key="${path##*/}"
 
     log debug "Attempting JSON field extraction" "name=$secret_name" "key=$json_key"
-    log info "Fetching secret" "path=$secret_name/$json_key"
+    # log info "Fetching secret" "path=$secret_name/$json_key"
 
     # Fetch secret
     local secret_json

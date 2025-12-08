@@ -30,7 +30,7 @@ releases:
     chart: oci://ghcr.io/home-operations/charts-mirror/keda
     version: 2.18.1
 
-  - name: victoria-metrics-k8s-stack
+  - name: kube-prometheus-stack
     namespace: observability
-    chart: oci://ghcr.io/victoriametrics/helm-charts/victoria-metrics-k8s-stack
-    version: 0.65.1
+    chart: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
+    version: 80.0.0

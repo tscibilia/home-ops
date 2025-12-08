@@ -34,3 +34,12 @@ metadata:
 stringData:
   SECRET_DOMAIN: ak://cluster-secrets/SECRET_DOMAIN
   TIMEZONE: ak://cluster-secrets/TIMEZONE
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cluster-secrets
+  namespace: external-secrets
+stringData:
+  SECRET_DOMAIN: ak://cluster-secrets/SECRET_DOMAIN
+  TIMEZONE: ak://cluster-secrets/TIMEZONE
