@@ -15,11 +15,14 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
 
-  # Note: this is needed when recovering from an existing cnpg cluster
-  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  # # Note: this is needed when recovering from an existing cnpg cluster
+  # # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
   # bootstrap:
   #   recovery:
   #     source: source
+  #     # Only needed for point-in-time recovery
+  #     recoveryTarget:
+  #       backupID: 20251208T040604
   # externalClusters:
   #   - name: source
   #     plugin:

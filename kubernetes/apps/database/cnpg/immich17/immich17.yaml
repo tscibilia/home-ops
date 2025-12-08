@@ -29,8 +29,9 @@ spec:
   # #       type: monolith
   #   recovery:
   #     source: source
+  #     # Only needed for point-in-time recovery
   #     recoveryTarget:
-  #       targetTime: "2025-10-15 20:01:00"
+  #       backupID: 20251208T040605
   # externalClusters:
   #   - name: source
   #     plugin:
