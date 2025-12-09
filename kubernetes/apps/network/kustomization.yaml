@@ -15,4 +15,4 @@ resources:
   - ./external-dns/ks.yaml
   - ./proxy/ks.yaml
   - ./tailscale/ks.yaml
-  - ./unifi-dns/ks.yaml
+  # - ./unifi-dns/ks.yaml
