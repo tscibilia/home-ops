@@ -17,7 +17,7 @@ spec:
       port: 9443
       protocol: TCP
       targetPort: https
-    - name: metrics
+    - name: http-metrics
       port: 9300
       protocol: TCP
       targetPort: metrics

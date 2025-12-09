@@ -54,6 +54,9 @@ spec:
         namespace: rook-ceph
       patch: |-
         - op: add
+          path: /metadata/labels/prometheus.io~1instance
+          value: stack
+        - op: add
           path: /spec/endpoints/0/relabelings
           value:
             - sourceLabels: ["__address__"]
