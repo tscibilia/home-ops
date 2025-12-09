@@ -11,6 +11,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Known Issues
 `- Task name - impact & workaround`
+- Document issues with bootstrapping ([#1252](https://github.com/tscibilia/home-ops/issues/1252)) - **update talos machineconfig and VM NIC**
 - Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - **update talos machineconfig and VM NIC**
 
 ## Blocked
@@ -23,6 +24,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ VMAgent Scrape Pool Target Discovery Issues - **2025-12-09** (See [#1261](https://github.com/tscibilia/home-ops/issues/1261))
 - ✅ Tailscale Split DNS after unifi-dns Migration - **2025-12-04** (See [#1235](https://github.com/tscibilia/home-ops/issues/1235))
 - ✅ Jellyfin 10.11.x trickplay path changed - **2025-12-04** (See [#1234](https://github.com/tscibilia/home-ops/issues/1234))
 - ✅ Switch from k8s-gateway -> unifi-dns - **2025-12-04** (See [#1229](https://github.com/tscibilia/home-ops/issues/1229))
