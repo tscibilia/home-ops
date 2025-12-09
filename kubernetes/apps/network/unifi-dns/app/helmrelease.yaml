@@ -23,7 +23,7 @@ spec:
           - name: UNIFI_SKIP_TLS_VERIFY
             value: "true"
           - name: UNIFI_EXTERNAL_CONTROLLER
-            value: "true"
+            value: "false"
           - name: UNIFI_API_KEY
             valueFrom:
               secretKeyRef:
