@@ -27,12 +27,8 @@ spec:
             disabled: false
             interval: 45s
     monitoring:
-      enabled: true
+      enabled: false  # Disabled - using VMStaticScrape instead for external mgr
       createPrometheusRules: true
-      externalMgrPrometheusPort: 9283 # IP doesn't need to be specified, operator will find it itself
-      externalMgrEndpoints:
-        - ip: 10.10.10.1
-      interval: 15s
 
     # -- Settings for the block pool snapshot class
     # @default -- See [RBD Snapshots](../Storage-Configuration/Ceph-CSI/ceph-csi-snapshot.md#rbd-snapshots)

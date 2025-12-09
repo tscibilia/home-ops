@@ -1,0 +1,16 @@
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMStaticScrape
+metadata:
+  name: rook-ceph-mgr-external
+  namespace: rook-ceph
+  labels:
+    app: rook-ceph-mgr
+spec:
+  jobName: rook-ceph-mgr-external
+  targetEndpoints:
+    - targets:
+        - "10.10.10.1:9283"
+      labels:
+        app: rook-ceph-mgr
+        rook_cluster: rook-ceph

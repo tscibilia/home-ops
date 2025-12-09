@@ -9,3 +9,4 @@ resources:
   - ./monitorconfig.yaml
   - ./ocirepository.yaml
   - ./storageclass.yaml
+  - ./vmstaticscrape.yaml
