@@ -4,6 +4,14 @@ kind: Service
 metadata:
   name: authentik-outpost-external
   namespace: default
+  labels:
+    app.kubernetes.io/name: authentik-proxy
+    app.kubernetes.io/instance: authentik-outpost-external
+    app.kubernetes.io/managed-by: goauthentik.io
+    app.kubernetes.io/version: "${AUTHENTIK_VERSION}"
+    goauthentik.io/outpost-name: authentik-outpost-external
+    goauthentik.io/outpost-type: proxy
+    goauthentik.io/outpost-uuid: efb6cd0c1ddd4664804cd0f00b1d220b
 spec:
   type: ClusterIP
   selector:
