@@ -20,17 +20,11 @@ spec:
         env:
           - name: UNIFI_HOST
             value: https://192.168.1.1
-          - name: UNIFI_SKIP_TLS_VERIFY
-            value: "true"
-          - name: UNIFI_EXTERNAL_CONTROLLER
-            value: "false"
           - name: UNIFI_API_KEY
             valueFrom:
               secretKeyRef:
                 name: &secret unifi-dns-secret
                 key: UNIFI_API_KEY
-          - name: LOG_LEVEL
-            value: debug #info, error, debug
         livenessProbe:
           httpGet:
             path: /healthz
