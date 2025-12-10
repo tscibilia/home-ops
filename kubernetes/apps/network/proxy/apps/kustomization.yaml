@@ -3,9 +3,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./adguard.yaml
-  - ./dadnas.yaml
   - ./grey.yaml
   - ./hassio.yaml
-  - ./nas.yaml
   - ./prnt3d.yaml

@@ -12,6 +12,9 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## Known Issues
 `- Task name - impact & workaround`
 - Document issues with bootstrapping ([#1252](https://github.com/tscibilia/home-ops/issues/1252)) - **update talos machineconfig and VM NIC**
+  - [ ] Resolve `just talos render-config <node>` not getting the right talos image
+  - [ ] Resolve `akeyless-inject.sh` info logs being put into the render-config
+  - [ ] Consider adding bootstrap recipe to pipe `rook-external-import.sh` with `just template`
 - Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - **update talos machineconfig and VM NIC**
 
 ## Blocked
