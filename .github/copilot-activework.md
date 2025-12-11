@@ -11,6 +11,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Known Issues
 `- Task name - impact & workaround`
+- Unpoller not workingm thought it was a similar Go 1.23 issue like unifi-dns **Investigate more**
 - Document issues with bootstrapping ([#1252](https://github.com/tscibilia/home-ops/issues/1252)) - **update talos machineconfig and VM NIC**
   - [ ] Resolve `just talos render-config <node>` not getting the right talos image
   - [ ] Resolve `akeyless-inject.sh` info logs being put into the render-config
