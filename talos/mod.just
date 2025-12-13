@@ -24,8 +24,9 @@ download-image version schematic:
     just log info "Downloaded Talos" version "{{ version }}" schematic "{{ schematic }}"
 
 [doc('Generate schematic ID from Talos schematic')]
-gen-schematic-id:
+gen-schematic-id node:
     just check-tools curl jq minijinja-cli akeyless
+    export IS_NVIDIA="$(just talos machine-nvidia {{ node }})"; \
     curl -sX POST --data-binary @<(just template "{{ talos_dir }}/schematic.yaml.j2") "https://factory.talos.dev/schematics" | jq -r '.id'
 
 [doc('Reboot a node')]
