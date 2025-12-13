@@ -8,7 +8,7 @@ controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
 nodes := `talosctl config info -o yaml | yq -e '.nodes | join (" ")'`
 
 [private]
-default: talos kube (kubeconfig "node") wait namespaces resources crds apps kubeconfig
+default: talos kube (kubeconfig "node") wait namespaces rook-ceph-external resources crds apps kubeconfig
 
 [doc('Install Talos')]
 talos:
@@ -66,6 +66,14 @@ namespaces:
             just log fatal "Failed to apply namespace" "stage" "$0" "namespace" "$(basename "$dir")"; \
         fi; \
     done
+
+[doc('Import external Rook-Ceph cluster resources')]
+rook-ceph-external:
+    just log info "Running stage..." "stage" "$0"
+    just check-tools akeyless jq kubectl gum
+    if ! gum spin --title "Injecting secrets..." -- bash -c 'cat "{{ bootstrap_dir }}/scripts/import-external-rook-ceph.sh" | bash "{{ bootstrap_dir }}/scripts/akeyless-inject.sh" | bash'; then \
+        just log fatal "Failed to import rook-ceph resources" "stage" "$0"; \
+    fi;
 
 [doc('Apply Kubernetes resources')]
 resources:
