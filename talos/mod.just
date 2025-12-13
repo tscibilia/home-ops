@@ -36,11 +36,12 @@ reboot-node node:
 
 [doc('Render Talos config for a node')]
 render-config node:
-    just check-tools talosctl minijinja-cli akeyless yq
+    just check-tools talosctl minijinja-cli akeyless yq gum
     export IS_CONTROLLER="$(just talos machine-controller {{ node }})"; \
     export IS_NVIDIA="$(just talos machine-nvidia {{ node }})"; \
-    talosctl machineconfig patch <(just template "{{ talos_dir }}/machineconfig.yaml.j2") \
-        -p @<(just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2")
+    gum spin --title "Injecting secrets..." -- bash -c '\
+        talosctl machineconfig patch <(just template "{{ talos_dir }}/machineconfig.yaml.j2") \
+            -p @<(just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2")'
 
 [doc('Reset a node')]
 reset-node node:
