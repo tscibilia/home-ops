@@ -13,8 +13,21 @@ releases:
     version: 1.18.4
     values: ['./templates/values.yaml.gotmpl']
     hooks:
+      - # Cilium CRDs aren't included in the mirrored OCI chart
+        command: bash
+        args:
+          - -c
+          - |
+            VERSION="{{ .Release.Version }}"
+            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumloadbalancerippools.yaml"
+            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumbgpadvertisements.yaml"
+            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumbgppeerconfigs.yaml"
+            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumbgpclusterconfigs.yaml"
+            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2alpha1/ciliuml2announcementpolicies.yaml"
+        events:
+          - presync
+        showlogs: true
       - # Wait for Cilium CRDs to be available
-        # CRDs didn't automatically get created when installing via Helm OCI chart
         command: bash
         args:
           - -c
@@ -59,10 +72,8 @@ releases:
     namespace: external-secrets
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
     version: 1.1.1
-    values:
-      - ./templates/values.yaml.gotmpl
-    needs:
-      - cert-manager/cert-manager
+    values: ['./templates/values.yaml.gotmpl']
+    needs: ['cert-manager/cert-manager']
 
   # NOTE: Not currently installed by api-gateway helm chart, just using basic clustersecretstore.yaml
   # - name: akeyless
