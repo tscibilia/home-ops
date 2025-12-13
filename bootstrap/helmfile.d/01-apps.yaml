@@ -75,35 +75,6 @@ releases:
     values: ['./templates/values.yaml.gotmpl']
     needs: ['cert-manager/cert-manager']
 
-  # NOTE: Not currently installed by api-gateway helm chart, just using basic clustersecretstore.yaml
-  # - name: akeyless
-  #   namespace: external-secrets
-  #   chart: oci://ghcr.io/bjw-s-labs/helm/app-template
-  #   version: 4.4.0
-  #   values:
-  #     - ./templates/values.yaml.gotmpl
-  #   hooks:
-  #     - # Wait for ExternalSecrets CRDs to be available
-  #       command: bash
-  #       args:
-  #         - -c
-  #         - until kubectl get crd clustersecretstores.external-secrets.io &>/dev/null; do sleep 5; done
-  #       events:
-  #         - postsync
-  #       showlogs: true
-  #     - # Apply ExternalSecret Resources
-  #       command: kubectl
-  #       args:
-  #         - apply
-  #         - --server-side
-  #         - --field-manager=kustomize-controller
-  #         - --filename=../../kubernetes/apps/external-secrets/secret-stores/akeyless/clustersecretstore.yaml
-  #       events:
-  #         - postsync
-  #       showlogs: true
-  #   needs:
-  #     - external-secrets/external-secrets
-
   - name: flux-operator
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
