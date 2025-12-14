@@ -1,0 +1,48 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # PostgreSQL cluster
+  - ../../kubernetes/apps/database/cnpg/pgsql-cluster
+  # Immich cluster
+  - ../../kubernetes/apps/database/cnpg/immich17
+patches:
+  # Add recovery for pgsql-cluster
+  - patch: |-
+      - op: add
+        path: /spec/bootstrap
+        value:
+          recovery:
+            source: source
+      - op: add
+        path: /spec/externalClusters
+        value:
+          - name: source
+            plugin:
+              name: barman-cloud.cloudnative-pg.io
+              parameters:
+                barmanObjectName: pgsql-cluster
+                serverName: pgsql-cluster
+    target:
+      kind: Cluster
+      name: pgsql-cluster
+  # Add recovery for immich17
+  - patch: |-
+      - op: add
+        path: /spec/bootstrap
+        value:
+          recovery:
+            source: source
+      - op: add
+        path: /spec/externalClusters
+        value:
+          - name: source
+            plugin:
+              name: barman-cloud.cloudnative-pg.io
+              parameters:
+                barmanObjectName: immich17
+                serverName: immich17
+    target:
+      kind: Cluster
+      name: immich17

@@ -8,7 +8,7 @@ controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
 nodes := `talosctl config info -o yaml | yq -e '.nodes | join (" ")'`
 
 [private]
-default: talos kube (kubeconfig "node") wait namespaces rook-ceph-external resources crds apps kubeconfig
+default: talos kube (kubeconfig "node") wait namespaces rook-ceph-external resources crds apps cnpg kubeconfig
 
 [doc('Install Talos')]
 talos:
@@ -97,4 +97,18 @@ apps:
     just check-tools helmfile
     if ! helmfile -f "{{ bootstrap_dir }}/helmfile.d/01-apps.yaml" sync --hide-notes; then \
         just log fatal "Failed to sync helmfile" "stage" "$0"; \
+    fi
+
+[doc('Create CNPG clusters with recovery (runs during bootstrap if backups exist)')]
+cnpg:
+    just log info "Running stage..." "stage" "$0"
+    just check-tools kustomize kubectl
+    # Wait for CNPG operator to be ready
+    until kubectl wait --for=condition=available deployment/cloudnative-pg -n cnpg-system --timeout=5s &>/dev/null; do \
+        just log info "Waiting for CNPG operator to be ready. Retrying in 5 seconds..." "stage" "$0"; \
+        sleep 5; \
+    done
+    # Apply clusters with recovery - if backups don't exist, cluster creation will fail and continue normally via Flux
+    if ! kustomize build "{{ bootstrap_dir }}/cnpg" | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f - 2>&1; then \
+        just log info "CNPG cluster creation failed (likely no backups exist). Clusters will be created by Flux." "stage" "$0"; \
     fi
