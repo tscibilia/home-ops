@@ -129,7 +129,7 @@ kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- ceph osd status
 kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- ceph df
 ```
 
-## VolSync: Automated Backups
+## VolSync Backups
 
 VolSync backs up PersistentVolumeClaims to cloud storage (Backblaze B2) using Restic. Apps with critical data include the VolSync component.
 

@@ -80,7 +80,7 @@ The sole DNS server for all network clients, providing:
 
 The `unifi-dns` webhook integrates Kubernetes HTTPRoutes with UniFi DNS:
 
-**Location**: [`kubernetes/apps/network/unifi-dns/`](../../kubernetes/apps/network/unifi-dns/)
+**Location**: [`kubernetes/apps/network/unifi-dns/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/network/unifi-dns)
 
 **Function**:
 - Watches HTTPRoute resources in Kubernetes
@@ -94,7 +94,7 @@ The `unifi-dns` webhook integrates Kubernetes HTTPRoutes with UniFi DNS:
 3. DNS A record created in UniFi: `authentik.t0m.co → 192.168.5.x`
 4. Local clients resolve via UniFi DNS
 
-**Configuration**: [`kubernetes/apps/network/unifi-dns/app/helmrelease.yaml`](../../kubernetes/apps/network/unifi-dns/app/helmrelease.yaml)
+**Configuration**: [`kubernetes/apps/network/unifi-dns/app/helmrelease.yaml`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/network/unifi-dns/app/helmrelease.yaml)
 
 ### Ad Blocking
 
@@ -138,11 +138,11 @@ Each Talos VM has a second NIC on the Ceph storage network:
 - Secondary NIC: 10.10.10.x (Ceph storage traffic)
 
 **Configuration Files**:
-- [`talos/nodes/talos-m01.yaml.j2`](../../talos/nodes/talos-m01.yaml.j2)
-- [`talos/nodes/talos-m02.yaml.j2`](../../talos/nodes/talos-m02.yaml.j2)
-- [`talos/nodes/talos-m03.yaml.j2`](../../talos/nodes/talos-m03.yaml.j2)
+- [`talos/nodes/talos-m01.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes/talos-m01.yaml.j2)
+- [`talos/nodes/talos-m02.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes/talos-m02.yaml.j2)
+- [`talos/nodes/talos-m03.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes/talos-m03.yaml.j2)
 
-See [Rook Ceph README](../../kubernetes/apps/rook-ceph/rook-ceph/README.md#unreachable-network) for details on the dual-NIC setup.
+See [Rook Ceph README](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph/rook-ceph/README.md#unreachable-network) for details on the dual-NIC setup.
 
 ## Network Services
 
@@ -163,7 +163,7 @@ Kubernetes services with `type: LoadBalancer` are allocated IPs from this range 
 
 #### unpoller (Metrics Exporter)
 
-**Location**: [`kubernetes/apps/observability/unpoller/`](../../kubernetes/apps/observability/unpoller/)
+**Location**: [`kubernetes/apps/observability/unpoller/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/observability/unpoller/)
 
 **Function**:
 - Exports UniFi network metrics to Prometheus/VictoriaMetrics
@@ -182,7 +182,7 @@ Kubernetes services with `type: LoadBalancer` are allocated IPs from this range 
 
 #### Cloudflared Tunnel
 
-**Location**: [`kubernetes/apps/network/cloudflared/`](../../kubernetes/apps/network/cloudflared/)
+**Location**: [`kubernetes/apps/network/cloudflared/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/network/cloudflared/)
 
 **Function**:
 - Cloudflare Zero Trust tunnel for external access
@@ -197,14 +197,14 @@ Internet → Cloudflare Edge → Tunnel → cloudflared Pod → envoy-external �
 
 #### Tailscale
 
-**Location**: [`kubernetes/apps/network/tailscale/`](../../kubernetes/apps/network/tailscale/)
+**Location**: [`kubernetes/apps/network/tailscale/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/network/tailscale/)
 
 **Function**:
 - Private VPN mesh network
 - Secure remote access to cluster services
 - Split DNS configuration for internal domain resolution
 
-See the resolved issue: [Tailscale Split DNS](../.github/copilot-activework.md#resolved) (2025-12-04)
+See the resolved issue: [Tailscale Split DNS](https://github.com/tscibilia/home-ops/tree/main/.github/copilot-activework.md#resolved) (2025-12-04)
 
 ## Network Security
 
@@ -229,7 +229,7 @@ UniFi UDM-Pro provides stateful firewall protection:
 
 **Storage Class**: `nfs-media`
 
-**Configuration**: [`kubernetes/apps/kube-system/csi-driver-nfs/app/helmrelease.yaml`](../../kubernetes/apps/kube-system/csi-driver-nfs/app/helmrelease.yaml)
+**Configuration**: [`kubernetes/apps/kube-system/csi-driver-nfs/app/helmrelease.yaml`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/kube-system/csi-driver-nfs/app/helmrelease.yaml)
 
 **NFS Export**:
 - Server: `nas.internal`
@@ -295,6 +295,6 @@ kubectl run -it --rm debug --image=nicolaka/netshoot --restart=Never -- ping 10.
 ## Related Documentation
 
 - [Architecture Overview](./architecture.md) - Complete infrastructure architecture
-- [Rook Ceph README](../../kubernetes/apps/rook-ceph/rook-ceph/README.md) - External Ceph setup
-- [Cluster Secrets](../../kubernetes/flux/vars/cluster-secrets.sops.yaml) - Network configuration variables
-- [Active Work & Known Issues](../.github/copilot-activework.md) - Current network-related tasks
+- [Rook Ceph README](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph/rook-ceph/README.md) - External Ceph setup
+- [Cluster Secrets](https://github.com/tscibilia/home-ops/tree/main/kubernetes/flux/vars/cluster-secrets.sops.yaml) - Network configuration variables
+- [Active Work & Known Issues](https://github.com/tscibilia/home-ops/tree/main/.github/copilot-activework.md) - Current network-related tasks

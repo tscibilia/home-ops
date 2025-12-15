@@ -119,6 +119,8 @@ nav:
       - guides/getting-started.md
   - Infrastructure:
       - infrastructure/overview.md
+      - infrastructure/architecture.md
+      - infrastructure/networking.md
       - infrastructure/bootstrap.md
   - Kubernetes:
       - kubernetes/overview.md
