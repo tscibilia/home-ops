@@ -35,9 +35,7 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: |
-          pip install mkdocs-material
-          pip install mkdocs-minify-plugin
+        run: pip install -r docs/requirements.txt
 
       - name: Build documentation
         run: mkdocs build --strict
