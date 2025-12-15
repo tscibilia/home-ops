@@ -7,7 +7,7 @@ This is a **Kubernetes-based home infrastructure monorepo** managed with Flux CD
 ## Architecture Overview
 
 **Three-layer stack:**
-1. **Talos** (`/talos`): Immutable Linux OS with Kubernetes pre-installed. Generated from `talconfig.yaml` via talhelper, includes node-specific patches and sops-encrypted secrets.
+1. **Talos** (`/talos`): Immutable Linux OS with Kubernetes pre-installed. Generated from minijinja templates (`machineconfig.yaml.j2` and node patches `nodes/*.yaml.j2`), includes node-specific patches and sops-encrypted secrets.
 2. **Kubernetes** (`/kubernetes`): Flux-driven GitOps. Apps organized by namespace in `/kubernetes/apps/*/{namespace}/{app-name}/`.
 3. **Bootstrap** (`/bootstrap`): Helmfile deployment for initial cluster setup (cilium, coredns, spegel, cert-manager, external-secrets).
 
@@ -175,7 +175,7 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 
 ## Critical Dependencies & Integration Points
 
-**Flux system dependencies (bootstrap order in `/bootstrap/helmfile.yaml`):**
+**Flux system dependencies (bootstrap order in `/bootstrap/helmfile.d/01-apps.yaml`):**
 1. cilium (CNI) → coredns → spegel (OCI mirror) → cert-manager → external-secrets
 
 **App-level dependencies (defined in `ks.yaml`):**
@@ -218,7 +218,9 @@ Apps communicate internally via Kubernetes Service DNS: `<service-name>.<namespa
 Kustomize components in `/kubernetes/components/` provide shared configuration:
 - `common/` - Standard alerts, secrets configuration applied to all namespaces
 - `cnpg/` - Automatic database user initialization via CronJob and ExternalSecret
-- `ext-auth/` - Authentik SSO integration via SecurityPolicy (see Authentik SSO section)
+- `ext-auth-internal/` - Authentik SSO integration via SecurityPolicy for internal gateway (see Authentik SSO section)
+- `ext-auth-external/` - Authentik SSO integration via SecurityPolicy for external gateway (see Authentik SSO section)
+- `keda/` - Auto-scaling configuration via KEDA ScaledObjects
 - `volsync/` - Backup/restore configuration (see Storage & Data Management section)
 - Apps include via `components: [../../../../components/cnpg]` in `ks.yaml`
 
@@ -249,8 +251,10 @@ Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's fo
    - Handles forward authentication requests from Envoy Gateway
    - Validates user sessions, checks authorization policies, forwards authenticated headers
 
-3. **ext-auth Component** (`/kubernetes/components/ext-auth`):
-   - Kustomize component applied to apps that need SSO protection (media apps, observability, etc.)
+3. **ext-auth Components** (`/kubernetes/components/ext-auth-internal/` and `/kubernetes/components/ext-auth-external/`):
+   - Kustomize components applied to apps that need SSO protection:
+     - `ext-auth-internal`: For apps accessed via internal gateway (LAN access)
+     - `ext-auth-external`: For apps accessed via external gateway (Cloudflare tunnel)
    - Defines Envoy Gateway SecurityPolicy CRD with ext-auth configuration:
      - Routes auth requests to `/outpost.goauthentik.io/auth/envoy` endpoint
      - Passes cookies and headers to Authentik for validation
@@ -272,15 +276,18 @@ Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's fo
 7. After login, Authentik sets session cookie and redirects back to original app
 
 **Adding SSO to a New App:**
-1. Add `- ../../../../components/ext-auth` to app's `ks.yaml` components list
+1. Add `- ../../../../components/ext-auth-internal` or `- ../../../../components/ext-auth-external` to app's `ks.yaml` components list
+   - Use `ext-auth-internal` for apps accessed only from LAN (media, observability)
+   - Use `ext-auth-external` for apps accessed from internet via Cloudflare tunnel
 2. Define HTTPRoute (Gateway routing rule) for the app in `app/helmrelease.yaml` or resources
 3. Substitute `${APP}` in ks.yaml; component auto-creates SecurityPolicy targeting HTTPRoute by name
 4. ReferenceGrant already permits: authentik's outpost accessible from network namespace SecurityPolicy
 
 **Related Files:**
 - Authentik deployment: `kubernetes/apps/default/authentik/`
-- ext-auth component: `kubernetes/components/ext-auth/securitypolicy.yaml` (parameterized SecurityPolicy)
-- Protected apps: `kubernetes/apps/media/{qbittorrent,radarr,sonarr,prowlarr,bazarr,tautulli}` and others
+- ext-auth-internal component: `kubernetes/components/ext-auth-internal/securitypolicy.yaml` (parameterized SecurityPolicy for internal gateway)
+- ext-auth-external component: `kubernetes/components/ext-auth-external/securitypolicy.yaml` (parameterized SecurityPolicy for external gateway)
+- Protected apps: `kubernetes/apps/media/{qbittorrent,radarr,sonarr,prowlarr,bazarr,tautulli}` (internal), `kubernetes/apps/media/ytptube` (external), and `kubernetes/apps/observability/{victoria-metrics,victoria-logs}` (internal)
 
 ## Flux Reconciliation & HelmRelease Management
 
@@ -304,7 +311,7 @@ just kube ks-reconcile <namespace> <name>
 - Pull-based model: cluster watches Git for changes, applies them automatically
 - Key resources: `GitRepository` (Git source), `Kustomization` (Flux), `HelmRelease` (Helm deployments)
 - Reconciliation interval: `interval: 1h` in `ks.yaml` (checks Git every hour, can be forced with `flux reconcile`)
-- Bootstrap via Helmfile (`/bootstrap/helmfile.yaml`) deploys core components in correct dependency order
+- Bootstrap via Helmfile (`/bootstrap/helmfile.d/`) deploys core components in correct dependency order
 
 **Renovate (Dependency Automation):**
 - Automated bot creates pull requests when new versions of images, Helm charts, or other dependencies are available
