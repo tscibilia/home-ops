@@ -7,7 +7,7 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/hostname: "pgsql-cluster.${SECRET_DOMAIN}"
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     cnpg.io/cluster: pgsql-cluster
     cnpg.io/instanceRole: primary
