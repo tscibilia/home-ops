@@ -90,7 +90,8 @@ My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](ht
 
 ### Cloud Services
 
-- [aKeyless](https://akeyless.io): Managing secrets via external-secrets.
+- [AirVPN](https://airvpn.org/?referred_by=780171): VPN service.
+- [aKeyless](https://akeyless.io/?referred_by=yo919kmwoqTm): Managing secrets via external-secrets.
 - [Cloudflare](https://cloudflare.com/): Tunnels for exposing services and DNS provider.
 - [Cloudinary](https://cloudinary.com/): Image hosting for plex newsletter posters.
 - [Backblaze B2](https://www.backblaze.com/): Daily backups from volsync and cnpg.
@@ -115,12 +116,24 @@ This Git repository contains the following directories.
 
 ```sh
 📁 bootstrap      # exactly what it sounds like
-└── 📁 scripts    # some janky hacks for my setup
+├── 📁 cnpg       # cnpg patch to run at bootstrap
+├── 📁 helmfile.d # helmreleases required at bootstrap
+├── 📁 scripts    # some janky hacks
+└── 📝 mod.just   # .justfile Bootstrap module
 📁 kubernetes
 ├── 📁 apps       # applications organized by namespace
 ├── 📁 components # re-useable kustomize components
-└── 📁 flux       # flux system configuration
+├── 📁 flux       # flux system configuration
+└── 📝 mod.just   # .justfile Kubernetes module
 📁 talos          # node OS configurations
+├── 📁 nodes      # Override configurations for each individual node.
+├── 📝 machineconfig.yaml.j2 # Base configuration template for all nodes.
+├── 📝 mod.just              # .justfile Talos module
+└── 📝 schematic.yaml.j2     # Talos image factory schematic
+📝 .justfile
+📝 .mise.toml
+📝 kubeconfig
+📝 talosconfig
 ```
 
 ---
