@@ -39,11 +39,6 @@ graph TB
     AM --> Karma
     AM --> Pushover
     FluentBit --> VLogs
-
-    style VM fill:#4ecdc4
-    style AM fill:#ff6b6b
-    style Gatus fill:#45b7d1
-    style VLogs fill:#96ceb4
 ```
 
 ## Web-Accessible Services

@@ -11,11 +11,6 @@ graph LR
     A[Push to GitHub] --> B[Flux Detects Change]
     B --> C[Flux Reconciles]
     C --> D[Cluster Updated]
-
-    style A fill:#5c4ee5
-    style B fill:#0091da
-    style C fill:#0091da
-    style D fill:#326ce5
 ```
 
 1. You edit YAML files in [`kubernetes/apps/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps)
@@ -279,11 +274,6 @@ graph TB
 
     D -->|Drift detected| B
     B -->|Reapply| D
-
-    style A fill:#ffeaa7
-    style B fill:#0091da
-    style C fill:#96ceb4
-    style D fill:#326ce5
 ```
 
 1. **GitRepository**: Flux clones the Git repo and watches for commits

@@ -13,13 +13,6 @@ graph LR
     C --> D[Flux Detects Change]
     D --> E[Flux Applies]
     E --> F[Cluster Updated]
-
-    style A fill:#5c4ee5
-    style B fill:#5c4ee5
-    style C fill:#333
-    style D fill:#0091da
-    style E fill:#0091da
-    style F fill:#326ce5
 ```
 
 1. Edit files locally in `kubernetes/apps/`

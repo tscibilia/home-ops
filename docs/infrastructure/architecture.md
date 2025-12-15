@@ -29,9 +29,7 @@ graph TB
     end
 
     subgraph "Supporting Infrastructure"
-        HA[Home Assistant<br/>HASSIO]
-        ADGUARD[AdGuard<br/>DNS]
-        PI[Raspberry Pi<br/>3D Printing]
+        PI[Raspberry Pi<br/>OctoPrint]
     end
 
     PX1 --> M01
@@ -54,19 +52,10 @@ graph TB
     UDM --> M02
     UDM --> M03
     UDM --> SYNO
-    UDM --> HA
-    UDM --> ADGUARD
     UDM --> PI
-
-    style M01 fill:#4ecdc4
-    style M02 fill:#4ecdc4
-    style M03 fill:#4ecdc4
-    style CEPH1 fill:#ff6b6b
-    style CEPH2 fill:#ff6b6b
-    style CEPH3 fill:#ff6b6b
-    style SYNO fill:#45b7d1
-    style UDM fill:#96ceb4
 ```
+
+<div class="diagram-note">💡 **Tip**: Large diagrams can be enlarged in most browsers by right-clicking and selecting "Inspect" or using browser zoom (Ctrl+/Cmd+).</div>
 
 ---
 
@@ -203,39 +192,13 @@ Configuration: [`kubernetes/apps/rook-ceph/`](https://github.com/tscibilia/home-
 - **Gateway**: UniFi UDM-Pro
 - **Kubernetes Nodes**: 192.168.5.201-203
 - **Kubernetes VIP**: 192.168.5.200
-- **Synology NAS**: ${NAS_IP} (referenced in secrets)
-- **Home Assistant**: ${HASSIO_IP}
-- **AdGuard**: ${ADGUARD_IP}
-- **Other devices**: Raspberry Pi (3D printing), additional NAS
+- **Synology NAS**: Referenced as `${NAS_IP}` in cluster configuration
+- **Other devices**: Raspberry Pi (3D printing), additional infrastructure as needed
 
 **Ceph Storage Network**: 10.10.10.0/28
 - **Ceph Monitors**: 10.10.10.1-3 (Proxmox nodes)
 - **Talos Node Storage IPs**: 10.10.10.8-10
 - **Purpose**: Dedicated 10GbE mesh for Ceph replication and client traffic
-
----
-
-## Supporting Infrastructure
-
-### Home Assistant
-
-**Purpose**: Home automation platform
-
-**Integration**: Runs independently but monitored by Kubernetes Gatus status page
-
-**IP**: Referenced as `${HASSIO_IP}` in cluster secrets
-
-### AdGuard
-
-**Purpose**: Network-wide ad blocking and DNS filtering
-
-**IP**: Referenced as `${ADGUARD_IP}` in cluster secrets
-
-### Raspberry Pi (3D Printing)
-
-**Purpose**: OctoPrint or similar 3D printer management
-
-**IP**: Referenced as `${PI_3DP_IP}` in cluster secrets
 
 ---
 
@@ -257,12 +220,6 @@ graph LR
     SSD --> BACKUP1
     CEPHFS --> BACKUP1
     NFS --> BACKUP2[Synology Snapshots]
-
-    style RBD fill:#ff6b6b
-    style SSD fill:#ff6b6b
-    style CEPHFS fill:#ff6b6b
-    style NFS fill:#45b7d1
-    style LOCAL fill:#96ceb4
 ```
 
 **Storage Decision Matrix**:
@@ -293,11 +250,6 @@ graph TB
     DB -->|CNPG Scheduled Backup| B2
     APP -->|VolSync Restic| B2
     APP -->|NFS Data| SYNO
-
-    style DB fill:#4ecdc4
-    style APP fill:#45b7d1
-    style B2 fill:#ff6b6b
-    style SYNO fill:#96ceb4
 ```
 
 **Backup Components**:

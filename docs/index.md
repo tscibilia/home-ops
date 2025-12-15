@@ -55,11 +55,6 @@ graph TB
     A[Talos OS] --> B[Kubernetes Cluster]
     B --> C[Flux CD GitOps]
     C --> D[Applications]
-
-    style A fill:#326ce5,color:#fff
-    style B fill:#326ce5,color:#fff
-    style C fill:#0091da,color:#fff
-    style D fill:#5c4ee5,color:#fff
 ```
 
 1. **Talos OS**: The foundation—an immutable Linux distribution built specifically for Kubernetes

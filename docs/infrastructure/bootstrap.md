@@ -47,17 +47,9 @@ graph TB
     F --> G[7. Apply CRDs]
     G --> H[8. Deploy Core Apps]
     H --> I[9. Restore CNPG Clusters]
-
-    style A fill:#ff6b6b
-    style B fill:#ff6b6b
-    style C fill:#4ecdc4
-    style D fill:#4ecdc4
-    style E fill:#45b7d1
-    style F fill:#45b7d1
-    style G fill:#96ceb4
-    style H fill:#96ceb4
-    style I fill:#ffeaa7
 ```
+
+<div class="diagram-note">💡 **Tip**: Large diagrams can be enlarged in most browsers by right-clicking and selecting "Inspect" or using browser zoom (Ctrl+/Cmd+).</div>
 
 ## Full Bootstrap Command
 

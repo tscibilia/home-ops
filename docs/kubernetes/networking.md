@@ -13,16 +13,10 @@ graph TB
     Service --> Cilium[Cilium Load Balancer]
     Cilium --> Pods[Application Pods]
 
-    LAN[Home Network] --> K8sGW[k8s-gateway DNS]
-    K8sGW --> ServiceLB[Service LoadBalancer IP]
+    LAN[Home Network] --> UnifiDNS[unifi-dns<br/>External-DNS]
+    UnifiDNS --> UniFi[UniFi Controller<br/>DNS Records]
+    UniFi --> ServiceLB[Service LoadBalancer IP]
     ServiceLB --> Cilium
-
-    style CF fill:#f6821f
-    style Tunnel fill:#f6821f
-    style EnvoyExt fill:#ac44db
-    style Cilium fill:#f8c800
-    style Service fill:#326ce5
-    style Pods fill:#326ce5
 ```
 
 ## Core Components
@@ -168,16 +162,9 @@ No port forwarding, no exposing your home IP. Everything goes through Cloudflare
 graph LR
     A[User Browser] --> B[Cloudflare Edge]
     B --> C[Cloudflared Tunnel]
-    C --> D[envoy-external]
-    D --> E[Service]
+    C --> D[Envoy Gateway<br/>envoy-external]
+    D --> E[Kubernetes Service]
     E --> F[Pod]
-
-    style A fill:#5c4ee5
-    style B fill:#f6821f
-    style C fill:#f6821f
-    style D fill:#ac44db
-    style E fill:#326ce5
-    style F fill:#326ce5
 ```
 
 1. DNS resolves `sonarr.yourdomain.com` to Cloudflare
@@ -195,12 +182,6 @@ graph LR
     B --> C[Service LoadBalancer IP]
     C --> D[Cilium]
     D --> E[Pod]
-
-    style A fill:#5c4ee5
-    style B fill:#4ecdc4
-    style C fill:#f8c800
-    style D fill:#f8c800
-    style E fill:#326ce5
 ```
 
 1. DNS query to UniFi controller resolves `sonarr.yourdomain.com`

@@ -154,7 +154,6 @@ Kubernetes services with `type: LoadBalancer` are allocated IPs from this range 
 
 **Key Services**:
 - Kubernetes API VIP: `192.168.5.200`
-- k8s-gateway (DNS): `192.168.5.199`
 - Envoy Gateway External: `192.168.5.x`
 - Envoy Gateway Internal: `192.168.5.x`
 - Various application LoadBalancer services

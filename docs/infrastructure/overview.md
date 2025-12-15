@@ -133,15 +133,6 @@ graph LR
     E --> F[Apply CRDs]
     F --> G[Deploy Core Apps]
     G --> H[Flux Sync]
-
-    style A fill:#ff6b6b
-    style B fill:#ff6b6b
-    style C fill:#4ecdc4
-    style D fill:#45b7d1
-    style E fill:#45b7d1
-    style F fill:#96ceb4
-    style G fill:#96ceb4
-    style H fill:#ffeaa7
 ```
 
 ### Step-by-Step Bootstrap

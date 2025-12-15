@@ -43,7 +43,7 @@ Run specific bootstrap stages:
 
 | Command | Description | What It Does |
 |---------|-------------|--------------|
-| `just bootstrap talos` | Install Talos OS on all nodes | Applies Talos machine configs to all nodes defined in `talconfig.yaml` |
+| `just bootstrap talos` | Install Talos OS on all nodes | Applies Talos machine configs from `talos/nodes/*.yaml.j2` to all configured nodes using minijinja templates |
 | `just bootstrap k8s` | Bootstrap Kubernetes | Initializes the Kubernetes control plane on the first controller node |
 | `just bootstrap kubeconfig [lb]` | Fetch kubeconfig | Downloads `kubeconfig` from cluster; optional `lb` parameter sets load balancer type (default: `cilium`) |
 | `just bootstrap wait` | Wait for nodes to be ready | Polls nodes until all report Ready status |
