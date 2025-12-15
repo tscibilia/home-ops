@@ -6,16 +6,9 @@ This document is intended to supplement and connect with GitHub issues and meant
 `- [ ] Task name - Started yyy-mm-dd - brief context`
 - [ ] Add multus and revise qbit deployment - **Impact:** Better network isolation for qBittorrent; simplifies deployment (See [#1168](https://github.com/tscibilia/home-ops/issues/1168))
 - [ ] Add autobrr and thelounge - (See [#803](https://github.com/tscibilia/home-ops/issues/803))
-- [ ] Add cluster documenation - (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
 - [ ] Upgrade postgres16 to 17 or 18 - (See [#1211](https://github.com/tscibilia/home-ops/issues/1211))
 
 ## Known Issues
-`- Task name - impact & workaround`
-- Unpoller not workingm thought it was a similar Go 1.23 issue like unifi-dns **Investigate more**
-- Document issues with bootstrapping ([#1252](https://github.com/tscibilia/home-ops/issues/1252)) - **update talos machineconfig and VM NIC**
-  - [ ] Resolve `just talos render-config <node>` not getting the right talos image
-  - [ ] Resolve `akeyless-inject.sh` info logs being put into the render-config
-  - [ ] Consider adding bootstrap recipe to pipe `rook-external-import.sh` with `just template`
 - Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - **update talos machineconfig and VM NIC**
 
 ## Blocked
@@ -28,6 +21,9 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Add cluster documenation - **2025-12-15** (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
+- ✅ Document issues with bootstrapping - **2025-12-14** ([#1252](https://github.com/tscibilia/home-ops/issues/1252))
+- ✅ Unpoller (MTU & config issue) - **2025-12-14** (See kashalls/external-dns-unifi-webhook/#163)
 - ✅ VMAgent Scrape Pool Target Discovery Issues - **2025-12-09** (See [#1261](https://github.com/tscibilia/home-ops/issues/1261))
 - ✅ Tailscale Split DNS after unifi-dns Migration - **2025-12-04** (See [#1235](https://github.com/tscibilia/home-ops/issues/1235))
 - ✅ Jellyfin 10.11.x trickplay path changed - **2025-12-04** (See [#1234](https://github.com/tscibilia/home-ops/issues/1234))
