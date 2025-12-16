@@ -13,7 +13,7 @@
       description: "Authentik Group",
       groupName: "authentik",
       matchDatasources: ["docker"],
-      matchPackageNames: ["/goauthentik/"],
+      matchPackageNames: ["/goauthentik/", "/goauthentik/proxy"],
       group: {commitMessageTopic: "{{{groupName}}} group"},
       separateMinorPatch: true,
       sourceUrl: "https://github.com/goauthentik/authentik",
