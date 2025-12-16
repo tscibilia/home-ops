@@ -10,6 +10,7 @@ spec:
     name: *app
   interval: 1h
   values:
+    fullnameOverride: &app
     oauthSecretVolume:
       secret:
         secretName: &secret tailscale-operator-secret
