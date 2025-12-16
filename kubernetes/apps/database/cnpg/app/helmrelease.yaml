@@ -10,6 +10,8 @@ spec:
     name: cnpg-operator
   interval: 1h
   values:
+    podLabels:
+      app.kubernetes.io/component: operator
     crds:
       create: true
     replicaCount: 2
@@ -17,3 +19,10 @@ spec:
       podMonitorEnabled: true
       grafanaDashboard:
         create: true
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: operator
