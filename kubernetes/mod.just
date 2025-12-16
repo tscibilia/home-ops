@@ -113,13 +113,17 @@ hr-reconcile ns name:
 
 [doc('Force all Flux Kustomizations to reconcile from Source')]
 ks-reconcile-all:
-    just check-tools flux
-    flux reconcile kustomization --namespace flux-system --with-source
+    just check-tools kubectl flux
+    kubectl get ks --all-namespaces --no-headers | while read -r namespace name _; do \
+        flux reconcile kustomization "$name" -n "$namespace" --with-source; \
+    done
 
 [doc('Force all HelmReleases to reconcile from Source')]
 hr-reconcile-all:
-    just check-tools flux
-    flux reconcile helmrelease --all --with-source
+    just check-tools kubectl flux
+    kubectl get hr --all-namespaces --no-headers | while read -r namespace name _; do \
+        flux reconcile helmrelease "$name" -n "$namespace" --with-source; \
+    done
 
 [doc('Suspend or resume a Keda ScaledObject')]
 keda state ns name:
