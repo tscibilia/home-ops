@@ -5,7 +5,7 @@ machine:
     interfaces:
       - # USW-Flex8-Port5-MGMT
         deviceSelector:
-          hardwareAddr: bc:24:11:9c:c7:7e
+          hardwareAddr: bc:24:11:a9:c7:7e
         addresses:
           - 192.168.5.202/24
         routes:
@@ -15,6 +15,15 @@ machine:
         dhcp: true
         vip:
           ip: 192.168.5.200
+        {# vlans:
+          - # IOT
+            vlanId: 107
+            dhcp: false
+            mtu: 9000
+          - # VPN
+            vlanId: 99
+            dhcp: false
+            mtu: 9000 #}
       - # USW-Flex8-Port2-CEPH
         deviceSelector:
           hardwareAddr: bc:24:11:48:24:3c

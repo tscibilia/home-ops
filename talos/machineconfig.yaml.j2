@@ -79,24 +79,26 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: main
   sysctls:
-    fs.inotify.max_user_instances: "8192"
-    fs.inotify.max_user_watches: "1048576"
-    net.core.default_qdisc: fq
-    net.core.rmem_max: "67108864"
-    net.core.wmem_max: "67108864"
-    net.ipv4.neigh.default.gc_thresh1: "4096"
-    net.ipv4.neigh.default.gc_thresh2: "8192"
-    net.ipv4.neigh.default.gc_thresh3: "16384"
-    net.ipv4.tcp_congestion_control: bbr
-    net.ipv4.tcp_fastopen: "3"
-    net.ipv4.tcp_mtu_probing: "1"
-    net.ipv4.tcp_rmem: 4096 87380 33554432
-    net.ipv4.tcp_window_scaling: "1"
-    net.ipv4.tcp_wmem: 4096 65536 33554432
-    sunrpc.tcp_max_slot_table_entries: "128"
-    sunrpc.tcp_slot_table_entries: "128"
-    user.max_user_namespaces: "11255"
-    vm.nr_hugepages: "1024" # New
+    fs.inotify.max_user_instances: "8192"      # increase inotify limits
+    fs.inotify.max_user_watches: "1048576"     # increase inotify limits
+    net.core.default_qdisc: fq                 # fairqueue
+    net.core.rmem_max: "100663296"             # 2.5GbE + cloudflared/quic
+    net.core.wmem_max: "100663296"             # 2.5GbE + cloudflared/quic
+    net.ipv4.neigh.default.gc_thresh1: "4096"  # arp cache
+    net.ipv4.neigh.default.gc_thresh2: "8192"  # arp cache
+    net.ipv4.neigh.default.gc_thresh3: "16384" # arp cache
+    net.ipv4.tcp_congestion_control: bbr       # 2.5GbE
+    net.ipv4.tcp_fastopen: "3"                 # enable syn cookies
+    net.ipv4.tcp_mtu_probing: "1"              # jumbo frames + 2.5GbE
+    net.ipv4.tcp_notsent_lowat: "131072"       # 2.5GbE
+    net.ipv4.tcp_rmem: 4096 87380 67108864     # 2.5GbE
+    net.ipv4.tcp_slow_start_after_idle: "0"    # 2.5GbE + CEPH
+    net.ipv4.tcp_window_scaling: "1"           # enable tcp window scaling
+    net.ipv4.tcp_wmem: 4096 65536 67108864     # 2.5GbE
+    sunrpc.tcp_max_slot_table_entries: "128"   # nfs
+    sunrpc.tcp_slot_table_entries: "128"       # nfs
+    user.max_user_namespaces: "11255"          # rootless containers
+    vm.nr_hugepages: "1024"                    # 2GB hugepages
   time:
     disabled: false
     servers:
