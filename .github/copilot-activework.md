@@ -10,6 +10,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Known Issues
 - Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - **update talos machineconfig and VM NIC**
+- etcd noisy logging, see kubernetes/kubernetes iss.134080 - **lookup localhost: operation was canceled**
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
