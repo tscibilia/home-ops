@@ -10,6 +10,8 @@ spec:
     name: dragonfly-operator
   interval: 1h
   values:
+    podLabels:
+      app.kubernetes.io/component: operator
     grafanaDashboard:
       enabled: true
     serviceMonitor:
@@ -23,6 +25,14 @@ spec:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       runAsUser: 1000
+    manager:
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: operator
   # To resolve the targetDown prom alert when the dragonfly-operator chart
   # default ia set `--metrics-bind-address=127.0.0.1:8080`
   postRenderers:
