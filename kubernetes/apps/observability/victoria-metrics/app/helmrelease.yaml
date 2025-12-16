@@ -167,8 +167,6 @@ spec:
 
     vmalert:
       spec:
-        extraArgs:
-          http.pathPrefix: /prometheus/vmalert/
         # Skip vmalerts for vmlog rules
         selectAllByDefault: false
         ruleSelector:
