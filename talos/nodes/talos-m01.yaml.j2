@@ -4,8 +4,9 @@ machine:
     hostname: talos-m01
     interfaces:
       - # USW-Flex8-Port4-MGMT
-        deviceSelector:
-          hardwareAddr: bc:24:11:a9:a3:43
+        {# deviceSelector:
+          hardwareAddr: bc:24:11:a9:a3:43 #}
+        interface: ens18
         addresses:
           - 192.168.5.201/24
         routes:
@@ -15,15 +16,6 @@ machine:
         dhcp: true
         vip:
           ip: 192.168.5.200
-        {# vlans:
-          - # IOT
-            vlanId: 107
-            dhcp: false
-            mtu: 9000
-          - # VPN
-            vlanId: 99
-            dhcp: false
-            mtu: 9000 #}
       - # USW-Flex8-Port1-CEPH
         deviceSelector:
           hardwareAddr: bc:24:11:10:d2:28

@@ -51,7 +51,7 @@ machine:
         noatime=True
   install:
     disk: /dev/sda
-    image: factory.talos.dev/metal-installer/cc720ffb8efc8f12637b8660a86448a88b3f89f516995fb9c67bf80564e723b1:v1.11.5
+    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC_ID | safe }}:v1.11.5
     wipe: false
   kernel:
     modules:
@@ -76,6 +76,20 @@ machine:
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
+  network:
+    interfaces:
+      - interface: ens18
+        dhcp: true
+        mtu: 1500
+        vlans:
+          - # IOT
+            vlanId: 107
+            dhcp: false
+            mtu: 9000
+          - # VPN
+            vlanId: 99
+            dhcp: false
+            mtu: 9000
   nodeLabels:
     topology.kubernetes.io/region: main
   sysctls:
