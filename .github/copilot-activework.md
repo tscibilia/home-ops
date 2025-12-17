@@ -22,7 +22,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
-- ✅ Add cluster documenation - **2025-12-15** (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
+- ✅ Add cluster documentation - **2025-12-15** (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
 - ✅ Document issues with bootstrapping - **2025-12-14** ([#1252](https://github.com/tscibilia/home-ops/issues/1252))
 - ✅ Unpoller (MTU & config issue) - **2025-12-14** (See kashalls/external-dns-unifi-webhook/#163)
 - ✅ VMAgent Scrape Pool Target Discovery Issues - **2025-12-09** (See [#1261](https://github.com/tscibilia/home-ops/issues/1261))

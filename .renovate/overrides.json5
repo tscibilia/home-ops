@@ -36,17 +36,8 @@
       description: "Cal-commit versioning for SearXNG (monthly updates only)",
       matchDatasources: ["docker"],
       matchPackagePatterns: ["searxng"],
-      versioning: "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d{1,2})-.*$",
+      versioning: "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.\\d{1,2}-(?<patch>[a-z0-9]+)$",
       matchUpdateTypes: ["major", "minor"],
-    },
-    {
-      description: "Don't open PRs for SMA images at all",
-      matchDatasources: ["docker"],
-      matchPackageNames: [
-        "ghcr.io/mdhiggins/sonarr-sma",
-        "ghcr.io/mdhiggins/radarr-sma",
-      ],
-      enabled: false,
     },
   ],
 }
