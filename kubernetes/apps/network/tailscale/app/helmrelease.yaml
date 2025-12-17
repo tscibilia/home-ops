@@ -12,9 +12,17 @@ spec:
   values:
     # Not supported in this chart version
     # fullnameOverride: tailscale-operator
-    oauthSecretVolume:
-      secret:
-        secretName: &secret tailscale-operator-secret
     operatorConfig:
       podAnnotations:
-        secret.reloader.stakater.com/reload: *secret
+        secret.reloader.stakater.com/reload: &secret tailscale-operator-secret
+    proxyConfig:
+      defaultTags: "tag:k8s"
+  valuesFrom:
+    - kind: Secret
+      name: *secret
+      valuesKey: client_id
+      targetPath: oauth.clientId
+    - kind: Secret
+      name: *secret
+      valuesKey: client_secret
+      targetPath: oauth.clientSecret
