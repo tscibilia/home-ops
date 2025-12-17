@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
         - name: outpost
-          image: ghcr.io/goauthentik/proxy:2025.10.2
+          image: ghcr.io/goauthentik/proxy:2025.10.3
           env:
             - name: AUTHENTIK_HOST
               value: "http://authentik-server.default.svc.cluster.local"
