@@ -10,8 +10,8 @@ spec:
     name: *app
   interval: 1h
   values:
-    fullnameOverride: tailscale-operator
-    nameOverride: tailscale-operator
+    # Not supported in this chart version
+    # fullnameOverride: tailscale-operator
     oauthSecretVolume:
       secret:
         secretName: &secret tailscale-operator-secret
