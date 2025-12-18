@@ -22,7 +22,7 @@ jobs:
 
       - name: Generate Release Notes
         id: release-notes
-        uses: tscibilia/action-semver-release@claude/fix-semver-pagination-018YiCViXgkXq8AXegaNAG61 # v2.1.0
+        uses: mirceanton/action-semver-release@32926bdfac015a028847dc4b295ab877a808e853 # v2.2.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: true
