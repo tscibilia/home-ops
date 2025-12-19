@@ -94,15 +94,15 @@ spec:
         data:
           .qbt.toml: |-
             [qbittorrent]
-            addr = "http://localhost:8080"
-            [settings]
-            CompletedDownloadFolder = "/Media/torrents/completed"
-            CategoryKomga = "audiobooks"
-            CategorySeed = "cross-seed"
-            CategoryManual = "manual"
-            CategoryLidarr = "music"
-            CategoryRadarr = "movies"
-            CategorySonarr = "tv"
+            addr = "http://localhost:80"
+            # [settings]
+            # CompletedDownloadFolder = "/Media/torrents/completed"
+            # CategoryKomga = "audiobooks"
+            # CategorySeed = "cross-seed"
+            # CategoryManual = "manual"
+            # CategoryLidarr = "music"
+            # CategoryRadarr = "movies"
+            # CategorySonarr = "tv"
     persistence:
       config:
         existingClaim: *app

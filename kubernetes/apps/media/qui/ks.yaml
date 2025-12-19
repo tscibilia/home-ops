@@ -6,9 +6,11 @@ metadata:
   name: &app qui
 spec:
   components:
-    - ../../../../components/nfs-scaler
+    - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: qbittorrent
