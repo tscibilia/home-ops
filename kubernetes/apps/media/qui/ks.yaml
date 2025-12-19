@@ -1,31 +1,30 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app qbittorrent
+  name: &app qui
 spec:
   components:
     - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
+    - name: qbittorrent
   interval: 1h
-  path: ./kubernetes/apps/media/qbittorrent/app
+  path: ./kubernetes/apps/media/qui/app
   postBuild:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: qb
-      VOLSYNC_CAPACITY: 1Gi
-    substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
+      VOLSYNC_CAPACITY: 2Gi
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: media
+  targetNamespace: default
+  wait: false
