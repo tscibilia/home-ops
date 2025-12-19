@@ -19,8 +19,6 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: auth
       CNPG_NAME: &postgresAppName pgsql-cluster
-      # renovate: datasource=docker depName=ghcr.io/goauthentik/server
-      AUTHENTIK_VERSION: "2025.10.2"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
@@ -53,9 +51,6 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/default/authentik/outposts
   postBuild:
-    substitute:
-      # renovate: datasource=docker depName=ghcr.io/goauthentik/server
-      AUTHENTIK_VERSION: "2025.10.2"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
