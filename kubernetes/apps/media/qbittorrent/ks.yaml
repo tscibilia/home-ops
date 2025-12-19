@@ -6,9 +6,16 @@ metadata:
   name: &app qbittorrent
 spec:
   components:
+    - ../../../../components/ext-auth-internal
     - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
+    - name: generic-device-plugin
+      namespace: kube-system
+    - name: keda
+      namespace: observability
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync

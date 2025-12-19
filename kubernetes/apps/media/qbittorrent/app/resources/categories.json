@@ -1,0 +1,20 @@
+{
+    "audiobooks": {
+        "save_path": "/Media/torrents/completed/audiobooks"
+    },
+    "cross-seed": {
+        "save_path": "/Media/torrents/completed/cross-seed"
+    },
+    "movies": {
+        "save_path": "/Media/torrents/completed/movies"
+    },
+    "music": {
+        "save_path": "/Media/torrents/completed/music"
+    },
+    "manual": {
+        "save_path": "/Media/torrents/completed/manual"
+    },
+    "tv": {
+        "save_path": "/Media/torrents/completed/tv"
+    }
+}
