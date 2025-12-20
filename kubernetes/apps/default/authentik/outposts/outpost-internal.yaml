@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/name: authentik-proxy
     app.kubernetes.io/instance: authentik-outpost-internal
     app.kubernetes.io/managed-by: goauthentik.io
+    # renovate: datasource=docker depName=ghcr.io/goauthentik/proxy
+    app.kubernetes.io/version: 2025.10.3
     goauthentik.io/outpost-name: authentik-outpost-internal
     goauthentik.io/outpost-type: proxy
     goauthentik.io/outpost-uuid: 7345384ad9d5492e83b0243e68d8ad6a
