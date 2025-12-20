@@ -9,12 +9,10 @@ This document is intended to supplement and connect with GitHub issues and meant
 - [ ] Upgrade postgres16 to 17 or 18 - (See [#1211](https://github.com/tscibilia/home-ops/issues/1211))
 
 ## Known Issues
-- Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - **update talos machineconfig and VM NIC**
 - etcd noisy logging, see kubernetes/kubernetes iss.134080 - **lookup localhost: operation was canceled**
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
-- ⚠️ Add multus and revise qbit deployment ([#1168](https://github.com/tscibilia/home-ops/issues/1168)) - **UDM-Pro VLAN and Proxmox setup**
 ###  [Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)
 - ⚠️ Migrate from minio to Garage/OpenMaxIO - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **waiting on upstream project development**
 - ⚠️ Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849)) - **Doesn't yet support playlist downloads**
