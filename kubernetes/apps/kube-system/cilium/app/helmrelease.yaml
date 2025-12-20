@@ -31,7 +31,7 @@ spec:
     dashboards:
       enabled: true
     # NOTE: devices might need to be set if you have more than one active NIC on your hosts
-    # devices: ens+
+    devices: ens+
     # enableIPv4BIGTCP: true
     endpointRoutes:
       enabled: true
