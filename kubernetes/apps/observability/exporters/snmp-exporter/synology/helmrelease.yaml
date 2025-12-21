@@ -30,7 +30,7 @@ spec:
           target: "nas.internal"
           auth: ["public_v2"]
       path: /snmp
-      scrapeTimeout: 10s
+      scrapeTimeout: 20s
       relabelings:
         # - { sourceLabels: ["__address__"], targetLabel: "__param_target" } # Sets pod IP and passes it as the target parameter of the /snmp URL
         - { sourceLabels: ["__param_target"], targetLabel: "instance" } # Sets the instance label to the target parameter value
