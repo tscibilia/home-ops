@@ -22,6 +22,9 @@ spec:
               tag: 0.6.43@sha256:9cb724e0bc84f05ba2f81a3da5f53f5add07e1001065d83f3b6b70b9a9eeef19
             env:
               TZ: "${TIMEZONE:-UTC}"
+              JWT_EXPIRES_IN: 604800
+              CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},http://localhost:8080"
+              WEBUI_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               OLLAMA_BASE_URLS: http://p1g6.local:11434;http://ts-p1g6-xnm8p.network.svc.cluster.local:11434
               ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: "searxng"
