@@ -41,7 +41,7 @@ spec:
               ICON_SERVICE: "duckduckgo"
               TEMPLATES_FOLDER: "data/templates"
               SSO_ENABLED: "true"
-              SSO_ONLY: "true"
+              SSO_ONLY: "false"
               SSO_AUTHORITY: "https://auth.${SECRET_DOMAIN}/application/o/bitwarden/"
               SSO_SCOPES: "email profile offline_access"
             envFrom:
