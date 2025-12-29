@@ -4,7 +4,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## In Progress
 `- [ ] Task name - Started yyy-mm-dd - brief context`
-- [ ] Add multus and revise qbit deployment - **Impact:** Better network isolation for qBittorrent; simplifies deployment (See [#1168](https://github.com/tscibilia/home-ops/issues/1168))
 - [ ] Add autobrr and thelounge - (See [#803](https://github.com/tscibilia/home-ops/issues/803))
 - [ ] Upgrade postgres16 to 17 or 18 - (See [#1211](https://github.com/tscibilia/home-ops/issues/1211))
 
@@ -20,6 +19,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Add multus and revise qbit deployment - **2025-12-29:** (See [#1168](https://github.com/tscibilia/home-ops/issues/1168))
 - ✅ Add cluster documentation - **2025-12-15** (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
 - ✅ Document issues with bootstrapping - **2025-12-14** ([#1252](https://github.com/tscibilia/home-ops/issues/1252))
 - ✅ Unpoller (MTU & config issue) - **2025-12-14** (See kashalls/external-dns-unifi-webhook/#163)
