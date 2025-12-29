@@ -30,7 +30,6 @@ machine:
       enabled: true
     {% endif %}
     rbac: true
-    stableHostname: true
   files:
     - op: create
       path: /etc/cri/conf.d/20-customization.part
@@ -62,7 +61,6 @@ machine:
     disableManifestsDirectory: true
     extraConfig:
       featureGates:
-        ImageVolume: true # New
         ResourceHealthStatus: true # New
       serializeImagePulls: false
     extraMounts:
@@ -164,7 +162,7 @@ cluster:
     disablePodSecurityPolicy: true
     extraArgs:
       enable-aggregator-routing: "true"
-      feature-gates: ImageVolume=true,MutatingAdmissionPolicy=true,ResourceHealthStatus=true
+      feature-gates: MutatingAdmissionPolicy=true,ResourceHealthStatus=true
       runtime-config: admissionregistration.k8s.io/v1beta1=true
       {# oidc-client-id: ak://talos/OIDC_CLIENT_ID
       oidc-issuer-url: ak://talos/OIDC_ISSUER_URL
