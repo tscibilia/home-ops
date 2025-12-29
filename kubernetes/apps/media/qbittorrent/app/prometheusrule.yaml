@@ -14,7 +14,7 @@ spec:
         - alert: QbittorrentFirewalled
           annotations:
             summary: "qBittorrent is firewalled"
-          expr: qbittorrent_firewalled{server="qbittorrent.media.svc.cluster.local:8080"} == 1
+          expr: qbittorrent_firewalled{server="qbittorrent.media.svc.cluster.local:80"} == 1
           for: 2m
           labels:
             severity: warning
