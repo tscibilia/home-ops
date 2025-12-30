@@ -22,9 +22,6 @@ spec:
             env:
               TZ: ${TIMEZONE:-UTC}
               HOMEPAGE_ALLOWED_HOSTS: "*"
-            envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 20m
@@ -79,8 +76,9 @@ spec:
         globalMounts:
           - path: /app/config
       config-files:
-        type: configMap
-        name: "{{ .Release.Name }}-configmap"
+        type: secret
+        name: "{{ .Release.Name }}-config"
+        defaultMode: 0400
         globalMounts:
           - path: /app/config/bookmarks.yaml
             subPath: bookmarks.yaml
