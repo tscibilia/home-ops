@@ -37,14 +37,14 @@ Multus CNI allows pods to have multiple network interfaces. The cluster uses thi
 
 ### NetworkAttachmentDefinition
 
-Defines the secondary VPN network:
+Defines the secondary VPN network. Located in the `network` namespace:
 
 ```yaml
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
-  name: unifi-vpn
-  namespace: media
+  name: vpn
+  namespace: network
 spec:
   config: |
     {
@@ -56,8 +56,7 @@ spec:
         "type": "static",
         "addresses": [
           {
-            "address": "10.10.20.x/24",
-            "gateway": "10.10.20.1"
+            "address": "192.168.99.x/24"
           }
         ]
       }
@@ -74,7 +73,12 @@ kind: Pod
 metadata:
   name: qbittorrent
   annotations:
-    k8s.v1.cni.cncf.io/networks: unifi-vpn
+    k8s.v1.cni.cncf.io/networks: |-
+      [{
+        "name": "vpn",
+        "namespace": "network",
+        "ips": ["192.168.99.x/24"]
+      }]
 spec:
   containers:
     - name: app
@@ -126,13 +130,13 @@ Check routing table:
 kubectl exec -it <pod-name> -n media -- ip route show
 ```
 
-External traffic should route through the VPN gateway (10.10.20.1).
+External traffic should route through the VPN network (192.168.99.x).
 
 ### Test VPN Connectivity
 
 ```bash
-# Ping VPN gateway
-kubectl exec -it <pod-name> -n media -- ping 10.10.20.1
+# Ping VPN network gateway
+kubectl exec -it <pod-name> -n media -- ping 192.168.99.1
 
 # Check external IP (should show VPN endpoint)
 kubectl exec -it <pod-name> -n media -- curl ifconfig.me
@@ -141,13 +145,13 @@ kubectl exec -it <pod-name> -n media -- curl ifconfig.me
 ### Common Issues
 
 **Pod fails to start with "failed to attach network"**:
-- Verify NetworkAttachmentDefinition exists: `kubectl get network-attachment-definitions -n media`
+- Verify NetworkAttachmentDefinition exists: `kubectl get network-attachment-definitions -n network`
 - Check that the annotation references the correct NetworkAttachmentDefinition name
 
 **VPN traffic not routing correctly**:
 - Verify routes in pod: `kubectl exec -it <pod-name> -n media -- ip route show`
-- Check VPN gateway is reachable: `kubectl exec -it <pod-name> -n media -- ping 10.10.20.1`
-- Verify firewall rules on UniFi gateway
+- Check VPN network is reachable: `kubectl exec -it <pod-name> -n media -- ping 192.168.99.1`
+- Verify network configuration
 
 **Cluster services not reachable**:
 - Ensure primary interface (eth0) is up: `kubectl exec -it <pod-name> -n media -- ip link show eth0`

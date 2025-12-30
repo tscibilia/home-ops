@@ -351,7 +351,7 @@ just kube restart-network
 
 ```bash
 # Verify NetworkAttachmentDefinition exists
-kubectl get network-attachment-definitions -n media
+kubectl get network-attachment-definitions -n network
 
 # Check pod has both interfaces
 kubectl exec -it <pod-name> -n media -- ip addr show
@@ -359,8 +359,8 @@ kubectl exec -it <pod-name> -n media -- ip addr show
 # Verify routing
 kubectl exec -it <pod-name> -n media -- ip route show
 
-# Test VPN gateway connectivity
-kubectl exec -it <pod-name> -n media -- ping 10.10.20.1
+# Test VPN network connectivity
+kubectl exec -it <pod-name> -n media -- ping 192.168.99.1
 ```
 
 **Fix**:

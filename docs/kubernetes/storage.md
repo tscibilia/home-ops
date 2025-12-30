@@ -222,8 +222,8 @@ CloudNativePG provides HA PostgreSQL clusters. Configured in [`kubernetes/apps/d
 
 ### Current Clusters
 
-- **pgsql-cluster**: Main PostgreSQL 17 cluster for most apps (Authentik, Immich, etc.)
-- **immich17**: Separate PostgreSQL 17 instance for Immich-specific requirements
+- **pgsql-cluster**: Main database cluster for most apps (Authentik, Gatus, etc.)
+- **immich17**: Dedicated database cluster for Immich
 - Located in `database` namespace
 
 ### Automatic User Provisioning
@@ -237,7 +237,7 @@ spec:
   postBuild:
     substitute:
       APP: authentik
-      CNPG_NAME: pgsql-cluster  # PostgreSQL 17 main cluster
+      CNPG_NAME: pgsql-cluster
 ```
 
 This automatically:
@@ -300,9 +300,10 @@ dragonfly-cluster.database.svc.cluster.local:6379
 
 Multiple apps share the same Dragonfly instance but use different database indices:
 
-- **Immich**: DB 2
-- **Searxng**: DB 3
-- Others: DB 0 (default)
+- **DB 0**: Default
+- **DB 1**: Authentik (unused as of [Authentik 2025.10](https://goauthentik.io/blog/2025-11-13-we-removed-redis/) which removed Redis support)
+- **DB 2**: Immich
+- **DB 3**: Searxng
 
 This prevents key collisions between apps.
 
