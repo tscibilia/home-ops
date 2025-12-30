@@ -3,6 +3,19 @@
   customManagers: [
     {
       customType: "regex",
+      description: "Process GitHub raw content URLs",
+      managerFilePatterns: [
+        "/\\.yaml(?:\\.j2)?$/",
+      ],
+      matchStrings: [
+        // # renovate: datasource=github-releases depName=foo/bar
+        // - https://raw.githubusercontent.com/foo/bar/refs/tags/v1.0.0/path/to/file.yaml
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+-\\s+https://raw\\.githubusercontent\\.com/[^/]+/[^/]+/refs/tags/(?<currentValue>v?[0-9]+\\.[0-9]+\\.[0-9]+)/.*",
+      ],
+      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+    },
+    {
+      customType: "regex",
       description: "Process annotated dependencies",
       managerFilePatterns: [
         "/\\.env(?:\\.j2)?$/",
@@ -15,7 +28,8 @@
         // # renovate: datasource=docker depName=ghcr.io/foo/bar
         // FOOBAR_VERSION=v1.0.0
         // Also matches: image: registry/path:v1.0.0
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
+        // Excludes full URLs starting with http:// or https://
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n(?!.*https?://).+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
