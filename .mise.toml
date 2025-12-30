@@ -16,7 +16,7 @@ _.file = [
 
 [tools]
 "python" = "3.14.2"
-"uv" = "0.9.20"
+"uv" = "0.9.21"
 "just" = "1.45.0"
 "gum" = "0.17.0"
 "pipx:makejinja" = "2.8.2"
