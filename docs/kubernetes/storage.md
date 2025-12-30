@@ -222,7 +222,8 @@ CloudNativePG provides HA PostgreSQL clusters. Configured in [`kubernetes/apps/d
 
 ### Current Clusters
 
-- **pgsql-cluster**: Main database for most apps (Authentik, Immich, etc.)
+- **pgsql-cluster**: Main PostgreSQL 17 cluster for most apps (Authentik, Immich, etc.)
+- **immich17**: Separate PostgreSQL 17 instance for Immich-specific requirements
 - Located in `database` namespace
 
 ### Automatic User Provisioning
@@ -236,7 +237,7 @@ spec:
   postBuild:
     substitute:
       APP: authentik
-      CNPG_NAME: pgsql-cluster
+      CNPG_NAME: pgsql-cluster  # PostgreSQL 17 main cluster
 ```
 
 This automatically:
@@ -271,6 +272,19 @@ To restore:
 ```bash
 kubectl cnpg restore <cluster-name> --backup <backup-name> -n database
 ```
+
+### PostgreSQL 17 Upgrade
+
+The cluster was upgraded from PostgreSQL 16 to PostgreSQL 17 in December 2024. Key changes:
+
+- **Cluster name**: `pgsql-cluster` (running PostgreSQL 17)
+- **Image**: `ghcr.io/cloudnative-pg/postgresql:17`
+- **Migration approach**: Blue-green migration pattern with restoration from backups
+- **Located in**: [`kubernetes/apps/database/cnpg/pgsql-cluster/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/database/cnpg/pgsql-cluster)
+
+The immich17 cluster is a separate PostgreSQL 17 instance for Immich-specific database requirements.
+
+For detailed migration procedures, see [Issue #1211](https://github.com/tscibilia/home-ops/issues/1211).
 
 ## Dragonfly: Redis Cache
 

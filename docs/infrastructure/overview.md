@@ -77,8 +77,8 @@ The base configuration in [`machineconfig.yaml.j2`](https://github.com/tscibilia
 - **Control plane endpoint**: `https://192.168.5.200:6443` (line 132)
 - **Pod network**: `10.42.0.0/16` (line 145)
 - **Service network**: `10.43.0.0/16` (line 147)
-- **Kubernetes version**: v1.34.3 (line 75)
-- **Talos image**: Factory-built with custom schematic (line 54)
+- **Kubernetes version**: Check [`talos/machineconfig.yaml.j2`](https://github.com/tscibilia/home-ops/blob/main/talos/machineconfig.yaml.j2) for current version
+- **Talos version**: Check [`talos/machineconfig.yaml.j2`](https://github.com/tscibilia/home-ops/blob/main/talos/machineconfig.yaml.j2) for current image
 
 Node-specific configs in `talos/nodes/*.yaml.j2` override:
 

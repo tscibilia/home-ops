@@ -242,6 +242,26 @@ Cilium enforces NetworkPolicies (Kubernetes standard) and CiliumNetworkPolicies 
 
 By default, all traffic is allowed. To restrict, create NetworkPolicy CRDs.
 
+## Multus VPN for Media Apps
+
+Select media applications (qBittorrent, Prowlarr) use [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) to attach to a secondary VPN network interface while maintaining cluster connectivity.
+
+**How it works:**
+
+1. Pod has two network interfaces:
+   - Primary: Cilium-managed cluster network (for internal services)
+   - Secondary: VPN network for external traffic routing
+2. VPN network routes specific traffic through UniFi VPN gateway
+3. Apps can simultaneously access cluster services and route downloads through VPN
+
+**Configuration**: See [`kubernetes/apps/media/qbittorrent/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/qbittorrent) and [`kubernetes/apps/media/prowlarr/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/prowlarr) for NetworkAttachmentDefinition examples.
+
+**Benefits:**
+
+- Download traffic isolated to VPN without affecting internal cluster communication
+- No need for sidecar VPN containers
+- Native Kubernetes networking with secondary interfaces
+
 ## Observability
 
 Network metrics are collected by:

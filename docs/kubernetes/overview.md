@@ -90,7 +90,7 @@ spec:
     substitute:
       APP: authentik
       GATUS_SUBDOMAIN: auth
-      CNPG_NAME: pgsql-cluster
+      CNPG_NAME: pgsql-cluster  # PostgreSQL 17 main cluster
       AUTHENTIK_VERSION: "2025.10.2"
     substituteFrom:
       - kind: Secret
@@ -213,7 +213,9 @@ Two variants for different gateways:
 - **`ext-auth-external`**: For apps exposed via `envoy-external` gateway (internet-facing)
 - **`ext-auth-internal`**: For apps exposed via `envoy-internal` gateway (LAN-only)
 
-Both create a SecurityPolicy that forwards authentication to Authentik's embedded outpost. See [`kubernetes/components/ext-auth-external/securitypolicy.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/components/ext-auth-external/securitypolicy.yaml):
+Both create a SecurityPolicy that forwards authentication to Authentik's dedicated outpost deployments. Authentik uses separate outpost pods for external and internal gateways for better isolation and scaling.
+
+See [`kubernetes/components/ext-auth-external/securitypolicy.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/components/ext-auth-external/securitypolicy.yaml):
 
 ```yaml
 apiVersion: gateway.envoyproxy.io/v1alpha1

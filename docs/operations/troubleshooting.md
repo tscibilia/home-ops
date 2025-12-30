@@ -343,6 +343,38 @@ kubectl get pods -n kube-system | grep cilium
 just kube restart-network
 ```
 
+### VPN Network Issues (Multus)
+
+**Symptoms**: qBittorrent or Prowlarr can't access internet or VPN isn't working
+
+**Check**:
+
+```bash
+# Verify NetworkAttachmentDefinition exists
+kubectl get network-attachment-definitions -n media
+
+# Check pod has both interfaces
+kubectl exec -it <pod-name> -n media -- ip addr show
+
+# Verify routing
+kubectl exec -it <pod-name> -n media -- ip route show
+
+# Test VPN gateway connectivity
+kubectl exec -it <pod-name> -n media -- ping 10.10.20.1
+```
+
+**Fix**:
+
+```bash
+# Restart pod to re-attach network
+kubectl delete pod <pod-name> -n media
+
+# If NetworkAttachmentDefinition is missing, check app's kustomization
+kubectl get kustomization -n media <app-name> -o yaml
+```
+
+See the [VPN Networking Guide](../kubernetes/vpn-networking.md) for detailed troubleshooting.
+
 ## Emergency: Everything is Broken
 
 If the entire cluster is down:
