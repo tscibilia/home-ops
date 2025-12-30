@@ -14,12 +14,6 @@
       overridePackageName: "ghcr.io/siderolabs/installer",
     },
     {
-      description: "Allow postgres versions <17",
-      matchDatasources: ["docker"],
-      allowedVersions: "<17",
-      matchPackageNames: ["cdpgvectorchord", "/postgresql/", "/postgres-backup-local/"],
-    },
-    {
       description: "Custom versioning for minio with upper bound",
       matchDatasources: ["docker"],
       matchPackageNames: ["minio"],

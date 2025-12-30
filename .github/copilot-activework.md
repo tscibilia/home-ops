@@ -5,7 +5,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## In Progress
 `- [ ] Task name - Started yyy-mm-dd - brief context`
 - [ ] Add autobrr and thelounge - (See [#803](https://github.com/tscibilia/home-ops/issues/803))
-- [ ] Upgrade postgres16 to 17 or 18 - (See [#1211](https://github.com/tscibilia/home-ops/issues/1211))
 
 ## Known Issues
 - etcd noisy logging, see kubernetes/kubernetes iss.134080 - **lookup localhost: operation was canceled**
@@ -19,6 +18,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Upgrade postgres16 to 17 - **2025-12-29:** (See [#1211](https://github.com/tscibilia/home-ops/issues/1211))
 - ✅ Add multus and revise qbit deployment - **2025-12-29:** (See [#1168](https://github.com/tscibilia/home-ops/issues/1168))
 - ✅ Add cluster documentation - **2025-12-15** (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
 - ✅ Document issues with bootstrapping - **2025-12-14** ([#1252](https://github.com/tscibilia/home-ops/issues/1252))
