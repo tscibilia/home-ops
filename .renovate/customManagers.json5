@@ -28,8 +28,7 @@
         // # renovate: datasource=docker depName=ghcr.io/foo/bar
         // FOOBAR_VERSION=v1.0.0
         // Also matches: image: registry/path:v1.0.0
-        // Excludes full URLs starting with http:// or https://
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n(?!.*https?://).+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
