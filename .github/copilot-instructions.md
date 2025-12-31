@@ -112,10 +112,11 @@ kubernetes/apps/{namespace}/{app-name}/
 ## Storage & Data Management
 
 **Storage Classes:**
-- **openebs-hostpath**: Local ephemeral storage (openebs)
-- **ceph-ssd**: Persistent block storage (rook-ceph)
-- **cephfs**: Shared filesystem storage (rook-ceph)
-- **nfs-media**: Network shared filesystem (nfs)
+- **openebs-hostpath**: Local ephemeral storage (openebs) - Used by CNPG clusters, victoria-logs
+- **ceph-rbd**: Persistent block storage on HDD (rook-ceph) - Used by media apps (for larger cache volumes)
+- **ceph-ssd**: Persistent block storage on SSD (rook-ceph) - Used by high-performance apps (victoria-metrics, seerr)
+- **cephfs**: Shared filesystem storage (rook-ceph) - Used by apps requiring shared access (plex media)
+- **nfs-media**: Network shared filesystem (nfs) - External NFS mounts for media libraries
 
 **VolSync Backups:**
 VolSync (`volsync-system` namespace) provides automated backup/restore for stateful apps using Restic:
@@ -163,6 +164,22 @@ VolSync (`volsync-system` namespace) provides automated backup/restore for state
 2. **Internal from LAN**: Client (192.168.5.0/24) → UniFi DNS → Cloudflare DoH → CoreDNS lookup → Cilium LB → Service
 3. **External**: Internet → Cloudflare tunnel → cloudflared → envoy-external → Service pods
 
+**VPN Networking (Multus CNI):**
+Select applications use Multus CNI to attach secondary VPN network interfaces for routing external traffic through a VPN while maintaining internal cluster connectivity:
+
+- **Primary interface (eth0)**: Cilium-managed network for cluster communication (DNS, service discovery, internal APIs)
+- **Secondary interface (net1)**: VPN network (192.168.99.0/24) for external traffic routed through UniFi VPN gateway
+
+**Apps using VPN networking:**
+- **qBittorrent**: Download traffic routed through VPN, metrics/UI accessible via primary interface
+- **Prowlarr**: Indexer queries routed through VPN, communication with Sonarr/Radarr via primary interface
+
+**Implementation:**
+- NetworkAttachmentDefinition (`vpn`) in `network` namespace defines macvlan bridge configuration
+- Apps add Multus annotation: `k8s.v1.cni.cncf.io/networks` with VPN network reference
+- Traffic isolation without sidecar overhead or complex iptables rules
+- See [`docs/kubernetes/vpn-networking.md`](../docs/kubernetes/vpn-networking.md) for detailed architecture and troubleshooting
+
 ## Secrets Management
 
 **aKeyless + ExternalSecrets + SOPS pattern:**
@@ -203,9 +220,18 @@ Apps communicate internally via Kubernetes Service DNS: `<service-name>.<namespa
 - Example from immich: `REDIS_HOSTNAME: dragonfly-cluster.database.svc.cluster.local`
 
 **Shared Infrastructure (Database Tier):**
-- **CNPG clusters** (PostgreSQL): Deployed in `database` namespace, apps depend via `dependsOn: cnpg-cluster`
+- **CNPG clusters** (PostgreSQL 17): Two separate clusters deployed in `database` namespace:
+  - **pgsql-cluster**: General-purpose PostgreSQL 17 cluster for most applications (authentik, grafana, gatus, mealie, etc.)
+    - 3 instances with openebs-hostpath storage (20Gi per instance)
+    - Image: `ghcr.io/cloudnative-pg/postgresql:17`
+    - Uses barman-cloud plugin v0.10.0 for backups to B2 storage
+  - **immich17**: Specialized PostgreSQL 17 cluster for Immich with vectorchord extension
+    - 3 instances with openebs-hostpath storage (20Gi per instance)
+    - Image: `ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.2`
+    - Includes `vchord.so` shared preload library for vector search capabilities
   - Each app gets a Kubernetes Secret with `user`, `password`, `uri` keys (managed by CNPG/ExternalSecrets)
-  - Referenced in HelmRelease: `valueFrom.secretKeyRef: immich-pguser-secret`
+  - Apps depend on clusters via `dependsOn: cnpg-cluster` in their `ks.yaml`
+  - Referenced in HelmRelease: `valueFrom.secretKeyRef: <app>-pguser-secret`
 - **Dragonfly** (Redis): Deployed in `database` namespace, accessed via hardcoded environment variables
   - Apps allocate different database indices (immich uses 2, searxng uses 3) to avoid conflicts
 
@@ -480,13 +506,18 @@ kubectl rollout restart deployment/external-secrets -n external-secrets
 
 ### CNPG Cluster Failures (Database unavailable)
 
+**Note:** Two CNPG clusters exist: `pgsql-cluster` (general apps) and `immich17` (Immich with vectorchord). Replace `<cluster-name>` with the appropriate cluster.
+
 **Diagnosis:**
 ```bash
-# Check Cluster status
-kubectl describe cluster pgsql-cluster -n database
+# List all CNPG clusters
+kubectl get cluster -n database
+
+# Check specific cluster status (pgsql-cluster or immich17)
+kubectl describe cluster <cluster-name> -n database
 
 # View CNPG pod logs
-kubectl logs -n database pgsql-cluster-1 -f
+kubectl logs -n database <cluster-name>-1 -f
 
 # Check persistent volumes
 kubectl get pv,pvc -n database
@@ -498,20 +529,20 @@ kubectl get backup -n database
 **Recovery steps:**
 ```bash
 # 1. Check cluster readiness condition
-kubectl get cluster pgsql-cluster -n database -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
+kubectl get cluster <cluster-name> -n database -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
 
 # 2. If cluster is degraded, check pod status
-kubectl get pods -n database -l cnpg.io/cluster=pgsql-cluster
+kubectl get pods -n database -l cnpg.io/cluster=<cluster-name>
 
 # 3. Retrieve superuser credentials for manual recovery
-kubectl get secret -n database pgsql-cluster-superuser -o jsonpath='{.data.password}' | base64 -d
+kubectl get secret -n database cnpg-secret -o jsonpath='{.data.password}' | base64 -d
 
 # 4. Connect directly to test database
-psql -h pgsql-cluster-rw.database.svc.cluster.local -U postgres -d postgres -W
+psql -h <cluster-name>-rw.database.svc.cluster.local -U postgres -d postgres -W
 
 # 5. If PVC is full, scale down app and clean data, then restart cluster
 kubectl scale deployment <app> --replicas=0 -n <app-namespace>
-kubectl rollout restart statefulset/cnpg-pgsql-cluster -n database
+kubectl rollout restart statefulset/<cluster-name> -n database
 ```
 
 ### PVC Mounting & Storage Issues
