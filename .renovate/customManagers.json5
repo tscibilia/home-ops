@@ -10,10 +10,9 @@
       matchStrings: [
         // # renovate: datasource=github-releases depName=foo/bar
         // - https://raw.githubusercontent.com/foo/bar/refs/tags/v1.0.0/path/to/file.yaml
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+-\\s+(?<url>https://raw\\.githubusercontent\\.com/(?<repo>[^/]+/[^/]+)/refs/tags/(?<currentValue>v?[0-9]+\\.[0-9]+\\.[0-9]+)/(?<path>.+))",
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+/(?<currentValue>[v|\\d][^/]+)/",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
-      autoReplaceStringTemplate: "https://raw.githubusercontent.com/{{{repo}}}/refs/tags/{{{newValue}}}/{{{path}}}",
     },
     {
       customType: "regex",
@@ -29,7 +28,8 @@
         // # renovate: datasource=docker depName=ghcr.io/foo/bar
         // FOOBAR_VERSION=v1.0.0
         // Also matches: image: registry/path:v1.0.0
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
+        // Uses [^/]+ before : to avoid matching URLs with ://
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n[^/]+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
