@@ -10,9 +10,10 @@
       matchStrings: [
         // # renovate: datasource=github-releases depName=foo/bar
         // - https://raw.githubusercontent.com/foo/bar/refs/tags/v1.0.0/path/to/file.yaml
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+-\\s+https://raw\\.githubusercontent\\.com/[^/]+/[^/]+/refs/tags/(?<currentValue>v?[0-9]+\\.[0-9]+\\.[0-9]+)/.*",
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+-\\s+(?<url>https://raw\\.githubusercontent\\.com/(?<repo>[^/]+/[^/]+)/refs/tags/(?<currentValue>v?[0-9]+\\.[0-9]+\\.[0-9]+)/(?<path>.+))",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+      autoReplaceStringTemplate: "https://raw.githubusercontent.com/{{{repo}}}/refs/tags/{{{newValue}}}/{{{path}}}",
     },
     {
       customType: "regex",
