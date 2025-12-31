@@ -27,9 +27,9 @@
         // foobar_version: v1.0.0
         // # renovate: datasource=docker depName=ghcr.io/foo/bar
         // FOOBAR_VERSION=v1.0.0
-        // Also matches: image: registry/path:v1.0.0
-        // Uses [^/]+ before : to avoid matching URLs with ://
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n[^/]+(:\\s?|=)(&\\S+\\s)?(?<currentValue>\\S+)",
+        // registry/path:v1.0.0
+        // Version must start with v or digit (not / from https://)
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s?|=)(&\\S+\\s)?(?<currentValue>[v\\d][^\\s]*)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
