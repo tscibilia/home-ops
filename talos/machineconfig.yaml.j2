@@ -211,3 +211,7 @@ cluster:
   serviceAccount:
     key: ak://talos/CLUSTER_SERVICEACCOUNT_KEY
   {% endif %}
+---
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"
