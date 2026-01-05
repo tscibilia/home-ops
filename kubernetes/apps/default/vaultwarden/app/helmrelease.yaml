@@ -43,7 +43,6 @@ spec:
               # Disabled, not providing full OIDC setup at the moment
               SSO_ENABLED: "false"
               SSO_ONLY: "false"
-              SSO_AUTHORITY: "https://auth.${SECRET_DOMAIN}/application/o/bitwarden/"
               SSO_SCOPES: "email profile offline_access"
             envFrom:
               - secretRef:

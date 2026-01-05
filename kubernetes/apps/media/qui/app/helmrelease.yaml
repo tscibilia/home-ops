@@ -25,7 +25,6 @@ spec:
               QUI__LOG_LEVEL: INFO
               QUI__OIDC_ENABLED: true
               QUI__OIDC_DISABLE_BUILT_IN_LOGIN: true
-              QUI__OIDC_ISSUER: "https://auth.${SECRET_DOMAIN}/application/o/qui/"
               QUI__OIDC_REDIRECT_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}/api/auth/oidc/callback"
               TZ: ${TIMEZONE:-UTC}
             envFrom:
