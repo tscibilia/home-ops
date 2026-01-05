@@ -37,6 +37,7 @@ spec:
               HBOX_DATABASE_DRIVER: postgres
               HBOX_DATABASE_SSL_MODE: disable
               HBOX_MODE: production
+              HBOX_OPTIONS_ALLOW_REGISTRATION: "false"
               # OIDC Values
               HBOX_OIDC_ENABLED: "true"
               HBOX_OIDC_ALLOWED_GROUPS: Plex User
