@@ -106,3 +106,8 @@ spec:
         existingClaim: *app
         globalMounts:
           - path: /data
+      modcache:
+        type: emptyDir
+        sizeLimit: 100Mi
+        globalMounts:
+          - path: /.cache
