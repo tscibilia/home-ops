@@ -38,7 +38,6 @@ spec:
               OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
               OAUTH_PROVIDER_NAME: Authentik
               OPENID_REDIRECT_URI: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth/oidc/callback
-              OPENID_PROVIDER_URL: https://auth.${SECRET_DOMAIN}/application/o/openai/.well-known/openid-configuration
               OAUTH_SCOPES: openid email profile
             envFrom:
               - secretRef:

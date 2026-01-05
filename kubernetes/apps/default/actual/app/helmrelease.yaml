@@ -27,8 +27,7 @@ spec:
               ACTUAL_ALLOWED_LOGIN_METHODS: openid,password,header
               ACTUAL_OPENID_ENFORCE: false
               ACTUAL_OPENID_AUTH_METHOD: openid
-              ACTUAL_OPENID_DISCOVERY_URL: "https://auth.${SECRET_DOMAIN}/application/o/actual/.well-known/openid-configuration"
-              ACTUAL_OPENID_SERVER_HOSTNAME: "https://budget.${SECRET_DOMAIN}"
+              ACTUAL_OPENID_SERVER_HOSTNAME: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"

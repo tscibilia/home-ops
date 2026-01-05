@@ -31,7 +31,6 @@ spec:
               MINIO_STORAGE_CLASS_STANDARD: EC:0
               MINIO_UPDATE: "off"
               MINIO_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth_callback"
-              MINIO_IDENTITY_OPENID_CONFIG_URL: "https://auth.${SECRET_DOMAIN}/application/o/minio/.well-known/openid-configuration"
               MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,minio
               MINIO_IDENTITY_OPENID_DISPLAY_NAME: "Login with Authentik"
             envFrom:

@@ -60,7 +60,7 @@ machineLearning:
 
 oauth:
   enabled: true
-  issuerUrl: "https://auth.{{ .SECRET_DOMAIN }}/application/o/immich/"
+  issuerUrl: "https://{{ .AUTHENTIK_SSO_SUBDOMAIN }}.{{ .SECRET_DOMAIN }}/application/o/${APP}/"
   autoLaunch: false
   autoRegister: true
   buttonText: Login with Authentik
