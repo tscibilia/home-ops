@@ -5,6 +5,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## In Progress
 `- [ ] Task name - Started yyy-mm-dd - brief context`
 - [ ] Add autobrr and thelounge - (See [#803](https://github.com/tscibilia/home-ops/issues/803))
+- [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 
 ## Known Issues
 - etcd noisy logging, see kubernetes/kubernetes iss.134080 - **lookup localhost: operation was canceled**
@@ -12,23 +13,22 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
 ###  [Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)
-- ⚠️ Migrate from minio to Garage/OpenMaxIO - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **waiting on upstream project development**
-- ⚠️ Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849)) - **Doesn't yet support playlist downloads**
-- ⚠️ Add homebox - (See [#85](https://github.com/tscibilia/home-ops/issues/85)) - **Doesn't yet support OIDC**
+- ⚠️ Migrate from minio to Garage - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **waiting on upstream project development**
 
 ## Resolved
 `Descending order, newest on top`
-- ✅ Upgrade postgres16 to 17 - **2025-12-29:** (See [#1211](https://github.com/tscibilia/home-ops/issues/1211))
-- ✅ Add multus and revise qbit deployment - **2025-12-29:** (See [#1168](https://github.com/tscibilia/home-ops/issues/1168))
-- ✅ Add cluster documentation - **2025-12-15** (See [#1210](https://github.com/tscibilia/home-ops/issues/1210))
+- ✅ Add homebox - **2026-01-04:** (See PR [#1409](https://github.com/tscibilia/home-ops/pull/1409) & issue [#85](https://github.com/tscibilia/home-ops/issues/85))
+- ✅ Upgrade postgres16 to 17 - **2025-12-29:** (See commit [b293ff1](https://github.com/tscibilia/home-ops/commit/b293ff1) & issue [#1211](https://github.com/tscibilia/home-ops/issues/1211))
+- ✅ Add multus and revise qbit deployment - **2025-12-29:** (See PR [#1337](https://github.com/tscibilia/home-ops/pull/1337) & issue [#1168](https://github.com/tscibilia/home-ops/issues/1168))
+- ✅ Add cluster documentation - **2025-12-15** (See PR [#1303](https://github.com/tscibilia/home-ops/pull/1303) & issue [#1210](https://github.com/tscibilia/home-ops/issues/1210))
 - ✅ Document issues with bootstrapping - **2025-12-14** ([#1252](https://github.com/tscibilia/home-ops/issues/1252))
-- ✅ Unpoller (MTU & config issue) - **2025-12-14** (See kashalls/external-dns-unifi-webhook/#163)
+- ✅ Unpoller (MTU & config issue) - **2025-12-14** (See commit [06b6686](https://github.com/tscibilia/home-ops/commit/06b6686) & issue kashalls/external-dns-unifi-webhook/#163)
 - ✅ VMAgent Scrape Pool Target Discovery Issues - **2025-12-09** (See [#1261](https://github.com/tscibilia/home-ops/issues/1261))
 - ✅ Tailscale Split DNS after unifi-dns Migration - **2025-12-04** (See [#1235](https://github.com/tscibilia/home-ops/issues/1235))
 - ✅ Jellyfin 10.11.x trickplay path changed - **2025-12-04** (See [#1234](https://github.com/tscibilia/home-ops/issues/1234))
-- ✅ Switch from k8s-gateway -> unifi-dns - **2025-12-04** (See [#1229](https://github.com/tscibilia/home-ops/issues/1229))
+- ✅ Switch from k8s-gateway -> unifi-dns - **2025-12-04** (See PR [#1228](https://github.com/tscibilia/home-ops/pull/1228) & issue [#1229](https://github.com/tscibilia/home-ops/issues/1229))
 - ✅ Fix Plex & allow remote access - **2025-12-03** (See [#1227](https://github.com/tscibilia/home-ops/issues/1227))
-- ✅ Add guacamole container - **2025-11-29** (See [#524](https://github.com/tscibilia/home-ops/issues/524))
+- ✅ Add guacamole container - **2025-11-29** (See PR [#1198](https://github.com/tscibilia/home-ops/pull/1198) & issue [#524](https://github.com/tscibilia/home-ops/issues/524))
 - ✅ Authentik Application Icons Not Displaying from MinIO S3 - **2025-11-28** (See [#1197](https://github.com/tscibilia/home-ops/issues/1197))
 - ✅ Internal Apps Inaccessible from LAN - **2025-11-28** (See PR [#1194](https://github.com/tscibilia/home-ops/pull/1194) & issue [#1196](https://github.com/tscibilia/home-ops/issues/1196))
 - ✅ Cloudflared tunnel connection error - **2025-11-27** (See commit [db25bb3](https://github.com/tscibilia/home-ops/commit/db25bb3) & issue [#1189](https://github.com/tscibilia/home-ops/issues/1189))
