@@ -8,7 +8,8 @@ This document is intended to supplement and connect with GitHub issues and meant
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 
 ## Known Issues
-- etcd noisy logging, see kubernetes/kubernetes iss.134080 - **lookup localhost: operation was canceled**
+- etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
+- talos 1.12 introduced OOM bug siderolabs/talos/issues/#12526 - **added config fix in commit [8efe556](https://github.com/tscibilia/home-ops/commit/8efe556)**
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
@@ -22,7 +23,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 - ✅ Add multus and revise qbit deployment - **2025-12-29:** (See PR [#1337](https://github.com/tscibilia/home-ops/pull/1337) & issue [#1168](https://github.com/tscibilia/home-ops/issues/1168))
 - ✅ Add cluster documentation - **2025-12-15** (See PR [#1303](https://github.com/tscibilia/home-ops/pull/1303) & issue [#1210](https://github.com/tscibilia/home-ops/issues/1210))
 - ✅ Document issues with bootstrapping - **2025-12-14** ([#1252](https://github.com/tscibilia/home-ops/issues/1252))
-- ✅ Unpoller (MTU & config issue) - **2025-12-14** (See commit [06b6686](https://github.com/tscibilia/home-ops/commit/06b6686) & issue kashalls/external-dns-unifi-webhook/#163)
+- ✅ Unpoller (MTU & config issue) - **2025-12-14** (See commit [06b6686](https://github.com/tscibilia/home-ops/commit/06b6686) & issue kashalls/external-dns-unifi-webhook/issues/163)
 - ✅ VMAgent Scrape Pool Target Discovery Issues - **2025-12-09** (See [#1261](https://github.com/tscibilia/home-ops/issues/1261))
 - ✅ Tailscale Split DNS after unifi-dns Migration - **2025-12-04** (See [#1235](https://github.com/tscibilia/home-ops/issues/1235))
 - ✅ Jellyfin 10.11.x trickplay path changed - **2025-12-04** (See [#1234](https://github.com/tscibilia/home-ops/issues/1234))
