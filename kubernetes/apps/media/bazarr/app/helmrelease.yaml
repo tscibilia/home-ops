@@ -42,10 +42,10 @@ spec:
                 enabled: false
             resources:
               requests:
-                cpu: 50m
+                cpu: 100m
                 memory: 256Mi
               limits:
-                memory: 1Gi
+                memory: 2Gi
             securityContext: &securityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -99,14 +99,6 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      config-cache:
-        type: emptyDir
-        globalMounts:
-          - path: /config/cache
-      config-log:
-        type: emptyDir
-        globalMounts:
-          - path: /config/log
       media:
         type: nfs
         server: nas.internal
@@ -121,7 +113,14 @@ spec:
           - path: /scripts/subcleaner.sh
             subPath: subcleaner.sh
             readOnly: true
-      subcleaner:
+      tmpfs:
         type: emptyDir
-      tmp:
-        type: emptyDir
+        globalMounts:
+          - path: /config/cache
+            subPath: cache
+          - path: /config/log
+            subPath: log
+          - path: /subcleaner
+            subPath: subcleaner
+          - path: /tmp
+            subPath: tmp
