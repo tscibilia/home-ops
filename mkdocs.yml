@@ -124,6 +124,7 @@ nav:
       - infrastructure/bootstrap.md
   - Kubernetes:
       - kubernetes/overview.md
+      - kubernetes/applications.md
       - kubernetes/networking.md
       - kubernetes/storage.md
       - kubernetes/secrets.md
