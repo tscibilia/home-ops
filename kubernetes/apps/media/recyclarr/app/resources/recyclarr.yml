@@ -17,13 +17,13 @@ sonarr:
       - name: WEB-1080p
         min_upgrade_format_score: 100
         upgrade:
-          allowed: true
+          allowed: false
           until_quality: WEB 720p
       - name: Remux-1080p - Anime
         min_format_score: 2000
         min_upgrade_format_score: 100
         upgrade:
-          allowed: true
+          allowed: false
           until_quality: WEB 720p
     # media_naming:
     #   series: plex
@@ -78,7 +78,7 @@ radarr:
       - name: UHD Bluray + WEB
         min_upgrade_format_score: 100
         upgrade:
-          allowed: true
+          allowed: false
           until_quality: WEB 2160p
     # media_naming:
     #   folder: "{Movie CleanTitle} ({Release Year}) {tmdb-{TmdbId}}"
