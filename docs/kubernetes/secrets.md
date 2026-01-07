@@ -330,7 +330,6 @@ During bootstrap, secrets are injected via the CLI method. See [`bootstrap/resou
 These include:
 
 - `akeyless-secret`: ESO authentication credentials
-- `sops-age-secret`: SOPS encryption key
 - `cloudflared-secret`: Cloudflare tunnel credentials
 - `cluster-secrets`: Cluster-wide variables (referenced by apps via `postBuild.substituteFrom`)
 

@@ -204,7 +204,7 @@ This page provides a comprehensive overview of all applications deployed in the 
 - [Networking](networking.md) - CNI, ingress, and service mesh
 - [VPN Networking](vpn-networking.md) - Multus secondary network configuration
 - [Storage](storage.md) - Storage classes and persistent volumes
-- [Secrets Management](secrets.md) - External Secrets and SOPS
+- [Secrets Management](secrets.md) - External Secrets with aKeyless
 - [Task Runner](../operations/task-runner.md) - Just commands for managing applications
 
 ---

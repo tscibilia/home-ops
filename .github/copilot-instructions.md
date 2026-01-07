@@ -7,7 +7,7 @@ This is a **Kubernetes-based home infrastructure monorepo** managed with Flux CD
 ## Architecture Overview
 
 **Three-layer stack:**
-1. **Talos** (`/talos`): Immutable Linux OS with Kubernetes pre-installed. Generated from minijinja templates (`machineconfig.yaml.j2` and node patches `nodes/*.yaml.j2`), includes node-specific patches and sops-encrypted secrets.
+1. **Talos** (`/talos`): Immutable Linux OS with Kubernetes pre-installed. Generated from minijinja templates (`machineconfig.yaml.j2` and node patches `nodes/*.yaml.j2`), includes node-specific patches.
 2. **Kubernetes** (`/kubernetes`): Flux-driven GitOps. Apps organized by namespace in `/kubernetes/apps/*/{namespace}/{app-name}/`.
 3. **Bootstrap** (`/bootstrap`): Helmfile deployment for initial cluster setup (cilium, coredns, spegel, cert-manager, external-secrets).
 
@@ -182,11 +182,10 @@ Select applications use Multus CNI to attach secondary VPN network interfaces fo
 
 ## Secrets Management
 
-**aKeyless + ExternalSecrets + SOPS pattern:**
-- External-facing secrets: Managed in aKeyless, synced via `ExternalSecret` CRDs
-- Git-committed secrets: Encrypted with SOPS/Age key, stored as `*.sops.yaml` files
+**aKeyless + ExternalSecrets pattern:**
+- All secrets: Managed in aKeyless, synced via `ExternalSecret` CRDs
 - Cluster bootstrap secrets: `cluster-secrets` ConfigMap injected via `postBuild.substituteFrom`
-- Helm chart credentials: Encrypted in helmrelease values or via PullSecrets
+- Helm chart credentials: Managed via ExternalSecrets or PullSecrets
 
 **Commands:** See [Task Runner Usage](#task-runner-usage) section for ExternalSecret and secret management commands
 
@@ -363,14 +362,13 @@ just kube ks-reconcile <namespace> <name>
 2. **Declarative YAML**: Every app is `kubectl apply --dry-run=client` friendly
 3. **Drift detection**: Flux automatically reverts manual changes back to Git state (via `prune: true`)
 4. **Version pinning**: All Helm charts and images have explicit versions (renovate keeps them updated)
-5. **Sealed secrets**: SOPS encryption for secrets committed to Git, automatic decryption by cluster
 
 **Renovate Integration with this Cluster:**
 - Image upgrades marked with `# renovate: datasource=docker` in `ks.yaml` or `helmrelease.yaml`
 - Example: `kubernetes/apps/kube-system/cilium/app/helmrelease.yaml` tracks cilium updates
 - Example: `kubernetes/apps/default/authentik/app/helmrelease.yaml` tracks authentik server+worker versions
 - Renovate groups related updates (e.g., all authentik images in one PR, all Flux components in one PR)
-- Ignores SOPS-encrypted files (`**/*.sops.*`) and custom resource patches (`**/resources/**`)
+- Ignores custom resource patches (`**/resources/**`)
 - Platform automerge enabled for Renovate PRs that pass flux-local tests
 
 **Common GitOps Operations:**
@@ -431,12 +429,6 @@ See [Task Runner Usage](#task-runner-usage) section for full reference. Key debu
 5. **Dependencies:** Always declare `dependsOn` in `ks.yaml` to ensure resource order
 6. **Test locally:** Use `just kube apply-ks <namespace> <app>` to validate before pushing (uses flux-local)
 7. **Force reconcile:** Use `just kube ks-reconcile <namespace> <app>` to trigger immediate sync from Git
-
-## File Encryption & SOPS
-
-- Age key stored in `age.key` (must match `$SOPS_AGE_KEY_FILE` env var)
-- `.sops.yaml` config file defines encryption rules per path
-- Encrypted files marked with `ENC[AES256_GCM` prefix, but deprecated in favor of ExternalSecrets
 
 ## Troubleshooting Common Failure Modes
 
