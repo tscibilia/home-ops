@@ -10,6 +10,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## Known Issues
 - etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
 - talos 1.12 introduced OOM bug siderolabs/talos/issues/#12526 - **added config fix in commit [8efe556](https://github.com/tscibilia/home-ops/commit/8efe556)**
+- tuppr not self-updating, see home-operations/tuppr/issues/#65 - **token might not be regenerating**
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
@@ -18,6 +19,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Remove sops - **2026-01-06** (See PR [#1431](https://github.com/tscibilia/home-ops/pull/1431))
 - ✅ Add homebox - **2026-01-04:** (See PR [#1409](https://github.com/tscibilia/home-ops/pull/1409) & issue [#85](https://github.com/tscibilia/home-ops/issues/85))
 - ✅ Upgrade postgres16 to 17 - **2025-12-29:** (See commit [b293ff1](https://github.com/tscibilia/home-ops/commit/b293ff1) & issue [#1211](https://github.com/tscibilia/home-ops/issues/1211))
 - ✅ Add multus and revise qbit deployment - **2025-12-29:** (See PR [#1337](https://github.com/tscibilia/home-ops/pull/1337) & issue [#1168](https://github.com/tscibilia/home-ops/issues/1168))
