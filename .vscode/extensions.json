@@ -6,7 +6,6 @@
     "blueglassblock.better-json5",
     "irongeek.vscode-env",
     "redhat.vscode-yaml",
-    "skellock.just",
-    "signageos.signageos-vscode-sops"
+    "skellock.just"
   ]
 }

@@ -12,14 +12,6 @@ stringData:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: sops-age-secret
-  namespace: flux-system
-stringData:
-  age.agekey: ak://sops/SOPS_PRIVATE_KEY
----
-apiVersion: v1
-kind: Secret
-metadata:
   name: cloudflared-secret
   namespace: network
 stringData:

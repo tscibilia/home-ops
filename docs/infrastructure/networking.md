@@ -295,5 +295,5 @@ kubectl run -it --rm debug --image=nicolaka/netshoot --restart=Never -- ping 10.
 
 - [Architecture Overview](./architecture.md) - Complete infrastructure architecture
 - [Rook Ceph README](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph/rook-ceph/README.md) - External Ceph setup
-- [Cluster Secrets](https://github.com/tscibilia/home-ops/tree/main/kubernetes/flux/vars/cluster-secrets.sops.yaml) - Network configuration variables
+- [Bootstrap Resources](https://github.com/tscibilia/home-ops/tree/main/bootstrap/resources.yaml.j2) - Bootstrap secrets including cluster-secrets
 - [Active Work & Known Issues](https://github.com/tscibilia/home-ops/tree/main/.github/copilot-activework.md) - Current network-related tasks

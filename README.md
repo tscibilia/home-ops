@@ -67,7 +67,6 @@ My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](ht
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
-- [sops](https://github.com/getsops/sops): Stores and manages encrypted secrets which are commited to Git.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
 - [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
 - [unifi-dns](https://github.com/kashalls/external-dns-unifi-webhook): External-DNS Webhook to manage UniFi DNS Records.
