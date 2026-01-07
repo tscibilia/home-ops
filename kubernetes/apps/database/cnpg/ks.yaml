@@ -33,11 +33,6 @@ spec:
     - name: cnpg-operator
     - name: openebs
       namespace: openebs-system
-  healthCheckExprs:
-  - apiVersion: postgresql.cnpg.io/v1
-    kind: Cluster
-    failed: status.conditions.filter(e, e.type == 'Ready' && e.status == 'False').size() > 0
-    current: status.conditions.filter(e, e.type == 'Ready' && e.status == 'True').size() > 0
   interval: 1h
   path: ./kubernetes/apps/database/cnpg/pgsql-cluster
   postBuild:
@@ -64,11 +59,6 @@ spec:
     - name: cnpg-operator
     - name: openebs
       namespace: openebs-system
-  healthCheckExprs:
-  - apiVersion: postgresql.cnpg.io/v1
-    kind: Cluster
-    failed: status.conditions.filter(e, e.type == 'Ready' && e.status == 'False').size() > 0
-    current: status.conditions.filter(e, e.type == 'Ready' && e.status == 'True').size() > 0
   interval: 1h
   path: ./kubernetes/apps/database/cnpg/immich17
   postBuild:
