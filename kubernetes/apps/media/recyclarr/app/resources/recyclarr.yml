@@ -78,7 +78,7 @@ radarr:
       - name: UHD Bluray + WEB
         min_upgrade_format_score: 100
         upgrade:
-          allowed: false
+          allowed: true
           until_quality: WEB 2160p
     # media_naming:
     #   folder: "{Movie CleanTitle} ({Release Year}) {tmdb-{TmdbId}}"
