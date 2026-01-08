@@ -27,11 +27,11 @@
       matchPackagePatterns: ["changedetection", "plex"],
     },
     {
-      description: "Cal-commit versioning for SearXNG (monthly updates only)",
+      description: "Cal-commit versioning for SearXNG (weekly updates)",
       matchDatasources: ["docker"],
-      matchPackagePatterns: ["searxng"],
-      versioning: "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.\\d{1,2}-(?<patch>[a-z0-9]+)$",
-      matchUpdateTypes: ["major", "minor"],
+      matchPackagePatterns: ["ghcr.io/searxng/searxng"],
+      versioning: "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d{1,2})-[0-9a-f]+$",
+      schedule: ["before 3am on Monday"],
     },
   ],
 }
