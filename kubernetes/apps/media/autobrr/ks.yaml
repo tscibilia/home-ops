@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app autobrr
+spec:
+  components:
+    - ../../../../components/keda/nfs-scaler
+    - ../../../../components/volsync
+  dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: qbittorrent
+  interval: 1h
+  path: ./kubernetes/apps/media/autobrr/app
+  postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: brr
+      VOLSYNC_CAPACITY: 4Gi
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: media
+  wait: false
