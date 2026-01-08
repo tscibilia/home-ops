@@ -59,14 +59,6 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      annotations:
-        k8s.v1.cni.cncf.io/networks: |-
-          [{
-            "name": "vpn",
-            "namespace": "network",
-            "ips": ["192.168.99.11/24"],
-            "mac": "02:7e:9a:c3:5f:82"
-          }]
       securityContext:
         runAsNonRoot: true
         runAsUser: 1044
