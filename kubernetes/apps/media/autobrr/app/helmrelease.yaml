@@ -90,11 +90,5 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      media:
-        type: nfs
-        server: nas.internal
-        path: /volume1/Media/torrents
-        globalMounts:
-          - path: /Media/torrents
       tmp:
         type: emptyDir
