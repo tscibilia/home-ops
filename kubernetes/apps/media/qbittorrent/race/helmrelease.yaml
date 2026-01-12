@@ -66,10 +66,11 @@ spec:
           http:
             port: *port
       bittorrent:
+        controller: *app
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.5.237
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster
         ports:
           bittorrent-tcp:
             port: *vpnPort
