@@ -117,8 +117,23 @@ jobs:
           curl -fsSL "https://www.talos.dev/install" | sh
           echo "$HOME/.talos/bin" >> $GITHUB_PATH
 
-      - name: Pull Image
-        run: talosctl --nodes $NODE image pull "${MATRIX_IMAGE}"
+      - name: Pull Image with Retry
+        run: |
+          set -euxo pipefail
+          attempts=3
+          delay=10
+          for i in $(seq 1 $attempts); do
+            echo "Attempt $i/$attempts"
+            if talosctl --nodes $NODE image pull "${MATRIX_IMAGE}"; then
+              echo "Image pull succeeded"
+              exit 0
+            fi
+            echo "Pull failed; sleeping ${delay}s"
+            sleep $delay
+            delay=$((delay * 2))
+          done
+          echo "All $attempts attempts failed"
+          exit 1
 
   success:
     if: ${{ !cancelled() }}
