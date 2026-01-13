@@ -1,29 +1,28 @@
 # Kubernetes Layer Overview
 
-The Kubernetes layer is where applications live. Everything is managed through Flux CD—a GitOps toolkit that watches this repository and automatically applies changes to the cluster.
+Applications live in `kubernetes/` and are deployed via Flux CD (GitOps). Edit YAML under `kubernetes/apps/`, push to GitHub, and Flux reconciles (hourly by default). Manual cluster edits are reverted to Git.
 
-## How GitOps Works Here
-
-The workflow is simple:
+## How GitOps Is Used
 
 ```mermaid
 graph LR
-    A[Push to GitHub] --> B[Flux Detects Change]
-    B --> C[Flux Reconciles]
-    C --> D[Cluster Updated]
+  A[Push to GitHub] --> B[Flux Detects Change]
+  B --> C[Flux Reconciles]
+  C --> D[Cluster Updated]
 ```
 
 1. You edit YAML files in [`kubernetes/apps/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps)
 2. Commit and push to GitHub
 3. Flux detects the change (polls every hour, or you can force it)
 4. Flux applies the changes to the cluster
-5. Done—no manual `kubectl apply` needed
 
-If someone manually edits something in the cluster, Flux reverts it back to match Git. This prevents drift and ensures Git is always the source of truth.
+If a configuration is manually edited in the cluster, Flux will revert it back to match Git. This prevents drift and ensures Git is always the source of truth.
 
-## Directory Structure
+## Directory structure
 
-Applications are organized by namespace:
+Applications are grouped by namespace under `kubernetes/apps/`. Reusable components live in `kubernetes/components/` and Flux bootstrap config is in `kubernetes/flux/`.
+
+Example layout:
 
 ```
 kubernetes/
@@ -64,133 +63,7 @@ kubernetes/apps/default/authentik/
 └── namespace.yaml          # Namespace definition
 ```
 
-### The Heart: `ks.yaml`
-
-This is the Flux Kustomization that ties everything together. From [`kubernetes/apps/default/authentik/ks.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/default/authentik/ks.yaml):
-
-```yaml
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: authentik
-spec:
-  path: ./kubernetes/apps/default/authentik/app
-  interval: 1h  # Check Git every hour
-
-  components:
-    - ../../../../components/cnpg  # Include database setup
-
-  dependsOn:
-    - name: cnpg-cluster  # Wait for database to be ready
-      namespace: database
-    - name: secret-stores  # Wait for secrets infrastructure
-      namespace: external-secrets
-
-  postBuild:
-    substitute:
-      APP: authentik
-      GATUS_SUBDOMAIN: auth
-      CNPG_NAME: pgsql-cluster  # PostgreSQL 17 main cluster
-      AUTHENTIK_VERSION: "2025.10.2"
-    substituteFrom:
-      - kind: Secret
-        name: cluster-secrets  # Inject cluster-wide secrets
-
-  healthChecks:
-    - apiVersion: postgresql.cnpg.io/v1
-      kind: Cluster
-      name: pgsql-cluster  # Wait for this specific database
-      namespace: database
-```
-
-??? question "What does each section do?"
-    **`path`**: Points to the `app/` directory containing the actual Kubernetes manifests.
-
-    **`interval`**: How often Flux checks Git for changes. `1h` means hourly automatic sync.
-
-    **`components`**: Includes reusable Kustomize components. The `cnpg` component automatically creates database users and credentials.
-
-    **`dependsOn`**: Ensures deployment order. Authentik won't deploy until its database exists.
-
-    **`postBuild.substitute`**: Variable substitution. `${APP}` in YAML files gets replaced with `authentik`.
-
-    **`postBuild.substituteFrom`**: Injects values from existing Kubernetes resources (like the `cluster-secrets` ConfigMap).
-
-    **`healthChecks`**: Flux waits for these resources to be healthy before marking this Kustomization as Ready.
-
-### The Helm Release
-
-Inside `app/`, the `helmrelease.yaml` defines the Helm chart and values:
-
-```yaml title="kubernetes/apps/default/authentik/app/helmrelease.yaml (simplified)"
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-  name: authentik
-spec:
-  interval: 1h
-  chart:
-    spec:
-      chart: authentik
-      version: ${AUTHENTIK_VERSION}  # Substituted from ks.yaml
-      sourceRef:
-        kind: OCIRepository
-        name: authentik
-
-  values:
-    replicas: 2
-    envFrom:
-      - secretRef:
-          name: authentik-secret  # Created by ExternalSecret
-```
-
-The `${AUTHENTIK_VERSION}` variable gets replaced with `2025.10.2` (from `ks.yaml`). This makes version bumps easy—just update the version in one place.
-
-??? tip "Finding Helm Chart Values"
-    Each Helm chart has different configuration options. To see available values:
-
-    1. Check the chart's GitHub repository (usually has a README)
-    2. Look at the chart's default `values.yaml` file
-    3. Use `helm show values <chart-name>` after adding the repo
-
-    For Authentik: [https://goauthentik.io/docs/installation/kubernetes](https://goauthentik.io/docs/installation/kubernetes)
-
-### Fetching Charts with OCIRepository
-
-The `ocirepository.yaml` tells Flux where to fetch the Helm chart:
-
-```yaml title="kubernetes/apps/default/authentik/app/ocirepository.yaml"
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: OCIRepository
-metadata:
-  name: authentik
-spec:
-  url: oci://ghcr.io/goauthentik/charts
-  interval: 6h
-  ref:
-    tag: authentik-${AUTHENTIK_VERSION}
-```
-
-Flux checks the OCI registry every 6 hours for chart updates. When a new version is available, Renovate (our dependency bot) creates a PR to update `AUTHENTIK_VERSION`.
-
-### Secrets Management
-
-The `externalsecret.yaml` syncs secrets from aKeyless:
-
-```yaml title="kubernetes/apps/default/authentik/app/externalsecret.yaml (simplified)"
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: authentik
-spec:
-  target:
-    name: authentik-secret  # Creates this Kubernetes Secret
-  dataFrom:
-    - extract:
-        key: authentik  # Fetches from aKeyless path
-```
-
-The ExternalSecrets operator watches this CRD, fetches secrets from aKeyless, and creates a regular Kubernetes Secret. The Helm chart then references this secret for environment variables.
+Keep app configs minimal and use components for shared behavior (DB provisioning, auth, backups). The `ks.yaml` healthChecks and `dependsOn` prevent apps from deploying before their dependencies are ready.
 
 ## Reusable Components
 

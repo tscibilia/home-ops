@@ -1,10 +1,8 @@
 # Operations Overview
 
-Day-to-day cluster operations are mostly automated. Flux handles deployments, Renovate creates update PRs, alerts fire when intervention is needed. This guide covers the workflows and procedures you'll actually use.
+Day-to-day operations are GitOps-driven: Renovate opens PRs for updates, Flux applies changes, and alerts notify when intervention is needed. This guide lists the common workflows and commands you’ll use.
 
-## Normal Operations Workflow
-
-### How Changes Flow Through the System
+## Normal workflow
 
 ```mermaid
 graph LR
@@ -15,22 +13,13 @@ graph LR
     E --> F[Cluster Updated]
 ```
 
-1. Edit files locally in `kubernetes/apps/`
-2. Commit and push to GitHub
-3. Flux automatically detects the change (within 1 hour, or force it with `just kube ks-reconcile`)
-4. Cluster updates itself
+## Monitoring
 
-### Monitoring Cluster Health
+- Passive: push notifications on alerts
+- Status page: https://status.t0m.co
+- AlertManager: https://am.t0m.co (only available w/in home LAN)
 
-You don't need to constantly watch the cluster. It tells you when something needs attention:
-
-**Three tiers of monitoring:**
-
-1. **Passive**: Pushover notifications on your phone when alerts fire
-2. **Active**: Check [https://status.t0m.co](https://status.t0m.co) for service health
-3. **Deep dive**: Check [https://am.t0m.co](https://am.t0m.co) (AlertManager) for detailed alert information
-
-If none of these show issues, the cluster is healthy.
+Use alerts and the status page as the primary indicators; dig into Grafana/AlertManager when needed.
 
 ## Common Tasks
 
@@ -148,102 +137,31 @@ just kube keda-all resume
 
 ## Backup & Restore
 
-### Manual Backups
-
-VolSync automatically backs up configured apps every 6 hours (default, check [`kubernetes/components/volsync/replicationsource.yaml:10`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/components/volsync/replicationsource.yaml#L10)). To force a backup immediately:
+VolSync handles PVC snapshots (default: every 6h). Useful commands:
 
 ```bash
-# Snapshot one app
-just kube snapshot <namespace> <app>
-
-# Snapshot all apps
-just kube snapshot-all
+just kube snapshot <ns> <app>      # snapshot one app
+just kube snapshot-all             # snapshot all
+just kube volsync-list <ns> <app>  # list snapshots
+just kube volsync-restore <ns> <app> <n> # restore (1 = latest)
 ```
 
-### Restoring from Backup
-
-```bash
-# List available snapshots
-just kube volsync-list <namespace> <app>
-
-# Restore from Nth most recent snapshot (1 = latest)
-just kube volsync-restore <namespace> <app> 1
-```
-
-This scales down the app, restores the PVC from backup, and scales it back up.
-
-### Database Backups
-
-PostgreSQL (CNPG) backs up to S3 automatically. To manually trigger:
+Postgres (CNPG) backups to S3(minio) are automatic. Useful commands:
 
 ```bash
 kubectl cnpg backup pgsql-cluster -n database
-```
-
-To restore:
-
-```bash
-kubectl cnpg restore pgsql-cluster --backup <backup-name> -n database
+kubectl cnpg restore pgsql-cluster --backup <name> -n database
 ```
 
 ## System Upgrades (Talos & Kubernetes)
 
-### Automated Upgrades via tuppr
+Upgrades are automated by `tuppr` via Renovate PRs (Talos → Kubernetes). Typical flow:
 
-**Upgrades are handled automatically by tuppr** ([`kubernetes/apps/system-upgrade/tuppr/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/system-upgrade/tuppr)), a system-upgrade controller that orchestrates Talos and Kubernetes version updates.
+1. Renovate opens PRs for tool and platform versions
+2. Merge tool updates (`.mise.toml`) first
+3. Merge tuppr/Talos PRs; tuppr performs rolling upgrades and health checks
 
-**How it works:**
-
-1. Renovate detects new Talos or Kubernetes versions
-2. Renovate creates a PR updating:
-    - [`tuppr/upgrades/talosupgrade.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/system-upgrade/tuppr/upgrades/talosupgrade.yaml) for Talos OS
-    - [`tuppr/upgrades/kubernetesupgrade.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/system-upgrade/tuppr/upgrades/kubernetesupgrade.yaml) for Kubernetes
-3. You review and merge the PR
-4. tuppr automatically upgrades nodes one at a time, ensuring:
-    - VolSync isn't actively syncing
-    - Ceph cluster is healthy
-    - Nodes reboot gracefully
-
-**Upgrade order** (handled automatically by tuppr):
-
-1. **Talos OS first**: Upgrades Talos, which includes the kubelet
-2. **Kubernetes second**: Upgrades Kubernetes control plane after Talos
-
-This ensures kubelet and Kubernetes versions stay compatible.
-
-??? example "Real Example: Talos Upgrade PR"
-    Renovate PR changes [`tuppr/upgrades/talosupgrade.yaml:10`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/system-upgrade/tuppr/upgrades/talosupgrade.yaml#L10):
-
-    ```diff
-    spec:
-      talos:
-    -   version: v1.11.4
-    +   version: v1.11.5
-    ```
-
-    After merging, tuppr:
-
-    1. Waits for VolSync backups to complete
-    2. Checks Ceph health is `HEALTH_OK`
-    3. Upgrades talos-m01, reboots it, waits for Ready
-    4. Upgrades talos-m02, reboots it, waits for Ready
-    5. Upgrades talos-m03, reboots it, waits for Ready
-
-### Tool Dependency Updates
-
-**Merge mise PRs first!** Renovate also updates CLI tools in [`.mise.toml`](https://github.com/tscibilia/home-ops/blob/main/.mise.toml):
-
-- `talosctl`
-- `kubectl`
-- `helm`
-- `flux`
-- etc.
-
-If you need to interact with the cluster during/after an upgrade, merge these PRs before the Talos/Kubernetes upgrade PRs. This ensures your local tools can talk to the upgraded cluster.
-
-### Manual Upgrades (Fallback)
-
-If tuppr fails or you need to force an upgrade manually:
+Manual fallback:
 
 ```bash
 # Upgrade Kubernetes manually
