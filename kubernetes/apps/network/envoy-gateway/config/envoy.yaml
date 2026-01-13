@@ -126,6 +126,8 @@ spec:
     - type: Zstd
     - type: Brotli
     - type: Gzip
+  connection:
+    bufferLimit: 8Mi
   targetSelectors:
     - group: gateway.networking.k8s.io
       kind: Gateway
@@ -143,7 +145,11 @@ spec:
   clientIPDetection:
     xForwardedFor:
       numTrustedHops: 1
+  connection:
+    bufferLimit: 8Mi
   http2:
+    initialStreamWindowSize: 2Mi
+    initialConnectionWindowSize: 32Mi
     onInvalidMessage: TerminateStream
   http3: {}
   targetSelectors:
