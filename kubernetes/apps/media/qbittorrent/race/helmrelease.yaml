@@ -91,11 +91,26 @@ spec:
           .qbt.toml: |-
             [qbittorrent]
             addr = "http://localhost:80"
+          categories.json: |-
+            {
+              "audiobooks": {"save_path": "/Media/torrents/completed/audiobooks"},
+              "cross-seed": {"save_path": "/Media/torrents/completed/cross-seed"},
+              "movies": {"save_path": "/Media/torrents/completed/movies"},
+              "music": {"save_path": "/Media/torrents/completed/music"},
+              "manual": {"save_path": "/Media/torrents/completed/manual"},
+              "tv": {"save_path": "/Media/torrents/completed/tv"}
+            }
     persistence:
       config:
         existingClaim: *app
         globalMounts:
           - path: /config
+      categories-file:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /config/qBittorrent/categories.json
+            subPath: categories.json
       config-file:
         type: configMap
         identifier: config
