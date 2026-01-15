@@ -47,7 +47,7 @@ spec:
     shared_preload_libraries: ["vchord.so"]
     pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
     parameters:
-      max_connections: "300"
+      max_connections: "100"
       shared_buffers: 256MB
       autovacuum_vacuum_scale_factor: "0.1"
       autovacuum_analyze_scale_factor: "0.05"
