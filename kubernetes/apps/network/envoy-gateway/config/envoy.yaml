@@ -14,8 +14,7 @@ spec:
       envoyDeployment:
         replicas: 2
         container:
-          image: mirror.gcr.io/envoyproxy/envoy:v1.37.0
-          # imageRepository: mirror.gcr.io/envoyproxy/envoy
+          imageRepository: mirror.gcr.io/envoyproxy/envoy
           resources:
             requests:
               cpu: 100m
@@ -123,18 +122,12 @@ kind: BackendTrafficPolicy
 metadata:
   name: envoy
 spec:
-  compressor:
+  compression:
     - type: Zstd
-      zstd: {}
     - type: Brotli
-      brotli: {}
     - type: Gzip
-      gzip: {}
-  retry:
-    numRetries: 2
-    retryOn:
-      triggers:
-        - reset
+  connection:
+    bufferLimit: 8Mi
   targetSelectors:
     - group: gateway.networking.k8s.io
       kind: Gateway
@@ -152,7 +145,11 @@ spec:
   clientIPDetection:
     xForwardedFor:
       numTrustedHops: 1
+  connection:
+    bufferLimit: 8Mi
   http2:
+    initialStreamWindowSize: 2Mi
+    initialConnectionWindowSize: 32Mi
     onInvalidMessage: TerminateStream
   http3: {}
   targetSelectors:
