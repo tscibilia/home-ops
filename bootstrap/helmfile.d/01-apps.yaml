@@ -9,24 +9,10 @@ helmDefaults:
 releases:
   - name: cilium
     namespace: kube-system
-    chart: oci://ghcr.io/home-operations/charts-mirror/cilium
-    version: 1.18.5
+    chart: oci://quay.io/cilium/charts/cilium
+    version: 1.18.6
     values: ['./templates/values.yaml.gotmpl']
     hooks:
-      - # Cilium CRDs aren't included in the mirrored OCI chart
-        command: bash
-        args:
-          - -c
-          - |
-            VERSION="{{ .Release.Version }}"
-            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumloadbalancerippools.yaml"
-            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumbgpadvertisements.yaml"
-            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumbgppeerconfigs.yaml"
-            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2/ciliumbgpclusterconfigs.yaml"
-            kubectl apply -f "https://github.com/cilium/cilium/raw/refs/tags/v${VERSION}/pkg/k8s/apis/cilium.io/client/crds/v2alpha1/ciliuml2announcementpolicies.yaml"
-        events:
-          - presync
-        showlogs: true
       - # Wait for Cilium CRDs to be available
         command: bash
         args:
