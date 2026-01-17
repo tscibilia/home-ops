@@ -22,7 +22,7 @@ jobs:
 
       - name: Generate Release Notes
         id: release-notes
-        uses: mirceanton/action-semver-release@8f0b1de39accb2dfd2615fe2b6ec87f773c0aa84 # v2.2.2
+        uses: mirceanton/action-semver-release@f33f6f3aa08fecd79968a2cb20c2243c9a3f08ca # v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: true
