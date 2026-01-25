@@ -10,6 +10,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 - etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
 - talos 1.12 introduced OOM bug siderolabs/talos/issues/#12526 - **added config fix in commit [8efe556](https://github.com/tscibilia/home-ops/commit/8efe556)**
 - tuppr not self-updating, see home-operations/tuppr/issues/#65 - **token might not be regenerating**
+- snmp-exporter synology, too many scrape errors - **snmpget hangs and timing out, disabled [7f0150f7]**
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
