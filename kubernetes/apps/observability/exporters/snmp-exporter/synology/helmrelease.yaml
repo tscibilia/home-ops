@@ -23,7 +23,7 @@ spec:
     podAnnotations:
       configmap.reloader.stakater.com/reload: *app
     serviceMonitor:
-      enabled: true
+      enabled: false
       params:
         - name: nas
           module: ["synology"]
