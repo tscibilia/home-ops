@@ -24,7 +24,7 @@ spec:
       APP: *app
       GATUS_PATH: /identity
       VOLSYNC_PUID: "1044"
-      VOLSYNC_CAPACITY: 160Gi
+      VOLSYNC_CAPACITY: 170Gi
       VOLSYNC_CACHE_CAPACITY: 40Gi
       VOLSYNC_SCHEDULE: "0 1 * * *"
     substituteFrom:
