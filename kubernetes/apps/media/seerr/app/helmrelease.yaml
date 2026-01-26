@@ -30,15 +30,23 @@ spec:
               liveness: &probes
                 enabled: true
                 custom: true
-                spec:
+                spec: &probeSpec
                   httpGet:
                     path: ${GATUS_PATH}
                     port: *port
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
+                  periodSeconds: 30
                   timeoutSeconds: 5
-                  failureThreshold: 3
-              readiness: *probes
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

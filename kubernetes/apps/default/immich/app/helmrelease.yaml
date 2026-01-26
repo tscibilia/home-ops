@@ -50,15 +50,19 @@ spec:
               liveness: &srvprobes
                 enabled: true
                 custom: true
-                spec:
+                spec: &probeSpec
                   httpGet:
                     path: ${GATUS_PATH}
                     port: &srvport 2283
                   initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
+                  periodSeconds: 30
+                  timeoutSeconds: 5
                   failureThreshold: 5
-              readiness: *srvprobes
+              readiness:
+                <<: *srvprobes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
               startup:
                 enabled: false
             resources:
