@@ -80,15 +80,19 @@ spec:
               liveness: &probes
                 enabled: true
                 custom: true
-                spec:
+                spec: &probeSpec
                   httpGet:
                     path: ${GATUS_PATH}
                     port: &port 9000
                   initialDelaySeconds: 120
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
                   periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
               startup:
                 enabled: false
     service:

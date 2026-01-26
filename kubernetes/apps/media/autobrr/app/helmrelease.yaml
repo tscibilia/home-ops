@@ -42,10 +42,9 @@ spec:
                   httpGet:
                     path: /api/healthz/liveness
                     port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
               readiness:
                 <<: *probes
                 spec:
@@ -53,6 +52,11 @@ spec:
                   httpGet:
                     path: /api/healthz/readiness
                     port: *port
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 10m
