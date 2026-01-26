@@ -106,6 +106,7 @@ spec:
               "movies": {"save_path": "/Media/torrents/completed/movies"},
               "music": {"save_path": "/Media/torrents/completed/music"},
               "manual": {"save_path": "/Media/torrents/completed/manual"},
+              "race": {"save_path": "/Media/torrents/completed/race"},
               "tv": {"save_path": "/Media/torrents/completed/tv"}
             }
     persistence:
