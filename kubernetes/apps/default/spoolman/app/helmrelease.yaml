@@ -58,6 +58,15 @@ spec:
               requests:
                 cpu: 25m
                 memory: 256Mi
+    defaultPodOptions:
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |-
+          [{
+            "name": "iot",
+            "namespace": "network",
+            "ips": ["192.168.107.11/24"],
+            "mac": "02:3a:8f:d4:6b:92"
+          }]
     service:
       app:
         controller: *app
@@ -68,6 +77,14 @@ spec:
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |
             group: "services"
+      iot:
+        controller: *app
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: "192.168.107.11"
+        ports:
+          http:
+            port: *port
     serviceMonitor:
       spoolman:
         serviceName: *app
