@@ -77,13 +77,6 @@ spec:
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |
             group: "services"
-      iot:
-        controller: *app
-        annotations:
-          io.cilium/lb-ipam-ips: "192.168.107.11"
-        ports:
-          http:
-            port: *port
     serviceMonitor:
       spoolman:
         serviceName: *app
