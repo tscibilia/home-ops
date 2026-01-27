@@ -42,7 +42,7 @@ spec:
               tag: "0.23.0@sha256:6606dcbbabfc75db207c07d5a8db6162b1e5ed0768750881f306b6328e14145b"
             env:
               TZ: "${TIMEZONE:-UTC}"
-              SPOOLMAN_PORT: &port 8000
+              SPOOLMAN_PORT: &port 80
               SPOOLMAN_METRICS_ENABLED: "true"
             probes:
               liveness:
