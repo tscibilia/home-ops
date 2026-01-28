@@ -19,6 +19,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Fix unifi/qbit port forwarding - **2026-01-28** (See issue [#1551](https://github.com/tscibilia/home-ops/issues/1551))
 - ✅ Add autobrr and thelounge - **2026-01-08** (See PR [#1440](https://github.com/tscibilia/home-ops/pull/1440) & [#1442](https://github.com/tscibilia/home-ops/pull/1442) as well as issue [#803](https://github.com/tscibilia/home-ops/issues/803))
 - ✅ Remove sops - **2026-01-06** (See PR [#1431](https://github.com/tscibilia/home-ops/pull/1431))
 - ✅ Add homebox - **2026-01-04:** (See PR [#1409](https://github.com/tscibilia/home-ops/pull/1409) & issue [#85](https://github.com/tscibilia/home-ops/issues/85))
