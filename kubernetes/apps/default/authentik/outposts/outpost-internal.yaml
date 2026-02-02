@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: authentik-outpost-internal
     app.kubernetes.io/managed-by: goauthentik.io
     # renovate: datasource=docker depName=ghcr.io/goauthentik/proxy
-    app.kubernetes.io/version: 2025.12.2
+    app.kubernetes.io/version: 2025.12.3
     goauthentik.io/outpost-name: authentik-outpost-internal
     goauthentik.io/outpost-type: proxy
     goauthentik.io/outpost-uuid: 7345384ad9d5492e83b0243e68d8ad6a
@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
         - name: outpost
-          image: ghcr.io/goauthentik/proxy:2025.12.2
+          image: ghcr.io/goauthentik/proxy:2025.12.3
           env:
             - name: AUTHENTIK_HOST
               value: "http://authentik-server.default.svc.cluster.local"

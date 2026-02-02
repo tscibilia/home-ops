@@ -26,7 +26,7 @@ spec:
         type: RollingUpdate
       image:
         repository: ghcr.io/goauthentik/server
-        tag: 2025.12.2
+        tag: 2025.12.3
         # For development builds, uncomment the lines below and comment the two lines above
         # repository: ghcr.io/goauthentik/dev-server
         # tag: gh-cab3834f6da1fdd1fb3ab294a3d9d157f2c4679f
