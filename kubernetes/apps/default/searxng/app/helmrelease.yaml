@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/searxng/searxng
-              tag: 2026.1.24-eea189286@sha256:d6c00e1d34c199a7ca141f7a6b0b9ddb850d931ff06d4cd0ffb53ef02c05b666
+              tag: 2026.1.30-ad42b553b@sha256:771d475fd7a6b9e254ad725220f977303cdb132fb2136401ea806553330214eb
             # command: ["/usr/local/searxng/venv/bin/uwsgi", "--master", "/usr/local/searxng/.template/uwsgi.ini"]
             env:
               TZ: "${TIMEZONE:-UTC}"
