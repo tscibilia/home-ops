@@ -19,7 +19,7 @@ spec:
       datapathMode: netkit
       masquerade: true
       preallocateMaps: true
-      tproxy: true
+      tproxy: false
     bpfClockProbe: true
     cni:
       # Required for pairing with Multus CNI
