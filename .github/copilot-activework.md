@@ -14,6 +14,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
+- ⚠️ Envoy 1.7.0 breaks ext-auth - (See [#1619](https://github.com/tscibilia/home-ops/pull/1619)) - **waiting on upstream changes**
 ###  [Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)
 - ⚠️ Migrate from minio to Garage - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **waiting on upstream project development**
 
