@@ -103,15 +103,14 @@ spec:
                 enabled: false
             resources:
               requests: *resReq
-              limits:
-                <<: *resLim
-                nvidia.com/gpu: "1"
+              limits: *resLim
+              claims:
+                - name: gpu
             securityContext: *secCont
-        pod:
-          runtimeClassName: nvidia
-          nodeSelector:
-            nvidia.com/gpu.present: "true"
     defaultPodOptions:
+      resourceClaims:
+        - name: gpu
+          resourceClaimTemplateName: immich
       securityContext:
         runAsNonRoot: true
         runAsUser: 1044

@@ -4,6 +4,7 @@ set shell := ['bash', '-euo', 'pipefail', '-c']
 scripts_dir := justfile_dir() + '/bootstrap/scripts'
 talos_dir := justfile_dir() + '/talos'
 controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
+nodes := `talosctl config info -o yaml | yq -e '.nodes | join (",")'`
 
 [private]
 default:
@@ -26,7 +27,6 @@ download-image version schematic:
 [doc('Generate schematic ID from Talos schematic')]
 gen-schematic-id node:
     just check-tools curl jq minijinja-cli akeyless
-    export IS_NVIDIA="$(just talos machine-nvidia {{ node }})"; \
     curl -sX POST --data-binary @<(just template "{{ talos_dir }}/schematic.yaml.j2") "https://factory.talos.dev/schematics" | jq -r '.id'
 
 [doc('Reboot a node')]
@@ -39,23 +39,22 @@ reboot-node node:
 render-config node:
     just check-tools talosctl minijinja-cli akeyless yq gum
     export IS_CONTROLLER="$(just talos machine-controller {{ node }})"; \
-    export IS_NVIDIA="$(just talos machine-nvidia {{ node }})"; \
     export SCHEMATIC_ID="$(just talos gen-schematic-id {{ node }})"; \
     gum spin --title "Injecting secrets..." -- bash -c '\
         talosctl machineconfig patch <(just template "{{ talos_dir }}/machineconfig.yaml.j2") \
             -p @<(just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2")'
 
 [doc('Reset a node')]
-reset-node node:
+reset-node node *args:
     just check-tools talosctl gum
     gum confirm "Reset node {{ node }}?" --default="No" && \
-        talosctl -n "{{ node }}" reset --graceful=false || exit 0
+        talosctl -n "{{ node }}" reset --system-labels-to-wipe STATE --graceful=false --reboot {{ args }} || exit 0
 
 [doc('Shutdown a node')]
-shutdown-node node:
+shutdown-node node *args:
     just check-tools talosctl gum
     gum confirm "Shutdown node {{ node }}?" --default="No" && \
-        talosctl -n "{{ node }}" shutdown --force || exit 0
+        talosctl -n "{{ node }}" shutdown --force {{ args }} || exit 0
 
 [doc('Upgrade Kubernetes version on the cluster')]
 upgrade-k8s version:
@@ -63,17 +62,13 @@ upgrade-k8s version:
     talosctl -n "{{ controller }}" upgrade-k8s --to {{ version }}
 
 [doc('Upgrade Talos version on a node')]
-upgrade-node node:
+upgrade-node node *args:
     just check-tools talosctl
-    talosctl -n "{{ node }}" upgrade -i "$(just talos machine-image)" -m powercycle --timeout=10m
+    talosctl -n "{{ node }}" upgrade -i "$(just talos machine-image)" -m powercycle --timeout=10m {{ args }}
 
 [private]
 machine-controller node:
     just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.type == "controlplane") // ""'
-
-[private]
-machine-nvidia node:
-    just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.nodeLabels["nvidia.com/gpu.product"] == "Quadro-P400") // ""'
 
 [private]
 machine-image:

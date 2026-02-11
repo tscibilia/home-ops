@@ -9,4 +9,4 @@ spec:
   resources:
     requests:
       storage: 6Gi
-  storageClassName: ceph-rbd
+  storageClassName: ceph-ssd

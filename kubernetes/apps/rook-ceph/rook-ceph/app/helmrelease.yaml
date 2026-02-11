@@ -10,15 +10,20 @@ spec:
     name: rook-ceph
   interval: 1h
   values:
-    crds:
-      enabled: true
-    monitoring:
-      enabled: true
+    csi:
+      cephFSKernelMountOptions: ms_mode=prefer-crc
+      # NOTE: Enable the driver and shapshotter if you want to use CephFS
+      enableCephfsDriver: false
+      enableCephfsSnapshotter: false
+      enableLiveness: true
+      serviceMonitor:
+        enabled: true
     image:
       repository: ghcr.io/rook/ceph
-    csi:
-      csiAddons:
-        enabled: false
-      enableCSIEncryption: false
-      enableVolumeGroupSnapshot: false
-      cephFSKernelMountOptions: ms_mode=secure # Necessary, otherwise PVC won't be able to be mounted to Pod. You'll see errors like stderr: unable to get monitor info from DNS SRV with service name: ceph-mon, failed for service _ceph-mon._tcp
+    monitoring:
+      enabled: true
+    resources:
+      requests:
+        cpu: 100m # unchangable
+        memory: 128Mi # unchangable
+      limits: {}

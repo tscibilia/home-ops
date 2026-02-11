@@ -31,7 +31,7 @@ spec:
   #     source: source
   #     # Only needed for point-in-time recovery
   #     recoveryTarget:
-  #       backupID: 20251208T035401
+  #       backupID: 20260211T074935
   # externalClusters:
   #   - name: source
   #     plugin:

@@ -45,11 +45,12 @@ spec:
                   failureThreshold: 30
                   periodSeconds: 10
             resources:
+              claims:
+                - name: gpu
               requests:
                 cpu: "1"
                 memory: 2Gi
               limits:
-                nvidia.com/gpu: "1"
                 cpu: "6"
                 memory: 8Gi
             securityContext:
@@ -61,11 +62,10 @@ spec:
               repository: ghcr.io/ghcr-library/busybox
               tag: 1.32.0@sha256:c9249fdf56138f0d929e2080ae98ee9cb2946f71498fc1484288e6a935b5e5bc
             command: ["/bin/sh", "-c", "tail -n+1 -F '/config/Library/Application Support/Plex Media Server/Logs/Plex Media Server.log'"]
-        pod:
-          runtimeClassName: nvidia
-          nodeSelector:
-            nvidia.com/gpu.present: "true"
     defaultPodOptions:
+      resourceClaims:
+        - name: gpu
+          resourceClaimTemplateName: plex
       securityContext:
         runAsNonRoot: true
         runAsUser: 1044
@@ -117,7 +117,9 @@ spec:
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Cache
       logs:
-        existingClaim: "{{ .Release.Name }}-logs"
+        type: nfs
+        server: unraid.internal
+        path: /mnt/user/appdata/plex-logs-rwm
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Logs
       media:

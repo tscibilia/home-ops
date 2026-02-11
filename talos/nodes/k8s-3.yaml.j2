@@ -1,0 +1,20 @@
+---
+machine:
+  type: controlplane
+  network:
+    interfaces:
+      - deviceSelector:
+          driver: e1000e
+        vip:
+          ip: 192.168.5.210
+      - deviceSelector:
+          hardwareAddr: "00:e0:4c:a1:36:18"
+        addresses:
+          - 192.168.43.13/24
+        mtu: 1500
+  nodeLabels:
+    topology.kubernetes.io/zone: m
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: k8s-3

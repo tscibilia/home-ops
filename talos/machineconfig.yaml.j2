@@ -4,9 +4,9 @@ debug: false
 persist: true
 machine:
   ca:
-    crt: ak://talos/MACHINE_CA_CRT
+    crt: ak://talos-m70q/MACHINE_CA_CRT
     {% if ENV.IS_CONTROLLER %}
-    key: ak://talos/MACHINE_CA_KEY
+    key: ak://talos-m70q/MACHINE_CA_KEY
     {% endif %}
   features:
     apidCheckExtKeyUsage: true
@@ -49,7 +49,7 @@ machine:
         nconnect=16
         noatime=True
   install:
-    disk: /dev/sda
+    disk: /dev/nvme0n1
     # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
     image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC_ID | safe }}:v1.12.2
     wipe: false
@@ -75,20 +75,6 @@ machine:
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
-  network:
-    interfaces:
-      - interface: ens18
-        dhcp: true
-        mtu: 1500
-        vlans:
-          - # IOT
-            vlanId: 107
-            dhcp: false
-            mtu: 1500
-          - # VPN
-            vlanId: 99
-            dhcp: false
-            mtu: 1500
   nodeLabels:
     topology.kubernetes.io/region: main
   sysctls:
@@ -117,16 +103,16 @@ machine:
     servers:
       - 162.159.200.1
       - 162.159.200.123
-  token: ak://talos/MACHINE_TOKEN
+  token: ak://talos-m70q/MACHINE_TOKEN
 cluster:
   ca:
-    crt: ak://talos/CLUSTER_CA_CRT
+    crt: ak://talos-m70q/CLUSTER_CA_CRT
     {% if ENV.IS_CONTROLLER %}
-    key: ak://talos/CLUSTER_CA_KEY
+    key: ak://talos-m70q/CLUSTER_CA_KEY
     {% endif %}
   clusterName: main
   controlPlane:
-    endpoint: https://192.168.5.200:6443
+    endpoint: https://192.168.5.210:6443
   discovery:
     enabled: true
     registries:
@@ -134,7 +120,7 @@ cluster:
         disabled: true
       service:
         disabled: false
-  id: ak://talos/CLUSTER_ID
+  id: ak://talos-m70q/CLUSTER_ID
   network:
     cni:
       name: none
@@ -143,12 +129,12 @@ cluster:
       - 10.42.0.0/16
     serviceSubnets:
       - 10.43.0.0/16
-  secret: ak://talos/CLUSTER_SECRET
-  token: ak://talos/CLUSTER_TOKEN
+  secret: ak://talos-m70q/CLUSTER_SECRET
+  token: ak://talos-m70q/CLUSTER_TOKEN
   {% if ENV.IS_CONTROLLER %}
   aggregatorCA:
-    crt: ak://talos/CLUSTER_AGGREGATORCA_CRT
-    key: ak://talos/CLUSTER_AGGREGATORCA_KEY
+    crt: ak://talos-m70q/CLUSTER_AGGREGATORCA_CRT
+    key: ak://talos-m70q/CLUSTER_AGGREGATORCA_KEY
   allowSchedulingOnControlPlanes: true
   apiServer:
     auditPolicy:
@@ -158,14 +144,14 @@ cluster:
         - level: Metadata
     certSANs:
       - k8s.internal
-      - 192.168.5.200
+      - 192.168.5.210
     disablePodSecurityPolicy: true
     extraArgs:
       enable-aggregator-routing: "true"
       feature-gates: MutatingAdmissionPolicy=true,ResourceHealthStatus=true
       runtime-config: admissionregistration.k8s.io/v1beta1=true
-      {# oidc-client-id: ak://talos/OIDC_CLIENT_ID
-      oidc-issuer-url: ak://talos/OIDC_ISSUER_URL
+      {# oidc-client-id: ak://talos-m70q/OIDC_CLIENT_ID
+      oidc-issuer-url: ak://talos-m70q/OIDC_ISSUER_URL
       oidc-groups-claim: groups
       oidc-username-claim: preferred_username #}
     image: registry.k8s.io/kube-apiserver:v1.35.0
@@ -179,8 +165,8 @@ cluster:
     advertisedSubnets:
       - 192.168.5.0/24
     ca:
-      crt: ak://talos/CLUSTER_ETCD_CA_CRT
-      key: ak://talos/CLUSTER_ETCD_CA_KEY
+      crt: ak://talos-m70q/CLUSTER_ETCD_CA_CRT
+      key: ak://talos-m70q/CLUSTER_ETCD_CA_KEY
     extraArgs:
       listen-metrics-urls: http://0.0.0.0:2381
   proxy:
@@ -207,11 +193,63 @@ cluster:
     extraArgs:
       bind-address: 0.0.0.0
     image: registry.k8s.io/kube-scheduler:v1.35.0
-  secretboxEncryptionSecret: ak://talos/CLUSTER_SECRETBOXENCRYPTIONSECRET
+  secretboxEncryptionSecret: ak://talos-m70q/CLUSTER_SECRETBOXENCRYPTIONSECRET
   serviceAccount:
-    key: ak://talos/CLUSTER_SERVICEACCOUNT_KEY
+    key: ak://talos-m70q/CLUSTER_SERVICEACCOUNT_KEY
   {% endif %}
 ---
 apiVersion: v1alpha1
 kind: OOMConfig
 triggerExpression: "false"
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: mgmt0
+selector:
+  match: link.driver == "e1000e"
+---
+apiVersion: v1alpha1
+kind: DHCPv4Config
+name: mgmt0
+clientIdentifier: mac
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: mgmt0.107
+vlanID: 107
+parent: mgmt0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: mgmt0.99
+vlanID: 99
+parent: mgmt0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: ceph0
+selector:
+  match: link.driver == "r8169"
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 256GiB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-hostpath
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  minSize: 256GiB
+---
+apiVersion: v1alpha1
+kind: WatchdogTimerConfig
+device: /dev/watchdog0
+timeout: 5m

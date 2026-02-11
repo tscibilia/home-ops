@@ -3,23 +3,18 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app dcgm-exporter
+  name: &app intel-gpu-resource-driver
 spec:
-  dependsOn:
-    - name: secret-stores
-      namespace: external-secrets
-    - name: nvidia-device-plugin
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: intel-gpu-resource-driver
       namespace: kube-system
   interval: 1h
-  path: ./kubernetes/apps/observability/exporters/dcgm-exporter/app
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  path: ./kubernetes/apps/kube-system/intel-gpu-resource-driver/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: observability
-  wait: false
+  targetNamespace: kube-system

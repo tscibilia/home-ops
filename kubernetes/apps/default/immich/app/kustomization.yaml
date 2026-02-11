@@ -6,6 +6,7 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./resourceclaimtemplate.yaml
   - ./scaledobject.yaml
   - ./vmrule.yaml
 configMapGenerator:

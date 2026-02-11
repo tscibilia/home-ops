@@ -11,7 +11,7 @@ spec:
   restic:
     copyMethod: "${VOLSYNC_COPYMETHOD:=Snapshot}"
     repository: "${APP}-volsync${VOLSYNC_REPOSITORY}-secret" # defaults to local, "-b2" for remote
-    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=ceph-rbd-snapshot}"
+    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=openebs-hostpath}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
