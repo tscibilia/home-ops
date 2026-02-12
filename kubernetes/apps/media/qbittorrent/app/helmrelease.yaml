@@ -28,7 +28,7 @@ spec:
               QBT_Preferences__WebUI__LocalHostAuth: false
               QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
               QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
-                10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
+                127.0.0.1/32, 10.42.0.0/16, 10.43.0.0/16, 192.168.1.0/24, 192.168.5.0/24
               QBT_TORRENTING_PORT: &vpnPort 55636
               QBT_WEBUI_PORT: &port 80
             probes:
@@ -68,8 +68,8 @@ spec:
           [{
             "name": "vpn",
             "namespace": "network",
-            "ips": ["192.168.99.10/24"],
-            "mac": "02:7e:9a:c3:5f:81"
+            "ips": ["192.168.99.99/24"],
+            "mac": "02:4b:7c:d2:a1:f3"
           }]
       securityContext:
         runAsNonRoot: true

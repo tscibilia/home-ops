@@ -75,6 +75,12 @@ machine:
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
+  # Remove once l2 is removed in lieu of bgp
+  network:
+    interfaces:
+      - interface: bond0
+        vip:
+          ip: 192.168.5.210
   nodeLabels:
     topology.kubernetes.io/region: main
   sysctls:
@@ -204,27 +210,35 @@ triggerExpression: "false"
 ---
 apiVersion: v1alpha1
 kind: LinkAliasConfig
-name: mgmt0
+name: net0
 selector:
   match: link.driver == "e1000e"
 ---
 apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - net0
+bondMode: active-backup
+mtu: 1500
+---
+apiVersion: v1alpha1
 kind: DHCPv4Config
-name: mgmt0
+name: bond0
 clientIdentifier: mac
 ---
 apiVersion: v1alpha1
 kind: VLANConfig
-name: mgmt0.107
+name: bond0.107
 vlanID: 107
-parent: mgmt0
+parent: bond0
 mtu: 1500
 ---
 apiVersion: v1alpha1
 kind: VLANConfig
-name: mgmt0.99
+name: bond0.99
 vlanID: 99
-parent: mgmt0
+parent: bond0
 mtu: 1500
 ---
 apiVersion: v1alpha1

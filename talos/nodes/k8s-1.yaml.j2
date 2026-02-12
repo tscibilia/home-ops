@@ -3,12 +3,7 @@ machine:
   type: controlplane
   network:
     interfaces:
-      - deviceSelector:
-          driver: e1000e
-        vip:
-          ip: 192.168.5.210
-      - deviceSelector:
-          hardwareAddr: "00:e0:4c:a1:38:71"
+      - interface: ceph0
         addresses:
           - 192.168.43.11/24
         mtu: 1500
