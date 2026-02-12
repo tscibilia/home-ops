@@ -50,7 +50,7 @@ job:
 machineLearning:
   urls: ["http://immich-ml:3003"]
   clip:
-    modelName: ViT-B-16-SigLIP-512__webli
+    modelName: ViT-B-16-SigLIP2__webli
   facialRecognition:
     modelName: buffalo_l
     minFaces: 1

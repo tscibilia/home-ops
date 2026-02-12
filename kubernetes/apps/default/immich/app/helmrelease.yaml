@@ -77,7 +77,7 @@ spec:
               capabilities: { drop: ["ALL"] }
 
       machine-learning:
-        strategy: RollingUpdate
+        strategy: Recreate
         containers:
           immich-ml:
             image:
