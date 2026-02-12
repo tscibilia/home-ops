@@ -107,13 +107,13 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/logs
-      plex-logs:
-        type: nfs
-        server: unraid.internal
-        path: /mnt/user/appdata/plex-logs-rwm
-        globalMounts:
-          - path: /logs
-            readOnly: true
+      # plex-logs:
+      #   type: nfs
+      #   server: unraid.internal
+      #   path: /mnt/user/appdata/plex-logs-rwm
+      #   globalMounts:
+      #     - path: /logs
+      #       readOnly: true
       tmp:
         type: emptyDir
       scripts:

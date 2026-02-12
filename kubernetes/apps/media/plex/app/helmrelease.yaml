@@ -117,9 +117,7 @@ spec:
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Cache
       logs:
-        type: nfs
-        server: unraid.internal
-        path: /mnt/user/appdata/plex-logs-rwm
+        type: emptyDir
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Logs
       media:
