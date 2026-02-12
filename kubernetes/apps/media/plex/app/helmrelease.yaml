@@ -117,7 +117,7 @@ spec:
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Cache
       logs:
-        type: emptyDir
+        existingClaim: plex-logs
         globalMounts:
           - path: /config/Library/Application Support/Plex Media Server/Logs
       media:
