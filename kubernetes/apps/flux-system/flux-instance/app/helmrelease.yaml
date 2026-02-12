@@ -24,7 +24,7 @@ spec:
       sync:
         kind: GitRepository
         url: "https://github.com/tscibilia/home-ops.git"
-        ref: "refs/heads/m70q"
+        ref: "refs/heads/main"
         path: kubernetes/flux/cluster
         interval: 1h
       kustomize:
