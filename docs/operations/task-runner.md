@@ -12,7 +12,7 @@ Examples:
 ```bash
 just bootstrap           # Run full bootstrap
 just kube sync-all-hr    # Sync all Helm releases
-just talos reboot-node talos-m01  # Reboot a node
+just talos reboot-node k8s-1  # Reboot a node
 ```
 
 View all commands:
@@ -289,14 +289,14 @@ kubectl rollout status deployment/<app> -n <namespace> -w
 
 ```bash
 # Reboot one node at a time
-just talos reboot-node talos-m01
-kubectl wait --for=condition=ready node/talos-m01 --timeout=10m
+just talos reboot-node k8s-1
+kubectl wait --for=condition=ready node/k8s-1 --timeout=10m
 
-just talos reboot-node talos-m02
-kubectl wait --for=condition=ready node/talos-m02 --timeout=10m
+just talos reboot-node k8s-2
+kubectl wait --for=condition=ready node/k8s-2 --timeout=10m
 
-just talos reboot-node talos-m03
-kubectl wait --for=condition=ready node/talos-m03 --timeout=10m
+just talos reboot-node k8s-3
+kubectl wait --for=condition=ready node/k8s-3 --timeout=10m
 ```
 
 ### Restore from Backup

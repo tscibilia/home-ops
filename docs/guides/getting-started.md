@@ -24,10 +24,10 @@ You'll need access to the cluster and a few tools installed. Don't worry, the re
     ```bash
     # Fetch talosconfig from existing cluster
     # Replace with your first control plane node IP
-    talosctl config new talosconfig --endpoints 192.168.5.201 --nodes 192.168.5.201
+    talosctl config new talosconfig --endpoints 192.168.5.211 --nodes 192.168.5.211
 
     # Fetch kubeconfig from existing cluster
-    talosctl kubeconfig -n 192.168.5.201 -f --force-context-name main
+    talosctl kubeconfig -n 192.168.5.211 -f --force-context-name main
 
     # Verify both work
     export KUBECONFIG=$(pwd)/kubeconfig
@@ -112,8 +112,8 @@ just kube sync-git                 # Sync all Git repositories
 just kube hr-restart              # Restart failed Helm releases
 
 # Talos operations
-just talos apply-node talos-m01   # Apply config to node
-just talos reboot-node talos-m01  # Reboot a node
+just talos apply-node k8s-1   # Apply config to node
+just talos reboot-node k8s-1  # Reboot a node
 ```
 
 Full command reference: [Task Runner Reference](../operations/task-runner.md)

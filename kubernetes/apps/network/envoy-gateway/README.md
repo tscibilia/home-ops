@@ -20,7 +20,7 @@ Internal: LAN → k8s-gateway → envoy-internal (192.168.5.231) → Apps
 | **envoy-external** | External Gateway (HTTPS) | 192.168.5.241 |
 | **envoy-internal** | Internal Gateway (HTTPS) | 192.168.5.231 |
 | **external-dns** | DNS automation (watches HTTPRoute) | - |
-| **k8s-gateway** | Internal DNS (watches HTTPRoute) | 192.168.5.199 |
+| **unifi-dns** | Internal DNS automation (watches HTTPRoute) | - |
 | **cloudflared** | Cloudflare tunnel | - |
 
 ## HTTPRoute Pattern

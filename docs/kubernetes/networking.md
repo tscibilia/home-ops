@@ -197,7 +197,7 @@ Pods talk directly via cluster DNS:
 postgresql.database.svc.cluster.local
 ```
 
-Cilium routes traffic using native routing (no overlay/tunneling). Pods get IPs from `10.42.0.0/16` (defined in [`talos/machineconfig.yaml.j2:145`](https://github.com/tscibilia/home-ops/blob/main/talos/machineconfig.yaml.j2#L145)).
+Cilium routes traffic using native routing over bond0 (no overlay/tunneling). Pods get IPs from `10.42.0.0/16` (defined in [`talos/machineconfig.yaml.j2`](https://github.com/tscibilia/home-ops/blob/main/talos/machineconfig.yaml.j2)).
 
 ## Certificate Management
 
@@ -249,18 +249,23 @@ Select media applications (qBittorrent, Prowlarr) use [Multus CNI](https://githu
 **How it works:**
 
 1. Pod has two network interfaces:
-   - Primary: Cilium-managed cluster network (for internal services)
-   - Secondary: VPN network for external traffic routing
+   - Primary (eth0): Cilium-managed cluster network (for internal services)
+   - Secondary (net1): VPN network (192.168.99.0/24) for external traffic
 2. VPN network routes specific traffic through UniFi VPN gateway
 3. Apps can simultaneously access cluster services and route downloads through VPN
 
-**Configuration**: See [`kubernetes/apps/media/qbittorrent/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/qbittorrent) and [`kubernetes/apps/media/prowlarr/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/media/prowlarr) for NetworkAttachmentDefinition examples.
+**Configuration**:
+- NetworkAttachmentDefinition creates secondary interface
+- VLAN 99 tagged on bond0 for VPN network
+- Apps using VPN: qBittorrent, Prowlarr
 
 **Benefits:**
 
 - Download traffic isolated to VPN without affecting internal cluster communication
 - No need for sidecar VPN containers
 - Native Kubernetes networking with secondary interfaces
+
+See [VPN Networking Guide](../kubernetes/vpn-networking.md) for detailed configuration.
 
 ## Observability
 

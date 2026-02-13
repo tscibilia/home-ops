@@ -379,13 +379,13 @@ See the [VPN Networking Guide](../kubernetes/vpn-networking.md) for detailed tro
 
 If the entire cluster is down:
 
-1. **Check node connectivity**: Can you ping 192.168.5.201/202/203?
+1. **Check node connectivity**: Can you ping 192.168.5.211/212/213?
 2. **Check control plane**: `kubectl get pods -n kube-system`
 3. **Reboot nodes one at a time**:
 
     ```bash
-    just talos reboot-node talos-m01
-    kubectl wait --for=condition=ready node/talos-m01 --timeout=10m
+    just talos reboot-node k8s-1
+    kubectl wait --for=condition=ready node/k8s-1 --timeout=10m
     # Repeat for m02, m03
     ```
 

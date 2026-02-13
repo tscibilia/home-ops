@@ -95,22 +95,22 @@ just bootstrap talos
 
 ```
 INFO Running stage... stage=talos
-INFO Talos config applied node=talos-m01
-INFO Talos config applied node=talos-m02
-INFO Talos config applied node=talos-m03
+INFO Talos config applied node=k8s-1
+INFO Talos config applied node=k8s-2
+INFO Talos config applied node=k8s-3
 ```
 
 ??? tip "If Nodes Already Have Talos"
     If nodes are already running Talos, the command detects this and skips:
 
     ```
-    INFO Talos already configured, skipping apply of config stage=talos node=talos-m01
+    INFO Talos already configured, skipping apply of config stage=talos node=k8s-1
     ```
 
     To force reapplication, manually run:
 
     ```bash
-    just talos apply-node talos-m01 --insecure
+    just talos apply-node k8s-1 --insecure
     ```
 
 ### Stage 2: Bootstrap Kubernetes
@@ -152,7 +152,7 @@ just bootstrap kubeconfig
 - Fetches `kubeconfig` from the cluster via `talosctl kubeconfig`
 - Saves to `kubeconfig` in the repository root
 - Sets context name to `main`
-- Configures kubectl to use the Cilium LoadBalancer VIP (192.168.5.200)
+- Configures kubectl to use the Cilium LoadBalancer VIP (192.168.5.210)
 
 **Expected output:**
 
@@ -186,9 +186,9 @@ just bootstrap wait
 ```
 INFO Running stage... stage=wait
 INFO Waiting for nodes to be ready...
-node/talos-m01 condition met
-node/talos-m02 condition met
-node/talos-m03 condition met
+node/k8s-1 condition met
+node/k8s-2 condition met
+node/k8s-3 condition met
 ```
 
 ### Stage 5: Apply Namespaces
@@ -373,15 +373,15 @@ Rebuilding after catastrophic failure:
 
 ```bash
 # 1. Factory reset all nodes
-just talos reset-node talos-m01  # Confirm prompt
-just talos reset-node talos-m02  # Confirm prompt
-just talos reset-node talos-m03  # Confirm prompt
+just talos reset-node k8s-1  # Confirm prompt
+just talos reset-node k8s-2  # Confirm prompt
+just talos reset-node k8s-3  # Confirm prompt
 
 # 2. Boot nodes from Talos ISO
 # 3. Run full bootstrap
 just bootstrap
 
-# 4. CNPG clusters restore from S3 backups automatically
+# 4. CNPG clusters restore from B2 backups automatically
 # 5. Flux deploys apps
 # 6. Restore VolSync PVCs for stateful apps
 
@@ -443,15 +443,15 @@ just bootstrap apps
 
 ```bash
 # Check Talos service status on each node
-talosctl -n 192.168.5.201 service kubelet status
-talosctl -n 192.168.5.202 service kubelet status
-talosctl -n 192.168.5.203 service kubelet status
+talosctl -n 192.168.5.211 service kubelet status
+talosctl -n 192.168.5.212 service kubelet status
+talosctl -n 192.168.5.213 service kubelet status
 
 # Check node logs
-talosctl -n 192.168.5.201 logs kubelet
+talosctl -n 192.168.5.211 logs kubelet
 
 # Reboot stuck nodes
-just talos reboot-node talos-m01
+just talos reboot-node k8s-1
 ```
 
 ### aKeyless Secrets Not Injecting
@@ -490,7 +490,7 @@ Key files involved in bootstrap:
 | [`bootstrap/helmfile.d/01-apps.yaml`](https://github.com/tscibilia/home-ops/blob/main/bootstrap/helmfile.d/01-apps.yaml) | Core infrastructure apps |
 | [`bootstrap/cnpg/`](https://github.com/tscibilia/home-ops/tree/main/bootstrap/cnpg) | CNPG cluster definitions with backup recovery |
 | [`talos/machineconfig.yaml.j2`](https://github.com/tscibilia/home-ops/blob/main/talos/machineconfig.yaml.j2) | Base Talos configuration |
-| [`talos/nodes/*.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes) | Node-specific Talos overrides |
+| [`talos/nodes/k8s-*.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes) | Node-specific Talos patches (k8s-1, k8s-2, k8s-3) |
 
 ## Next Steps
 

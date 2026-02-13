@@ -168,7 +168,7 @@ Manual fallback:
 just talos upgrade-k8s 1.35.0
 
 # Upgrade Talos on a single node
-just talos upgrade-node talos-m01
+just talos upgrade-node k8s-1
 ```
 
 tuppr can also **downgrade** if needed—just update the version in the TalosUpgrade/KubernetesUpgrade CRD to an earlier version and commit it.
@@ -180,14 +180,14 @@ tuppr can also **downgrade** if needed—just update the version in the TalosUpg
 For manual reboots (not upgrades), reboot one at a time:
 
 ```bash
-just talos reboot-node talos-m01
-kubectl wait --for=condition=ready node/talos-m01 --timeout=10m
+just talos reboot-node k8s-1
+kubectl wait --for=condition=ready node/k8s-1 --timeout=10m
 
-just talos reboot-node talos-m02
-kubectl wait --for=condition=ready node/talos-m02 --timeout=10m
+just talos reboot-node k8s-2
+kubectl wait --for=condition=ready node/k8s-2 --timeout=10m
 
-just talos reboot-node talos-m03
-kubectl wait --for=condition=ready node/talos-m03 --timeout=10m
+just talos reboot-node k8s-3
+kubectl wait --for=condition=ready node/k8s-3 --timeout=10m
 ```
 
 Kubernetes reschedules pods to healthy nodes during reboots automatically.
@@ -326,14 +326,14 @@ If the cluster is in a weird state:
 
 ```bash
 # Restart all nodes (one at a time)
-just talos reboot-node talos-m01
-kubectl wait --for=condition=ready node/talos-m01 --timeout=10m
+just talos reboot-node k8s-1
+kubectl wait --for=condition=ready node/k8s-1 --timeout=10m
 
-just talos reboot-node talos-m02
-kubectl wait --for=condition=ready node/talos-m02 --timeout=10m
+just talos reboot-node k8s-2
+kubectl wait --for=condition=ready node/k8s-2 --timeout=10m
 
-just talos reboot-node talos-m03
-kubectl wait --for=condition=ready node/talos-m03 --timeout=10m
+just talos reboot-node k8s-3
+kubectl wait --for=condition=ready node/k8s-3 --timeout=10m
 ```
 
 ## Best Practices

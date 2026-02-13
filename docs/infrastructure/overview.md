@@ -14,43 +14,41 @@ Manage nodes the same way as Kubernetes resources—update config and apply.
 
 Three control-plane nodes (scheduling enabled). Configs live in [`talos/nodes/`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes):
 
-| Node | Management IP | CEPH IP | Role | Notes |
-|------|---------------|---------|------|-------|
-| talos-m01 | 192.168.5.201 | 10.10.10.8 | Control Plane | NVIDIA Quadro P400 (GPU)
-| talos-m02 | 192.168.5.202 | 10.10.10.9 | Control Plane | Standard
-| talos-m03 | 192.168.5.203 | 10.10.10.10 | Control Plane | Standard
+| Node | Management IP | Ceph IP | Role | Hardware |
+|------|---------------|---------|------|----------|
+| k8s-1 | 192.168.5.211 | 192.168.43.11 | Control Plane | Lenovo M70q + Intel iGPU
+| k8s-2 | 192.168.5.212 | 192.168.43.12 | Control Plane | Lenovo M70q + Intel iGPU
+| k8s-3 | 192.168.5.213 | 192.168.43.13 | Control Plane | Lenovo M70q + Intel iGPU
 
-**Control plane VIP**: `192.168.5.200:6443`
+**Control plane VIP**: `192.168.5.210:6443`
 
 ??? info "Why a VIP (Virtual IP)?"
-    The VIP (192.168.5.200) floats between the control plane nodes. If one node goes down, the VIP moves to another healthy node automatically. This provides high availability—your `kubeconfig` points to the VIP, not individual nodes, so you're always connected to a healthy control plane.
+    The VIP (192.168.5.210) floats between the control plane nodes via Cilium L2 announcements. If one node goes down, the VIP moves to another healthy node automatically. This provides high availability—your `kubeconfig` points to the VIP, not individual nodes, so you're always connected to a healthy control plane.
 
-    Configured in each node's YAML at [`talos/nodes/talos-m0X.yaml.j2`](https://github.com/tscibilia/home-ops/blob/main/talos/nodes/talos-m01.yaml.j2):
+    Configured in base machine config at [`talos/machineconfig.yaml.j2`](https://github.com/tscibilia/home-ops/blob/main/talos/machineconfig.yaml.j2):
     ```yaml
-    vip:
-      ip: 192.168.5.200
+    network:
+      interfaces:
+        - interface: bond0
+          vip:
+            ip: 192.168.5.210
     ```
 
 ??? tip "Dual-Network Architecture"
-    Notice each node has two networks:
+    Each node has two networks:
 
-    - **Management (192.168.5.x)**: Primary network for Kubernetes control plane, pod traffic, and external access
-    - **CEPH (10.10.10.x)**: Dedicated network for Rook-Ceph storage traffic
+    - **Management (192.168.5.x)**: Primary network (bond0) for Kubernetes control plane, pod traffic, and external access
+    - **Ceph (192.168.43.x)**: Dedicated network (ceph0) for Rook-Ceph storage traffic
 
-    This separation prevents storage replication from saturating the main network. Only Ceph currently uses 9000 MTU (jumbo frames) for better performance with 2.5GbE networking.
+    This separation prevents storage replication from saturating the main network.
 
-??? note "GPU Acceleration"
-    talos-m01 has an NVIDIA Quadro P400 GPU with drivers loaded via kernel modules. See [`talos/nodes/talos-m01.yaml.j2:36-40`](https://github.com/tscibilia/home-ops/blob/main/talos/nodes/talos-m01.yaml.j2#L36-L40):
-    ```yaml
-    kernel:
-      modules:
-        - name: nvidia
-        - name: nvidia_uvm
-        - name: nvidia_drm
-        - name: nvidia_modeset
-    ```
+??? note "Intel iGPU Acceleration"
+    All nodes have Intel integrated graphics (i915) for hardware transcoding. Talos extensions loaded:
+    - `extensions.talos.dev/i915`: Intel GPU driver
+    - `extensions.talos.dev/intel-ucode`: Intel microcode updates
+    - `extensions.talos.dev/mei`: Intel Management Engine Interface
 
-    This enables GPU-accelerated transcoding for media apps like Plex/Jellyfin.
+    This enables GPU-accelerated transcoding for media apps like Plex using Dynamic Resource Allocation (DRA).
 
 ## Talos Configuration
 
@@ -60,14 +58,14 @@ Node configuration is generated from Jinja2 templates. The structure in [`talos/
 talos/
 ├── machineconfig.yaml.j2
 ├── nodes/
-│   ├── talos-m01.yaml.j2     # Node-specific overrides (IP, hardware)
-│   ├── talos-m02.yaml.j2
-│   └── talos-m03.yaml.j2
-├── schematic.yaml.j2          # Talos image customization
+│   ├── k8s-1.yaml.j2          # Node-specific patches (hostname, IPs)
+│   ├── k8s-2.yaml.j2
+│   └── k8s-3.yaml.j2
+├── schematic.yaml.j2          # Talos image customization (extensions)
 └── mod.just                   # Just commands for Talos operations
 ```
 
-Base settings (pod/service networks, control plane endpoint, images) live in `machineconfig.yaml.j2`. Node files override hostname, IPs, and hardware options.
+Base settings (pod/service networks, control plane endpoint, images, VIP) live in `machineconfig.yaml.j2`. Node files patch hostname and network interfaces (ceph0 IP).
 
 Secrets (certs, tokens) are referenced as `ak://...` and injected at render time via `akeyless-inject`—they are not stored in Git.
 
@@ -106,13 +104,13 @@ Render, apply, and reboot:
 
 ```bash
 # 1. Render the config to see what will change
-just talos render-config talos-m01
+just talos render-config k8s-1
 
 # 2. Apply the configuration (requires confirmation)
-just talos apply-node talos-m01
+just talos apply-node k8s-1
 
 # 3. Reboot if needed (some changes require reboot)
-just talos reboot-node talos-m01
+just talos reboot-node k8s-1
 ```
 
 The node applies changes gracefully. Kubernetes reschedules pods during the reboot, so there's no downtime if you have multiple replicas.
@@ -123,7 +121,7 @@ The node applies changes gracefully. Kubernetes reschedules pods during the rebo
 
 ```bash
 just talos upgrade-k8s 1.35.0     # Kubernetes upgrade
-just talos upgrade-node talos-m01 # Talos OS upgrade per-node
+just talos upgrade-node k8s-1 # Talos OS upgrade per-node
 ```
 
 Follow a rolling pattern: upgrade one node, wait for Ready, then continue.
@@ -135,7 +133,7 @@ Follow a rolling pattern: upgrade one node, wait for Ready, then continue.
 Talos automatically snapshots etcd. To manually trigger a backup:
 
 ```bash
-talosctl -n 192.168.5.201 etcd snapshot /tmp/etcd-backup.db
+talosctl -n 192.168.5.211 etcd snapshot /tmp/etcd-backup.db
 ```
 
 Store this safely—it contains your entire cluster state (except application data).

@@ -4,14 +4,34 @@ The cluster uses multiple storage backends depending on the use case: local ephe
 
 ## Storage Classes
 
-Different apps need different types of storage. The cluster provides four storage classes:
+Different apps need different types of storage. The cluster provides three storage classes:
 
 | Storage Class | Backend | Use Case | Performance | Redundancy |
 |---------------|---------|----------|-------------|------------|
-| `openebs-hostpath` | OpenEBS | Ephemeral local storage | Fast | None (local disk) |
-| `ceph-ssd` | Rook-Ceph | Persistent block storage | Fast | 3x replication |
-| `cephfs` | Rook-Ceph | Shared filesystem | Medium | 3x replication |
+| `ceph-ssd` (default) | Rook-Ceph | Persistent block storage | Medium | 3x replication |
+| `openebs-hostpath` | OpenEBS | Local storage (CNPG, ephemeral) | Fast | None (local disk) |
 | `nfs-media` | NFS Server | Media libraries | Varies | External |
+
+### Storage Decision Matrix
+
+```mermaid
+graph LR
+    APP[Application Pod] --> PVC[PersistentVolumeClaim]
+
+    PVC --> SSD[Ceph SSD<br/>ceph-ssd<br/>ceph-blockpool]
+    PVC --> NFS[Synology NFS<br/>nfs-media<br/>Media Libraries]
+    PVC --> LOCAL[OpenEBS<br/>openebs-hostpath<br/>Local Storage]
+
+    SSD --> BACKUP1[VolSync → Backblaze B2]
+    NFS --> BACKUP2[Synology Snapshots]
+```
+
+| App Type | Storage Class | Reason |
+|----------|--------------|---------|
+| **Databases** (PostgreSQL via CNPG) | `openebs-hostpath` | CNPG manages replication, prefers local fast storage |
+| **Config & app state** | `ceph-ssd` | Critical persistent data, survives node failure |
+| **Media libraries** (Plex, Jellyfin) | `nfs-media` | Large capacity from Synology NAS |
+| **Cache** (Victoria Logs, temp data) | `openebs-hostpath` | Fast local storage, ephemeral |
 
 ### When to Use Each
 
@@ -51,24 +71,6 @@ Different apps need different types of storage. The cluster provides four storag
           storage: 100Gi
     ```
 
-=== "cephfs"
-    **Use for**: Shared data accessed by multiple pods
-
-    Shared filesystem (like NFS) backed by Ceph. Multiple pods can mount it simultaneously with `ReadWriteMany`.
-
-    ```yaml
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      name: shared-config
-    spec:
-      storageClassName: cephfs
-      accessModes: [ReadWriteMany]
-      resources:
-        requests:
-          storage: 50Gi
-    ```
-
 === "nfs-media"
     **Use for**: Large media libraries (movies, photos, etc.)
 
@@ -89,23 +91,15 @@ Different apps need different types of storage. The cluster provides four storag
 
 ??? tip "How to Choose"
     - **Can you afford to lose this data?** → `openebs-hostpath`
-    - **Is it critical and only one pod uses it?** → `ceph-ssd`
-    - **Do multiple pods need to read/write it?** → `cephfs`
-    - **Is it massive and on external storage?** → `nfs-media`
+    - **Is it critical persistent data?** → `ceph-ssd`
+    - **Database (CNPG manages replication)?** → `openebs-hostpath`
+    - **Is it massive media files?** → `nfs-media`
 
 ## Rook-Ceph: Distributed Storage
 
-Rook-Ceph provides distributed storage backed by the dedicated CEPH network (10.10.10.0/28). Configured in [`kubernetes/apps/rook-ceph/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph).
+Rook-Ceph provides distributed block storage across cluster nodes. Each node contributes Samsung SSDs for Ceph OSDs over a dedicated 2.5GbE network. See [Infrastructure Architecture](../infrastructure/architecture.md#rook-ceph-distributed-storage) and [Ceph Network](../infrastructure/networking.md#ceph-storage-network) for configuration details.
 
-### Architecture
-
-Each Talos node contributes disk space:
-
-- **talos-m01**: Disk attached on CEPH network (10.10.10.8)
-- **talos-m02**: Disk attached on CEPH network (10.10.10.9)
-- **talos-m03**: Disk attached on CEPH network (10.10.10.10)
-
-Ceph replicates data 3 ways across these nodes. If one node dies, data is still accessible from the other two.
+Ceph replicates data 3x across nodes (host failure domain). Single node failure doesn't impact data availability.
 
 ??? example "How Replication Works"
     When you write to a `ceph-ssd` PVC:
@@ -127,6 +121,9 @@ kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- ceph osd status
 
 # Check storage usage
 kubectl -n rook-ceph exec -it deploy/rook-ceph-tools -- ceph df
+
+# Access Rook-Ceph dashboard
+# URL: https://rook.${SECRET_DOMAIN}
 ```
 
 ## VolSync Backups
@@ -222,9 +219,11 @@ CloudNativePG provides HA PostgreSQL clusters. Configured in [`kubernetes/apps/d
 
 ### Current Clusters
 
-- **pgsql-cluster**: Main database cluster for most apps (Authentik, Gatus, etc.)
-- **immich17**: Dedicated database cluster for Immich
+- **pgsql-cluster**: Main PostgreSQL 17 cluster for most apps (Authentik, Gatus, etc.)
+- **immich17**: PostgreSQL 17 cluster for Immich with vectorchord extension
 - Located in `database` namespace
+- Storage: `openebs-hostpath` (20Gi per instance, 3 instances)
+- Backups: Barman-cloud to Backblaze B2
 
 ### Automatic User Provisioning
 

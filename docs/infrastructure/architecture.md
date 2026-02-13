@@ -1,58 +1,33 @@
 # Infrastructure Architecture
 
-This document describes the complete home infrastructure, including the Kubernetes cluster, storage systems, networking equipment, and how everything interconnects.
+High-level overview of the home infrastructure components and how they interconnect. For detailed configuration, see [Overview](overview.md), [Networking](networking.md), and [Storage](../kubernetes/storage.md).
 
 ## High-Level Architecture
 
-The infrastructure is built on a foundation of **Proxmox virtualization** running Kubernetes (via Talos OS), supported by external **Ceph storage**, **Synology NAS**, and **UniFi networking**.
+The infrastructure runs on **bare-metal Lenovo M70q systems** with Talos Linux, internal **Rook-Ceph storage**, **Synology NAS**, and **UniFi networking**.
 
 ```mermaid
 graph TB
     subgraph "Physical Infrastructure"
-        PX1[Proxmox Server 1<br/>Dell R620]
-        PX2[Proxmox Server 2<br/>Dell R620]
-        PX3[Proxmox Server 3<br/>Dell R620]
+        K1[Lenovo M70q k8s-1<br/>Control Plane + Rook-Ceph]
+        K2[Lenovo M70q k8s-2<br/>Control Plane + Rook-Ceph]
+        K3[Lenovo M70q k8s-3<br/>Control Plane + Rook-Ceph]
         SYNO[Synology NAS<br/>NFS + Backups]
-        UDM[UniFi UDM-Pro<br/>Router + Controller]
+        UDM[UniFi UDM-Pro<br/>Gateway]
     end
 
-    subgraph "Kubernetes Cluster (Talos VMs)"
-        M01[talos-m01<br/>192.168.5.201<br/>Control Plane]
-        M02[talos-m02<br/>192.168.5.202<br/>Control Plane]
-        M03[talos-m03<br/>192.168.5.203<br/>Control Plane]
-    end
+    K1 -.Ceph Network.-> K2
+    K2 -.Ceph Network.-> K3
+    K3 -.Ceph Network.-> K1
 
-    subgraph "Ceph Storage Cluster"
-        CEPH1[Ceph OSD<br/>4x 900GB SAS]
-        CEPH2[Ceph OSD<br/>4x 900GB SAS]
-        CEPH3[Ceph OSD<br/>4x 900GB SAS]
-    end
+    K1 -.NFS.-> SYNO
+    K2 -.NFS.-> SYNO
+    K3 -.NFS.-> SYNO
 
-    subgraph "Supporting Infrastructure"
-        PI[Raspberry Pi<br/>OctoPrint]
-    end
-
-    PX1 --> M01
-    PX2 --> M02
-    PX3 --> M03
-
-    PX1 --> CEPH1
-    PX2 --> CEPH2
-    PX3 --> CEPH3
-
-    M01 -.10GbE Storage.-> CEPH1
-    M02 -.10GbE Storage.-> CEPH2
-    M03 -.10GbE Storage.-> CEPH3
-
-    M01 -.NFS.-> SYNO
-    M02 -.NFS.-> SYNO
-    M03 -.NFS.-> SYNO
-
-    UDM --> M01
-    UDM --> M02
-    UDM --> M03
+    UDM --> K1
+    UDM --> K2
+    UDM --> K3
     UDM --> SYNO
-    UDM --> PI
 ```
 
 <div class="diagram-note">💡 **Tip**: Large diagrams can be enlarged in most browsers by right-clicking and selecting "Inspect" or using browser zoom (Ctrl+/Cmd+).</div>
@@ -61,89 +36,41 @@ graph TB
 
 ## Physical Hardware
 
-### Proxmox Cluster (3x Dell R620)
+### Bare-Metal Kubernetes Cluster (3x Lenovo M70q)
 
-**Purpose**: Hypervisor layer hosting Talos Kubernetes VMs and external Ceph storage cluster
+**Purpose**: Kubernetes control plane and compute nodes with integrated Rook-Ceph storage
 
 **Specifications**:
-- **Servers**: 3x Dell PowerEdge R620 rack servers
-- **Network**: Dell 10GbE dual-port cards in mesh configuration
-- **Storage**: 4x 900GB 10k SAS drives per server (dedicated to Ceph OSDs)
-- **Ceph Configuration**: Hyper-converged setup (compute + storage on same physical hardware)
+- **Systems**: 3x Lenovo ThinkCentre M70q Tiny (Gen 3)
+- **Network**: 2.5GbE primary + secondary Ceph network interface
+- **Storage**: NVMe SSDs + Samsung SATA SSDs for Ceph OSDs
+- **GPU**: Intel integrated graphics (i915) on all nodes for hardware transcoding
 
-**What runs here**:
-- Ceph storage cluster (distributed block + filesystem storage)
-- Talos Kubernetes nodes as VMs
-- External Ceph cluster provides storage back to Kubernetes via Rook-Ceph
-
-??? info "Why External Ceph?"
-    The cluster follows [onedr0p's external Ceph architecture](https://onedr0p.github.io/home-ops/archive/proxmox-considerations.html), separating Ceph management from Kubernetes. This provides:
-
-    - **Cluster survivability**: Storage persists even if Kubernetes cluster is destroyed
-    - **Simplified disaster recovery**: Rebuild Kubernetes VMs without touching storage
-    - **Performance isolation**: Ceph operations don't compete with Kubernetes workloads
-    - **Independent scaling**: Add storage capacity without adding Kubernetes nodes
-
-    See [Rook-Ceph README](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/rook-ceph/rook-ceph/README.md) for implementation details.
-
-### Kubernetes Cluster (Talos VMs)
-
-**Purpose**: Container orchestration platform running all applications
-
-**Node Configuration**:
-
-| Node | Management IP | Ceph IP | Role | Special Features |
-|------|--------------|---------|------|------------------|
-| **talos-m01** | 192.168.5.201 | 10.10.10.8 | Control Plane | NVIDIA Quadro P400 GPU |
-| **talos-m02** | 192.168.5.202 | 10.10.10.9 | Control Plane | Standard node |
-| **talos-m03** | 192.168.5.203 | 10.10.10.10 | Control Plane | Standard node |
-
-**VIP**: 192.168.5.200 (Cilium LoadBalancer shared IP for API access)
-
-**Operating System**: [Talos Linux](https://talos.dev) - Immutable Kubernetes OS
-- No SSH access (API-driven management via `talosctl`)
-- Declarative configuration via YAML templates
-- Minimal attack surface (read-only root filesystem)
-- Automatic OS updates via [tuppr](https://github.com/home-operations/tuppr)
-
-**Dual Network Design**:
-Each node has two network interfaces:
-- **vmbr0** (192.168.5.x): Management network for Kubernetes API, pod networking, external access
-- **vmbr1** (10.10.10.x): Dedicated Ceph storage network (10GbE mesh)
-
-This segregation prevents storage traffic from impacting application performance.
+Three control plane nodes running Talos Linux with integrated Rook-Ceph storage. See [Infrastructure Overview](overview.md#cluster-nodes) for detailed node configuration, IPs, and network setup.
 
 ---
 
 ## Storage Infrastructure
 
-### Ceph Distributed Storage
+### Rook-Ceph Distributed Storage
 
-**Purpose**: Persistent block and filesystem storage for Kubernetes workloads
+**Purpose**: Persistent block storage for Kubernetes workloads
 
-**Architecture**: External Ceph cluster running on Proxmox, consumed by Kubernetes via Rook-Ceph
+**Architecture**: Internal Rook-Ceph cluster running on Kubernetes nodes
 
 **Configuration**:
-- **Public Network**: 10.10.10.0/28 (dedicated storage VLAN)
-- **Pools**:
-  - `ceph-vm`: Primary RBD block storage pool
-  - `ceph-ssd`: Secondary RBD block storage pool
-  - `ceph-fs`: CephFS filesystem pool (with `ceph-fs_data` and `ceph-fs_metadata`)
-- **Replication**: 3x replication across nodes
-- **Connection**: Kubernetes nodes connect via vmbr1 (10GbE)
+- **Public Network**: 192.168.5.0/24 (primary network)
+- **Cluster Network**: 192.168.43.0/24 (dedicated Ceph replication network)
+- **Device Filter**: `/dev/disk/by-id/ata-SAMSUNG*` (Samsung SSDs)
+- **Pool**: `ceph-blockpool` (single RBD block pool)
+- **Replication**: 3x replication across nodes, host failure domain
+- **Compression**: aggressive with zstd algorithm
+- **CephFS**: Not configured (`cephFileSystems: []`)
+- **Object Storage**: Not configured (`cephObjectStores: []`)
 
-**Storage Classes Provided**:
+Storage classes: `ceph-ssd` (default), `openebs-hostpath`, `nfs-media`. See [Storage Management](../kubernetes/storage.md) for details.
 
-| Storage Class | Ceph Pool | Type | Use Case |
-|--------------|-----------|------|----------|
-| **ceph-rbd** | `ceph-vm` | RBD (block) | General-purpose block storage |
-| **ceph-ssd** | `ceph-ssd` | RBD (block) | High-performance databases, application state |
-| **cephfs** | `ceph-fs_data` | CephFS (filesystem) | Shared filesystem for multi-pod access |
-
-**Integration**:
-Kubernetes imports Ceph resources via `create-external-cluster-resources.py` script run on Proxmox, then `import-external-cluster.sh` configures Rook-Ceph operator to manage external cluster.
-
-Configuration: [`kubernetes/apps/rook-ceph/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph)
+Configuration: [`kubernetes/apps/rook-ceph/rook-ceph/cluster/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph/rook-ceph/cluster)
 
 ### Synology NAS
 
@@ -186,19 +113,7 @@ Configuration: [`kubernetes/apps/rook-ceph/`](https://github.com/tscibilia/home-
 - Planning to add VLAN isolation for qBittorrent torrent traffic
 - See [issue #1168](https://github.com/tscibilia/home-ops/issues/1168) for multus VLAN integration
 
-### Network Topology
-
-**Primary Network**: 192.168.5.0/24
-- **Gateway**: UniFi UDM-Pro
-- **Kubernetes Nodes**: 192.168.5.201-203
-- **Kubernetes VIP**: 192.168.5.200
-- **Synology NAS**: Referenced as `${NAS_IP}` in cluster configuration
-- **Other devices**: Raspberry Pi (3D printing), additional infrastructure as needed
-
-**Ceph Storage Network**: 10.10.10.0/28
-- **Ceph Monitors**: 10.10.10.1-3 (Proxmox nodes)
-- **Talos Node Storage IPs**: 10.10.10.8-10
-- **Purpose**: Dedicated 10GbE mesh for Ceph replication and client traffic
+See [Network Infrastructure](networking.md) for complete network topology, IP allocation, and DNS architecture.
 
 ---
 
@@ -206,32 +121,7 @@ Configuration: [`kubernetes/apps/rook-ceph/`](https://github.com/tscibilia/home-
 
 ### Application Data Storage
 
-```mermaid
-graph LR
-    APP[Application Pod] --> PVC[PersistentVolumeClaim]
-
-    PVC --> RBD[Ceph RBD<br/>ceph-rbd<br/>ceph-vm pool]
-    PVC --> SSD[Ceph SSD<br/>ceph-ssd<br/>ceph-ssd pool]
-    PVC --> CEPHFS[CephFS<br/>cephfs<br/>ceph-fs pool]
-    PVC --> NFS[Synology NFS<br/>nfs-media<br/>Media Libraries]
-    PVC --> LOCAL[OpenEBS<br/>openebs-hostpath<br/>Ephemeral Cache]
-
-    RBD --> BACKUP1[VolSync → Backblaze B2]
-    SSD --> BACKUP1
-    CEPHFS --> BACKUP1
-    NFS --> BACKUP2[Synology Snapshots]
-```
-
-**Storage Decision Matrix**:
-
-| App Type | Storage Class | Ceph Pool | Reason |
-|----------|--------------|-----------|---------|
-| **Databases** (PostgreSQL, Redis) | `ceph-ssd` | `ceph-ssd` | Requires persistence, fast I/O, survives node failure |
-| **Config files** (Home Assistant, etc.) | `ceph-ssd` | `ceph-ssd` | Small but critical data |
-| **General storage** | `ceph-rbd` | `ceph-vm` | Standard persistent block storage |
-| **Shared data** (multi-pod apps) | `cephfs` | `ceph-fs_data` | Multiple pods need simultaneous access |
-| **Media libraries** (Plex, Jellyfin) | `nfs-media` | N/A (Synology) | Large capacity, served from Synology NAS |
-| **Cache** (Victoria Logs, temp data) | `openebs-hostpath` | N/A (local) | Fast local storage, doesn't need persistence |
+Three storage classes support different workload types. See [Storage Management](../kubernetes/storage.md) for detailed storage architecture and when to use each class.
 
 ### Backup Strategy
 
@@ -292,18 +182,18 @@ The infrastructure integrates with several cloud services:
 - Ceph enters read-only mode (requires quorum: 2/3 nodes)
 - New pods cannot schedule (insufficient capacity)
 
-**Recovery**: Manual (restore failed nodes or rebuild cluster from backup)
+**Recovery**: Manual (restore failed nodes or rebuild from backup)
 
 ### Complete Cluster Loss
 
 **Impact**: All Kubernetes workloads offline
-- Ceph data remains intact on Proxmox storage
+- Ceph data lost (stored on node disks)
 - Synology NAS data unaffected
 - Backups available in Backblaze B2
 
 **Recovery**: Full bootstrap process
-1. Rebuild Talos VMs on Proxmox
-2. Run `just bootstrap` to restore Kubernetes
+1. Reinstall Talos on bare-metal nodes
+2. Run `just bootstrap` to restore Kubernetes and Rook-Ceph
 3. Restore CNPG databases from B2 backups
 4. Restore application PVCs via VolSync
 
@@ -313,20 +203,10 @@ See [Bootstrap Guide](bootstrap.md) for disaster recovery procedures.
 
 ## Performance Characteristics
 
-### Storage Performance
-
-| Storage Class | Ceph Pool | Latency | Throughput | Use Case |
-|--------------|-----------|---------|------------|----------|
-| `openebs-hostpath` | N/A (local) | <1ms | Local disk speed | Fastest (ephemeral) |
-| `ceph-ssd` | `ceph-ssd` | 2-5ms | ~500 MB/s | Fast persistent storage |
-| `ceph-rbd` | `ceph-vm` | 2-5ms | ~500 MB/s | Standard persistent storage |
-| `cephfs` | `ceph-fs_data` | 5-10ms | ~300 MB/s | Shared filesystem |
-| `nfs-media` | Synology | 10-20ms | ~100 MB/s | Large files, acceptable latency |
-
 ### Network Performance
 
-- **Kubernetes Internal**: 10 Gbps (pod-to-pod via Cilium)
-- **Ceph Storage**: 10 Gbps (dedicated mesh network)
+- **Kubernetes Internal**: 1 Gbps (pod-to-pod via Cilium on bond0)
+- **Ceph Storage**: 2.5 Gbps (dedicated Ceph network on ceph0)
 - **Internet Uplink**: Varies (home ISP connection)
 - **Cloudflare Tunnel**: ~50-100ms latency (depends on Cloudflare edge location)
 
@@ -336,20 +216,20 @@ See [Bootstrap Guide](bootstrap.md) for disaster recovery procedures.
 
 ### Horizontal Scaling (Add Nodes)
 
-**Not currently supported**: Cluster designed for 3 control plane nodes
-- Would require worker node VMs on Proxmox
-- Ceph storage capacity can scale by adding OSDs to existing Proxmox servers
+**Limited**: Cluster designed for 3 control plane nodes
+- Would require additional M70q systems as worker nodes
+- Ceph storage capacity scales by adding more OSDs (disks) to existing nodes
 
 ### Vertical Scaling (More Resources)
 
-**Easily achievable**:
-- Increase VM CPU/RAM allocation in Proxmox
-- Expand Ceph pools with additional disks
+**Constrained by hardware**:
+- M70q systems have fixed CPU/RAM (can upgrade RAM modules)
+- Expand Ceph by adding larger SSDs
 - Upgrade Synology NAS capacity
 
 ### Storage Expansion
 
-**Ceph**: Add more OSDs (disks) to Proxmox servers or create new pools
+**Ceph**: Add more SSDs to nodes or replace existing drives with larger capacity
 **Synology**: Add more drives or replace with larger capacity
 
 ---
@@ -358,10 +238,10 @@ See [Bootstrap Guide](bootstrap.md) for disaster recovery procedures.
 
 Potential architecture enhancements tracked in GitHub issues:
 
-- **Multus CNI**: Add secondary networks for better traffic isolation ([#1168](https://github.com/tscibilia/home-ops/issues/1168))
-- **Faster Ceph SSDs**: Replace 10k SAS drives with NVMe for improved latency
-- **Separate Worker Nodes**: Dedicate control plane nodes to management, add worker nodes for workloads
-- **Object Storage**: Consider adding Ceph RGW or MinIO/Garage for S3-compatible storage ([#842](https://github.com/tscibilia/home-ops/issues/842))
+- **Larger SSDs**: Upgrade Ceph OSDs to higher capacity Samsung SSDs
+- **Separate Worker Nodes**: Add dedicated worker nodes for workloads
+- **CephFS**: Enable shared filesystem support for multi-pod RWX access
+- **Object Storage**: Consider adding MinIO/Garage for S3-compatible storage
 
 ---
 
@@ -380,17 +260,17 @@ Potential architecture enhancements tracked in GitHub issues:
                            │ HTTPS/API
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ Kubernetes Applications (Talos VMs)                         │
+│ Kubernetes Applications                                     │
 │  • Media Apps (Plex, Jellyfin, Sonarr, Radarr)             │
-│  • Home Automation (Home Assistant integration)             │
 │  • Observability (Grafana, VictoriaMetrics, Gatus)         │
+│  • Databases (PostgreSQL via CNPG)                          │
 └─────────────────────────────────────────────────────────────┘
                            ▲
                            │
 ┌──────────────────────────┼──────────────────────────────────┐
 │ Kubernetes Infrastructure│                                  │
 │  • Cilium CNI            │  • Flux CD GitOps               │
-│  • Rook-Ceph Integration │  • Cert-Manager                 │
+│  • Rook-Ceph Storage     │  • Cert-Manager                 │
 │  • External-Secrets      │  • Envoy Gateway                │
 └──────────────────────────┼──────────────────────────────────┘
                            │
@@ -398,23 +278,17 @@ Potential architecture enhancements tracked in GitHub issues:
         │                  │                  │
         ▼                  ▼                  ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│ talos-m01    │  │ talos-m02    │  │ talos-m03    │
-│ 192.168.5.201│  │ 192.168.5.202│  │ 192.168.5.203│
-│ 10.10.10.8   │  │ 10.10.10.9   │  │ 10.10.10.10  │
+│ k8s-1        │  │ k8s-2        │  │ k8s-3        │
+│ M70q         │  │ M70q         │  │ M70q         │
+│ Control Plane│  │ Control Plane│  │ Control Plane│
+│ Rook-Ceph    │  │ Rook-Ceph    │  │ Rook-Ceph    │
+│ Intel iGPU   │  │ Intel iGPU   │  │ Intel iGPU   │
 └──────────────┘  └──────────────┘  └──────────────┘
         │                  │                  │
         └──────────────────┼──────────────────┘
-                           │ 10GbE Ceph Network
+                           │ Ceph Network (192.168.43.0/24)
+                           │ Samsung SSDs (Rook-Ceph OSDs)
                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│ Proxmox + Ceph Cluster (3x Dell R620)                       │
-│  • Hyper-converged: VMs + Storage on same hardware          │
-│  • 12x 900GB 10k SAS drives (4 per server)                  │
-│  • 10GbE mesh network for Ceph replication                  │
-│  • Ceph Pools: ceph-vm, ceph-ssd, ceph-fs                   │
-└─────────────────────────────────────────────────────────────┘
-        │
-        ▼
 ┌──────────────┐              ┌──────────────────────────┐
 │ Synology NAS │◄─────────────│ UniFi Network (UDM-Pro)  │
 │ NFS + Backup │              │  • DNS Integration       │

@@ -21,22 +21,15 @@ Internet
     │
     ├─ UniFi UDM-Pro (192.168.5.1)
     │   ├─ Primary LAN: 192.168.5.0/24
-    │   ├─ Ceph Storage Network: 10.10.10.0/28
-    │   └─ VLANs (if configured)
+    │   └─ Ceph Storage Network: 192.168.43.0/24
     │
-    ├─ Proxmox Cluster (192.168.5.x)
-    │   ├─ talos-m01 (Proxmox host)
-    │   ├─ talos-m02 (Proxmox host)
-    │   └─ talos-m03 (Proxmox host)
+    ├─ Kubernetes Nodes (Bare-Metal M70q)
+    │   ├─ k8s-1: 192.168.5.211 / 192.168.43.11
+    │   ├─ k8s-2: 192.168.5.212 / 192.168.43.12
+    │   ├─ k8s-3: 192.168.5.213 / 192.168.43.13
+    │   └─ VIP: 192.168.5.210
     │
-    ├─ Kubernetes Nodes (Talos VMs)
-    │   ├─ talos-m01: 192.168.5.201
-    │   ├─ talos-m02: 192.168.5.202
-    │   ├─ talos-m03: 192.168.5.203
-    │   └─ VIP: 192.168.5.200
-    │
-    ├─ Synology NAS (192.168.5.x)
-    ├─ Unraid Server (192.168.5.x)
+    ├─ Synology NAS (nas.internal)
     └─ Other Infrastructure Services
 ```
 
@@ -118,31 +111,31 @@ Two-layer ad blocking strategy:
 
 ## Ceph Storage Network
 
-### Dedicated 10GbE Mesh Network
+### Dedicated Mesh Network
 
-**Network**: 10.10.10.0/28
+**Network**: 192.168.43.0/24
 
-The Proxmox Ceph cluster uses a dedicated 10GbE network for storage traffic:
+Rook-Ceph uses a dedicated network for storage traffic:
 
-- **Topology**: Full mesh configuration between Proxmox nodes
-- **Hardware**: Dell 10GbE Dual-port NICs
+- **Topology**: Full mesh configuration between nodes
+- **Interface**: Secondary network interface `ceph0` on each node
 - **Purpose**: Isolate Ceph replication and client traffic from management network
-- **Performance**: Low-latency, high-bandwidth storage access
+- **Performance**: 2.5GbE dedicated bandwidth for storage
 
-### Talos Nodes Ceph Network Configuration
+### Node Ceph Network Configuration
 
-Each Talos VM has a second NIC on the Ceph storage network:
+Each Talos node has a second NIC on the Ceph storage network:
 
 **Network Interface Configuration**:
-- Primary NIC: 192.168.5.x (management/cluster traffic)
-- Secondary NIC: 10.10.10.x (Ceph storage traffic)
+- Primary NIC `bond0`: 192.168.5.x (management/cluster traffic)
+- Secondary NIC `ceph0`: 192.168.43.x (Ceph storage traffic)
 
-**Configuration Files**:
-- [`talos/nodes/talos-m01.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes/talos-m01.yaml.j2)
-- [`talos/nodes/talos-m02.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes/talos-m02.yaml.j2)
-- [`talos/nodes/talos-m03.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes/talos-m03.yaml.j2)
+**Node IPs**:
+- k8s-1: 192.168.43.11
+- k8s-2: 192.168.43.12
+- k8s-3: 192.168.43.13
 
-See [Rook Ceph README](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/rook-ceph/rook-ceph/README.md#unreachable-network) for details on the dual-NIC setup.
+**Configuration Files**: [`talos/nodes/*.yaml.j2`](https://github.com/tscibilia/home-ops/tree/main/talos/nodes)
 
 ## Network Services
 
@@ -153,10 +146,10 @@ See [Rook Ceph README](https://github.com/tscibilia/home-ops/tree/main/kubernete
 Kubernetes services with `type: LoadBalancer` are allocated IPs from this range via Cilium's L2 announcements:
 
 **Key Services**:
-- Kubernetes API VIP: `192.168.5.200`
-- Envoy Gateway External: `192.168.5.x`
-- Envoy Gateway Internal: `192.168.5.x`
-- Various application LoadBalancer services
+- Kubernetes API VIP: `192.168.5.210`
+- Envoy Gateway External: Allocated from pool
+- Envoy Gateway Internal: Allocated from pool
+- Various application LoadBalancer services (Plex: 192.168.5.235, etc.)
 
 ### UniFi Integration Services
 
@@ -219,8 +212,8 @@ UniFi UDM-Pro provides stateful firewall protection:
 ### Traffic Segmentation
 
 - **Management Network**: 192.168.5.0/24 (general cluster and infrastructure)
-- **Storage Network**: 10.10.10.0/28 (Ceph replication and client traffic)
-- **VLANs**: Additional segmentation as configured in UniFi
+- **Ceph Storage Network**: 192.168.43.0/24 (Ceph replication and client traffic)
+- **VPN Network**: 192.168.99.0/24 (VLAN 99 for Multus VPN routing)
 
 ## Network Storage
 
@@ -283,12 +276,12 @@ kubectl logs -n network deployment/unifi-dns -f
 
 **Verify secondary NIC configuration**:
 ```bash
-talosctl -n talos-m01 get addresses
+eval "$(mise activate zsh)" && talosctl -n k8s-1 get addresses
 ```
 
 **Test Ceph network from pod**:
 ```bash
-kubectl run -it --rm debug --image=nicolaka/netshoot --restart=Never -- ping 10.10.10.1
+kubectl run -it --rm debug --image=nicolaka/netshoot --restart=Never -- ping 192.168.43.11
 ```
 
 ## Related Documentation
