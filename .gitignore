@@ -21,4 +21,5 @@ talosconfig
 .task/
 .venv/
 .DS_Store
+/docs/rewriting-guidelines.md
 Thumbs.db
