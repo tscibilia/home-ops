@@ -5,6 +5,7 @@ alertmanager:
     - name: main
       uri: http://vmalertmanager-stack.observability.svc.cluster.local:9093
       timeout: 10s
+      proxy: true
       healthcheck:
         visible: false
         filters:
