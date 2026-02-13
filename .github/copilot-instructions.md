@@ -15,6 +15,20 @@ This is a **Kubernetes-based home infrastructure monorepo** managed with Flux CD
 
 Commands via `just` (main `.justfile` with 3 modules from `bootstrap`, `kubernetes`, and `talos`):
 
+**Environment Setup:**
+
+Tools managed by mise (kubectl, talosctl, just, flux, helm, etc.) require shell activation. Prefix all commands with:
+
+```bash
+eval "$(mise activate zsh)" && <command>
+```
+
+**Example:**
+```bash
+eval "$(mise activate zsh)" && kubectl get pods -A
+eval "$(mise activate zsh)" && just kube sync-hr flux-system flux-operator
+```
+
 ### Bootstrap Module (`just bootstrap`)
 **Cluster Installation & Setup:**
 - `talos` - Install Talos on all configured nodes
@@ -112,11 +126,9 @@ kubernetes/apps/{namespace}/{app-name}/
 ## Storage & Data Management
 
 **Storage Classes:**
-- **openebs-hostpath**: Local ephemeral storage (openebs) - Used by CNPG clusters, victoria-logs
-- **ceph-rbd**: Persistent block storage on HDD (rook-ceph) - Used by media apps (for larger cache volumes)
-- **ceph-ssd**: Persistent block storage on SSD (rook-ceph) - Used by high-performance apps (victoria-metrics, seerr)
-- **cephfs**: Shared filesystem storage (rook-ceph) - Used by apps requiring shared access (plex media)
-- **nfs-media**: Network shared filesystem (nfs) - External NFS mounts for media libraries
+- **ceph-ssd** (default): Persistent block storage on Samsung SSDs (rook-ceph) - Used by most apps requiring persistent storage (media apps, victoria-metrics, databases)
+- **openebs-hostpath**: Local ephemeral node storage (openebs) - Used by victoria-logs, actions-runner, CNPG clusters
+- **nfs-media**: External NFS mounts for media libraries
 
 **VolSync Backups:**
 VolSync (`volsync-system` namespace) provides automated backup/restore for stateful apps using Restic:

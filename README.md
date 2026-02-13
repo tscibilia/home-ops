@@ -52,7 +52,7 @@ If you like this project, please consider supporting the work of [onedr0p](https
 
 ### <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/kubernetes.svg" alt="☸️" width="20" height="20"> Kubernetes
 
-My Kubernetes cluster is a semi-hyper-converged cluster deployed with [Talos](https://www.talos.dev) on three [Proxmox](https://proxmox.com/) nodes. Workloads and block storage share the same available resources on my nodes backed by Ceph, while I have a separate server with NFS shares, bulk file storage, and backups.
+My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https://www.talos.dev) on three bare-metal nodes. Workloads and block storage share the same available resources backed by [Rook Ceph](https://rook.io/) on Samsung SSDs, while I have a separate server with NFS shares for media libraries and backups.
 
 ### Core Components
 
