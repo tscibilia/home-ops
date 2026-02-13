@@ -15,9 +15,9 @@
             "TunnelAuthentication": 0
         },
         "2": {
-            "Name": "immich",
+            "Name": "immich17",
             "Group": "Servers",
-            "Host": "immich-rw.database.svc.cluster.local",
+            "Host": "immich17-rw.database.svc.cluster.local",
             "Port": 5432,
             "MaintenanceDB": "postgres",
             "Username": "postgres",
