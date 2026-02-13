@@ -20,6 +20,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Migrate VM cluster to bare-metal - **2026-02-12** (See commit [5e8eb98] & issue [#1593])
 - ✅ Fix unifi/qbit port forwarding - **2026-01-28** (See issue [#1551](https://github.com/tscibilia/home-ops/issues/1551))
 - ✅ Add autobrr and thelounge - **2026-01-08** (See PR [#1440](https://github.com/tscibilia/home-ops/pull/1440) & [#1442](https://github.com/tscibilia/home-ops/pull/1442) as well as issue [#803](https://github.com/tscibilia/home-ops/issues/803))
 - ✅ Remove sops - **2026-01-06** (See PR [#1431](https://github.com/tscibilia/home-ops/pull/1431))
