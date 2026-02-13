@@ -107,10 +107,11 @@ spec:
               claims:
                 - name: gpu
             securityContext: *secCont
+        pod:
+          resourceClaims:
+            - name: gpu
+              resourceClaimTemplateName: immich
     defaultPodOptions:
-      resourceClaims:
-        - name: gpu
-          resourceClaimTemplateName: immich
       securityContext:
         runAsNonRoot: true
         runAsUser: 1044
