@@ -23,15 +23,15 @@ metadata:
 spec:
   dependsOn:
     - name: &namespace rook-ceph
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: *app
-      namespace: *namespace
-    - apiVersion: ceph.rook.io/v1
-      kind: CephCluster
-      name: *namespace
-      namespace: *namespace
+  # healthChecks:
+  #   - apiVersion: helm.toolkit.fluxcd.io/v2
+  #     kind: HelmRelease
+  #     name: *app
+  #     namespace: *namespace
+  #   - apiVersion: ceph.rook.io/v1
+  #     kind: CephCluster
+  #     name: *namespace
+  #     namespace: *namespace
   # healthCheckExprs:
   #   - apiVersion: ceph.rook.io/v1
   #     kind: CephCluster
