@@ -9,6 +9,8 @@ spec:
     - ../../../../components/keda/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
+    - name: multus-networks
+      namespace: network
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync
