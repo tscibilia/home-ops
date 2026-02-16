@@ -377,7 +377,7 @@ components:
 # App's ks.yaml
 postBuild:
   substitute:
-    APP: victoria-metrics  # Must match HelmRelease/HTTPRoute name
+    APP: kube-prometheus-stack  # Must match HelmRelease/HTTPRoute name
 ```
 
 This creates a SecurityPolicy in the app's namespace targeting its HTTPRoute, using the appropriate Authentik outpost for authentication.

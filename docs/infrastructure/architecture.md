@@ -262,7 +262,7 @@ Potential architecture enhancements tracked in GitHub issues:
 ┌─────────────────────────────────────────────────────────────┐
 │ Kubernetes Applications                                     │
 │  • Media Apps (Plex, Jellyfin, Sonarr, Radarr)             │
-│  • Observability (Grafana, VictoriaMetrics, Gatus)         │
+│  • Observability (Grafana, Prometheus, Gatus)              │
 │  • Databases (PostgreSQL via CNPG)                          │
 └─────────────────────────────────────────────────────────────┘
                            ▲

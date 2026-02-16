@@ -18,7 +18,7 @@ spec:
   triggers:
     - type: prometheus
       metadata:
-        serverAddress: http://vmsingle-stack.observability.svc.cluster.local:8428
+        serverAddress: http://prometheus-operated.observability.svc.cluster.local:9090
         query: probe_success{instance=~"nas.internal:2049"}
         threshold: "1"
         ignoreNullValues: "0"

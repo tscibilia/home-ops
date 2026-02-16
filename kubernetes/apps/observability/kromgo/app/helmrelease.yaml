@@ -10,7 +10,7 @@ spec:
     name: *app
   interval: 1h
   dependsOn:
-    - name: victoria-metrics
+    - name: kube-prometheus-stack
       namespace: observability
   values:
     controllers:
@@ -25,7 +25,7 @@ spec:
               repository: ghcr.io/kashalls/kromgo
               tag: "v0.7.5@sha256:25df18d426e19aafa7526cd9138a6f35ca73c6ef6fcfcf9de8971c4334f6efdf"
             env:
-              PROMETHEUS_URL: http://vmsingle-stack.observability.svc.cluster.local:8428
+              PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
               SERVER_PORT: &port 80
               SERVER_HOST: 0.0.0.0
               HEALTH_PORT: &healthPort 8080

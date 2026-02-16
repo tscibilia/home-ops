@@ -197,7 +197,7 @@ Kubernetes reschedules pods to healthy nodes during reboots automatically.
 ### Dashboards
 
 - **Grafana**: [https://grafana.t0m.co](https://grafana.t0m.co) - Metrics and dashboards
-- **VictoriaMetrics**: Metrics database (queried via Grafana)
+- **Prometheus**: [https://prometheus.t0m.co](https://prometheus.t0m.co) - Metrics database (queried via Grafana)
 - **VictoriaLogs**: [https://logs.t0m.co](https://logs.t0m.co) - Log search GUI (internal network only)
 - **AlertManager**: [https://am.t0m.co](https://am.t0m.co) - Active alerts
 - **Karma**: [https://karma.t0m.co](https://karma.t0m.co) - AlertManager UI with silencing

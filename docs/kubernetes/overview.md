@@ -31,7 +31,7 @@ kubernetes/
 │   ├── media/              # Media stack (Plex, Sonarr, etc.)
 │   ├── database/           # Database layer (CNPG, Dragonfly)
 │   ├── network/            # Networking (Envoy, Cloudflared)
-│   ├── observability/      # Monitoring (Grafana, VictoriaMetrics)
+│   ├── observability/      # Monitoring (Grafana, Prometheus)
 │   ├── kube-system/        # Core K8s components (Cilium, CoreDNS)
 │   ├── rook-ceph/          # Storage backend
 │   ├── external-secrets/   # Secrets management

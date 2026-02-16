@@ -126,7 +126,7 @@ kubernetes/apps/{namespace}/{app-name}/
 ## Storage & Data Management
 
 **Storage Classes:**
-- **ceph-ssd** (default): Persistent block storage on Samsung SSDs (rook-ceph) - Used by most apps requiring persistent storage (media apps, victoria-metrics, databases)
+- **ceph-ssd** (default): Persistent block storage on Samsung SSDs (rook-ceph) - Used by most apps requiring persistent storage (media apps, kube-prometheus-stack, databases)
 - **openebs-hostpath**: Local ephemeral node storage (openebs) - Used by victoria-logs, actions-runner, CNPG clusters
 - **nfs-media**: External NFS mounts for media libraries
 
@@ -274,7 +274,7 @@ Kustomize components in `/kubernetes/components/` provide shared configuration:
 ## Authentik SSO & Forward Auth Pattern
 
 **Architecture Overview:**
-Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's forward authentication (ext-auth) plugin. Apps protected by Authentik include: qbittorrent, radarr, sonarr, prowlarr, bazarr, tautulli, spoolman, victoria-metrics.
+Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's forward authentication (ext-auth) plugin. Apps protected by Authentik include: qbittorrent, radarr, sonarr, prowlarr, bazarr, tautulli, spoolman, kube-prometheus-stack.
 
 **Key Components:**
 1. **Authentik Server** (`default` namespace):
@@ -324,7 +324,7 @@ Authentik provides Single Sign-On (SSO) for the cluster using Envoy Gateway's fo
 - Authentik deployment: `kubernetes/apps/default/authentik/`
 - ext-auth-internal component: `kubernetes/components/ext-auth-internal/securitypolicy.yaml` (parameterized SecurityPolicy for internal gateway)
 - ext-auth-external component: `kubernetes/components/ext-auth-external/securitypolicy.yaml` (parameterized SecurityPolicy for external gateway)
-- Protected apps: `kubernetes/apps/media/{qbittorrent,radarr,sonarr,prowlarr,bazarr,tautulli}` (internal), `kubernetes/apps/media/ytptube` (external), and `kubernetes/apps/observability/{victoria-metrics,victoria-logs}` (internal)
+- Protected apps: `kubernetes/apps/media/{qbittorrent,radarr,sonarr,prowlarr,bazarr,tautulli}` (internal), `kubernetes/apps/media/ytptube` (external), and `kubernetes/apps/observability/{kube-prometheus-stack,victoria-logs}` (internal)
 
 ## Flux Reconciliation & HelmRelease Management
 
@@ -395,7 +395,7 @@ just kube ks-reconcile <namespace> <name>
 The observability namespace (`/kubernetes/apps/observability`) provides monitoring, logging, alerting, and status dashboards:
 
 **Core Components:**
-- **VictoriaMetrics**: Time series database (drop-in Prometheus replacement) stores metrics
+- **Prometheus**: Time series database for metrics collection and storage (kube-prometheus-stack)
 - **VictoriaLogs**: Log aggregation database for storing logs from fluent-bit
 - **Grafana**: Visualization and dashboarding for metrics and logs
 - **AlertManager**: Handles alert routing, grouping, and notifications (managed by Prometheus Operator)
@@ -407,7 +407,7 @@ The observability namespace (`/kubernetes/apps/observability`) provides monitori
 - **Unpoller**: Collects UniFi Controller metrics for Prometheus
 
 **Key Patterns:**
-- Apps protected by Authentik (victoria-metrics, etc.) include `components: [../../../../components/ext-auth]` for UI access control
+- Apps protected by Authentik (kube-prometheus-stack, victoria-logs, etc.) include `components: [../../../../components/ext-auth]` for UI access control
 - Alerts defined via PrometheusRule CRDs (ignored by Renovate in `**/resources/**`)
 - Grafana dashboards embedded via ConfigMaps (customizable via `custom.css`)
 - External exporters in `kubernetes/apps/observability/exporters/` for custom metrics

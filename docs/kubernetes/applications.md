@@ -20,7 +20,7 @@ This page provides a comprehensive overview of all applications deployed in the 
 - **NFS** - Network filesystem storage
 - **GPU** - NVIDIA GPU access
 - **VPN** - Multus VPN network
-- **VM Rules** - VictoriaMetrics log rules
+- **Prom Rules** - Prometheus Rules
 - **Reloader** - Stakater Reloader annotations
 
 ---
@@ -106,14 +106,14 @@ This page provides a comprehensive overview of all applications deployed in the 
     | **grafana-instance** | ESO, CNPG | cnpg | DB (pgsql-cluster), Dashboards, ServiceMonitor, Grafana Dashboard |
     | **guacamole-guacd** | — | — | Guacamole daemon |
     | **guacamole** | ESO, CNPG, guacamole-guacd | cnpg | DB (pgsql-cluster), OIDC, Remote desktop gateway, Reloader |
-    | **karma** | ESO, victoria-metrics | — | Alert dashboard, Reloader |
+    | **karma** | ESO, kube-prometheus-stack | — | Alert dashboard, Reloader |
     | **keda** | — | — | Auto-scaling operator |
     | **kite** | ESO, CNPG | cnpg | DB (pgsql-cluster), OIDC, Kubernetes dashboard, Reloader |
-    | **kromgo** | ESO, victoria-metrics | — | Metrics badge service, Reloader |
+    | **kromgo** | ESO, kube-prometheus-stack | — | Metrics badge service, Reloader |
+    | **kube-prometheus-stack** | ESO | ext-auth-internal | Auth, Prometheus + Grafana + AlertManager, Prom Rules, Grafana Dashboard |
     | **silence-operator** | — | — | Alert silencing automation |
-    | **unpoller** | ESO, victoria-metrics | — | UniFi metrics exporter, Grafana Dashboard |
+    | **unpoller** | ESO, kube-prometheus-stack | — | UniFi metrics exporter, Grafana Dashboard |
     | **victoria-logs** | ESO | ext-auth-internal | Auth, Log aggregation, OpenEBS storage |
-    | **victoria-metrics** | ESO | ext-auth-internal | Auth, Metrics storage, VM Rules, VM/Prom Rules, Grafana Dashboard |
     | **blackbox-exporter** | — | — | HTTP/TCP probing |
     | **dcgm-exporter** | — | — | NVIDIA GPU metrics |
     | **plex-exporter** | — | — | Plex metrics |
@@ -182,14 +182,13 @@ This page provides a comprehensive overview of all applications deployed in the 
 | **CNPG Database** | 9 | authentik, gatus, grafana, guacamole, homebox, immich, kite, mealie, pgadmin |
 | **VolSync Backups** | 30 | actual, bazarr, homebox, jellyfin, kometa, komga, maintainerr, mealie, open-webui, pgadmin, plex, prowlarr, qbittorrent, qui, radarr, radicale, recyclarr, seerr, sonarr, spoolman, tautulli, threadfin, vaultwarden, ytptube (and more) |
 | **KEDA Auto-scaling** | 13 | bazarr, immich, jellyfin, komga, minio, plex, qbittorrent, qui, radarr, rclone, sonarr, ytptube (nfs-scaler, nfs-bkup-scaler) |
-| **Authentik SSO** | 11 | bazarr (int), prowlarr (int), radarr (int), sonarr (int), spoolman (int), tautulli (int), victoria-logs (int), victoria-metrics (int), ytptube (ext) |
+| **Authentik SSO** | 11 | bazarr (int), prowlarr (int), radarr (int), sonarr (int), spoolman (int), tautulli (int), victoria-logs (int), kube-prometheus-stack (int), ytptube (ext) |
 | **OIDC Integration** | 7 | guacamole, homebox, immich, kite, mealie, open-webui, qui |
 | **SMTP/Email** | 5 | homebox, immich, mealie, vaultwarden |
 | **NFS Storage** | 13 | bazarr, immich, jellyfin, komga, minio, plex, qbittorrent, qui, radarr, seerr, sonarr, ytptube (NAS volume mounts) |
 | **Stakater Reloader** | 43 | actual, authentik, bazarr, cloudflared, external-dns, flaresolverr, gatus, guacamole, homebox, homepage, imagemaid, immich, jellyfin, karma, kite, kometa, komga, kromgo, maintainerr, mealie, minio, open-webui, pairdrop, plex, prowlarr, qbittorrent, qui, radarr, radicale, rclone, searxng, seerr, sonarr, spoolman, tailscale, tautulli, threadfin, unifi-dns, vaultwarden, ytptube (and more in observability/exporters) |
-| **VM Log Rules** | 5 | actual, immich, plex, qbittorrent, victoria-metrics |
-| **VM/Prometheus Rules** | 12 | cert-manager, cnpg, external-dns, flux-instance, gatus, qbittorrent, radarr, rook-ceph, sonarr, victoria-metrics, volsync (observability exporters) |
-| **Grafana Dashboards** | 16 | cert-manager, cilium, cloudflared, cnpg, dragonfly, envoy-gateway, external-dns, flux-operator, gatus, grafana, rook-ceph, spegel, unpoller, victoria-metrics, volsync (observability exporters) |
+| **Prometheus Rules** | 12 | cert-manager, cnpg, external-dns, flux-instance, gatus, qbittorrent, radarr, rook-ceph, sonarr, kube-prometheus-stack, volsync (observability exporters) |
+| **Grafana Dashboards** | 16 | cert-manager, cilium, cloudflared, cnpg, dragonfly, envoy-gateway, external-dns, flux-operator, gatus, grafana, rook-ceph, spegel, unpoller, kube-prometheus-stack, volsync (observability exporters) |
 | **NVIDIA GPU** | 2 | immich (ML), plex (transcoding) |
 | **Multus VPN** | 2 | prowlarr (192.168.99.11), qbittorrent (192.168.99.10) |
 | **Redis/Dragonfly** | 2 | immich, searxng |

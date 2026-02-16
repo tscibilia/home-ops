@@ -41,13 +41,13 @@ spec:
 apiVersion: observability.giantswarm.io/v1alpha2
 kind: Silence
 metadata:
-  name: ceph-pvc-nearfull-vmsingle-stack
+  name: ceph-pvc-nearfull-prometheus
 spec:
   matchers:
     - name: alertname
       value: PersistentVolumeUsageNearFull
     - name: persistentvolumeclaim
-      value: vmsingle-stack
+      value: prometheus-kube-prometheus-stack-db-prometheus-kube-prometheus-stack-0
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/observability.giantswarm.io/silence_v1alpha2.json
 apiVersion: observability.giantswarm.io/v1alpha2

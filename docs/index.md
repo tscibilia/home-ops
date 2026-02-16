@@ -56,7 +56,7 @@ Use the repository as the source of truth: push changes to Git, then reconcile w
 - Media & automation: Plex/Jellyfin, Sonarr, Radarr, Prowlarr, qBittorrent
 - Databases: CNPG (Postgres), Dragonfly (Redis-compatible cache)
 - Core infra: Cilium, Rook-Ceph, Envoy Gateway, Cloudflared, cert-manager
-- Observability: VictoriaMetrics, Grafana, Fluent-bit, Gatus
+- Observability: Prometheus, Grafana, Fluent-bit, Gatus
 
 ## Key practices
 

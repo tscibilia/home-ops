@@ -273,7 +273,7 @@ Network metrics are collected by:
 
 - **Unpoller**: Scrapes UniFi Controller for network stats (bandwidth, clients, etc.)
 - **Cilium Hubble**: eBPF-based flow observability (see traffic between pods)
-- **VictoriaMetrics**: Stores time-series metrics from both
+- **Prometheus**: Stores time-series metrics from both
 
 See the [Observability Guide](../operations/observability.md) for details.
 

@@ -8,7 +8,7 @@ spec:
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: victoria-metrics-stack
+    - name: kube-prometheus-stack
   interval: 1h
   path: ./kubernetes/apps/observability/karma/app
   postBuild:

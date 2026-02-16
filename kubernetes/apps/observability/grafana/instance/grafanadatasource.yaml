@@ -13,7 +13,7 @@ spec:
     type: prometheus
     uid: prometheus
     access: proxy
-    url: http://vmsingle-stack.observability.svc.cluster.local:8428
+    url: http://prometheus-operated.observability.svc.cluster.local:9090
     isDefault: true
     editable: false
 ---
@@ -31,7 +31,7 @@ spec:
     type: alertmanager
     uid: alertmanager
     access: proxy
-    url: http://vmalertmanager-stack.observability.svc.cluster.local:9093
+    url: http://alertmanager-operated.observability.svc.cluster.local:9093
     jsonData:
       implementation: prometheus
     editable: false

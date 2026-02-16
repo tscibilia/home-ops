@@ -3,21 +3,20 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app kromgo
+  name: &app kube-prometheus-stack
 spec:
   dependsOn:
-    - name: secret-stores
-      namespace: external-secrets
-    - name: kube-prometheus-stack
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   interval: 1h
-  path: ./kubernetes/apps/observability/kromgo/app
+  path: ./kubernetes/apps/observability/kube-prometheus-stack/app
   postBuild:
     substitute:
       APP: *app
-      GATUS_PATH: /talos_version
+      GATUS_SUBDOMAIN: pm
     substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+      - kind: Secret
+        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository

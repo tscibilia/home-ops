@@ -4,19 +4,19 @@ The cluster includes a comprehensive observability stack for monitoring, alertin
 
 ## Observability Stack Overview
 
-The stack is built around **VictoriaMetrics** (Prometheus-compatible metrics), **AlertManager** (alert routing via Karma UI), **Gatus** (status monitoring), and **VictoriaLogs** (log aggregation).
+The stack is built around **Prometheus** (metrics collection and storage via kube-prometheus-stack), **AlertManager** (alert routing via Karma UI), **Gatus** (status monitoring), and **VictoriaLogs** (log aggregation).
 
 ```mermaid
 graph TB
     subgraph "Metrics Collection"
-        VM[VictoriaMetrics]
+        Prom[Prometheus]
         Exporters[Prometheus Exporters]
         Grafana[Grafana Dashboards]
         Kromgo[Kromgo Badge Generator]
     end
 
     subgraph "Alerting"
-        VMAlert[VMAlert]
+        PromAlert[Prometheus Alerting]
         AM[AlertManager]
         Karma[Karma Dashboard]
         Pushover[Pushover Mobile Notifications]
@@ -31,11 +31,11 @@ graph TB
         VLogs[VictoriaLogs]
     end
 
-    Exporters --> VM
-    VM --> Grafana
-    VM --> Kromgo
-    VM --> VMAlert
-    VMAlert --> AM
+    Exporters --> Prom
+    Prom --> Grafana
+    Prom --> Kromgo
+    Prom --> PromAlert
+    PromAlert --> AM
     AM --> Karma
     AM --> Pushover
     FluentBit --> VLogs
@@ -47,7 +47,7 @@ graph TB
 |---------|-----|--------|----------------|
 | **Gatus** (Status page) | [status.t0m.co](https://status.t0m.co) | External (public) | None |
 | **Karma** (AlertManager UI) | [am.t0m.co](https://am.t0m.co) | Internal only | Authentik SSO |
-| **VictoriaMetrics** | [vm.t0m.co](https://vm.t0m.co) | Internal only | Authentik SSO |
+| **Prometheus** | [prometheus.t0m.co](https://prometheus.t0m.co) | Internal only | Authentik SSO |
 | **VictoriaLogs** | [logs.t0m.co](https://logs.t0m.co) | Internal only | Authentik SSO |
 | **Grafana** | [grafana.t0m.co](https://grafana.t0m.co) | Internal only | Grafana auth + Authentik SSO |
 | **Kromgo** | [kromgo.t0m.co](https://kromgo.t0m.co) | External (public) | None |
@@ -63,25 +63,26 @@ graph TB
 
 ## Components
 
-### VictoriaMetrics (Metrics)
+### Prometheus (Metrics)
 
-**Purpose**: Prometheus-compatible metrics collection, storage, and querying
+**Purpose**: Metrics collection, storage, and querying
 
-**Components**:
-- **vmsingle**: Single-node metrics storage with 6-week retention
-- **vmagent**: Scrapes metrics from services and exporters
-- **vmalert**: Evaluates Prometheus alert rules
+**Components** (via kube-prometheus-stack):
+- **Prometheus Server**: Metrics storage and querying
+- **Prometheus Operator**: Manages ServiceMonitors and PrometheusRules
 - **kube-state-metrics**: Exports Kubernetes object state as metrics
 - **prometheus-node-exporter**: Exports node/system metrics
+- **Grafana**: Dashboarding (included in stack)
+- **AlertManager**: Alert routing and notifications
 
-**Access**: [vm.t0m.co](https://vm.t0m.co) (internal only, Authentik SSO required)
+**Access**: [prometheus.t0m.co](https://prometheus.t0m.co) (internal only, Authentik SSO required)
 
-**Storage**: 40Gi on `ceph-ssd` storage class
+**Storage**: Persistent storage on `ceph-ssd` storage class
 
-**Configuration**: [`victoria-metrics/app/helmrelease.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/observability/victoria-metrics/app/helmrelease.yaml)
+**Configuration**: [`kube-prometheus-stack/app/helmrelease.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/observability/kube-prometheus-stack/app/helmrelease.yaml)
 
 ??? info "Adding Metrics to an App"
-    Apps expose metrics via **ServiceMonitor** resources. VictoriaMetrics automatically discovers and scrapes them:
+    Apps expose metrics via **ServiceMonitor** resources. Prometheus Operator automatically discovers and scrapes them:
 
     ```yaml title="kubernetes/apps/default/myapp/app/helmrelease.yaml"
     serviceMonitor:
@@ -92,7 +93,7 @@ graph TB
             path: /metrics
     ```
 
-    VictoriaMetrics Operator converts ServiceMonitors into vmagent scrape configs automatically.
+    Prometheus Operator converts ServiceMonitors into Prometheus scrape configs automatically.
 
 ---
 
@@ -116,7 +117,7 @@ graph TB
 4. Repeat alerts every 12 hours if not resolved
 5. Silence lower-severity alerts when critical alerts are firing
 
-**Karma configuration**: Connects to AlertManager internally at `http://vmalertmanager-stack.observability.svc.cluster.local:9093`
+**Karma configuration**: Connects to AlertManager internally at `http://kube-prometheus-stack-alertmanager.observability.svc.cluster.local:9093`
 
 ??? example "Pushover Notification Format"
     Alerts are sent to Pushover with:
@@ -127,7 +128,7 @@ graph TB
     - **Sound**: `gamelan`
     - **URL**: "View in Alertmanager" (links to Karma)
 
-    Configuration: [`victoria-metrics/app/helmrelease.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/observability/victoria-metrics/app/helmrelease.yaml#L95-L166)
+    Configuration: [`kube-prometheus-stack/app/helmrelease.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/observability/kube-prometheus-stack/app/helmrelease.yaml)
 
 ---
 
@@ -223,7 +224,7 @@ spec:
   url: https://raw.githubusercontent.com/cilium/cilium/main/install/kubernetes/cilium/files/cilium-operator/dashboards/cilium-operator-dashboard.json
 ```
 
-**Datasource**: VictoriaMetrics at `https://vm.${SECRET_DOMAIN}`
+**Datasource**: Prometheus at `http://kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090`
 
 ??? tip "Creating Custom Dashboards"
     1. Create dashboard in Grafana web UI
@@ -260,7 +261,7 @@ spec:
 - Storage usage
 - Kubernetes version
 
-**How it works**: Kromgo queries VictoriaMetrics internally and renders SVG badges based on configured queries.
+**How it works**: Kromgo queries Prometheus internally and renders SVG badges based on configured queries.
 
 **Configuration**: [`kromgo/app/configmap.yaml`](https://github.com/tscibilia/home-ops/blob/main/kubernetes/apps/observability/kromgo/app/configmap.yaml)
 
@@ -276,7 +277,7 @@ Various exporters provide metrics for infrastructure components:
 | **kube-state-metrics** | Kubernetes object state | Pods, deployments, nodes |
 | **unpoller** | Unifi network stats | WiFi clients, bandwidth, devices |
 
-All exporters are scraped by vmagent automatically via ServiceMonitor CRDs.
+All exporters are scraped by Prometheus automatically via ServiceMonitor CRDs.
 
 ---
 
@@ -313,7 +314,7 @@ open https://logs.t0m.co
 
 ### Creating Alert Rules
 
-Alert rules are defined as `PrometheusRule` CRDs (converted to VMRule by VictoriaMetrics Operator):
+Alert rules are defined as `PrometheusRule` CRDs (managed by Prometheus Operator):
 
 ```yaml title="kubernetes/apps/default/myapp/app/prometheusrule.yaml"
 apiVersion: monitoring.coreos.com/v1
@@ -334,7 +335,7 @@ spec:
             severity: critical
 ```
 
-**Commit and push**—Flux applies the rule, VMAlert evaluates it, and AlertManager routes firing alerts to Pushover.
+**Commit and push**—Flux applies the rule, Prometheus evaluates it, and AlertManager routes firing alerts to Pushover.
 
 ### Silencing Alerts
 
@@ -384,7 +385,7 @@ Apps define custom alerts in [`prometheusrule.yaml`](https://github.com/tscibili
 
 ### Custom Alerts
 
-Additional alerts defined in VictoriaMetrics HelmRelease:
+Additional alerts defined in kube-prometheus-stack HelmRelease:
 
 - `DockerhubRateLimitRisk` - Too many Docker Hub pulls
 - `OomKilled` - Pods killed due to OOM
@@ -398,10 +399,10 @@ All alerts are viewable in [Karma](https://am.t0m.co).
 
 | Component | Retention | Storage Size | Storage Class |
 |-----------|-----------|--------------|---------------|
-| **VictoriaMetrics** | 6 weeks | 40Gi | ceph-ssd |
+| **Prometheus** | Configurable | Persistent storage | ceph-ssd |
 | **VictoriaLogs** | 21 days | 10Gi | openebs-hostpath |
 | **Gatus** | Unlimited (PostgreSQL) | Shared CNPG cluster | ceph-ssd |
-| **Grafana** | N/A (uses VictoriaMetrics) | Shared CNPG cluster | ceph-ssd |
+| **Grafana** | N/A (uses Prometheus) | Shared CNPG cluster | ceph-ssd |
 
 ---
 
@@ -417,17 +418,17 @@ All alerts are viewable in [Karma](https://am.t0m.co).
 # 1. Check if alert rule exists
 kubectl get prometheusrule -A | grep <rule-name>
 
-# 2. Check VMAlert logs
-kubectl logs -n observability deployment/vmalert-stack -f
+# 2. Check Prometheus logs
+kubectl logs -n observability -l app.kubernetes.io/name=prometheus -f
 
-# 3. Query VictoriaMetrics directly to test alert expression
-# Navigate to https://vm.t0m.co (internal network)
+# 3. Query Prometheus directly to test alert expression
+# Navigate to https://prometheus.t0m.co (internal network)
 # Run the alert's PromQL expression manually
 ```
 
 **Common causes**:
-- Alert rule syntax error (check VMAlert logs)
-- Alert expression never evaluates to true (test in VictoriaMetrics)
+- Alert rule syntax error (check Prometheus logs)
+- Alert expression never evaluates to true (test in Prometheus)
 - Alert `for` duration not yet elapsed
 
 ### Metrics Missing
@@ -440,12 +441,12 @@ kubectl logs -n observability deployment/vmalert-stack -f
 # 1. Check if ServiceMonitor exists
 kubectl get servicemonitor -n <namespace>
 
-# 2. Check vmagent targets
-# Navigate to https://vm.t0m.co/targets (internal network)
+# 2. Check Prometheus targets
+# Navigate to https://prometheus.t0m.co/targets (internal network)
 # Verify target shows as "UP"
 
-# 3. Check vmagent logs
-kubectl logs -n observability deployment/vmagent-stack -f
+# 3. Check Prometheus logs
+kubectl logs -n observability -l app.kubernetes.io/name=prometheus -f
 ```
 
 **Common causes**:
@@ -504,7 +505,7 @@ kubectl get httproute -n <namespace> <app> -o yaml | grep gatus.home-operations.
 1. **Always define alerts for new apps**: Include a `prometheusrule.yaml` for critical failure scenarios
 2. **Use Grafana dashboards**: Create dashboards for app-specific metrics
 3. **Enable Gatus monitoring**: Add `gatus.home-operations.com/enabled: "true"` to HTTPRoutes
-4. **Test alert expressions**: Verify PromQL queries in VictoriaMetrics web UI before committing
+4. **Test alert expressions**: Verify PromQL queries in Prometheus web UI before committing
 5. **Monitor alert noise**: If alerts fire too frequently, adjust thresholds or add inhibition rules
 6. **Check logs for errors**: Use VictoriaLogs to investigate alert root causes
 

@@ -84,8 +84,8 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 - [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
 - [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
 - [unpoller](https://github.com/unpoller/unpoller): Collect UniFi Controller data for Prometheus.
+- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts): Prometheus + Grafana + AlertManager stack for metrics.
 - [victoriaLogs](https://docs.victoriametrics.com/victorialogs/): Database for logs.
-- [victoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics): Time series database, drop-in replacement for Prometheus.
 
 ### Cloud Services
 

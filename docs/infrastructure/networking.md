@@ -158,7 +158,7 @@ Kubernetes services with `type: LoadBalancer` are allocated IPs from this range 
 **Location**: [`kubernetes/apps/observability/unpoller/`](https://github.com/tscibilia/home-ops/tree/main/kubernetes/apps/observability/unpoller/)
 
 **Function**:
-- Exports UniFi network metrics to Prometheus/VictoriaMetrics
+- Exports UniFi network metrics to Prometheus
 - Monitors network device statistics, client connections, traffic patterns
 - Provides visibility into UniFi infrastructure health
 
