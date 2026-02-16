@@ -51,7 +51,7 @@ machine:
   install:
     disk: /dev/nvme0n1
     # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
-    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC_ID | safe }}:v1.12.3
+    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC_ID | safe }}:v1.12.4
     wipe: false
   kernel:
     modules:
