@@ -10,7 +10,7 @@ spec:
     name: *app
   interval: 1h
   values:
-    alertmanagerAddress: http://vmalertmanager-stack.observability.svc.cluster.local:9093
+    alertmanagerAddress: http://alertmanager-operated.observability.svc.cluster.local:9093
     networkPolicy:
       enabled: false
     resources:
