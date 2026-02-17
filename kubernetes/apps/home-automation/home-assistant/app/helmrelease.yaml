@@ -1,0 +1,78 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app home-assistant
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/home-assistant
+              tag: 2026.2.2@sha256:57d87be8a6065c994d75dd6c3e842ccfa669ea537518dbbe2e2fc692d3d00d97
+            env:
+              TZ: America/New_York
+              HASS_HTTP_TRUSTED_PROXY_1: 10.43.0.0/16
+              HASS_HTTP_TRUSTED_PROXY_2: 10.42.0.0/16
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 2Gi
+    defaultPodOptions:
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |-
+          [{
+            "name": "iot",
+            "namespace": "network",
+            "ips": ["192.168.107.50/24"],
+            "mac": "02:3a:8e:c5:d7:91"
+          }]
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        ports:
+          http:
+            appProtocol: kubernetes.io/ws
+            port: 8123
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}", "hass.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+    persistence:
+      config:
+        existingClaim: "{{ .Release.Name }}"
+        globalMounts:
+          - path: /config
+      config-cache:
+        existingClaim: "{{ .Release.Name }}-cache"
+        globalMounts:
+          - path: /config/.venv
+      tmp:
+        type: emptyDir
