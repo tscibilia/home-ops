@@ -154,6 +154,7 @@ volsync state:
     just check-tools flux kubectl
     flux -n volsync-system {{ state }} kustomization volsync
     flux -n volsync-system {{ state }} helmrelease volsync
+    just kube keda {{ if state != "suspend" { "resume" } else { "suspend" } }} volsync-system volsync
     kubectl -n volsync-system scale deployment volsync --replicas {{ if state != "suspend" { "1" } else { "0" } }}
 
 [doc('Unlock all VolSync restic source repos')]
