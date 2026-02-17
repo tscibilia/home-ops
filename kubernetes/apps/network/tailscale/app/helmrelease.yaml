@@ -10,7 +10,7 @@ spec:
     name: *app
   interval: 1h
   values:
-    # Not supported in this chart version
+    # Not supported in this chart version, use postRenderers
     # fullnameOverride: tailscale-operator
     operatorConfig:
       podAnnotations:
@@ -26,3 +26,13 @@ spec:
       name: *secret
       valuesKey: client_secret
       targetPath: oauth.clientSecret
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: operator
+            patch: |
+              - op: replace
+                path: /metadata/name
+                value: tailscale-operator
