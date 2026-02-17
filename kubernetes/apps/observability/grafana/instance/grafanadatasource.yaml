@@ -48,6 +48,7 @@ spec:
   datasource:
     name: victorialogs
     type: victoriametrics-logs-datasource
+    uid: victorialogs
     access: proxy
     url: http://victoria-logs-server.observability.svc.cluster.local:9428
     editable: false

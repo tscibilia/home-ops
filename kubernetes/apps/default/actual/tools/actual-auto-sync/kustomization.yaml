@@ -6,4 +6,5 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
-  - ./vmrule.yaml
+  - ./grafanaalert.yaml
+  # - ./vmrule.yaml  # Replaced with grafanaalert.yaml (no VM operator needed)

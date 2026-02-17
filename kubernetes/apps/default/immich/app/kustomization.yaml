@@ -8,7 +8,7 @@ resources:
   - ./ocirepository.yaml
   - ./resourceclaimtemplate.yaml
   - ./scaledobject.yaml
-  - ./vmrule.yaml
+  - ./grafanaalert.yaml
 configMapGenerator:
   - name: immich-config-tpl
     files:

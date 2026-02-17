@@ -1,0 +1,70 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/grafana.integreatly.org/grafanaalertrulegroup_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: actual-auto-sync-alerts
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana
+  folderUID: Logs
+  interval: 5m
+  rules:
+    - uid: actual-auto-sync-error
+      title: ActualAutoSyncError
+      condition: C
+      data:
+        - refId: A
+          queryType: range
+          relativeTimeRange:
+            from: 300
+            to: 0
+          datasourceUid: victorialogs
+          model:
+            # VictoriaLogs query syntax
+            expr: |
+              app: "actual-auto-sync"
+              | _msg:~"Failed syncing account"
+            intervalMs: 60000
+            maxDataPoints: 43200
+
+        - refId: B
+          queryType: ""
+          relativeTimeRange:
+            from: 300
+            to: 0
+          datasourceUid: __expr__
+          model:
+            # Count log lines
+            type: reduce
+            expression: A
+            reducer: count
+
+        - refId: C
+          queryType: ""
+          relativeTimeRange:
+            from: 300
+            to: 0
+          datasourceUid: __expr__
+          model:
+            # Threshold: alert if count > 0
+            type: threshold
+            expression: B
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+      annotations:
+        summary: "Sync error in actual-auto-sync"
+        description: "actual-auto-sync failed to sync account. Check logs for details."
+      labels:
+        severity: critical
+        app: actual-auto-sync
+      for: 1m  # Alert must be active for 1 minute before firing
+      noDataState: OK
+      execErrState: Alerting
