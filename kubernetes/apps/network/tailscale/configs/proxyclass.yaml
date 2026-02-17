@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/tailscale.com/proxyclass_v1alpha1.json
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyClass
+metadata:
+  name: connector-proxyclass
+spec:
+  statefulSet:
+    pod:
+      tailscaleContainer:
+        env:
+          # Force nftables firewall mode so Tailscale sets up masquerade rules
+          # on Talos where CONFIG_IP_NF_NAT is not set (iptables nat table unavailable)
+          # but CONFIG_NF_TABLES=y and CONFIG_NFT_MASQ=y are built-in.
+          # Without this, NoStatefulFiltering=true (set by operator) disables SNAT
+          # and subnet-routed traffic times out (no return path for 100.64.0.0/10).
+          # See: https://github.com/tscibilia/home-ops/issues/1593#issuecomment-3917296548
+          - name: TS_DEBUG_FIREWALL_MODE
+            value: nftables

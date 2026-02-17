@@ -5,3 +5,4 @@ kind: Kustomization
 resources:
   - ./egress-p1g6.yaml
   - ./exit-node.yaml
+  - ./proxyclass.yaml
