@@ -9,4 +9,4 @@ resources:
   - ./namespace.yaml
   - ./home-assistant/ks.yaml
   - ./mosquitto/ks.yaml
-  - ./zwave/ks.yaml
+  # - ./zwave/ks.yaml
