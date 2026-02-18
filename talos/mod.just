@@ -48,7 +48,7 @@ render-config node:
 reset-node node *args:
     just check-tools talosctl gum
     gum confirm "Reset node {{ node }}?" --default="No" && \
-        talosctl -n "{{ node }}" reset --system-labels-to-wipe STATE --graceful=false --reboot {{ args }} || exit 0
+        talosctl -n "{{ node }}" reset --system-labels-to-wipe EPHEMERAL,STATE,u-local-hostpath --graceful=false --reboot {{ args }} || exit 0
 
 [doc('Shutdown a node')]
 shutdown-node node *args:
