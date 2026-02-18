@@ -134,9 +134,9 @@ kubernetes/apps/{namespace}/{app-name}/
 VolSync (`volsync-system` namespace) provides automated backup/restore for stateful apps using Restic:
 - Deployed via `volsync/` Kustomize component in app's `ks.yaml` (examples: home-assistant, immich database)
 - Requires postBuild substitutions: `VOLSYNC_CAPACITY` (PVC size), `APP` (app name)
-- Snapshot CRD defines backup schedule, ReplicationDestination handles data transfer to cloud storage
+- Snapshot CRD defines backup schedule, ReplicationDestination handles data transfer to nfs storage
 - Restores via Volume Populator: new PVC with `dataSourceRef` auto-populates from latest backup
-- Requires `RESTIC_PASSWORD` and cloud storage credentials (B2, S3, etc.) managed via aKeyless
+- Requires `RESTIC_PASSWORD` and storage credentials managed via aKeyless
 - **Commands:** See [Task Runner Usage](#task-runner-usage) section for all VolSync commands (snapshot, restore, list, unlock)
 
 ## Cluster Networking Architecture
@@ -184,7 +184,6 @@ Select applications use Multus CNI to attach secondary VPN network interfaces fo
 
 **Apps using VPN networking:**
 - **qBittorrent**: Download traffic routed through VPN, metrics/UI accessible via primary interface
-- **Prowlarr**: Indexer queries routed through VPN, communication with Sonarr/Radarr via primary interface
 
 **Implementation:**
 - NetworkAttachmentDefinition (`vpn`) in `network` namespace defines macvlan bridge configuration

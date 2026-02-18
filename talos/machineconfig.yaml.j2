@@ -14,7 +14,7 @@ machine:
     # https://github.com/siderolabs/talos/issues/8836#issuecomment-2159127683
     hostDNS:
       enabled: true
-      forwardKubeDNSToHost: false
+      forwardKubeDNSToHost: true # Requires Cilium socketLB features
       resolveMemberNames: true
     kubePrism:
       enabled: true
@@ -82,6 +82,7 @@ machine:
         vip:
           ip: 192.168.5.210
   nodeLabels:
+    node.kubernetes.io/gpu: "true"
     topology.kubernetes.io/region: main
   sysctls:
     fs.inotify.max_user_instances: "8192"      # increase inotify limits
@@ -105,7 +106,7 @@ machine:
     sunrpc.tcp_max_slot_table_entries: "128"   # nfs
     sunrpc.tcp_slot_table_entries: "128"       # nfs
     user.max_user_namespaces: "11255"          # rootless containers
-    vm.nr_hugepages: "1024"                    # 2GB hugepages
+    vm.nr_hugepages: "1024"                    # 1GB hugepages
   time:
     disabled: false
     servers:
@@ -207,10 +208,6 @@ cluster:
   {% endif %}
 ---
 apiVersion: v1alpha1
-kind: OOMConfig
-triggerExpression: "false"
----
-apiVersion: v1alpha1
 kind: LinkAliasConfig
 name: net0
 selector:
@@ -268,4 +265,4 @@ provisioning:
 apiVersion: v1alpha1
 kind: WatchdogTimerConfig
 device: /dev/watchdog0
-timeout: 5m
+timeout: 10m
