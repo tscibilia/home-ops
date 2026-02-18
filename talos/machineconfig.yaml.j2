@@ -107,11 +107,6 @@ machine:
     sunrpc.tcp_slot_table_entries: "128"       # nfs
     user.max_user_namespaces: "11255"          # rootless containers
     vm.nr_hugepages: "1024"                    # 1GB hugepages
-  time:
-    disabled: false
-    servers:
-      - 162.159.200.1
-      - 162.159.200.123
   token: ak://talos-m70q/MACHINE_TOKEN
 cluster:
   ca:
