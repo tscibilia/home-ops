@@ -4,6 +4,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: &app ts-exit-node
+  annotations:
+    secret.reloader.stakater.com/reload: &secret ts-exit-node-0
 spec:
   serviceName: *app
   replicas: 1
@@ -24,6 +26,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name  # → ts-exit-node-0
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: *secret
+                  key: authkey
             - name: TS_HOSTNAME
               value: k8s-egress
             - name: TS_ROUTES

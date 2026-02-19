@@ -4,6 +4,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: &app ts-p1g6-egress
+  annotations:
+    secret.reloader.stakater.com/reload: &secret ts-p1g6-egress-0
 spec:
   serviceName: *app
   replicas: 1
@@ -24,10 +26,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name  # → ts-p1g6-egress-0
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: *secret
+                  key: authkey
             - name: TS_TAILNET_TARGET_FQDN
               value: "p1g6.${TAILSCALE_MAGICDNS}"
-            - name: TS_USERSPACE
-              value: "true"
             - name: TS_DEBUG_FIREWALL_MODE
               value: nftables
           securityContext:
