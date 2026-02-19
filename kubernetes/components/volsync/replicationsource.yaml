@@ -10,6 +10,9 @@ spec:
     schedule: "${VOLSYNC_SCHEDULE:=0 */6 * * *}" # every 6 hours
   restic:
     accessModes: ["${VOLSYNC_SNAP_ACCESSMODES:=ReadWriteOnce}"] # Use ReadOnlyMany for CephFS
+    cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
+    cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=openebs-hostpath}"
     copyMethod: "${VOLSYNC_COPYMETHOD:=Snapshot}"
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
