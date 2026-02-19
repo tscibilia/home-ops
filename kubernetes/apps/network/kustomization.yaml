@@ -15,5 +15,5 @@ resources:
   - ./external-dns/ks.yaml
   - ./multus/ks.yaml
   - ./proxy/ks.yaml
-  # - ./tailscale/ks.yaml
+  - ./tailscale/ks.yaml
   - ./unifi-dns/ks.yaml
