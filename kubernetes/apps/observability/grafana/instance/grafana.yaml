@@ -98,6 +98,11 @@ spec:
                     secretKeyRef:
                       name: grafana-secret
                       key: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+                - name: GF_SECURITY_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-secret
+                      key: GF_SECURITY_SECRET_KEY
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
