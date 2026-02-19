@@ -7,7 +7,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 
 ## Known Issues
-- rook-ceph metric inaccessible - (See [#1677](https://github.com/tscibilia/home-ops/issues/1677)) - **possibly causing volsync issues**
 - etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
 - snmp-exporter synology, too many scrape errors - **snmpget hangs and timing out, disabled [7f0150f7]**
 
@@ -19,6 +18,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ rook-ceph metric inaccessible - **2026-02-18** (See issue [#1677](https://github.com/tscibilia/home-ops/issues/1677))
 - ✅ Migrate VM cluster to bare-metal - **2026-02-12** (See commit [5e8eb98] & issue [#1593])
 - ✅ Fix unifi/qbit port forwarding - **2026-01-28** (See issue [#1551](https://github.com/tscibilia/home-ops/issues/1551))
 - ✅ Add autobrr and thelounge - **2026-01-08** (See PR [#1440](https://github.com/tscibilia/home-ops/pull/1440) & [#1442](https://github.com/tscibilia/home-ops/pull/1442) as well as issue [#803](https://github.com/tscibilia/home-ops/issues/803))
