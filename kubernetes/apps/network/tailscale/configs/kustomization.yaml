@@ -3,6 +3,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./egress-p1g6.yaml
-  - ./exit-node.yaml
-  - ./proxyclass.yaml
+  - ./externalsecret.yaml
+  - ./ts-exit-node.yaml
+  - ./ts-p1g6-egress.yaml
