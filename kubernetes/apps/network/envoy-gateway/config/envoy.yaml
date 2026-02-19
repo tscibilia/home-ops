@@ -12,7 +12,15 @@ spec:
     type: Kubernetes
     kubernetes:
       envoyDeployment:
-        replicas: 2
+        replicas: 3
+        pod:
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector: {}
+              matchLabelKeys:
+                - pod-template-hash
         container:
           imageRepository: mirror.gcr.io/envoyproxy/envoy
           resources:
