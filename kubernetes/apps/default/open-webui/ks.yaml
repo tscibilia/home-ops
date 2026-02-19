@@ -10,6 +10,8 @@ spec:
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
+    - name: tailscale
+      namespace: network
     - name: volsync
       namespace: volsync-system
     - name: rook-ceph-cluster
@@ -25,6 +27,8 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
+      - kind: Secret
+        name: tailscale-operator-secret
   prune: true
   sourceRef:
     kind: GitRepository

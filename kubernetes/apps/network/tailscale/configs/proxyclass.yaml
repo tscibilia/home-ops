@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/tailscale.com/proxyclass_v1alpha1.json
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyClass
+metadata:
+  name: connector-proxyclass
+spec:
+  statefulSet:
+    pod:
+      tailscaleContainer:
+        env:
+          # Use userspace networking so Tailscale proxies connections via Go sockets.
+          # Cilium's sockLB intercepts Go net.Dial() calls and correctly DNATs
+          # service VIPs (192.168.5.231 → envoy-internal pods). Kernel IP forwarding
+          # from tailscale0 bypasses sockLB and TC-level DNAT does not apply for
+          # LoadBalancer external IPs, causing SYN_SENT [UNREPLIED] for all internal services.
+          # See: https://github.com/tscibilia/home-ops/issues/1593
+          - name: TS_USERSPACE
+            value: "true"
+          # Force nftables firewall mode (harmless in userspace mode, kept as safety net
+          # for Talos where CONFIG_IP_NF_NAT is not set).
+          # See: https://github.com/tscibilia/home-ops/issues/1593#issuecomment-3917296548
+          - name: TS_DEBUG_FIREWALL_MODE
+            value: nftables

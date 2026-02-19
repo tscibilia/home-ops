@@ -1,50 +1,13 @@
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/statefulset.json
-apiVersion: apps/v1
-kind: StatefulSet
+# yaml-language-server: $schema=https://github.com/datreeio/CRDs-catalog/raw/refs/heads/main/tailscale.com/connector_v1alpha1.json
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
 metadata:
-  name: &app ts-exit-node
-  annotations:
-    secret.reloader.stakater.com/reload: ts-exit-node-0
+  name: exit-node
 spec:
-  serviceName: *app
-  replicas: 1
-  selector:
-    matchLabels:
-      app: *app
-  template:
-    metadata:
-      labels:
-        app: *app
-    spec:
-      serviceAccountName: proxies
-      containers:
-        - name: tailscale
-          image: ghcr.io/tailscale/tailscale:v1.94.2@sha256:95e528798bebe75f39b10e74e7051cf51188ee615934f232ba7ad06a3390ffa1
-          env:
-            - name: TS_KUBE_SECRET
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name  # → ts-exit-node-0
-            - name: TS_HOSTNAME
-              value: k8s-egress
-            - name: TS_ROUTES
-              value: 192.168.5.0/24
-            - name: TS_EXTRA_ARGS
-              value: --advertise-exit-node
-            - name: TS_USERSPACE
-              value: "true"
-            - name: TS_DEBUG_FIREWALL_MODE
-              value: nftables
-          securityContext:
-            privileged: true
----
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
-apiVersion: v1
-kind: Service
-metadata:
-  name: &name ts-exit-node
-spec:
-  clusterIP: None
-  selector:
-    app: *name
+  exitNode: true
+  hostname: k8s-egress
+  proxyClass: connector-proxyclass
+  subnetRouter:
+    advertiseRoutes:
+      - 192.168.5.0/24
