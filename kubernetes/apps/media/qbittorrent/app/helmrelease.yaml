@@ -18,13 +18,11 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.1.4@sha256:56ecd30a7f5e1357daf5eea2a6935134d329b7b268a3a9b9c67041b65fb87fc6
+              repository: ghcr.io/home-operations/qbittorrent-libtorrentv1
+              tag: 5.1.4@sha256:fc48ae3a5b3daa2e80811207f659d0349da459f086faa06810f5353050da541b
             env:
               TZ: ${TIMEZONE:-UTC}
               QBT_BitTorrent__Session__DefaultSavePath: /Media/torrents/completed
-              QBT_BitTorrent__Session__TempPath: /Media/torrents/incomplete
-              QBT_BitTorrent__Session__TempPathEnabled: true
               QBT_Preferences__WebUI__LocalHostAuth: false
               QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
               QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
@@ -63,6 +61,7 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: ['ALL'] }
     defaultPodOptions:
+      terminationGracePeriodSeconds: 300
       annotations:
         k8s.v1.cni.cncf.io/networks: |-
           [{
