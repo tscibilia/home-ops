@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: &app ts-exit-node
+  name: &app ts-p1g6-egress
 spec:
   serviceName: *app
   replicas: 1
@@ -23,15 +23,15 @@ spec:
             - name: TS_KUBE_SECRET
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name  # → ts-exit-node-0
+                  fieldPath: metadata.name  # → ts-p1g6-egress-0
             - name: TS_HOSTNAME
-              value: k8s-egress
-            - name: TS_ROUTES
-              value: 192.168.5.0/24
+              value: k8s-p1g6
+            - name: TS_TAILNET_TARGET_FQDN
+              value: "p1g6.${TAILSCALE_MAGICDNS}"
             - name: TS_EXTRA_ARGS
-              value: --advertise-exit-node
+              value: --reset
             - name: TS_USERSPACE
-              value: "true"
+              value: "false"
             - name: TS_DEBUG_FIREWALL_MODE
               value: nftables
           securityContext:
@@ -41,8 +41,20 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: &name ts-exit-node
+  name: &name ts-p1g6-egress
 spec:
   clusterIP: None
   selector:
     app: *name
+---
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: ts-p1g6
+spec:
+  selector:
+    app: ts-p1g6-egress
+  ports:
+    - port: 11434
+      targetPort: 11434

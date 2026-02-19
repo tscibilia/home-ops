@@ -25,7 +25,7 @@ spec:
               JWT_EXPIRES_IN: 604800
               CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},http://localhost:8080"
               WEBUI_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-              OLLAMA_BASE_URLS: http://p1g6.local:11434;http://p1g6.${TAILSCALE_MAGICDNS}:11434
+              OLLAMA_BASE_URLS: http://p1g6.local:11434;http://ts-p1g6.network.svc.cluster.local:11434;http://k8s-p1g6.${TAILSCALE_MAGICDNS}:11434
               ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: "searxng"
               SEARXNG_QUERY_URL: "http://searxng.default.svc.cluster.local:8080/search?q=<query>"
