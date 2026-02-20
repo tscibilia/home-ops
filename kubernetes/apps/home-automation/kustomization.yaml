@@ -8,5 +8,5 @@ components:
 resources:
   - ./namespace.yaml
   - ./home-assistant/ks.yaml
-  # - ./mosquitto/ks.yaml
-  # - ./zwave/ks.yaml
+  - ./mosquitto/ks.yaml
+  - ./zwave/ks.yaml
