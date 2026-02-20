@@ -14,8 +14,6 @@ spec:
   path: ./kubernetes/apps/network/proxy/apps
   postBuild:
     substituteFrom:
-      - kind: Secret
-        name: proxy-secrets
       - name: cluster-secrets
         kind: Secret
   prune: true

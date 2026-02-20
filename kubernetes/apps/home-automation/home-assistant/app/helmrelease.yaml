@@ -23,6 +23,9 @@ spec:
               TZ: ${TIMEZONE}
               HASS_HTTP_TRUSTED_PROXY_1: 10.43.0.0/16
               HASS_HTTP_TRUSTED_PROXY_2: 10.42.0.0/16
+              HASS_HTTP_TRUSTED_PROXY_3: 192.168.107.0/24
+              HASS_HTTP_TRUSTED_PROXY_4: 192.168.5.0/24
+              HASS_HTTP_TRUSTED_PROXY_5: 192.168.1.0/24
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
@@ -61,7 +64,7 @@ spec:
         annotations:
           gatus.home-operations.com/endpoint: |-
             conditions: ["[STATUS] == 200"]
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}", "hass.${SECRET_DOMAIN}"]
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}", "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-external
             namespace: network

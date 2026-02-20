@@ -19,6 +19,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_SUBDOMAIN: ha
       VOLSYNC_CAPACITY: 10Gi
     substituteFrom:
       - kind: Secret

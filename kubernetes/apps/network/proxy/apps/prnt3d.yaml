@@ -20,7 +20,7 @@ metadata:
   name: prnt3d
 subsets:
   - addresses:
-      - ip: ${PI_3DP_IP}
+      - ip: 192.168.107.111
     ports:
       - name: http
         port: 80
