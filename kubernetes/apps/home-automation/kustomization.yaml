@@ -7,6 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./namespace.yaml
+  - ./esphome/ks.yaml
   - ./home-assistant/ks.yaml
   - ./mosquitto/ks.yaml
   - ./zwave/ks.yaml
