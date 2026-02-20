@@ -4,6 +4,8 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app home-assistant
+  labels:
+    app.kubernetes.io/sidecar: &sidecar code-server
 spec:
   chartRef:
     kind: OCIRepository
@@ -38,15 +40,50 @@ spec:
                 cpu: 10m
               limits:
                 memory: 2Gi
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: |-
+              [{
+                "name": "iot",
+                "namespace": "network",
+                "ips": ["192.168.107.50/24"],
+                "mac": "02:3a:8e:c5:d7:91"
+              }]
+      *sidecar :
+        annotations:
+          secret.reloader.stakater.com/reload: home-assistant-deploykey
+        containers:
+          *sidecar :
+            image:
+              repository: ghcr.io/coder/code-server
+              tag: 4.109.2@sha256:1b84cd817fe8eb1159323ae9d2f29b3c70c6ccd44958d651a94900cf7f0ff9c4
+            args:
+              - --auth
+              - none
+              - --disable-telemetry
+              - --disable-update-check
+              - --user-data-dir
+              - /mnt/code-server
+              - --extensions-dir
+              - /mnt/code-server
+              - --port
+              - "12321"
+              - /config
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 512Mi
+        pod:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/controller: *app
+                      app.kubernetes.io/name: *app
+                  topologyKey: kubernetes.io/hostname
     defaultPodOptions:
-      annotations:
-        k8s.v1.cni.cncf.io/networks: |-
-          [{
-            "name": "iot",
-            "namespace": "network",
-            "ips": ["192.168.107.50/24"],
-            "mac": "02:3a:8e:c5:d7:91"
-          }]
       securityContext:
         runAsNonRoot: true
         runAsUser: 1044
@@ -55,10 +92,17 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        forceRename: "{{.Release.Name}}"
+        controller: *app
         ports:
           http:
             appProtocol: kubernetes.io/ws
             port: 8123
+      *sidecar :
+        controller: *sidecar
+        ports:
+          http:
+            port: 12321
     route:
       app:
         annotations:
@@ -68,14 +112,54 @@ spec:
         parentRefs:
           - name: envoy-external
             namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+      *sidecar :
+        hostnames: ["ha-code.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: *sidecar
     persistence:
       config:
         existingClaim: "{{ .Release.Name }}"
-        globalMounts:
-          - path: /config
+        advancedMounts:
+          *app :
+            app:
+              - path: /config
+          *sidecar :
+            *sidecar :
+              - path: /config
+              - path: /mnt/code-server
+                subPath: code-server
       config-cache:
         existingClaim: "{{ .Release.Name }}-cache"
-        globalMounts:
-          - path: /config/.venv
+        advancedMounts:
+          *app :
+            app:
+              - path: /config/.venv
       tmp:
         type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /tmp
+                subPath: home-assistant-tmp
+          *sidecar :
+            *sidecar :
+              - path: /tmp
+                subPath: code-server-tmp
+              - path: /nonexistent
+                subPath: nonexistent
+      deploy-key:
+        type: secret
+        name: home-assistant-deploykey
+        defaultMode: 256
+        advancedMounts:
+          *sidecar :
+            *sidecar :
+              - path: /home/coder/.ssh/id_ed25519
+                subPath: id_ed25519

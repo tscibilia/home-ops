@@ -45,15 +45,6 @@ spec:
       *sidecar :
         annotations:
           secret.reloader.stakater.com/reload: esphome-secret,esphome-deploykey
-        pod:
-          affinity:
-            podAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                - labelSelector:
-                    matchLabels:
-                      app.kubernetes.io/controller: *app
-                      app.kubernetes.io/name: *app
-                  topologyKey: kubernetes.io/hostname
         containers:
           *sidecar :
             image:
@@ -76,6 +67,15 @@ spec:
                 cpu: 10m
               limits:
                 memory: 512Mi
+        pod:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/controller: *app
+                      app.kubernetes.io/name: *app
+                  topologyKey: kubernetes.io/hostname
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
