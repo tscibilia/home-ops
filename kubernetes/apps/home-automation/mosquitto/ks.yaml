@@ -13,6 +13,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      GATUS_SUBDOMAIN: mqtt
       CONTROLLER: StatefulSet
     substituteFrom:
       - kind: Secret

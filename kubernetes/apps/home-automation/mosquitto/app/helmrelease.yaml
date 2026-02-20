@@ -56,7 +56,7 @@ spec:
       app:
         type: LoadBalancer
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/hostname: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
           gatus.home-operations.com/endpoint: |-
             group: services
         externalTrafficPolicy: Local
