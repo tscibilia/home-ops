@@ -1,0 +1,155 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app esphome
+  labels:
+    app.kubernetes.io/sidecar: &sidecar code-server
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          secret.reloader.stakater.com/reload: &secrets esphome-secret
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/esphome
+              tag: 2026.2.0@sha256:204ef76fee96eec77bb528b7a3e8e70301ec949acfa6529bad8f42af6c93639b
+            env:
+              TZ: ${TIMEZONE}
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+            resources:
+              requests:
+                cpu: 5m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: |-
+              [{
+                "name": "iot",
+                "namespace": "network",
+                "ips": ["192.168.107.49/24"],
+                "mac": "02:7f:b4:2c:e9:15"
+              }]
+      *sidecar :
+        annotations:
+          secret.reloader.stakater.com/reload: esphome-secret,esphome-deploykey
+        containers:
+          *sidecar :
+            image:
+              repository: ghcr.io/coder/code-server
+              tag: 4.109.2@sha256:1b84cd817fe8eb1159323ae9d2f29b3c70c6ccd44958d651a94900cf7f0ff9c4
+            args:
+              - --auth
+              - none
+              - --disable-telemetry
+              - --disable-update-check
+              - --user-data-dir
+              - /mnt/code-server
+              - --extensions-dir
+              - /mnt/code-server
+              - --port
+              - "12321"
+              - /config
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 512Mi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1044
+        runAsGroup: 100
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        forceRename: "{{.Release.Name}}"
+        controller: *app
+        ports:
+          http:
+            port: 6052
+      *sidecar :
+        controller: *sidecar
+        ports:
+          http:
+            port: 12321
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+      *sidecar :
+        hostnames: ["esphome-code.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: *sidecar
+    persistence:
+      config:
+        existingClaim: esphome
+        advancedMounts:
+          *app :
+            app:
+              - path: /config
+                subPath: config
+          *sidecar :
+            *sidecar :
+              - path: /config
+                subPath: config
+              - path: /mnt/code-server
+                subPath: code-server
+      secrets:
+        type: secret
+        name: *secrets
+        globalMounts:
+          - path: /config/secrets.yaml
+            subPath: secrets.yaml
+      buildcache:
+        suffix: buildcache
+        size: 50Gi
+        accessMode: ReadWriteOnce
+        advancedMounts:
+          *app :
+            app:
+              - path: /cache
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /tmp
+                subPath: esphome-tmp
+          *sidecar :
+            *sidecar :
+              - path: /tmp
+                subPath: code-server-tmp
+              - path: /nonexistent
+                subPath: nonexistent
+      deploy-key:
+        type: secret
+        name: esphome-deploykey
+        defaultMode: 256
+        advancedMounts:
+          *sidecar :
+            *sidecar :
+              - path: /home/coder/.ssh/id_ed25519
+                subPath: id_ed25519
