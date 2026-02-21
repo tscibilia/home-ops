@@ -27,6 +27,7 @@ spec:
               tag: 8.0.0@sha256:b4b341ac8be5bdd89a0f836547198f76d08d8f946cad7c93e0c98ffd6aa3b01d
             env:
               TZ: ${TIMEZONE:-UTC}
+              RECYCLARR_DATA_DIR: /tmp
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
