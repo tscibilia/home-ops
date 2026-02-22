@@ -28,6 +28,7 @@ spec:
               HASS_HTTP_TRUSTED_PROXY_3: 192.168.107.0/24
               HASS_HTTP_TRUSTED_PROXY_4: 192.168.5.0/24
               HASS_HTTP_TRUSTED_PROXY_5: 192.168.1.0/24
+              HASS_ADVERTISED_IP: 192.168.107.50
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
