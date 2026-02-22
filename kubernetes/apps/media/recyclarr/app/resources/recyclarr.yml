@@ -19,12 +19,12 @@ sonarr:
       type: series
       preferred_ratio: 0.04 # Adjust for preferred file size
     quality_profiles:
-      - trash_id: 9d142234e45d6143785ac55f5a9e8dc9 # WEB-1080p
+      - trash_id: 9d142234e45d6143785ac55f5a9e8dc9 # WEB-1080p (Alternative)
         min_upgrade_format_score: 100
         upgrade:
           allowed: false
           until_quality: WEB 720p
-      - trash_id: 20e0fc959f1f1704bed501f23bdae76f # Remux-1080p - Anime
+      - trash_id: 20e0fc959f1f1704bed501f23bdae76f # [Anime] Remux-1080p
         min_format_score: 2000
         min_upgrade_format_score: 100
         upgrade:
@@ -38,18 +38,18 @@ sonarr:
           - 06d66ab109d4d2eddb2794d21526d140 # Retags
           - 1b3994c551cbb92a2c781af061f4ab44 # Scene
         assign_scores_to:
-          - name: WEB-1080p
-          - name: Remux-1080p - Anime
+          - name: WEB-1080p (Alternative)
+          - name: '[Anime] Remux-1080p'
       - trash_ids:
           - d7c747094a7c65f4c2de083c24899e8b # Proritize Freeleech
         assign_scores_to:
-          - name: WEB-1080p
-          - name: Remux-1080p - Anime
+          - name: WEB-1080p (Alternative)
+          - name: '[Anime] Remux-1080p'
             score: 250
       - trash_ids:
           - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
         assign_scores_to:
-          - name: Remux-1080p - Anime
+          - name: '[Anime] Remux-1080p'
             score: 2000 # Require (Jap/Eng) dual audio
 
 radarr:
@@ -70,6 +70,7 @@ radarr:
     quality_profiles:
       - trash_id: 90a3370d2d30cbaf08d9c23b856a12c8 # SQP-1 WEB (1080p)
         min_upgrade_format_score: 100
+        name: SQP-1 WEB (1080p)
       - trash_id: 64fb5f9858489bdac2af690e27c8f42f # UHD Bluray + WEB
         min_upgrade_format_score: 100
         upgrade:
@@ -125,8 +126,7 @@ radarr:
             score: -10000
       - trash_ids:
           - 923b6abef9b17f937fab56cfcf89e1f1 # DV (WEBDL)
-          - b17886cb4158d9fea189859409975758 # HDR10Plus Boost
-          - 55a5b50cb416dea5a50c4955896217ab # DV HDR10+ Boost
+          - caa37d0df9c348912df1fb1d88f9273a # HDR10Plus Boost
           - 9c38ebb7384dada637be8899efa68e6f # SDR Block
         assign_scores_to:
           - name: UHD Bluray + WEB
