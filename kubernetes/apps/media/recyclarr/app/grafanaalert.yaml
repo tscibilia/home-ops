@@ -1,0 +1,119 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/refs/heads/main/grafana.integreatly.org/grafanaalertrulegroup_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaAlertRuleGroup
+metadata:
+  name: recyclarr-alerts
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana
+  folderUID: Logs
+  interval: 5m
+  rules:
+    - uid: recyclarr-sync-failed
+      title: RecyclarrSyncFailed
+      condition: C
+      data:
+        - refId: A
+          queryType: range
+          relativeTimeRange:
+            from: 1800
+            to: 0
+          datasourceUid: victorialogs
+          model:
+            expr: |
+              app:~"recyclarr"
+              | _msg:~"(?i)fatal error|fatal exception"
+            intervalMs: 60000
+            maxDataPoints: 43200
+
+        - refId: B
+          queryType: ""
+          relativeTimeRange:
+            from: 1800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            type: reduce
+            expression: A
+            reducer: count
+
+        - refId: C
+          queryType: ""
+          relativeTimeRange:
+            from: 1800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            type: threshold
+            expression: B
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+      annotations:
+        summary: "recyclarr sync failed with a fatal error"
+      labels:
+        severity: critical
+        app: recyclarr
+      for: 0m
+      noDataState: OK
+      execErrState: Alerting
+
+    - uid: recyclarr-sync-errors
+      title: RecyclarrSyncErrors
+      condition: C
+      data:
+        - refId: A
+          queryType: range
+          relativeTimeRange:
+            from: 1800
+            to: 0
+          datasourceUid: victorialogs
+          model:
+            expr: |
+              app:~"recyclarr"
+              | _msg:~"(?i)cannot be synced|invalid trash_id"
+            intervalMs: 60000
+            maxDataPoints: 43200
+
+        - refId: B
+          queryType: ""
+          relativeTimeRange:
+            from: 1800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            type: reduce
+            expression: A
+            reducer: count
+
+        - refId: C
+          queryType: ""
+          relativeTimeRange:
+            from: 1800
+            to: 0
+          datasourceUid: __expr__
+          model:
+            type: threshold
+            expression: B
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+      annotations:
+        summary: "recyclarr sync completed with errors requiring attention"
+      labels:
+        severity: critical
+        app: recyclarr
+      for: 0m
+      noDataState: OK
+      execErrState: Alerting
