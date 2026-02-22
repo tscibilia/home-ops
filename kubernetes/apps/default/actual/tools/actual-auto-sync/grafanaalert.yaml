@@ -19,7 +19,7 @@ spec:
         - refId: A
           queryType: range
           relativeTimeRange:
-            from: 300
+            from: 1800
             to: 0
           datasourceUid: victorialogs
           model:
@@ -33,7 +33,7 @@ spec:
         - refId: B
           queryType: ""
           relativeTimeRange:
-            from: 300
+            from: 1800
             to: 0
           datasourceUid: __expr__
           model:
@@ -45,7 +45,7 @@ spec:
         - refId: C
           queryType: ""
           relativeTimeRange:
-            from: 300
+            from: 1800
             to: 0
           datasourceUid: __expr__
           model:
@@ -65,6 +65,6 @@ spec:
       labels:
         severity: critical
         app: actual-auto-sync
-      for: 1m  # Alert must be active for 1 minute before firing
+      for: 0m
       noDataState: OK
       execErrState: Alerting
