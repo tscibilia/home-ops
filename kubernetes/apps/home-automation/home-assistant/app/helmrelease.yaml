@@ -16,6 +16,22 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          copy-soco-fix:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: 1.37.0@sha256:026ed7273270ec08f6902b4ae8334c23b473e5394bec3bbbdbfe580c710d50bc
+            securityContext:
+              runAsUser: 1044
+              runAsGroup: 100
+              runAsNonRoot: true
+            command:
+              - sh
+              - -c
+              - |
+                mkdir -p /config/custom_components/soco_ip_fix
+                cp /soco-config/manifest.json /config/custom_components/soco_ip_fix/
+                cp /soco-config/__init__.py /config/custom_components/soco_ip_fix/
         containers:
           app:
             image:
@@ -127,11 +143,33 @@ spec:
         rules:
           - backendRefs:
               - identifier: *sidecar
+    # Custom component to fix Sonos SoCo library binding to pod IP instead of Multus IOT IP.
+    # Sets soco.config.EVENT_LISTENER_IP so Sonos speakers can reach HA for event callbacks.
+    configMaps:
+      soco-config:
+        data:
+          manifest.json: |
+            {
+              "domain": "soco_ip_fix",
+              "name": "Soco IP Fix",
+              "version": "1.0.0",
+              "codeowners": [],
+              "dependencies": [],
+              "requirements": []
+            }
+          __init__.py: |
+            import soco.config
+            soco.config.EVENT_LISTENER_IP = "192.168.107.50"
+
+            async def async_setup(hass, config):
+                return True
     persistence:
       config:
         existingClaim: "{{ .Release.Name }}"
         advancedMounts:
           *app :
+            copy-soco-fix:
+              - path: /config
             app:
               - path: /config
           *sidecar :
@@ -158,6 +196,13 @@ spec:
                 subPath: code-server-tmp
               - path: /nonexistent
                 subPath: nonexistent
+      soco-config:
+        type: configMap
+        name: home-assistant
+        advancedMounts:
+          *app :
+            copy-soco-fix:
+              - path: /soco-config
       deploy-key:
         type: secret
         name: home-assistant-deploykey
