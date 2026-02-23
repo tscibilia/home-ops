@@ -8,7 +8,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Known Issues
 - etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
-- snmp-exporter synology, too many scrape errors - **snmpget hangs and timing out, disabled [7f0150f7]**
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
@@ -18,7 +17,8 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
-- ✅ rook-ceph metric inaccessible - **2026-02-18** (See issue [#1677](https://github.com/tscibilia/home-ops/issues/1677))
+- ✅ Migrate HASS from VM to cluster - **2026-02-23** (Added over several commits)
+- ✅ rook-ceph metric inaccessible - **2026-02-18** (See issue [#1677](https://github.com/tscibilia/home-ops/issues/1677) & [#1723](https://github.com/tscibilia/home-ops/issues/1723))
 - ✅ Migrate VM cluster to bare-metal - **2026-02-12** (See commit [5e8eb98] & issue [#1593])
 - ✅ Fix unifi/qbit port forwarding - **2026-01-28** (See issue [#1551](https://github.com/tscibilia/home-ops/issues/1551))
 - ✅ Add autobrr and thelounge - **2026-01-08** (See PR [#1440](https://github.com/tscibilia/home-ops/pull/1440) & [#1442](https://github.com/tscibilia/home-ops/pull/1442) as well as issue [#803](https://github.com/tscibilia/home-ops/issues/803))
@@ -43,6 +43,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 - ✅ Grafana Operator Migration - **2025-11-19** (See PR [#1157](https://github.com/tscibilia/home-ops/pull/1157))
 - ✅ HTTPRoute instead of Ingress - **2025-11-13** (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
-## Unresolved
+## Unresolved/Closed
+- ⛔ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
 - ⛔ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
-- ⛔ Migrate unifi aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**
+- ⛔ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**
