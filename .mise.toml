@@ -15,7 +15,7 @@ _.file = [
 
 [tools]
 "python" = "3.14.3"
-"uv" = "0.10.5"
+"uv" = "0.10.6"
 "just" = "1.46.0"
 "gum" = "0.17.0"
 "pipx:flux-local" = "8.1.0"
