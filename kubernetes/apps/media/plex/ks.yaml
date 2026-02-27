@@ -30,9 +30,14 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: plex
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
   targetNamespace: media
+  wait: true
