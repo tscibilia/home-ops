@@ -63,14 +63,6 @@ machine:
       featureGates:
         ResourceHealthStatus: true # New
       serializeImagePulls: false
-    extraMounts:
-      - destination: /var/mnt
-        type: bind
-        source: /var/mnt
-        options:
-          - bind
-          - rshared
-          - rw
     image: ghcr.io/siderolabs/kubelet:v1.35.2
     nodeIP:
       validSubnets:
