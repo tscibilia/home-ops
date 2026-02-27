@@ -66,6 +66,9 @@ spec:
                 "ips": ["192.168.107.50/24"],
                 "mac": "02:3a:8e:c5:d7:91"
               }]
+          dnsConfig:
+            options:
+              - name: single-request
       *sidecar :
         annotations:
           secret.reloader.stakater.com/reload: home-assistant-deploykey
