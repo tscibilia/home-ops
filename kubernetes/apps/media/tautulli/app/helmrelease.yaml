@@ -71,17 +71,18 @@ spec:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      affinity:
-        podAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app.kubernetes.io/name
-                      operator: In
-                      values: [plex]
-                topologyKey: kubernetes.io/hostname
+      # Scheduled with Plex to read logs PVC
+      # affinity:
+      #   podAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #       - weight: 100
+      #         podAffinityTerm:
+      #           labelSelector:
+      #             matchExpressions:
+      #               - key: app.kubernetes.io/name
+      #                 operator: In
+      #                 values: [plex]
+      #           topologyKey: kubernetes.io/hostname
       securityContext:
         runAsNonRoot: true
         runAsUser: 1044
@@ -118,11 +119,12 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /config/logs
-      plex-logs:
-        existingClaim: plex-logs
-        globalMounts:
-          - path: /logs
-            readOnly: true
+      # Needs to be ceph-fs RWM to share with plex
+      # plex-logs:
+      #   existingClaim: plex-logs
+      #   globalMounts:
+      #     - path: /logs
+      #       readOnly: true
       tmp:
         type: emptyDir
       scripts:
