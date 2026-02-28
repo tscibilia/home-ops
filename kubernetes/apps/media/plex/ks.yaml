@@ -30,10 +30,6 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: plex
   prune: true
   sourceRef:
     kind: GitRepository

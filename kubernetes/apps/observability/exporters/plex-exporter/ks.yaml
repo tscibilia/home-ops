@@ -22,4 +22,4 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: observability
-  wait: true
+  wait: false
