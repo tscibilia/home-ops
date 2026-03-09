@@ -36,7 +36,7 @@ spec:
   enableSuperuserAccess: true
   postgresql:
     parameters:
-      max_connections: "100"
+      max_connections: "200"
       shared_buffers: 256MB
     pg_hba:
     - host all all 10.42.0.0/16 scram-sha-256
