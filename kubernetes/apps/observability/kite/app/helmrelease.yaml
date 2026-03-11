@@ -25,8 +25,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/zxh326/kite
-              tag: v0.8.1@sha256:f02ab10e62ebc2d398e6b509b23662053e84bcefca4539d85b289897a0c7a6c9
+              repository: ghcr.io/kite-org/kite
+              tag: v0.8.1@sha256:dfce5129580cfa0fb406c5fc4c3909b6abc3fc2fba14924f907885f1ba0b25d0
             env:
               HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               ENABLE_ANALYTICS: true
