@@ -5,6 +5,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## In Progress
 `- [ ] Task name - Started yyy-mm-dd - brief context`
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
+- [ ] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
 
 ## Known Issues
 - etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
@@ -12,8 +13,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
 - ⚠️ Envoy 1.7.0 breaks ext-auth - (See [#1619](https://github.com/tscibilia/home-ops/pull/1619)) - **waiting on upstream changes**
-###  [Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)
-- ⚠️ Migrate from minio to Garage - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **waiting on upstream project development**
 
 ## Resolved
 `Descending order, newest on top`
