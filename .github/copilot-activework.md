@@ -12,10 +12,10 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
-- ⚠️ Envoy 1.7.0 breaks ext-auth - (See [#1619](https://github.com/tscibilia/home-ops/pull/1619)) - **waiting on upstream changes**
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Envoy 1.7.0 broke ext-auth - **2026-03-16** (See [#1619](https://github.com/tscibilia/home-ops/pull/1619))
 - ✅ Migrate HASS from VM to cluster - **2026-02-23** (Added over several commits)
 - ✅ rook-ceph metric inaccessible - **2026-02-18** (See issue [#1677](https://github.com/tscibilia/home-ops/issues/1677) & [#1723](https://github.com/tscibilia/home-ops/issues/1723))
 - ✅ Migrate VM cluster to bare-metal - **2026-02-12** (See commit [5e8eb98] & issue [#1593])
