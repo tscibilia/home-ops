@@ -3,7 +3,7 @@
 This document is intended to supplement and connect with GitHub issues and meant to provide AI agents with context regarding planned revisions and active development on the project to alleviate chat context memory issues. This document should follow the following format and should like to the GitHub issue where applicable:
 
 ## In Progress
-`- [ ] Task name - Started yyy-mm-dd - brief context`
+`- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - [ ] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
 

@@ -1,0 +1,40 @@
+---
+version: "3.8"
+
+services:
+  scrutiny:
+    image: ghcr.io/analogj/scrutiny:v0.8.6-omnibus@sha256:8dcc722855198da5c198f8b0cdb1b0a33dac7ca91df57bc01fc24052e18ce49f
+    container_name: scrutiny
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    ports:
+      - "8080:8080"
+    volumes:
+      - scrutiny-data:/opt/scrutiny/data
+      - /run/udev:/run/udev:ro
+    privileged: true
+    environment:
+      # Web UI
+      SCRUTINY_WEB_LISTEN_ADDRESS: 0.0.0.0
+      SCRUTINY_WEB_LISTEN_PORT: 8080
+
+      # API
+      SCRUTINY_API_LISTEN_ADDRESS: 0.0.0.0
+      SCRUTINY_API_LISTEN_PORT: 8080
+
+      # Collector (sends SMART data to API)
+      SCRUTINY_COLLECTOR_HOST: 0.0.0.0
+      SCRUTINY_COLLECTOR_PORT: 8086
+
+      # Notifications: Pushover
+      SCRUTINY_NOTIFY_PUSHOVER_ENABLED: true
+      SCRUTINY_NOTIFY_PUSHOVER_API_KEY: ${SCRUTINY_PUSHOVER_TOKEN}
+      SCRUTINY_NOTIFY_PUSHOVER_USER_KEY: ${SCRUTINY_PUSHOVER_USER}
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  scrutiny-data:

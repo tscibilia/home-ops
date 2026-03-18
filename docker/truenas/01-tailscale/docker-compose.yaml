@@ -1,0 +1,28 @@
+---
+version: "3.8"
+
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      TS_AUTHKEY: ${TAILSCALE_AUTH_KEY}
+      TS_HOSTNAME: truenas
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: false
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  tailscale-data:

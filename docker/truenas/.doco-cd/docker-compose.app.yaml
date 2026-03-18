@@ -1,0 +1,70 @@
+---
+# This file is not managed by doco-cd because it can't manage itself
+
+secrets:
+  gh_token:
+    file: /mnt/nas/data/users/sysadmin/.config/doco-cd/gh_token
+  akeyless_access_id:
+    file: /mnt/nas/data/users/sysadmin/.config/doco-cd/akeyless_access_id
+  akeyless_access_key:
+    file: /mnt/nas/data/users/sysadmin/.config/doco-cd/akeyless_access_key
+
+services:
+  doco-cd:
+    image: ghcr.io/kimdre/doco-cd:0.73.2@sha256:1fe8f9a425700befb50bfe54f16c7c0d5c588655cee496e84ce95876028d5927
+    container_name: doco-cd
+    restart: unless-stopped
+    depends_on:
+      akeyless-proxy:
+        condition: service_healthy
+    networks:
+      - doco-cd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/data
+    environment:
+      LOG_LEVEL: info
+      DEPLOY_CONFIG_BASE_DIR: ./docker/truenas/
+      POLL_CONFIG: |-
+        - url: https://github.com/tscibilia/home-ops.git
+          reference: refs/heads/main
+          interval: 3600
+      SECRET_PROVIDER: webhook
+      SECRET_PROVIDER_SITE_URL: "http://akeyless-proxy:8080/secret?name={{ urlquery .remoteRef }}"
+      SECRET_PROVIDER_RESULT_JMES_PATH: "values(@)[0]"
+      TZ: America/New_York
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - gh_token
+
+  akeyless-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: akeyless-proxy
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    expose:
+      - "8080"
+    environment:
+      AKEYLESS_ACCESS_ID_FILE: /run/secrets/akeyless_access_id
+      AKEYLESS_ACCESS_KEY_FILE: /run/secrets/akeyless_access_key
+    secrets:
+      - akeyless_access_id
+      - akeyless_access_key
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  data: {}
