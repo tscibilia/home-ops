@@ -10,3 +10,23 @@ spec:
       app: dragonfly-cluster
   podTargetLabels: ["app"]
   podMetricsEndpoints: [{ port: admin }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dragonfly-cluster-allow-metrics
+  namespace: database
+spec:
+  podSelector:
+    matchLabels:
+      app: dragonfly-cluster
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+      ports:
+        - port: 9999
+          protocol: TCP
