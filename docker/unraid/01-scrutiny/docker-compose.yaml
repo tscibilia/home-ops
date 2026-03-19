@@ -1,0 +1,18 @@
+---
+services:
+  scrutiny-collector:
+    # renovate: datasource=docker depName=ghcr.io/analogj/scrutiny
+    image: ghcr.io/analogj/scrutiny:v0.8.6-collector@sha256:c5228c99119a708e23f6235619273ae8d03735ba2a283aa97ecb5085787ea0f7
+    container_name: scrutiny-collector
+    restart: unless-stopped
+    cap_add:
+      - SYS_RAWIO    # required for smartctl SMART queries
+      - SYS_ADMIN    # required for NVMe (/dev/nvme0)
+    volumes:
+      - /dev:/dev
+      - /run/udev:/run/udev:ro
+    device_cgroup_rules:
+      - 'b 8:* r'    # /dev/sda-sdz (SATA/SAS)
+      - 'b 259:* r'  # /dev/nvme* (NVMe)
+    environment:
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal

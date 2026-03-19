@@ -1,0 +1,6 @@
+---
+working_dir: ./docker/unraid
+auto_discover: true
+auto_discover_opts:
+  depth: 1
+  delete: true
