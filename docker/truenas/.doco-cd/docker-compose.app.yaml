@@ -1,5 +1,7 @@
 ---
-# This file is not managed by doco-cd because it can't manage itself
+# This file is not managed by doco-cd because it can't manage itself.
+# A cron job on TrueNAS pulls `docker-compose.app.yaml` and `Dockerfile`
+# from GitHub, compares hashes, and rebuilds only when something changed.
 
 secrets:
   gh_token:
