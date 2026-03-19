@@ -11,14 +11,14 @@ spec:
   interval: 1h
   values:
     controllers:
-      scrutiny:
+      *app :
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
               repository: ghcr.io/analogj/scrutiny
-              tag: v0.8.6-web
+              tag: v0.8.6-web@sha256:9eadf87322a7826924a835c9bf5632d52bc2d8d1576f04749eda627da3898518
             env:
               TZ: ${TIMEZONE:-UTC}
               SCRUTINY_WEB_INFLUXDB_HOST: scrutiny-influxdb
@@ -49,8 +49,8 @@ spec:
               limits:
                 memory: 256Mi
             securityContext:
-              runAsNonRoot: false  # scrutiny-web runs as root
-              runAsUser: 0         # explicit override — defaultPodOptions sets UID 1000 for influxdb
+              runAsNonRoot: false
+              runAsUser: 0
       influxdb:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -58,8 +58,7 @@ spec:
           app:
             image:
               repository: docker.io/library/influxdb
-              # renovate: datasource=docker depName=influxdb
-              tag: "2.7"
+              tag: 2.8.0@sha256:7500f5825d4cdda41befbafca3582ae606b984d33aa1aaf8ae22675dd12d8457
             env:
               TZ: ${TIMEZONE:-UTC}
               DOCKER_INFLUXDB_INIT_MODE: setup
@@ -100,7 +99,7 @@ spec:
                 memory: 512Mi
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false  # influxdb writes to its data dir
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
@@ -109,8 +108,8 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
-      scrutiny:
-        controller: scrutiny
+      *app :
+        controller: *app
         ports:
           http:
             port: *scrutinyPort
@@ -133,7 +132,7 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - identifier: scrutiny
+              - identifier: *app
                 port: *scrutinyPort
     persistence:
       data:
