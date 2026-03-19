@@ -59,6 +59,7 @@ spec:
                 memory: 2Gi
         pod:
           annotations:
+            external-dns.alpha.kubernetes.io/hostname: home-assistant.internal
             k8s.v1.cni.cncf.io/networks: |-
               [{
                 "name": "iot",

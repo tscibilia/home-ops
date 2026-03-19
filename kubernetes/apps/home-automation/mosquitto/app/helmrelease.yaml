@@ -56,6 +56,7 @@ spec:
       app:
         type: LoadBalancer
         annotations:
+          lbipam.cilium.io/ips: 192.168.5.232
           external-dns.alpha.kubernetes.io/hostname: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
           gatus.home-operations.com/endpoint: |-
             group: services
