@@ -8,6 +8,4 @@ auto_discover_opts:
 external_secrets:
   # Must be stored as folders with a single (text-based) static secret file, no JSON!
   TAILSCALE_AUTH_KEY: /truenas/tailscale/auth-key
-  SCRUTINY_API_KEY: /truenas/scrutiny/api-key
-  SCRUTINY_PUSHOVER_TOKEN: /truenas/scrutiny/pushover-token
-  SCRUTINY_PUSHOVER_USER: /truenas/scrutiny/pushover-user
+  SECRET_DOMAIN: /truenas/secret-domain

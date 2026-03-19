@@ -1,0 +1,15 @@
+version: 1
+host:
+  id: "truenas"
+
+devices:
+  - device: /dev/sda
+    type: sat
+  - device: /dev/sdb
+    type: sat
+  - device: /dev/sdc
+    type: sat
+  - device: /dev/sdd
+    type: sat
+  - device: /dev/nvme0
+    type: nvme
