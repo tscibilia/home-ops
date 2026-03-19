@@ -8,4 +8,3 @@ auto_discover_opts:
 external_secrets:
   # Must be stored as folders with a single (text-based) static secret file, no JSON!
   TAILSCALE_AUTH_KEY: /truenas/tailscale/auth-key
-  SECRET_DOMAIN: /truenas/secret-domain

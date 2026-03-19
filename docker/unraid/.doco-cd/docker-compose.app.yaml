@@ -1,0 +1,45 @@
+---
+# This file is not managed by doco-cd because it can't manage itself.
+# A cron job on Unraid pulls `docker-compose.app.yaml` from GitHub,
+# compares hashes, and restarts only when something changed.
+
+secrets:
+  gh_token:
+    file: /mnt/user/appdata/doco-cd/gh_token
+
+services:
+  doco-cd:
+    image: ghcr.io/kimdre/doco-cd:0.75.0@sha256:29833479e74952aa8d2535edcda66dbb7161e38378a6b2a3adeb73f142444440
+    container_name: doco-cd
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/data
+    environment:
+      LOG_LEVEL: info
+      DEPLOY_CONFIG_BASE_DIR: ./docker/unraid/
+      POLL_CONFIG: |-
+        - url: https://github.com/tscibilia/home-ops.git
+          reference: refs/heads/main
+          interval: 3600
+      TZ: America/New_York
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - gh_token
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  data: {}

@@ -1,0 +1,35 @@
+---
+services:
+  scrutiny-collector:
+    # renovate: datasource=docker depName=ghcr.io/analogj/scrutiny
+    image: ghcr.io/analogj/scrutiny:v0.8.6-collector@sha256:c5228c99119a708e23f6235619273ae8d03735ba2a283aa97ecb5085787ea0f7
+    container_name: scrutiny-collector
+    restart: unless-stopped
+    cap_add:
+      - SYS_RAWIO    # required for smartctl ATA passthrough
+      - SYS_ADMIN    # required for smartctl device access
+    devices:
+      - /dev/sda:/dev/sda
+      - /dev/sdb:/dev/sdb
+      - /dev/sdc:/dev/sdc
+      - /dev/sdd:/dev/sdd
+      - /dev/sde:/dev/sde
+      - /dev/sdf:/dev/sdf
+      - /dev/sdg:/dev/sdg
+      - /dev/sdh:/dev/sdh
+      - /dev/sdi:/dev/sdi
+      - /dev/sdj:/dev/sdj
+      - /dev/sdk:/dev/sdk
+      - /dev/sdl:/dev/sdl
+      - /dev/sdm:/dev/sdm
+      - /dev/sdn:/dev/sdn
+    volumes:
+      - /run/udev:/run/udev:ro
+    networks:
+      - doco-cd
+    environment:
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal
+
+networks:
+  doco-cd:
+    external: true

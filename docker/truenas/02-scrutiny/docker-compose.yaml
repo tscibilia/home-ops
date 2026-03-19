@@ -19,7 +19,7 @@ services:
       - 'b 8:* r'    # /dev/sda-sdd (SATA, major 8)
       - 'b 259:* r'  # /dev/nvme0 (NVMe, major 259)
     environment:
-      COLLECTOR_API_ENDPOINT: https://scrutiny.${SECRET_DOMAIN}
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal
 
 networks:
   doco-cd:
