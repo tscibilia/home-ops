@@ -131,6 +131,16 @@ spec:
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |
             group: "services"
+      lb:
+        controller: *app
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.5.233
+          external-dns.alpha.kubernetes.io/hostname: scrutiny.internal
+        ports:
+          http:
+            port: 80
+            targetPort: *scrutinyPort
       influxdb:
         controller: influxdb
         ports:
