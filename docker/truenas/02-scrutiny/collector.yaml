@@ -11,5 +11,5 @@ devices:
     type: sat
   - device: /dev/sdd
     type: sat
-  - device: /dev/nvme0
+  - device: /dev/nvme0n1
     type: nvme
