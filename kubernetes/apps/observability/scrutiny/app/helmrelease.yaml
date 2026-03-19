@@ -40,7 +40,6 @@ spec:
               SCRUTINY_WEB_INFLUXDB_PORT: "8086"
               SCRUTINY_WEB_INFLUXDB_ORG: homelab
               SCRUTINY_WEB_INFLUXDB_BUCKET: scrutiny
-              SCRUTINY_NOTIFY_PUSHOVER_ENABLED: "true"
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
