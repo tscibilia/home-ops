@@ -1,7 +1,6 @@
 ---
 services:
   scrutiny-collector:
-    # renovate: datasource=docker depName=ghcr.io/analogj/scrutiny
     image: ghcr.io/analogj/scrutiny:v0.8.6-collector@sha256:c5228c99119a708e23f6235619273ae8d03735ba2a283aa97ecb5085787ea0f7
     container_name: scrutiny-collector
     restart: unless-stopped
@@ -25,11 +24,11 @@ services:
       - /dev/sdn:/dev/sdn
     volumes:
       - /run/udev:/run/udev:ro
-      - ./collector.yaml:/opt/scrutiny/config/collector.yaml:ro
     networks:
       - doco-cd
     environment:
       COLLECTOR_API_ENDPOINT: http://scrutiny.internal
+      COLLECTOR_HOST_ID: unraid
 
 networks:
   doco-cd:
