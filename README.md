@@ -114,21 +114,25 @@ The way Flux works for me here is it will recursively search the `kubernetes/app
 This Git repository contains the following directories.
 
 ```sh
-📁 bootstrap      # exactly what it sounds like
-├── 📁 cnpg       # cnpg patch to run at bootstrap
-├── 📁 helmfile.d # helmreleases required at bootstrap
-├── 📁 scripts    # some janky hacks
-└── 📝 mod.just   # .justfile Bootstrap module
+📁 docker
+├── 📁 unraid                    # docker deployments on unraid
+├── 📁 truenas                   # docker deployments on truenas
+└── 📁 ai3090                    # docker deployments on RTX3090
 📁 kubernetes
-├── 📁 apps       # applications organized by namespace
-├── 📁 components # re-useable kustomize components
-├── 📁 flux       # flux system configuration
-└── 📝 mod.just   # .justfile Kubernetes module
-📁 talos          # node OS configurations
-├── 📁 nodes      # Override configurations for each individual node.
-├── 📝 machineconfig.yaml.j2 # Base configuration template for all nodes.
-├── 📝 mod.just              # .justfile Talos module
-└── 📝 schematic.yaml.j2     # Talos image factory schematic
+├── 📁 apps                      # applications organized by namespace
+├── 📁 bootstrap                 # exactly what it sounds like
+│   ├── 📁 cnpg                  # cnpg patch to run at bootstrap
+│   ├── 📁 helmfile.d            # helmreleases required at bootstrap
+│   ├── 📁 scripts               # some janky hacks
+│   └── 📝 mod.just              # .justfile Bootstrap module
+├── 📁 components                # re-useable kustomize components
+├── 📁 flux                      # flux system configuration
+├── 📁 talos                     # node OS configurations
+│   ├── 📁 nodes                 # Override configurations for individual nodes
+│   ├── 📝 machineconfig.yaml.j2 # Base configuration template for all nodes
+│   ├── 📝 mod.just              # .justfile Talos module
+│   └── 📝 schematic.yaml.j2     # Talos image factory schematic
+└── 📝 mod.just                  # .justfile Kubernetes module
 📝 .justfile
 📝 .mise.toml
 📝 kubeconfig
