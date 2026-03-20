@@ -1,7 +1,7 @@
 ---
 area/bootstrap:
   - changed-files:
-      - any-glob-to-any-file: bootstrap/**/*
+      - any-glob-to-any-file: kubernetes/bootstrap/**/*
 
 area/github:
   - changed-files:
@@ -23,7 +23,7 @@ area/scripts:
 
 area/talos:
   - changed-files:
-      - any-glob-to-any-file: talos/**/*
+      - any-glob-to-any-file: kubernetes/talos/**/*
 
 area/taskfile:
   - changed-files:

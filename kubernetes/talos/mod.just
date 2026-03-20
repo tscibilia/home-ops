@@ -1,8 +1,9 @@
 set quiet := true
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
-scripts_dir := justfile_dir() + '/bootstrap/scripts'
-talos_dir := justfile_dir() + '/talos'
+kubernetes_dir := justfile_dir() + '/kubernetes'
+scripts_dir := kubernetes_dir + '/bootstrap/scripts'
+talos_dir := kubernetes_dir + '/talos'
 controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
 nodes := `talosctl config info -o yaml | yq -e '.nodes | join (",")'`
 
