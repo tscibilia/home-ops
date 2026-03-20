@@ -25,6 +25,7 @@ services:
       - /dev/sdn:/dev/sdn
     volumes:
       - /run/udev:/run/udev:ro
+      - ./collector.yaml:/opt/scrutiny/config/collector.yaml:ro
     networks:
       - doco-cd
     environment:
