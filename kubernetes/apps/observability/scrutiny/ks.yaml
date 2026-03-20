@@ -40,7 +40,6 @@ metadata:
 spec:
   dependsOn:
     - name: scrutiny
-      namespace: flux-system
   interval: 1h
   path: ./kubernetes/apps/observability/scrutiny/collector
   postBuild:
