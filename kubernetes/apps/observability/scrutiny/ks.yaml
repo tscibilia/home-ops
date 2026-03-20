@@ -20,6 +20,37 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: scrutiny
+      VOLSYNC_CAPACITY: 1Gi
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: observability
+  wait: false
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app scrutiny-influxdb
+spec:
+  components:
+    - ../../../../components/volsync
+  dependsOn:
+    - name: scrutiny
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+    - name: volsync
+      namespace: volsync-system
+  interval: 1h
+  path: ./kubernetes/apps/observability/scrutiny/influxdb
+  postBuild:
+    substitute:
+      APP: *app
       VOLSYNC_CAPACITY: 10Gi
     substituteFrom:
       - name: cluster-secrets
@@ -36,10 +67,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: scrutiny-collector
+  name: &app scrutiny-collector
 spec:
   dependsOn:
-    - name: scrutiny
+    - name: scrutiny-influxdb
   interval: 1h
   path: ./kubernetes/apps/observability/scrutiny/collector
   postBuild:
