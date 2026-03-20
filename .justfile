@@ -3,9 +3,9 @@
 set quiet := true
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
-mod bootstrap "bootstrap"
+mod bootstrap "kubernetes/bootstrap"
 mod kube "kubernetes"
-mod talos "talos"
+mod talos "kubernetes/talos"
 
 [private]
 default:
@@ -17,7 +17,7 @@ log lvl msg *args:
 
 [private]
 template file *args:
-    minijinja-cli "{{ file }}" {{ args }} | bash bootstrap/scripts/akeyless-inject.sh
+    minijinja-cli "{{ file }}" {{ args }} | bash kubernetes/bootstrap/scripts/akeyless-inject.sh
 
 [private]
 check-tools *tools:
