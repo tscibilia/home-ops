@@ -16,7 +16,7 @@ services:
       LLAMA_ARG_HOST: 0.0.0.0
       LLAMA_ARG_PORT: "10000"
       LLAMA_ARG_N_GPU_LAYERS: "99"
-      LLAMA_ARG_CTX_SIZE: "4096"
+      LLAMA_ARG_CTX_SIZE: "8192"
       LLAMA_ARG_PARALLEL: "4"
     deploy:
       resources:
