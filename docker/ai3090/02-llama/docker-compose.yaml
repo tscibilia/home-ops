@@ -18,6 +18,7 @@ services:
       LLAMA_ARG_N_GPU_LAYERS: "99"
       LLAMA_ARG_CTX_SIZE: "8192"
       LLAMA_ARG_PARALLEL: "4"
+      LLAMA_ARG_CHAT_TEMPLATE_KWARGS: '{"enable_thinking":false}'
     deploy:
       resources:
         reservations:
