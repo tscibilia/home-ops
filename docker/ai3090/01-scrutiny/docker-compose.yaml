@@ -1,0 +1,23 @@
+---
+services:
+  scrutiny-collector:
+    image: ghcr.io/analogj/scrutiny:v0.8.6-collector@sha256:c5228c99119a708e23f6235619273ae8d03735ba2a283aa97ecb5085787ea0f7
+    container_name: scrutiny-collector
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    cap_add:
+      - SYS_RAWIO    # required for smartctl ATA/NVMe queries
+      - SYS_ADMIN    # required for NVMe device access
+    devices:
+      - /dev/nvme0:/dev/nvme0
+      # Add HDDs here if attached, e.g.: - /dev/sda:/dev/sda
+    volumes:
+      - /run/udev:/run/udev:ro
+    environment:
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal
+      COLLECTOR_HOST_ID: ai3090
+
+networks:
+  doco-cd:
+    external: true
