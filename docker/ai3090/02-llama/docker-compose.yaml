@@ -7,20 +7,17 @@ services:
     networks:
       - doco-cd
     ports:
-      - "11434:11434"
+      - "10000:10000"
     volumes:
       - /home/ubuntu/models:/models:ro
     environment:
-      # Set to the filename of the model in /home/ubuntu/models/
-      # REQUIRED: update this before first deploy — must match the downloaded file exactly
-      LLAMA_MODEL: Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf
-    command: >
-      --model /models/${LLAMA_MODEL}
-      --host 0.0.0.0
-      --port 11434
-      --n-gpu-layers 99
-      --ctx-size 4096
-      --parallel 4
+      # Update LLAMA_ARG_MODEL when changing models
+      LLAMA_ARG_MODEL: /models/Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf
+      LLAMA_ARG_HOST: 0.0.0.0
+      LLAMA_ARG_PORT: "10000"
+      LLAMA_ARG_N_GPU_LAYERS: "99"
+      LLAMA_ARG_CTX_SIZE: "4096"
+      LLAMA_ARG_PARALLEL: "4"
     deploy:
       resources:
         reservations:
@@ -29,7 +26,7 @@ services:
               count: all
               capabilities: [gpu]
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:11434/health || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:10000/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

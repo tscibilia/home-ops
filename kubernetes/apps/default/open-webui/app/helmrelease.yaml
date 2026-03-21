@@ -25,7 +25,8 @@ spec:
               JWT_EXPIRES_IN: 604800
               CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN};http://localhost:8080"
               WEBUI_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-              OLLAMA_BASE_URLS: http://ai3090.internal:11434
+              OPENAI_API_BASE_URLS: "http://ai3090.internal:10000/v1"
+              OPENAI_API_KEYS: "sk-no-key"
               ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: "searxng"
               SEARXNG_QUERY_URL: "http://searxng.default.svc.cluster.local:8080/search?q=<query>"
