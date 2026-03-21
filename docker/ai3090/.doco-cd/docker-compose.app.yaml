@@ -1,0 +1,45 @@
+---
+# This file is not managed by doco-cd because it can't manage itself.
+# A cron job on ai3090 fetches docker-compose.app.yaml from GitHub,
+# compares hashes, and does `docker compose up -d` only when something changed.
+
+secrets:
+  gh_token:
+    file: /home/ubuntu/.config/doco-cd/gh_token
+
+services:
+  doco-cd:
+    image: ghcr.io/kimdre/doco-cd:0.76.0@sha256:ef0df49fca5ccaa4c4e01e13bf99d15609c093dd08f53f0c94dacac2a72ed4bd
+    container_name: doco-cd
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/data
+    environment:
+      LOG_LEVEL: info
+      DEPLOY_CONFIG_BASE_DIR: ./docker/ai3090/
+      POLL_CONFIG: |-
+        - url: https://github.com/tscibilia/home-ops.git
+          reference: refs/heads/main
+          interval: 3600
+      TZ: America/New_York
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - gh_token
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  data: {}

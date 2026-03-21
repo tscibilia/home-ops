@@ -1,0 +1,40 @@
+---
+services:
+  llama-server:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda@sha256:af644be83950bb5dd7420858f32a6a78952b9d5ecd8e5c2e703e750b220f392d
+    container_name: llama-server
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    ports:
+      - "11434:11434"
+    volumes:
+      - /home/ubuntu/models:/models:ro
+    environment:
+      # Set to the filename of the model in /home/ubuntu/models/
+      # REQUIRED: update this before first deploy — must match the downloaded file exactly
+      LLAMA_MODEL: Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf
+    command: >
+      --model /models/${LLAMA_MODEL}
+      --host 0.0.0.0
+      --port 11434
+      --n-gpu-layers 99
+      --ctx-size 4096
+      --parallel 4
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s    # GPU model load can take 30-90s
+
+networks:
+  doco-cd:
+    external: true
