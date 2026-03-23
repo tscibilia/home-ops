@@ -10,8 +10,9 @@ set -euo pipefail
 WORK_DIR="/home/ubuntu/.config/doco-cd"
 BASE_URL="https://raw.githubusercontent.com/tscibilia/home-ops/main/docker/ai3090/.doco-cd"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+LOG_FILE="$WORK_DIR/update.log"
 
-log() { echo "[$TIMESTAMP] $*"; }
+log() { echo "[$TIMESTAMP] $*" | tee -a "$LOG_FILE"; }
 
 cd "$WORK_DIR" || { log "ERROR: Cannot cd to $WORK_DIR"; exit 1; }
 

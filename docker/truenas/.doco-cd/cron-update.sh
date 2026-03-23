@@ -3,15 +3,16 @@
 # 1. Fetches each file from GitHub with `curl -sf` — aborts entirely if GitHub is unreachable
 # 2. Compares SHA256 hashes against local copies
 # 3. Only runs `docker compose up -d --build --force-recreate` if at least one file changed
-# 4. Logs with timestamps to `/var/log/doco-cd-update.log`
+# 4. Logs with timestamps to ~/.config/doco-cd/update.log
 
 set -euo pipefail
 
 WORK_DIR="/mnt/nas/data/users/sysadmin/.config/doco-cd"
 BASE_URL="https://raw.githubusercontent.com/tscibilia/home-ops/main/docker/truenas/.doco-cd"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+LOG_FILE="$WORK_DIR/update.log"
 
-log() { echo "[$TIMESTAMP] $*"; }
+log() { echo "[$TIMESTAMP] $*" | tee -a "$LOG_FILE"; }
 
 cd "$WORK_DIR" || { log "ERROR: Cannot cd to $WORK_DIR"; exit 1; }
 

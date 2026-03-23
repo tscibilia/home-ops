@@ -3,7 +3,7 @@
 # 1. Fetches docker-compose.app.yaml from GitHub — aborts entirely if GitHub is unreachable
 # 2. Compares SHA256 hash against local copy
 # 3. If changed: parses new image tag, stops/removes doco-cd, runs new container
-# 4. Logs with timestamps to /var/log/doco-cd-update.log
+# 4. Logs with timestamps to /mnt/user/appdata/doco-cd/update.log
 # NOTE: Uses plain docker commands — Unraid does not have docker compose
 
 set -euo pipefail
@@ -11,8 +11,9 @@ set -euo pipefail
 WORK_DIR="/mnt/user/appdata/doco-cd"
 BASE_URL="https://raw.githubusercontent.com/tscibilia/home-ops/main/docker/unraid/.doco-cd"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+LOG_FILE="$WORK_DIR/update.log"
 
-log() { echo "[$TIMESTAMP] $*"; }
+log() { echo "[$TIMESTAMP] $*" | tee -a "$LOG_FILE"; }
 
 cd "$WORK_DIR" || { log "ERROR: Cannot cd to $WORK_DIR"; exit 1; }
 
