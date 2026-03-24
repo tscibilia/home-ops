@@ -16,9 +16,11 @@ services:
       - /dev/net/tun:/dev/net/tun
     environment:
       TS_AUTHKEY: ${TAILSCALE_AUTH_KEY}
+      TS_AUTH_ONCE: true
       TS_HOSTNAME: truenas
       TS_STATE_DIR: /var/lib/tailscale
       TS_USERSPACE: false
+      TS_EXTRA_ARGS: --advertise-tags=tag:nas
 
 networks:
   doco-cd:
