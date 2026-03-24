@@ -66,9 +66,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
@@ -101,9 +101,9 @@ spec:
           - path: /config/MediaCover
       media:
         type: nfs
-        server: nas.internal
-        path: /volume1/Media
+        server: truenas.internal
+        path: /mnt/nas/data/media
         globalMounts:
-          - path: /Media
+          - path: /media
       tmp:
         type: emptyDir

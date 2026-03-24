@@ -61,8 +61,8 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
-        runAsGroup: 100
-        fsGroup: 100
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
@@ -100,9 +100,9 @@ spec:
         type: emptyDir
       custom-logo:
         type: nfs
-        server: nas.internal
-        path: /volume1/Media
+        server: truenas.internal
+        path: /mnt/nas/data/shares
         globalMounts:
           - path: /app/public
-            subPath: torrents/overseerr/public
+            subPath: seerr/public
             readOnly: true

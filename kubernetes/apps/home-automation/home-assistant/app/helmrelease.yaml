@@ -22,8 +22,8 @@ spec:
               repository: ghcr.io/home-operations/busybox
               tag: 1.37.0@sha256:026ed7273270ec08f6902b4ae8334c23b473e5394bec3bbbdbfe580c710d50bc
             securityContext:
-              runAsUser: 1044
-              runAsGroup: 100
+              runAsUser: 1000
+              runAsGroup: 1000
               runAsNonRoot: true
             command:
               - sh
@@ -110,9 +110,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:

@@ -114,9 +114,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: Always
         seccompProfile: { type: RuntimeDefault }
         supplementalGroups: [44]
@@ -150,23 +150,23 @@ spec:
     persistence:
       media:
         type: nfs
-        server: nas.internal
-        path: /volume1/Media
+        server: truenas.internal
+        path: /mnt/nas/data/shares
         advancedMounts:
           server:
             app:
               - path: /usr/src/app/upload/upload
-                subPath: Immich/upload
+                subPath: immich/upload
               - path: /usr/src/app/upload/profile
-                subPath: Immich/profile
+                subPath: immich/profile
               - path: /usr/src/app/upload/library
-                subPath: Immich/library
+                subPath: immich/library
               - path: /usr/src/app/upload/thumbs
-                subPath: Immich/upload/thumbs
+                subPath: immich/upload/thumbs
               - path: /usr/src/app/upload/encoded-video
-                subPath: Immich/upload/encoded-video
+                subPath: immich/upload/encoded-video
               - path: /import/tscibilia/lrexport
-                subPath: Lightroom/LRExport
+                subPath: lightroom/LRExport
       geocoding-dump:
         type: emptyDir
         advancedMounts:
