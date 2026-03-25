@@ -58,9 +58,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
     service:
@@ -90,13 +90,13 @@ spec:
         existingClaim: *app
       media:
         type: nfs
-        server: nas.internal
-        path: /volume1/Media/library
+        server: truenas.internal
+        path: /mnt/nas/data/media
         globalMounts:
-          - path: /downloads/library
+          - path: /media
       downloads:
         type: emptyDir
         globalMounts:
-          - path: /downloads
+          - path: /media/downloads
       tmp:
         type: emptyDir

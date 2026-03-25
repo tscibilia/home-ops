@@ -65,9 +65,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1044
-        runAsGroup: 100
-        fsGroup: 100
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups: [10000]
         seccompProfile: { type: RuntimeDefault }
@@ -115,8 +115,8 @@ spec:
     persistence:
       data:
         type: nfs
-        server: nas.internal
-        path: /volume1/Media
+        server: truenas.internal
+        path: /mnt/nas/data/shares
         globalMounts:
           - path: /data
-            subPath: Minio
+            subPath: minio

@@ -14,10 +14,10 @@ spec:
       replicas: 1
     storageClass:
       create: true
-      name: nfs-media
+      name: nfs-share
       parameters:
-        server: nas.internal
-        share: /volume1/Media
+        server: truenas.internal
+        share: /mnt/nas/data/shares/k8s
       mountOptions:
         - nfsvers=4    # or vers=3 if your server supports NFSv3
         - nconnect=16  # sets the number of TCP connections between the client and server

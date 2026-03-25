@@ -11,7 +11,7 @@ spec:
   targets:
     staticConfig:
       static:
-        - nas.internal
+        - truenas.internal
         - unraid.internal
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/monitoring.coreos.com/probe_v1.json
@@ -26,5 +26,5 @@ spec:
   targets:
     staticConfig:
       static:
-        - nas.internal:2049
+        - truenas.internal:2049
         - unraid.internal:2049
