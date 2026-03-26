@@ -116,7 +116,6 @@ spec:
       data:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/shares
+        path: /mnt/nas/data/shares/minio
         globalMounts:
           - path: /data
-            subPath: minio

@@ -100,13 +100,13 @@ spec:
             addr = "http://localhost:80"
           categories.json: |-
             {
-              "audiobooks": {"save_path": "/Media/torrents/completed/audiobooks"},
-              "cross-seed": {"save_path": "/Media/torrents/completed/cross-seed"},
-              "movies": {"save_path": "/Media/torrents/completed/movies"},
-              "music": {"save_path": "/Media/torrents/completed/music"},
-              "manual": {"save_path": "/Media/torrents/completed/manual"},
-              "race": {"save_path": "/Media/torrents/completed/race"},
-              "tv": {"save_path": "/Media/torrents/completed/tv"}
+              "audiobooks": {"save_path": "/media/downloads/completed/audiobooks"},
+              "cross-seed": {"save_path": "/media/downloads/completed/cross-seed"},
+              "movies": {"save_path": "/media/downloads/completed/movies"},
+              "music": {"save_path": "/media/downloads/completed/music"},
+              "manual": {"save_path": "/media/downloads/completed/manual"},
+              "race": {"save_path": "/media/downloads/completed/race"},
+              "tv": {"save_path": "/media/downloads/completed/tv"}
             }
     persistence:
       config:

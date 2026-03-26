@@ -151,22 +151,29 @@ spec:
       media:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/shares
+        path: /mnt/nas/data/shares/immich
         advancedMounts:
           server:
             app:
               - path: /usr/src/app/upload/upload
-                subPath: immich/upload
+                subPath: upload
               - path: /usr/src/app/upload/profile
-                subPath: immich/profile
+                subPath: profile
               - path: /usr/src/app/upload/library
-                subPath: immich/library
+                subPath: library
               - path: /usr/src/app/upload/thumbs
-                subPath: immich/upload/thumbs
+                subPath: upload/thumbs
               - path: /usr/src/app/upload/encoded-video
-                subPath: immich/upload/encoded-video
+                subPath: upload/encoded-video
+      lightroom:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/shares/lightroom
+        advancedMounts:
+          server:
+            app:
               - path: /import/tscibilia/lrexport
-                subPath: lightroom/LRExport
+                subPath: LRExport
       geocoding-dump:
         type: emptyDir
         advancedMounts:
