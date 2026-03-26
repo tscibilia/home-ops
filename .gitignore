@@ -16,11 +16,12 @@ talosconfig
 # Misc.
 .archived/
 .pytest_cache/
-.claude/
+.claude/*
+!.claude/CLAUDE.md
+!.claude/skills/
 .git/
 .private/
 .task/
 .venv/
 .DS_Store
-/docs/rewriting-guidelines.md
 Thumbs.db

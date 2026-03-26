@@ -115,21 +115,20 @@ extra:
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - guides/getting-started.md
-  - Infrastructure:
-      - infrastructure/overview.md
-      - infrastructure/architecture.md
-      - infrastructure/networking.md
-      - infrastructure/bootstrap.md
-  - Kubernetes:
-      - kubernetes/overview.md
-      - kubernetes/applications.md
-      - kubernetes/networking.md
-      - kubernetes/storage.md
-      - kubernetes/secrets.md
+  - Architecture: architecture.md
+  - Applications:
+      - apps/index.md
+      - Default: apps/default.md
+      - Media: apps/media.md
+      - Database: apps/database.md
+      - Home Automation: apps/home-automation.md
+      - Observability: apps/observability.md
+      - Network: apps/network.md
+      - System: apps/system.md
+  - Docker Services: docker/index.md
   - Operations:
-      - operations/overview.md
-      - operations/observability.md
-      - operations/troubleshooting.md
-      - operations/task-runner.md
+      - Daily Ops: operations/daily-ops.md
+      - Troubleshooting: operations/troubleshooting.md
+      - Task Runner: operations/task-runner.md
+  - Bootstrap: bootstrap.md
+  - Emergency: emergency.md

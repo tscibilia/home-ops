@@ -1,80 +1,25 @@
-# Home Operations
+# Home Ops
 
-This repository holds a GitOps-managed Kubernetes home infrastructure (Talos OS → Kubernetes → Flux). The docs are a compact reference for how the pieces fit together and where to look when something breaks.
+GitOps-managed Kubernetes cluster on three Lenovo M70q nodes, plus Docker services on TrueNAS, UnRaid, and a dedicated AI box.
 
-## Quick Navigation
+## Why are you here?
 
-<div class="grid cards" markdown>
+| I need to...                         | Go here                                          |
+| ------------------------------------ | ------------------------------------------------ |
+| Fix something that broke             | [Troubleshooting](operations/troubleshooting.md) |
+| Merge a Renovate PR / daily upkeep   | [Daily Ops](operations/daily-ops.md)             |
+| Add or modify an application         | [App Catalog](apps/)                             |
+| Understand how the cluster works     | [Architecture](architecture.md)                  |
+| Rebuild the cluster from scratch     | [Bootstrap](bootstrap.md)                        |
+| Find a `just` command                | [Task Runner](operations/task-runner.md)         |
+| I'm family and need help             | [Emergency](emergency.md)                        |
 
--   :material-rocket-launch:{ .lg .middle } **Getting Started**
+## Quick Reference
 
-	---
-
-	New to the cluster? Start here.
-
-	[:octicons-arrow-right-24: Getting Started](guides/getting-started.md)
-
--   :material-server:{ .lg .middle } **Infrastructure**
-
-	---
-
-	Talos, bootstrapping, and node configuration.
-
-	[:octicons-arrow-right-24: Infrastructure Guide](infrastructure/overview.md)
-
--   :material-kubernetes:{ .lg .middle } **Kubernetes Layer**
-
-	---
-
-	Apps, Flux, and deployment patterns.
-
-	[:octicons-arrow-right-24: Kubernetes Guide](kubernetes/overview.md)
-
--   :material-wrench:{ .lg .middle } **Operations**
-
-	---
-
-	Troubleshooting, backups, and maintenance.
-
-	[:octicons-arrow-right-24: Operations Guide](operations/overview.md)
-
-</div>
-
-## Architecture at a glance
-
-```mermaid
-graph TB
-	A[Talos OS] --> B[Kubernetes Cluster]
-	B --> C[Flux CD GitOps]
-	C --> D[Applications]
-```
-
-Use the repository as the source of truth: push changes to Git, then reconcile with Flux. For design details and templates, see the `talos/` and `bootstrap/` folders.
-
-## What's in the cluster
-
-- Media & automation: Plex/Jellyfin, Sonarr, Radarr, Prowlarr, qBittorrent
-- Databases: CNPG (Postgres), Dragonfly (Redis-compatible cache)
-- Core infra: Cilium, Rook-Ceph, Envoy Gateway, Cloudflared, cert-manager
-- Observability: Prometheus, Grafana, Fluent-bit, Gatus
-
-## Key practices
-
-- GitOps: repo is the single source of truth; use Flux for reconciliation
-- Backups: VolSync + Restic for critical PVCs
-- Secrets: managed with ExternalSecrets (aKeyless) and `cluster-secrets`
-- Access: Authentik provides SSO; external access via Cloudflared + Envoy
-
-## Need help?
-
-- Troubleshooting: [operations/troubleshooting.md](operations/troubleshooting.md)
-- Task runner commands: [operations/task-runner.md](operations/task-runner.md)
-- Repo: https://github.com/tscibilia/home-ops
-
-??? info "External Resources"
-	- [DeepWiki AI Documentation](https://deepwiki.com/tscibilia/home-ops)
-	- [GitHub Repository](https://github.com/tscibilia/home-ops)
-	- [Flux CD Documentation](https://fluxcd.io/docs/)
-	- [Talos Documentation](https://www.talos.dev/latest/)
-
-```
+| Item       | Value                                              |
+| ---------- | -------------------------------------------------- |
+| Cluster VIP | 192.168.5.210                                     |
+| Nodes      | k8s-1 (.211), k8s-2 (.212), k8s-3 (.213)          |
+| Domain     | *.t0m.co (external), LAN via UniFi DNS             |
+| Source of truth | This repo — Flux reconciles on push            |
+| Secrets    | aKeyless → ExternalSecrets                         |
