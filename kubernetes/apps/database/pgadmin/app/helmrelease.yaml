@@ -24,8 +24,8 @@ spec:
         initContainers:
           remove-old-db:
             image:
-              repository: docker.io/library/busybox
-              tag: 1.37.0@sha256:b3255e7dfbcd10cb367af0d409747d511aeb66dfac98cf30e97e87e4207dd76f
+              repository: ghcr.io/home-operations/busybox
+              tag: 1.37.0@sha256:026ed7273270ec08f6902b4ae8334c23b473e5394bec3bbbdbfe580c710d50bc
             command: ["sh","-c","rm -f /var/lib/pgadmin/pgadmin4.db"]
         containers:
           app:
