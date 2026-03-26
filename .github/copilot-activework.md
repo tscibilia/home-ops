@@ -4,17 +4,22 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
+- [ ] Fix llama.cpp thinking enable/disable - [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
+- [ ] Fix NFS error w/ volsync - (See [#1887](https://github.com/tscibilia/home-ops/issues/1887))
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - [ ] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
 
 ## Known Issues
-- etcd noisy logging, see kubernetes/kubernetes/issues/#134080 - **lookup localhost: operation was canceled**
+- etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
+- Not receiving pushover notifications from grafana alerts
+- Docs out of date after docker and k8s restructuring, needs simplification
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Migrate from synology to truenas - **2026-03-25** (See [#1750](https://github.com/tscibilia/home-ops/issues/1750))
 - ✅ Deployed scrutiny hub/spoke on truenas/k8s - **2026-03-18** (See [#1870](https://github.com/tscibilia/home-ops/pull/1870))
 - ✅ Envoy 1.7.0 broke ext-auth - **2026-03-16** (See [#1619](https://github.com/tscibilia/home-ops/pull/1619))
 - ✅ Migrate HASS from VM to cluster - **2026-02-23** (Added over several commits)
