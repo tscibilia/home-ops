@@ -1,0 +1,160 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app filebrowser
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/gtsteffaniak/filebrowser
+              tag: 1.2.3-stable@sha256:10a53cbed7b97350317c93dba67f68221bb54474faa3e3630ce32da191078275
+            env:
+              FILEBROWSER_CONFIG: /config/config.yaml
+            envFrom:
+              - secretRef:
+                  name: filebrowser-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    configMaps:
+      config:
+        data:
+          config.yaml: |
+            server:
+              database: /data/filebrowser.db
+              cacheDir: /tmp/.cache
+              numImageProcessors: 8
+              sources:
+                - path: /mnt
+                  config:
+                    defaultEnabled: true
+                    indexingIntervalMinutes: 5
+              indexSqlConfig:
+                walMode: true
+            auth:
+              adminUsername: sysadmin
+              tokenExpirationHours: 24
+              methods:
+                password:
+                  enabled: true
+                # oidc:                          # Phase 2: uncomment and remove password block
+                #   enabled: true
+                #   clientId: filebrowser
+                #   issuerUrl: https://auth.${SECRET_DOMAIN}/application/o/filebrowser/
+                #   scopes: email openid profile groups
+                #   userIdentifier: preferred_username
+                #   createUser: true
+            userDefaults:
+              scope: /mnt/users
+              fileLoading:
+                maxConcurrentUpload: 5
+                uploadChunkSizeMb: 10
+    persistence:
+      config:
+        type: configMap
+        identifier: config
+        globalMounts:
+          - path: /config/config.yaml
+            subPath: config.yaml
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+      users:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/users
+        globalMounts:
+          - path: /mnt/users
+      docs:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/docs
+        globalMounts:
+          - path: /mnt/docs
+      lightroom:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/shares/lightroom
+        globalMounts:
+          - path: /mnt/lightroom
+      strata:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/work/strata
+        globalMounts:
+          - path: /mnt/strata
+      grey:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/work/grey
+        globalMounts:
+          - path: /mnt/grey
