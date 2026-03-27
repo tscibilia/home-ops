@@ -21,18 +21,14 @@ Namespace: `observability`
 
 ## Config Notes
 
-### Scrutiny
+??? note "Scrutiny"
+    Hub-and-spoke setup. The hub runs in this namespace as a Kubernetes pod. Collectors run as Docker containers on each external machine (TrueNAS, UnRaid, AI3090) and report disk SMART data back to the hub. See [Docker Services](../docker/) for the collector configs.
 
-Hub-and-spoke setup. The hub runs in this namespace as a Kubernetes pod. Collectors run as Docker containers on each external machine (TrueNAS, UnRaid, AI3090) and report disk SMART data back to the hub. See [Docker Services](../docker/) for the collector configs.
+??? note "victoria-logs"
+    Uses `openebs-hostpath` for local fast storage (write-heavy log ingestion). Protected by ext-auth-internal for web UI access. Fluent-bit ships logs from all pods into victoria-logs.
 
-### victoria-logs
+??? note "KEDA"
+    The autoscaler itself lives in observability, but its ScaledObjects are used across media and default namespaces via the `keda` component. Apps with `keda/nfs-scaler` scale based on NFS mount availability.
 
-Uses `openebs-hostpath` for local fast storage (write-heavy log ingestion). Protected by ext-auth-internal for web UI access. Fluent-bit ships logs from all pods into victoria-logs.
-
-### KEDA
-
-The autoscaler itself lives in observability, but its ScaledObjects are used across media and default namespaces via the `keda` component. Apps with `keda/nfs-scaler` scale based on NFS mount availability.
-
-### Grafana
-
-Uses Postgres (in the database namespace) for dashboard and user storage. No dedicated PVC — state is in the database.
+??? note "Grafana"
+    Uses Postgres (in the database namespace) for dashboard and user storage. No dedicated PVC — state is in the database.

@@ -12,7 +12,9 @@ Namespace: `database`
 
 ### CNPG (CloudNative-PG)
 
-Two clusters with different images — don't mix them up:
+!!! warning "Two clusters — different images"
+
+Two clusters with different images:
 
 | Cluster       | Image                                | Use                              |
 | ------------- | ------------------------------------ | -------------------------------- |

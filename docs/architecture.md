@@ -32,18 +32,37 @@ UniFi controller manages the `.internal` domain for non-cluster hosts:
 
 ### Cluster
 
-- **CNI**: Cilium — eBPF-based, completely replaces kube-proxy. Standard kube-proxy debug tools don't apply here; use `cilium` CLI or Hubble instead.
+!!! warning "No kube-proxy"
+    Cilium is the eBPF replacement. Standard kube-proxy debug tools don't apply. Use `cilium` CLI or Hubble for network debugging.
+
+- **CNI**: Cilium — eBPF-based, completely replaces kube-proxy
 - **Load balancing**: Cilium L2 ARP announcements, IP pool 192.168.5.200–250
-- **Ingress**: Envoy Gateway, two instances:
-  - `envoy-external` — internet traffic via Cloudflared tunnel (*.t0m.co)
-  - `envoy-internal` — LAN-only, resolved via UniFi DNS
 - **Routing**: HTTPRoute resources, not legacy Ingress objects
 - **Auth**: Authentik SSO via Envoy SecurityPolicy forward-auth
 - **Cross-namespace**: Requires a ReferenceGrant when an HTTPRoute or SecurityPolicy references a Service in another namespace
 
+**Ingress** — Envoy Gateway runs two instances:
+
+=== "envoy-external"
+
+    Internet-facing. Cloudflared terminates the Cloudflare tunnel and forwards traffic here. All `*.t0m.co` requests enter through this gateway.
+
+=== "envoy-internal"
+
+    LAN-only. UniFi DNS points local clients directly to this gateway's LoadBalancer IP. No Cloudflare involvement.
+
 ### DNS
 
-Three layers of DNS resolution:
+Three layers of resolution:
+
+```mermaid
+flowchart LR
+    Pod -->|cluster DNS| CoreDNS["CoreDNS\n10.43.0.10"]
+    LAN["LAN Client"] -->|*.t0m.co| UniFi["unifi-dns\n→ UniFi Controller"]
+    Internet -->|*.t0m.co| CF["external-dns\n→ Cloudflare"]
+    UniFi --> EI[envoy-internal]
+    CF --> Tunnel[cloudflared] --> EE[envoy-external]
+```
 
 | Layer        | Service      | Scope                                      |
 | ------------ | ------------ | ------------------------------------------ |
@@ -63,7 +82,7 @@ cert-manager handles TLS via Let's Encrypt with DNS-01 challenges through Cloudf
 | openebs-hostpath  | Local node storage       | CNPG clusters, victoria-logs, actions-runner |
 | nfs-media         | TrueNAS NFS              | Media libraries                            |
 
-No ceph-rbd, no CephFS, no object storage.
+!!! info "No ceph-rbd, no CephFS, no object storage"
 
 ### Backups
 
@@ -74,7 +93,8 @@ No ceph-rbd, no CephFS, no object storage.
 
 ### PostgreSQL (CNPG)
 
-Two clusters in the `database` namespace. Don't mix them up — they use different images.
+!!! warning "Two clusters — don't mix them up"
+    They use different images. `pgsql-cluster` is standard PostgreSQL 17. `immich17` has the vectorchord extension for vector search.
 
 | Cluster       | Image                              | Use                                |
 | ------------- | ---------------------------------- | ---------------------------------- |
@@ -105,4 +125,6 @@ Flux CD watches this repo and reconciles on every push.
 
 - **Entry point**: `ks.yaml` per app — defines `dependsOn`, `postBuild` substitutions, and `components`
 - **Components**: Reusable patterns in `kubernetes/components/` — volsync, cnpg, ext-auth-internal, ext-auth-external, keda
-- **Important**: `kubectl edit` changes are ephemeral. Flux resets them on the next reconciliation. Always edit in Git.
+
+!!! danger "kubectl edits are ephemeral"
+    Flux resets them on the next reconciliation. Always edit in Git, push, and reconcile.

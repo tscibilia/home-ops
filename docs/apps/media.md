@@ -25,22 +25,17 @@ Namespace: `media`
 
 ## Config Notes
 
-### qBittorrent
+??? note "qBittorrent"
+    VPN-routed via Multus secondary interface (net1) on VLAN 99 (192.168.99.0/24). All torrent traffic goes through the VPN tunnel — cluster and LAN traffic stay on the primary interface. See [Architecture — Networking](../architecture.md#physical) for the VLAN setup.
 
-VPN-routed via Multus secondary interface (net1) on VLAN 99 (192.168.99.0/24). All torrent traffic goes through the VPN tunnel — cluster and LAN traffic stay on the primary interface. See [Architecture — Networking](../architecture.md#physical) for the VLAN setup.
+??? note "Plex"
+    External access via envoy-external for remote streaming. Uses Intel i915 GPU for hardware transcoding (shared with Jellyfin and Immich). Media stored on nfs-media (TrueNAS).
 
-### Plex
+??? note "Jellyfin"
+    Uses ceph-ssd for config storage, not nfs-media. Media access is separate from Plex's NFS mount.
 
-External access via envoy-external for remote streaming. Uses Intel i915 GPU for hardware transcoding (shared with Jellyfin and Immich). Media stored on nfs-media (TrueNAS).
+??? note "ytptube"
+    Uses `ext-auth-external` (not internal) — accessible from outside the LAN with Authentik SSO.
 
-### Jellyfin
-
-Uses ceph-ssd for config storage, not nfs-media. Media access is separate from Plex's NFS mount.
-
-### ytptube
-
-Uses `ext-auth-external` (not internal) — accessible from outside the LAN with Authentik SSO.
-
-### recyclarr
-
-Syncs quality profiles and custom formats to both Radarr and Sonarr. No persistent storage — config is generated from the repo on each run.
+??? note "recyclarr"
+    Syncs quality profiles and custom formats to both Radarr and Sonarr. No persistent storage — config is generated from the repo on each run.

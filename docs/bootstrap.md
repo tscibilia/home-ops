@@ -11,17 +11,37 @@ Full cluster rebuild from zero. You need this repo, aKeyless access, and Backbla
 
 ## Stage Order
 
-1. **Install Talos**: `just bootstrap talos`
-2. **Bootstrap Kubernetes**: `just bootstrap kube`
-3. **Fetch kubeconfig**: `just bootstrap kubeconfig`
-4. **Wait for nodes**: `just bootstrap wait`
-5. **Apply namespaces**: `just bootstrap namespaces`
-6. **Import Rook-Ceph** (if restoring): `just bootstrap rook-ceph-external`
-7. **Apply resources**: `just bootstrap resources`
-8. **Apply CRDs**: `just bootstrap crds`
-9. **Apply core apps**: `just bootstrap apps` — installs in order: Cilium → CoreDNS → cert-manager → external-secrets
-10. **Flux takes over**: Once Flux is running, it reconciles everything else from Git
-11. **Restore databases**: `just bootstrap cnpg` — recovers CNPG clusters from B2 backups
+```mermaid
+flowchart TD
+    A["1. Install Talos"] --> B["2. Bootstrap K8s"]
+    B --> C["3. Fetch kubeconfig"]
+    C --> D["4. Wait for nodes"]
+    D --> E["5. Apply namespaces"]
+    E --> F["6. Import Rook-Ceph ¹"]
+    F --> G["7. Apply resources"]
+    G --> H["8. Apply CRDs"]
+    H --> I["9. Apply core apps ²"]
+    I --> J(["10. Flux takes over"])
+    J --> K["11. Restore CNPG from B2"]
+
+    style J fill:#4051b5,color:#fff
+```
+
+<small>¹ Only if restoring an existing cluster &nbsp; ² Cilium → CoreDNS → cert-manager → external-secrets</small>
+
+| Stage | Command | Notes |
+| ----- | ------- | ----- |
+| 1. Install Talos | `just bootstrap talos` | |
+| 2. Bootstrap K8s | `just bootstrap kube` | |
+| 3. Fetch kubeconfig | `just bootstrap kubeconfig` | |
+| 4. Wait for nodes | `just bootstrap wait` | |
+| 5. Apply namespaces | `just bootstrap namespaces` | |
+| 6. Import Rook-Ceph | `just bootstrap rook-ceph-external` | Only if restoring |
+| 7. Apply resources | `just bootstrap resources` | |
+| 8. Apply CRDs | `just bootstrap crds` | |
+| 9. Apply core apps | `just bootstrap apps` | Cilium → CoreDNS → cert-manager → external-secrets |
+| 10. Flux takes over | — | Reconciles everything else from Git |
+| 11. Restore databases | `just bootstrap cnpg` | Recovers CNPG clusters from B2 backups |
 
 ## Post-Bootstrap Checks
 
@@ -56,7 +76,11 @@ Check available snapshots first: `just kube volsync-list <ns> <name>`
 
 ## Important Notes
 
+!!! warning "Upgrade order matters"
+    Always upgrade Talos first (`just talos upgrade-node <node>`), then Kubernetes (`just talos upgrade-k8s <version>`). Never the other way around.
+
+!!! danger "Don't manually recreate CNPG clusters"
+    CNPG recovery uses Barman-cloud backups from B2. Use `just bootstrap cnpg` — it handles the restore process.
+
 - **Talos configs are templates** — edit `kubernetes/talos/`, never the rendered output
-- **Upgrade order matters** — Talos first (`just talos upgrade-node <node>`), then Kubernetes (`just talos upgrade-k8s <version>`)
-- **CNPG recovery uses B2 backups** — don't try to manually recreate database clusters
 - **Flux is the source of truth** — once it's running, everything else deploys from Git automatically

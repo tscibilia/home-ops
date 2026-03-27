@@ -23,14 +23,11 @@ Namespace: `default`
 
 ## Config Notes
 
-### Authentik
+??? note "Authentik"
+    The SSO provider for the cluster. Runs its own Postgres database and Dragonfly cache. Uses a cross-namespace ReferenceGrant because other namespaces reference its outpost service (`ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000`) in their SecurityPolicy resources.
 
-The SSO provider for the cluster. Runs its own Postgres database and Dragonfly cache. Uses a cross-namespace ReferenceGrant because other namespaces reference its outpost service (`ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000`) in their SecurityPolicy resources.
+??? note "Immich"
+    Photo management with AI features. Uses the `immich17` CNPG cluster (vectorchord extension for vector search), not the general `pgsql-cluster`. Dragonfly db2 for caching. Intel i915 GPU for machine learning tasks. External access via envoy-external.
 
-### Immich
-
-Photo management with AI features. Uses the `immich17` CNPG cluster (vectorchord extension for vector search), not the general `pgsql-cluster`. Dragonfly db2 for caching. Intel i915 GPU for machine learning tasks. External access via envoy-external.
-
-### Searxng
-
-Metasearch engine using Dragonfly db3 for caching. No external access — internal only.
+??? note "Searxng"
+    Metasearch engine using Dragonfly db3 for caching. No external access — internal only.

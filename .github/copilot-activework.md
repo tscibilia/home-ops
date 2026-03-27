@@ -12,13 +12,13 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## Known Issues
 - etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
 - Not receiving pushover notifications from grafana alerts
-- Docs out of date after docker and k8s restructuring, needs simplification
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Docs out of date & needs simplification - **2026-03-26** (See commit febbc91)
 - ✅ Migrate from synology to truenas - **2026-03-25** (See [#1750](https://github.com/tscibilia/home-ops/issues/1750))
 - ✅ Deployed scrutiny hub/spoke on truenas/k8s - **2026-03-18** (See [#1870](https://github.com/tscibilia/home-ops/pull/1870))
 - ✅ Envoy 1.7.0 broke ext-auth - **2026-03-16** (See [#1619](https://github.com/tscibilia/home-ops/pull/1619))
