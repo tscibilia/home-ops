@@ -54,7 +54,6 @@ spec:
       root_url: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
     unified_alerting:
       enabled: "true"
-      alertmanager_config: "http://prometheus-operated.observability:9093"
   deployment:
     spec:
       replicas: 1

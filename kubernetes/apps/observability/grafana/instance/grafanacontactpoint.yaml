@@ -1,0 +1,41 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/grafana.integreatly.org/grafanacontactpoint_v1beta1.json
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaContactPoint
+metadata:
+  name: pushover
+spec:
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana
+  name: pushover
+  receivers:
+    - type: pushover
+      settings:
+        alertingPriority: 1
+        okPriority: 0
+        alertingSound: gamelan
+        okSound: gamelan
+        title: >-
+          [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
+        message: |-
+          {{- range .Alerts }}
+            {{- if ne .Annotations.description "" }}
+              {{ .Annotations.description }}
+            {{- else if ne .Annotations.summary "" }}
+              {{ .Annotations.summary }}
+            {{- else }}
+              Alert description not available
+            {{- end }}
+          {{- end }}
+      valuesFrom:
+        - targetPath: apiToken
+          valueFrom:
+            secretKeyRef:
+              name: alertmanager-secret
+              key: PUSHOVER_ALERTMANAGER_TOKEN
+        - targetPath: userKey
+          valueFrom:
+            secretKeyRef:
+              name: alertmanager-secret
+              key: PUSHOVER_USER_KEY
