@@ -14,6 +14,8 @@
 kubeconfig
 talosconfig
 # Misc.
+/CLAUDE.md
+node-compile-cache/
 .archived/
 .pytest_cache/
 .claude/*
