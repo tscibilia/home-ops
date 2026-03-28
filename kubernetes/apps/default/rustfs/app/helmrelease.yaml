@@ -1,0 +1,108 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app rustfs
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: rustfs/rustfs
+              tag: 1.0.0-alpha.90@sha256:0725587f6fcca83c1898f321424327d6e6da5e01ea20382905dd258ed5af3be4
+            args: ["--console-enable", "/data"]
+            env:
+              RUSTFS_ADDRESS: ":9000"
+              RUSTFS_CONSOLE_ENABLE: "true"
+              RUSTFS_SERVER_DOMAINS: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
+              RUSTFS_IDENTITY_OPENID_ENABLE: "true"
+              RUSTFS_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth_callback"
+              RUSTFS_IDENTITY_OPENID_SCOPES: "openid,profile,email"
+              RUSTFS_IDENTITY_OPENID_DISPLAY_NAME: "Login with Authentik"
+              TZ: ${TIMEZONE:-UTC}
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: &port 9000
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 6
+              readiness: *probes
+              startup:
+                enabled: false
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: &http 9001
+          s3:
+            port: *port
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *http
+      s3:
+        annotations:
+          gatus.home-operations.com/enabled: "false"
+        hostnames: ["${S3_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /logs
