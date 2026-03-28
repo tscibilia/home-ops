@@ -239,7 +239,7 @@ name: EPHEMERAL
 provisioning:
   diskSelector:
     match: disk.transport == "nvme"
-  maxSize: 256GiB
+  maxSize: 400GiB
 ---
 apiVersion: v1alpha1
 kind: UserVolumeConfig
@@ -247,7 +247,7 @@ name: local-hostpath
 provisioning:
   diskSelector:
     match: disk.transport == "nvme"
-  minSize: 200GiB
+  minSize: 50GiB
 ---
 apiVersion: v1alpha1
 kind: WatchdogTimerConfig
