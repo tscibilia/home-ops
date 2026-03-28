@@ -43,17 +43,9 @@ spec:
                 cpu: 50m
               limits:
                 memory: 1Gi
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+    # Can't set UID/GID because container designed for root
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
     service:
       app:
@@ -98,7 +90,3 @@ spec:
         path: /mnt/nas/data/shares/rahoot
         globalMounts:
           - path: /app/config/quizz
-      tmp:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
