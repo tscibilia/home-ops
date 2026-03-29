@@ -16,8 +16,11 @@ services:
       LLAMA_ARG_HOST: 0.0.0.0
       LLAMA_ARG_PORT: "10000"
       LLAMA_ARG_N_GPU_LAYERS: "99"
-      LLAMA_ARG_CTX_SIZE: "8192"
-      LLAMA_ARG_PARALLEL: "4"
+      LLAMA_ARG_CTX_SIZE: "32768"
+      LLAMA_ARG_PARALLEL: "3"
+      # KV cache quantization flag
+      LLAMA_ARG_CACHE_TYPE_K: q4_0
+      LLAMA_ARG_CACHE_TYPE_V: q4_0
     deploy:
       resources:
         reservations:
