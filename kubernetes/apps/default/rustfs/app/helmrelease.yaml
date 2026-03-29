@@ -77,6 +77,7 @@ spec:
       app:
         annotations:
           gatus.home-operations.com/endpoint: |-
+            url: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/health"
             conditions: ["[STATUS] == 200"]
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
