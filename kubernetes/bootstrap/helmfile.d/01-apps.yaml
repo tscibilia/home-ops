@@ -28,7 +28,7 @@ releases:
           - --namespace=kube-system
           - --server-side
           - --field-manager=kustomize-controller
-          - --filename=../../kubernetes/apps/kube-system/cilium/app/networks.yaml
+          - --filename=../../apps/kube-system/cilium/app/networks.yaml
         events:
           - postsync
         showlogs: true
@@ -74,3 +74,10 @@ releases:
     version: 0.45.1
     values: ['./templates/values.yaml.gotmpl']
     needs: ['flux-system/flux-operator']
+
+  - name: cnpg
+    namespace: database
+    chart: oci://ghcr.io/cloudnative-pg/charts/cloudnative-pg
+    version: 0.27.1
+    values: ['./templates/values.yaml.gotmpl']
+    needs: ['external-secrets/external-secrets']

@@ -8,7 +8,7 @@ controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
 nodes := `talosctl config info -o yaml | yq -e '.nodes | join (" ")'`
 
 [private]
-default: talos kube (kubeconfig "node") wait namespaces resources crds apps kubeconfig
+default: talos kube (kubeconfig "node") wait namespaces resources crds apps cnpg kubeconfig
 
 [doc('Install Talos')]
 talos:
@@ -104,9 +104,19 @@ cnpg:
     just log info "Running stage..." "stage" "$0"
     just check-tools kustomize kubectl
     # Wait for CNPG operator to be ready
-    until kubectl wait --for=condition=available deployment/cloudnative-pg -n cnpg-system --timeout=5s &>/dev/null; do \
+    until kubectl wait --for=condition=available deployment/cnpg-operator-cloudnative-pg -n database --timeout=5s &>/dev/null; do \
         just log info "Waiting for CNPG operator to be ready. Retrying in 5 seconds..." "stage" "$0"; \
         sleep 5; \
+    done
+    # Delete clusters that were created with initdb (Flux race) so recovery can proceed
+    for cluster in pgsql-cluster immich17; do \
+        if kubectl get cluster -n database "$cluster" &>/dev/null; then \
+            bootstrap=$(kubectl get cluster -n database "$cluster" -o jsonpath='{.spec.bootstrap}' 2>/dev/null); \
+            if echo "$bootstrap" | grep -q '"initdb"'; then \
+                just log info "Cluster $cluster exists with initdb bootstrap, deleting for recovery..." "stage" "$0" "cluster" "$cluster"; \
+                kubectl delete cluster -n database "$cluster"; \
+            fi; \
+        fi; \
     done
     # Apply clusters with recovery - if backups don't exist, cluster creation will fail and continue normally via Flux
     if ! kustomize build "{{ bootstrap_dir }}/cnpg" | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f - 2>&1; then \

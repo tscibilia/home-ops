@@ -2,11 +2,12 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: database
 resources:
   # PostgreSQL cluster
-  - ../../kubernetes/apps/database/cnpg/pgsql-cluster
+  - ../../apps/database/cnpg/pgsql-cluster
   # Immich cluster
-  - ../../kubernetes/apps/database/cnpg/immich17
+  - ../../apps/database/cnpg/immich17
 patches:
   # Add recovery for pgsql-cluster
   - patch: |-
