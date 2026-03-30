@@ -8,6 +8,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 - [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - [X] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
   - [ ] RustFS up for testing, finalize with [migration-plan.md](/home/tscibilia/home-ops/.claude/superpowers/plans/2026-03-28-minio-to-rustfs-migration.md)
+  - [ ] RustFS OIDC issue with Authentik [See upstream](https://redirect.github.com/rustfs/rustfs/issues/2049)
 
 ## Known Issues
 - etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
