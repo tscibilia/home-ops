@@ -8,3 +8,12 @@ resources:
   - ./ocirepository.yaml
   - ./pvc.yaml
   - ./grafanaalert.yaml
+configMapGenerator:
+  - name: sonarr-configmap
+    files:
+      - refresh-series.sh=./resources/refresh-series.sh
+      - tag-resolution.sh=./resources/tag-resolution.sh
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
