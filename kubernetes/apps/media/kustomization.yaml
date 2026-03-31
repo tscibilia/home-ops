@@ -10,6 +10,7 @@ resources:
   - ./autobrr/ks.yaml
   - ./bazarr/ks.yaml
   - ./flaresolverr/ks.yaml
+  - ./hometube/ks.yaml
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
   - ./kometa/ks.yaml
@@ -24,4 +25,3 @@ resources:
   - ./sonarr/ks.yaml
   - ./tautulli/ks.yaml
   - ./threadfin/ks.yaml
-  - ./ytptube/ks.yaml
