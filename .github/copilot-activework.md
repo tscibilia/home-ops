@@ -5,7 +5,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] Fix llama.cpp thinking enable/disable - [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
-- [ ] Migrate from ytptube to hometube - (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - [X] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
   - [ ] RustFS up for testing, finalize with [migration-plan.md](/home/tscibilia/home-ops/.claude/superpowers/plans/2026-03-28-minio-to-rustfs-migration.md)
   - [ ] RustFS OIDC issue with Authentik [See upstream](https://redirect.github.com/rustfs/rustfs/issues/2049)
@@ -19,6 +18,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ Migrate from ytptube to hometube - **2026-03-30** (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - ✅ Fix notifications from grafana alerts - **2026-03-27** (See commit [bde878b](https://github.com/tscibilia/home-ops/commit/bde878b))
 - ✅ Docs out of date & needs simplification - **2026-03-26** (See commit [febbc91](https://github.com/tscibilia/home-ops/commit/febbc91))
 - ✅ Migrate from synology to truenas - **2026-03-25** (See [#1750](https://github.com/tscibilia/home-ops/issues/1750))
