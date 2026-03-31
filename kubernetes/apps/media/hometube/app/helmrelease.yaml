@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app ytptube
+  name: &app hometube
 spec:
   chartRef:
     kind: OCIRepository
@@ -17,13 +17,11 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/arabcoders/ytptube
-              tag: "v2.0.1@sha256:1e39653a9b8b1df5a56201590c0cc9bc6866c7a9456cc1486b15966b8caf110f"
+              repository: ghcr.io/egalitarianmonkey/hometube
+              tag: 2.9.1@sha256:936c299ec03204eff4cba36c0040073a5772c4c5ac181d9799ba2d8c98c0cd93
             env:
               TZ: ${TIMEZONE:-UTC}
-              YTP_MAX_WORKERS: 1
-            # Resolve deprecation warning in v0.9.0
-            args: ["/opt/python/bin/python", "/app/app/main.py", "--ytp-process", "--socket-timeout", "30", "--download-archive", "/config/archive.log"]
+              STREAMLIT_SERVER_HEADLESS: true
             probes:
               liveness: &probes
                 enabled: true
@@ -31,7 +29,7 @@ spec:
                 spec: &probeSpec
                   httpGet:
                     path: ${GATUS_PATH}
-                    port: &port 8081
+                    port: &port 8501
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -47,10 +45,10 @@ spec:
                   periodSeconds: 10
             resources:
               requests:
-                cpu: 50m
-                memory: 256Mi
+                cpu: "1"
+                memory: 1024Mi
               limits:
-                memory: 512Mi
+                memory: 2048Mi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -97,6 +95,6 @@ spec:
       downloads:
         type: emptyDir
         globalMounts:
-          - path: /media/downloads
+          - path: /media/downloads/incomplete
       tmp:
         type: emptyDir
