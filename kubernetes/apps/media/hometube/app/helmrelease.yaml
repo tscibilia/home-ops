@@ -21,7 +21,9 @@ spec:
               tag: 2.9.1@sha256:936c299ec03204eff4cba36c0040073a5772c4c5ac181d9799ba2d8c98c0cd93
             env:
               TZ: ${TIMEZONE:-UTC}
-              STREAMLIT_SERVER_HEADLESS: true
+              TMP_DOWNLOAD_FOLDER: /app/media/downloads/incomplete
+              VIDEOS_FOLDER: /app/media/youtube
+              YOUTUBE_COOKIES_FILE_PATH: /app/cookies.txt
             probes:
               liveness: &probes
                 enabled: true
@@ -91,10 +93,18 @@ spec:
         server: truenas.internal
         path: /mnt/nas/data/media
         globalMounts:
-          - path: /media
-      downloads:
-        type: emptyDir
+          - path: /app/media
+      cookies:
+        type: secret
+        name: hometube-secret
         globalMounts:
-          - path: /media/downloads/incomplete
+          - path: /app/cookies.txt
+            subPath: cookies.txt
+            readOnly: true
       tmp:
         type: emptyDir
+        globalMounts:
+          - path: /app/downloads
+            subPath: downloads
+          - path: /app/tmp
+            subPath: tmp
