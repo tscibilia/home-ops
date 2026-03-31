@@ -17,8 +17,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/EgalitarianMonkey/hometube
-              tag: "v2.0.1@sha256:1e39653a9b8b1df5a56201590c0cc9bc6866c7a9456cc1486b15966b8caf110f"
+              repository: ghcr.io/egalitarianmonkey/hometube
+              tag: 2.9.1@sha256:936c299ec03204eff4cba36c0040073a5772c4c5ac181d9799ba2d8c98c0cd93
             env:
               TZ: ${TIMEZONE:-UTC}
               STREAMLIT_SERVER_HEADLESS: true
