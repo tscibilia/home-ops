@@ -91,9 +91,10 @@ All secrets in aKeyless → synced via `ExternalSecret` CRDs. Cluster-wide vars 
 
 ## Networking
 
+- **SSO Auth**: `ext-auth-external` (Authentik forward auth) + `ext-auth-internal` (Authentik forward auth, LAN only) — for apps without native OIDC support
 - **Ingress**: `envoy-external` (cloudflared tunnel) + `envoy-internal` (LAN only)
 - **DNS**: CoreDNS (cluster), unifi-dns (LAN → UniFi), external-dns (Cloudflare)
-- **VPN**: Multus CNI secondary interface (net1, 192.168.99.0/24) — qBittorrent, Prowlarr
+- **VPN**: Multus CNI secondary interface (net1, 192.168.99.0/24) — qBittorrent
 - **Cross-namespace**: Requires `ReferenceGrant` when HTTPRoute/SecurityPolicy references Service in another namespace
 
 ## Conventions
