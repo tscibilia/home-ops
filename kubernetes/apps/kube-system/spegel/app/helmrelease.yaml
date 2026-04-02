@@ -17,6 +17,11 @@ spec:
         hostPort: 29999
     serviceMonitor:
       enabled: true
+    resources:
+      requests:
+        memory: 128Mi
+      limits:
+        memory: 256Mi
     spegel:
       appendMirrors: true
       containerdSock: /run/containerd/containerd.sock
