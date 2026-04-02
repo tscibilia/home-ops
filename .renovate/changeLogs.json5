@@ -32,10 +32,10 @@
       sourceUrl: "https://github.com/kite-org/kite",
     },
     {
-      description: "Changelog URL for PromPP",
-      matchPackageNames: ["/prompp/"],
-      changelogUrl: "https://github.com/deckhouse/prompp/releases",
-      sourceUrl: "https://github.com/deckhouse/prompp",
+      description: "Changelog URL for Kometa",
+      matchPackageNames: ["/kometa/"],
+      changelogUrl: "https://github.com/Kometa-Team/Kometa/releases",
+      sourceUrl: "https://github.com/Kometa-Team/Kometa",
     },
     {
       description: "Changelog URL for Spegel",
