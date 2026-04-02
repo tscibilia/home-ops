@@ -1,5 +1,5 @@
 ---
-name: maintain-docs
+name: update-docs
 description: Use when adding an app to docs, updating docs after a PR or timeframe of changes, or modifying any file in docs/. Triggers on "add X to docs", "update docs", "document X", "reflect changes in docs".
 ---
 

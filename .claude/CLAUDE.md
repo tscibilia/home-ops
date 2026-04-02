@@ -66,11 +66,10 @@ Include via `components: [../../../../components/<name>]` in `ks.yaml`:
 
 ## Storage Classes
 
+Only 3 storage classes exist:
 - **`ceph-ssd`** (default) — Rook Ceph, Samsung SSDs — all persistent workloads
 - **`openebs-hostpath`** — local node storage — CNPG clusters, victoria-logs, actions-runner
 - **`nfs-media`** — external NFS — media library
-
-No `ceph-rbd`, no CephFS, no object storage.
 
 ## Shared Infrastructure
 
@@ -106,18 +105,18 @@ All secrets in aKeyless → synced via `ExternalSecret` CRDs. Cluster-wide vars 
 
 ## Modifying Apps
 
-1. New app: copy existing, update anchors and namespace
+1. New app: use the skill `add-app`
 2. Secrets: add to aKeyless → reference in `externalsecret.yaml`
 3. Test before push: `just kube apply-ks <ns> <app>` (flux-local validation)
 4. Force sync after push: `just kube ks-reconcile <ns> <app>`
 5. `kubectl edit` changes are ephemeral — Flux resets them
+6. Update docs: use skill `update-docs`, triggered by "add X to docs", "update docs", "reflect changes in docs"
 
 ## Troubleshooting
 
 ### Flux / GitOps
-- `kubectl edit` changes are ephemeral — Flux resets them. Always edit Git, then reconcile.
+- `kubectl edit` changes are ephemeral — Flux resets them. Always edit, `git add <dir/> && git commit -m`. Flux will auto-reconcile.
 - Check Kustomization failures: `eval "$(mise activate zsh)" && kubectl get ks -A | grep -v True`
-- Force reconcile after a push: `just kube ks-reconcile <ns> <app>`
 - If a HelmRelease is stuck in a bad state, delete it and let Flux recreate: `kubectl delete hr <name> -n <ns>`
 
 ### Talos
@@ -144,7 +143,7 @@ All secrets in aKeyless → synced via `ExternalSecret` CRDs. Cluster-wide vars 
 
 ## Active Work & Known Issues
 
-Check [`.github/copilot-activework.md`](.github/copilot-activework.md) at the start of any task for:
+Check [`../ACTIVE-WIP.md`](../ACTIVE-WIP.md) at the start of any task for:
 - **In Progress** — ongoing work to avoid conflicts or duplication
 - **Known Issues** — active bugs/limitations to be aware of
 - **Blocked** — items waiting on external dependencies
