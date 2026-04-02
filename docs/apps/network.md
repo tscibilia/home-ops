@@ -11,7 +11,6 @@ Namespace: `network`
 | multus         | CNI for secondary network interfaces (VPN VLAN)        |
 | tailscale      | Mesh VPN access to the cluster                         |
 | certificates   | Shared TLS certificate resources                       |
-| proxy          | Reverse proxy rules, depends on envoy-gateway-config   |
 | echo           | Test endpoint for debugging ingress, external access   |
 
 ## Config Notes

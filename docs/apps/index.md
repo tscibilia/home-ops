@@ -33,5 +33,5 @@ Include via `components: [../../../../components/<name>]` in `ks.yaml`.
 | [database](database.md)                    | 3    | CNPG clusters, Dragonfly, pgAdmin          |
 | [home-automation](home-automation.md)      | 5    | Home Assistant, MQTT, ESPHome, Z-Wave      |
 | [observability](observability.md)          | 14   | Prometheus, Grafana, logs, alerting        |
-| [network](network.md)                      | 9    | Envoy, Cloudflared, DNS, Tailscale         |
+| [network](network.md)                      | 8    | Envoy, Cloudflared, DNS, Tailscale         |
 | [system](system.md)                        | 19   | Cilium, Flux, Rook-Ceph, cert-manager     |
