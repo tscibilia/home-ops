@@ -21,6 +21,13 @@ services:
       # KV cache quantization flag
       LLAMA_ARG_CACHE_TYPE_K: q4_0
       LLAMA_ARG_CACHE_TYPE_V: q4_0
+      # Unsloth recommended sampling params for Qwen3.5-35B reasoning tasks
+      LLAMA_ARG_TEMP: "1.0"
+      LLAMA_ARG_TOP_P: "0.95"
+      LLAMA_ARG_TOP_K: "20"
+      LLAMA_ARG_MIN_P: "0.00"
+      # Disable thinking mode (set to true to enable)
+      LLAMA_ARG_CHAT_TEMPLATE_KWARGS: '{"enable_thinking":false}'
     deploy:
       resources:
         reservations:
