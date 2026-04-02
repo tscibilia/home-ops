@@ -16,6 +16,7 @@ Namespace: `default`
 | pairdrop     | —         |                                                    |
 | radicale     | ceph-ssd  | CalDAV/CardDAV server, external access, volsync backup |
 | rclone       | —         | NFS backup scaler via keda                         |
+| rustfs       | ceph-ssd  | S3-compatible object storage, external access, native OIDC, volsync backup |
 | searxng      | ceph-ssd  | Dragonfly (db3), volsync backup                    |
 | spoolman     | ceph-ssd  | ext-auth-internal, volsync backup                  |
 | thelounge    | ceph-ssd  | IRC client, volsync backup                         |
@@ -28,6 +29,9 @@ Namespace: `default`
 
 ??? note "Immich"
     Photo management with AI features. Uses the `immich17` CNPG cluster (vectorchord extension for vector search), not the general `pgsql-cluster`. Dragonfly db2 for caching. Intel i915 GPU for machine learning tasks. External access via envoy-external.
+
+??? note "RustFS"
+    S3-compatible object storage (MinIO alternative). Exposes two routes: the web console at `rustfs.${SECRET_DOMAIN}` (port 9001) and the S3 API at `r3.${SECRET_DOMAIN}` (port 9000). Both are external via envoy-external. Native OIDC login via Authentik.
 
 ??? note "Searxng"
     Metasearch engine using Dragonfly db3 for caching. No external access — internal only.

@@ -4,10 +4,13 @@ All apps are deployed via Flux CD. Each has a `ks.yaml` entry point in `kubernet
 
 ## Adding an App
 
-1. Copy an existing app directory, update the YAML anchor (`name: &app`) and namespace
-2. Add secrets to aKeyless → reference them in `externalsecret.yaml`
-3. Validate locally: `just kube apply-ks <ns> <app>`
-4. Push and reconcile: `just kube ks-reconcile <ns> <app>`
+Use the `/add-app` AI skill — it interactively scaffolds all manifests from scratch.
+
+1. Run `/add-app` in Claude Code — it prompts for app name, namespace, helm chart type, ingress, auth, and optional features (VolSync, CNPG, KEDA, Gatus), then generates all files
+2. Add secrets to aKeyless at the path referenced in `externalsecret.yaml`
+3. Fill in `{IMAGE_REPO}` and `{IMAGE_TAG}` in `helmrelease.yaml` (add Renovate annotation)
+4. Validate locally: `just kube apply-ks <ns> <app>`
+5. Push and reconcile: `just kube ks-reconcile <ns> <app>`
 
 Reusable components live in `kubernetes/components/`:
 
@@ -25,7 +28,7 @@ Include via `components: [../../../../components/<name>]` in `ks.yaml`.
 
 | Namespace                                  | Apps | Purpose                                    |
 | ------------------------------------------ | ---- | ------------------------------------------ |
-| [default](default.md)                      | 16   | SSO, dashboard, photos, recipes, passwords |
+| [default](default.md)                      | 17   | SSO, dashboard, photos, recipes, passwords |
 | [media](media.md)                          | 18   | Plex, *arr stack, downloads                |
 | [database](database.md)                    | 3    | CNPG clusters, Dragonfly, pgAdmin          |
 | [home-automation](home-automation.md)      | 5    | Home Assistant, MQTT, ESPHome, Z-Wave      |
