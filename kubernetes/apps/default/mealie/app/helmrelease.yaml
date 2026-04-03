@@ -65,8 +65,10 @@ spec:
               OIDC_REMEMBER_ME: "true"
               OIDC_USER_CLAIM: email
               # OpenAI Values
-              OPENAI_MODEL: gpt-4o-mini
-              OPENAI_ENABLE_IMAGE_SERVICES: "false" #creating recipes via image
+              OPENAI_BASE_URL: "http://ai3090.internal:10000/v1"
+              OPENAI_API_KEY: "sk-no-key"
+              OPENAI_MODEL: gemma-4-26B-A4B.gguf
+              OPENAI_ENABLE_IMAGE_SERVICES: "true" #creating recipes via image
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"

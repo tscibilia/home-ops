@@ -11,20 +11,20 @@ services:
     volumes:
       - /home/ubuntu/models:/models:ro
     environment:
-      # Update LLAMA_ARG_MODEL when changing models
-      LLAMA_ARG_MODEL: /models/Gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf
       LLAMA_ARG_HOST: 0.0.0.0
       LLAMA_ARG_PORT: "10000"
       LLAMA_ARG_N_GPU_LAYERS: "99"
       LLAMA_ARG_CTX_SIZE: "32768"
       LLAMA_ARG_PARALLEL: "3"
-      # KV cache quantization flag
-      LLAMA_ARG_CACHE_TYPE_K: q4_0
-      LLAMA_ARG_CACHE_TYPE_V: q4_0
-      # Unsloth recommended sampling params for Gemma-4-26B reasoning tasks
+      # Update when changing models and Unsloth recommended sampling params
+      LLAMA_ARG_MODEL: /models/gemma-4-26B-A4B-it-UD-Q5_K_XL-GGUF/gemma-4-26B-A4B.gguf
+      LLAMA_ARG_MMPROJ: /models/gemma-4-26B-A4B-it-UD-Q5_K_XL-GGUF/mmproj-BF16.gguf
       LLAMA_ARG_TEMP: "1.0"
       LLAMA_ARG_TOP_P: "0.95"
       LLAMA_ARG_TOP_K: "64"
+      # KV cache quantization flag
+      LLAMA_ARG_CACHE_TYPE_K: q4_0
+      LLAMA_ARG_CACHE_TYPE_V: q4_0
       # Disable thinking mode (set to true to enable)
       # LLAMA_ARG_CHAT_TEMPLATE_KWARGS: '{"enable_thinking":false}'
     deploy:
