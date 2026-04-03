@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/home/tscibilia/.claude/plugins/marketplaces/context-mode/hooks/pretooluse.mjs\""
+            "command": "node \"/home/tscibilia/.claude/plugins/cache/context-mode/context-mode/1.0.28/hooks/pretooluse.mjs\""
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/home/tscibilia/.claude/plugins/marketplaces/context-mode/hooks/posttooluse.mjs\""
+            "command": "node \"/home/tscibilia/.claude/plugins/cache/context-mode/context-mode/1.0.28/hooks/posttooluse.mjs\""
           }
         ]
       }
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/home/tscibilia/.claude/plugins/marketplaces/context-mode/hooks/precompact.mjs\""
+            "command": "node \"/home/tscibilia/.claude/plugins/cache/context-mode/context-mode/1.0.28/hooks/precompact.mjs\""
           }
         ]
       }
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/home/tscibilia/.claude/plugins/marketplaces/context-mode/hooks/sessionstart.mjs\""
+            "command": "node \"/home/tscibilia/.claude/plugins/cache/context-mode/context-mode/1.0.28/hooks/sessionstart.mjs\""
           }
         ]
       }

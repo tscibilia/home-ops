@@ -4,7 +4,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [ ] Fix llama.cpp thinking enable/disable - [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
 - [X] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
   - [ ] RustFS up for testing, finalize with [migration-plan.md](/home/tscibilia/home-ops/.claude/superpowers/plans/2026-03-28-minio-to-rustfs-migration.md)
   - [ ] RustFS OIDC issue with Authentik [See upstream](https://redirect.github.com/rustfs/rustfs/issues/2049)
@@ -51,6 +50,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 - ✅ HTTPRoute instead of Ingress - **2025-11-13** (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
 ## Unresolved/Closed
+- ⛔ Qwen3 thinking enable/disable - **2026-04-03 Not Planned, changed model** [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
 - ⛔ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
 - ⛔ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
 - ⛔ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**
