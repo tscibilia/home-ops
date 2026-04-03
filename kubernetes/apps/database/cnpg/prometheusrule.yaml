@@ -83,30 +83,13 @@ spec:
           for: 2m
           labels:
             severity: critical
-        - alert: CnpgBackupFailed
-          annotations:
-            description: Cluster {{ $labels.cluster }} last backup failed more recently than the last successful backup
-            summary: CNPG barman backup is failing
-          expr: |-
-            cnpg_collector_last_failed_backup_timestamp > cnpg_collector_last_available_backup_timestamp
-          for: 5m
-          labels:
-            severity: critical
-        - alert: CnpgNoRecentBackup
-          annotations:
-            description: Cluster {{ $labels.cluster }} has not completed a successful backup in over 26 hours
-            summary: CNPG barman backup is overdue
-          expr: |-
-            (time() - cnpg_collector_last_available_backup_timestamp) > 43200
-          for: 5m
-          labels:
-            severity: warning
+        # Removed NoWALPluginActivity & LastFailedArchiveTime alert, barman-cloud plugin doesn't support them
         - alert: CnpgWALArchivingFailing
           annotations:
-            description: Cluster {{ $labels.cluster }} pod {{ $labels.pod }} has WAL files failing to archive
+            description: Cluster {{ $labels.cluster }} has {{ $value }} WAL files queued and not archiving
             summary: CNPG WAL archiving is failing
           expr: |-
-            cnpg_collector_pg_wal_archive_status{value="fail"} > 0
-          for: 5m
+            cnpg_collector_pg_wal_archive_status{value="ready"} > 5
+          for: 10m
           labels:
             severity: critical
