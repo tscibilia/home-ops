@@ -1,7 +1,7 @@
 ---
 services:
   llama-server:
-    image: ghcr.io/ggml-org/llama.cpp:server-cuda-b8606@sha256:2e65e1ac2d7d0428342e0004537fd81b964d744fc417387fc393b41308f1e643
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda@sha256:33372a113cdf1c458fc04dab5f13b0c1c566e3de8f3c73c4c782133eba952c09
     container_name: llama-server
     restart: unless-stopped
     networks:
@@ -12,7 +12,7 @@ services:
       - /home/ubuntu/models:/models:ro
     environment:
       # Update LLAMA_ARG_MODEL when changing models
-      LLAMA_ARG_MODEL: /models/Qwen3.5-35B-A3B-UD-Q4_K_XL.gguf
+      LLAMA_ARG_MODEL: /models/Gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf
       LLAMA_ARG_HOST: 0.0.0.0
       LLAMA_ARG_PORT: "10000"
       LLAMA_ARG_N_GPU_LAYERS: "99"
@@ -21,13 +21,12 @@ services:
       # KV cache quantization flag
       LLAMA_ARG_CACHE_TYPE_K: q4_0
       LLAMA_ARG_CACHE_TYPE_V: q4_0
-      # Unsloth recommended sampling params for Qwen3.5-35B reasoning tasks
+      # Unsloth recommended sampling params for Gemma-4-26B reasoning tasks
       LLAMA_ARG_TEMP: "1.0"
       LLAMA_ARG_TOP_P: "0.95"
-      LLAMA_ARG_TOP_K: "20"
-      LLAMA_ARG_MIN_P: "0.00"
+      LLAMA_ARG_TOP_K: "64"
       # Disable thinking mode (set to true to enable)
-      LLAMA_ARG_CHAT_TEMPLATE_KWARGS: '{"enable_thinking":false}'
+      # LLAMA_ARG_CHAT_TEMPLATE_KWARGS: '{"enable_thinking":false}'
     deploy:
       resources:
         reservations:
