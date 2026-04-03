@@ -62,7 +62,7 @@ spec:
               <<: *env
               RCLONE_TIMEOUT: 1h
               ARG: | # TODO: so much jank over k8s doing auto shell escaping on args and me wanting to not repeat the command line
-                sync/sync srcFs='/data/kubernetes/volsync' dstFs='b2-volsync:t0mKube/volsync' _config='{"Progress": true}'
+                sync/sync srcFs='/data/kubernetes/volsync' dstFs='b2-volsync:${AWS_VOLSYNC_BUCKET}' _config='{"Progress": true}'
             envFrom: *envFrom
             securityContext: *sc
         pod:
