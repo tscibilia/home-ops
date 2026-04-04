@@ -144,6 +144,12 @@ spec:
         path: /mnt/nas/data/users
         globalMounts:
           - path: /mnt/home
+      backups:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/backups
+        globalMounts:
+          - path: /mnt/backups
       docs:
         type: nfs
         server: truenas.internal
