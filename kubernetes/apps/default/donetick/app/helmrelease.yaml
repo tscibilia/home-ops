@@ -84,6 +84,12 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+            filters:
+              - type: ResponseHeaderModifier
+                responseHeaderModifier:
+                  add:
+                    - name: Cache-Control
+                      value: "no-cache, no-transform"
     persistence:
       config:
         existingClaim: *app
