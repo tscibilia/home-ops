@@ -32,6 +32,7 @@ spec:
               SELF_HOSTED: "true"
               REDIS_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/4
               CHROME_PATH: /usr/bin/chromium-browser
+              CHROMIUM_USER_FLAGS: "--disable-features=IOUring"
               CRON_ENABLED: "true"
               CRON_INTERVAL_HOURS: 12
               NODE_ENV: production
@@ -68,16 +69,10 @@ spec:
                   failureThreshold: 30
                   periodSeconds: 10
             securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: [ALL] }
+              privileged: true
     defaultPodOptions:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: Unconfined }
     service:
       app:
         controller: *app
@@ -100,11 +95,24 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+    configMaps:
+      crashpad-noop:
+        data:
+          chrome_crashpad_handler: |
+            #!/bin/sh
+            exit 0
     persistence:
       data:
         existingClaim: *app
         globalMounts:
           - path: /app/data
+      crashpad-noop:
+        type: configMap
+        identifier: crashpad-noop
+        defaultMode: 0755
+        globalMounts:
+          - path: /usr/lib/chromium/chrome_crashpad_handler
+            subPath: chrome_crashpad_handler
       tmpfs:
         type: emptyDir
         globalMounts:
