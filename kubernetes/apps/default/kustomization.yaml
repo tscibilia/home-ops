@@ -9,8 +9,6 @@ resources:
   - ./namespace.yaml
   - ./actual/ks.yaml
   - ./authentik/ks.yaml
-  - ./donetick/ks.yaml
-  - ./fairtrail/ks.yaml
   - ./filebrowser/ks.yaml
   - ./homebox/ks.yaml
   - ./homepage/ks.yaml

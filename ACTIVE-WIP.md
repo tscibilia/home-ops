@@ -9,7 +9,8 @@ This document is intended to supplement and connect with GitHub issues and meant
   - [ ] RustFS OIDC issue with Authentik [See upstream](https://redirect.github.com/rustfs/rustfs/issues/2049)
 
 ## Known Issues
-- Investigating donetick SSE realtime disconnects through Cloudflare tunnel
+- Fairtrail: Chromium 146 crashes even when run as root (Alpine or Talos issue?)
+- Donetick: SSE realtime disconnects through Cloudflare tunnel
 - etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
 
 ## Blocked
