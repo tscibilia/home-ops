@@ -9,14 +9,15 @@ This document is intended to supplement and connect with GitHub issues and meant
   - [ ] RustFS OIDC issue with Authentik [See upstream](https://redirect.github.com/rustfs/rustfs/issues/2049)
 
 ## Known Issues
+- Investigating donetick SSE realtime disconnects through Cloudflare tunnel
 - etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
-- NFS `fileid` error w/ volsync - (See [#1887](https://github.com/tscibilia/home-ops/issues/1887))
 
 ## Blocked
 `- Task name - blocking factor (waiting for X)`
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ NFS `fileid` error w/ volsync - **2026-04-03** (See [#1887](https://github.com/tscibilia/home-ops/issues/1887))
 - ✅ Migrate from ytptube to hometube - **2026-03-30** (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - ✅ Fix notifications from grafana alerts - **2026-03-27** (See commit [bde878b](https://github.com/tscibilia/home-ops/commit/bde878b))
 - ✅ Docs out of date & needs simplification - **2026-03-26** (See commit [febbc91](https://github.com/tscibilia/home-ops/commit/febbc91))
