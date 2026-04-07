@@ -110,5 +110,9 @@ spec:
         globalMounts:
           - path: /home/node/.npm-global
             subPath: npm-global
+          - path: /home/node/.npm
+            subPath: npm-cache
+          - path: /app/apps/web/.next/cache
+            subPath: next-cache
           - path: /tmp
             subPath: tmp
