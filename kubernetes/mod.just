@@ -68,21 +68,21 @@ sync-ks ns name:
 sync-all-es:
     just check-tools kubectl
     kubectl get es --no-headers -A | while read -r ns name _; do \
-        just k8s sync-es "$ns" "$name"; \
+        just kube sync-es "$ns" "$name"; \
     done
 
 [doc('Sync all Flux HelmReleases')]
 sync-all-hr:
     just check-tools kubectl
     kubectl get hr --no-headers -A | while read -r ns name _; do \
-        just k8s sync-hr "$ns" "$name"; \
+        just kube sync-hr "$ns" "$name"; \
     done
 
 [doc('Sync all Flux Kustomizations')]
 sync-all-ks:
     just check-tools kubectl
     kubectl get ks --no-headers -A | while read -r ns name _; do \
-        just k8s sync-ks "$ns" "$name"; \
+        just kube sync-ks "$ns" "$name"; \
     done
 
 [doc('Restart all failed Flux Kustomizations')]
