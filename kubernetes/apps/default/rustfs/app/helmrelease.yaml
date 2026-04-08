@@ -22,13 +22,17 @@ spec:
             args: ["--console-enable", "/data"]
             env:
               RUSTFS_ADDRESS: ":9000"
+              RUSTFS_CONSOLE_ADDRESS: ":9001"
               RUSTFS_CONSOLE_ENABLE: "true"
               RUSTFS_BROWSER_REDIRECT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               RUSTFS_SERVER_DOMAINS: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
               RUSTFS_IDENTITY_OPENID_ENABLE: "true"
-              RUSTFS_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth_callback"
+              RUSTFS_IDENTITY_OPENID_CONFIG_URL: "https://auth.${SECRET_DOMAIN}/application/o/${GATUS_SUBDOMAIN}/"
+              RUSTFS_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/rustfs/admin/v3/oidc/callback/default"
+              RUSTFS_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC: "off"
               RUSTFS_IDENTITY_OPENID_SCOPES: "openid,profile,email"
-              RUSTFS_IDENTITY_OPENID_DISPLAY_NAME: "Login with Authentik"
+              RUSTFS_IDENTITY_OPENID_CLAIM_NAME: "groups"
+              RUSTFS_IDENTITY_OPENID_DISPLAY_NAME: "Authentik"
               TZ: ${TIMEZONE:-UTC}
             envFrom:
               - secretRef:
@@ -61,9 +65,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 10001
-        runAsGroup: 10001
-        fsGroup: 10001
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
     service:
@@ -76,15 +80,18 @@ spec:
             port: *port
     route:
       app:
-        annotations:
-          gatus.home-operations.com/endpoint: |-
-            url: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/health"
-            conditions: ["[STATUS] == 200"]
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-external
             namespace: network
         rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /rustfs/admin/
+            backendRefs:
+              - identifier: app
+                port: *port
           - backendRefs:
               - identifier: app
                 port: *http
