@@ -23,6 +23,7 @@ spec:
             env:
               RUSTFS_ADDRESS: ":9000"
               RUSTFS_CONSOLE_ENABLE: "true"
+              RUSTFS_BROWSER_REDIRECT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               RUSTFS_SERVER_DOMAINS: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
               RUSTFS_IDENTITY_OPENID_ENABLE: "true"
               RUSTFS_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth_callback"
