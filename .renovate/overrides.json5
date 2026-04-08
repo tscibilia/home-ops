@@ -17,7 +17,14 @@
       description: "Loose versioning for non-semver packages",
       matchDatasources: ["docker"],
       versioning: "loose",
-      matchPackagePatterns: ["changedetection", "plex", "rustfs"],
+      matchPackagePatterns: ["changedetection", "plex"],
+    },
+    {
+      description: "Loose versioning for RustFS excluding -glibc tags",
+      matchDatasources: ["docker"],
+      matchPackagePatterns: ["rustfs/rustfs"],
+      versioning: "loose",
+      allowedVersions: "/^\\d+\\.\\d+\\.\\d+-alpha\\.\\d+$/",
     },
     {
       description: "Cal-commit versioning for SearXNG (weekly updates)",
