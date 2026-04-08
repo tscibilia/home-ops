@@ -4,9 +4,6 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [X] Migrate from minio to RustFS - (See [#842](https://github.com/tscibilia/home-ops/issues/842)) - **[Pending Milestone](https://github.com/tscibilia/home-ops/milestone/1)**
-  - [X] RustFS up for testing, finalize with [migration-plan.md](/home/tscibilia/home-ops/.claude/superpowers/plans/2026-03-28-minio-to-rustfs-migration.md)
-  - [ ] RustFS OIDC issue with Authentik [See upstream](https://redirect.github.com/rustfs/rustfs/issues/2049)
 
 ## Known Issues
 - Fairtrail: Chromium 146 crashes even when run as root (Alpine or Talos issue?)
@@ -18,6 +15,8 @@ This document is intended to supplement and connect with GitHub issues and meant
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ ESO remapping/reorganization - **2026-04-07** (See [#2032](https://github.com/tscibilia/home-ops/pull/2032))
+- ✅ Migrate minio -> RustFS - **2026-04-07** (See [#842](https://github.com/tscibilia/home-ops/issues/842))
 - ✅ NFS `fileid` error w/ volsync - **2026-04-03** (See [#1887](https://github.com/tscibilia/home-ops/issues/1887))
 - ✅ Migrate from ytptube to hometube - **2026-03-30** (See [#849](https://github.com/tscibilia/home-ops/issues/849))
 - ✅ Fix notifications from grafana alerts - **2026-03-27** (See commit [bde878b](https://github.com/tscibilia/home-ops/commit/bde878b))

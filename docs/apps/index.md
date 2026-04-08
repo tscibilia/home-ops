@@ -28,7 +28,7 @@ Include via `components: [../../../../components/<name>]` in `ks.yaml`.
 
 | Namespace                                  | Apps | Purpose                                    |
 | ------------------------------------------ | ---- | ------------------------------------------ |
-| [default](default.md)                      | 17   | SSO, dashboard, photos, recipes, passwords |
+| [default](default.md)                      | 16   | SSO, dashboard, photos, recipes, passwords |
 | [media](media.md)                          | 18   | Plex, *arr stack, downloads                |
 | [database](database.md)                    | 3    | CNPG clusters, Dragonfly, pgAdmin          |
 | [home-automation](home-automation.md)      | 5    | Home Assistant, MQTT, ESPHome, Z-Wave      |

@@ -82,7 +82,7 @@ cert-manager handles TLS via Let's Encrypt with DNS-01 challenges through Cloudf
 | openebs-hostpath  | Local node storage       | CNPG clusters, victoria-logs, actions-runner |
 | nfs-media         | TrueNAS NFS              | Media libraries                            |
 
-!!! info "No ceph-rbd, no CephFS, no object storage"
+!!! info "S3-compatible object storage via RustFS (ceph-ssd backed). No ceph-rbd, no CephFS."
 
 ### Backups
 
