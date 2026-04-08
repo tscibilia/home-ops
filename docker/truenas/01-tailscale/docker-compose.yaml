@@ -3,7 +3,7 @@ version: "3.8"
 
 services:
   tailscale:
-    image: tailscale/tailscale:v1.94.2@sha256:95e528798bebe75f39b10e74e7051cf51188ee615934f232ba7ad06a3390ffa1
+    image: tailscale/tailscale:v1.96.5@sha256:dbeff02d2337344b351afac203427218c4d0a06c43fc10a865184063498472a6
     container_name: tailscale
     restart: unless-stopped
     network_mode: host
