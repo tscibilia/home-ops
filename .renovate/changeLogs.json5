@@ -56,6 +56,11 @@
       sourceUrl: "https://github.com/VictoriaMetrics/helm-charts",
     },
     {
+      description: "Changelog URL for Plex",
+      matchPackageNames: ["/plex/"],
+      changelogUrl: "https://forums.plex.tv/t/plex-media-server/30447/last",
+    },
+    {
       description: "Changelog URL for VictoriaMetrics Logs",
       matchPackageNames: ["/victoria-logs-single/"],
       changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-logs-single/CHANGELOG.md",
