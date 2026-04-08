@@ -104,6 +104,14 @@
       minimumGroupSize: 2,
     },
     {
+      description: "Tailscale Group",
+      groupName: "tailscale",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/tailscale/"],
+      group: {commitMessageTopic: "{{{groupName}}} group"},
+      minimumGroupSize: 2,
+    },
+    {
       description: "Talos Group",
       groupName: "talos",
       matchDatasources: ["docker", "aqua"],
