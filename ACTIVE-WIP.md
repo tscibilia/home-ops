@@ -6,6 +6,7 @@ This document is intended to supplement and connect with GitHub issues and meant
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 
 ## Known Issues
+- RustFS: authentik-Admin group -> rustfsAdmin, Plex Users need a RustFS group policy for access
 - Fairtrail: Chromium 146 crashes even when run as root (Alpine or Talos issue?)
 - Donetick: SSE realtime disconnects through Cloudflare tunnel
 - etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
