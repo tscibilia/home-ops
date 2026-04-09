@@ -1,0 +1,87 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app greenlight
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tscibilia/greenlight
+              tag: 1.0.1@sha256:61783a6c4925179156a2ad8165174067021be3b0c6bb80f446b189fe401aee0f
+            env:
+              TZ: ${TIMEZONE:-UTC}
+              PORT: &port 80
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 128Mi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+        annotations:
+          gatus.home-operations.com/enabled: "true"
+          gatus.home-operations.com/endpoint: |
+            group: "network"
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        annotations:
+          gatus.home-operations.com/enabled: "false"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      tmp:
+        type: emptyDir
