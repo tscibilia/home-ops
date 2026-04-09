@@ -85,13 +85,6 @@ spec:
           - name: envoy-external
             namespace: network
         rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /rustfs/admin/
-            backendRefs:
-              - identifier: app
-                port: *port
           - backendRefs:
               - identifier: app
                 port: *http
@@ -106,12 +99,6 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-            filters:
-              - type: RequestHeaderModifier
-                requestHeaderModifier:
-                  set:
-                    - name: Accept-Encoding
-                      value: identity
     persistence:
       data:
         existingClaim: *app
