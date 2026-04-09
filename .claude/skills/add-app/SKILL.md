@@ -57,6 +57,7 @@ Use `AskUserQuestion` to collect the following. Ask up to 4 questions per call, 
 
 9. **Config style** (only if app-template):
    - `Inline env vars only` (Recommended) — all config via env vars in HelmRelease
+   - `ESO env vars` — ExternalSecret that maps aKeyless keys to env vars injected via envFrom secretRef (no configMap needed)
    - `ConfigMapGenerator + ESO` — external config file templated with secrets (like immich pattern: configMapGenerator in kustomization.yaml + kustomizeconfig.yaml + ExternalSecret templateFrom)
 
 ### Phase 2 — Research Before Generating
@@ -342,7 +343,7 @@ spec:
 
 **Rules for the HelmRelease:**
 - Only include `initContainers` block if CNPG is selected.
-- Only include `envFrom` secretRef if the app has an ExternalSecret.
+- Only include `envFrom` secretRef if the app has an ExternalSecret (i.e. config style is "ESO env vars", "ConfigMapGenerator + ESO", or any feature that requires secrets like CNPG or OIDC).
 - Only include `route` section if ingress is not "None".
 - Use `envoy-internal` or `envoy-external` based on ingress selection.
 - If GATUS_SUBDOMAIN is custom (differs from app name): use `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}` in hostnames.
