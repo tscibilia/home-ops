@@ -33,10 +33,10 @@ spec:
             patch: |-
               - op: add
                 path: /spec/template/spec/containers/0/args/-
-                value: --concurrent=5
+                value: --concurrent=10
               - op: add
                 path: /spec/template/spec/containers/0/args/-
-                value: --requeue-dependency=30s
+                value: --requeue-dependency=5s
               - op: add
                 path: /spec/template/spec/containers/0/args/-
                 value: --kube-api-qps=500
@@ -67,7 +67,7 @@ spec:
             patch: |-
               - op: add
                 path: /spec/template/spec/containers/0/args/-
-                value: --concurrent=10
+                value: --concurrent=20
               - op: replace
                 path: /spec/template/spec/volumes/0
                 value:
@@ -113,11 +113,11 @@ spec:
             target:
               kind: Deployment
               name: helm-controller
-          - # Disable chart digest tracking (https://github.com/fluxcd/helm-controller/pull/1212)
+          - # Retry on failure and disable chart digest tracking (https://github.com/fluxcd/helm-controller/pull/1212)
             patch: |-
               - op: add
                 path: /spec/template/spec/containers/0/args/-
-                value: --feature-gates=DisableChartDigestTracking=true
+                value: --feature-gates=DefaultToRetryOnFailure=true,DisableChartDigestTracking=true
             target:
               kind: Deployment
               name: helm-controller
