@@ -21,7 +21,11 @@ spec:
               tag: 1.0.1@sha256:61783a6c4925179156a2ad8165174067021be3b0c6bb80f446b189fe401aee0f
             env:
               TZ: ${TIMEZONE:-UTC}
+              UNIFI_HOST: "https://192.168.1.1"
               PORT: &port 80
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             resources:
               requests:
                 cpu: 10m
