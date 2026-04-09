@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/greenlight
-              tag: 1.0.1@sha256:61783a6c4925179156a2ad8165174067021be3b0c6bb80f446b189fe401aee0f
+              tag: 1.1.0@sha256:48689e7125057dd38fb8880f39468de409c4e487f98764090a88ec34a10aa2f6
             env:
               TZ: ${TIMEZONE:-UTC}
               UNIFI_HOST: "https://192.168.1.1"
