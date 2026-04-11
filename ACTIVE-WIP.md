@@ -1,6 +1,6 @@
 # Active Work & Known Issues
 
-This document is intended to supplement and connect with GitHub issues and meant to provide AI agents with context regarding planned revisions and active development on the project to alleviate chat context memory issues. This document should follow the following format and should like to the GitHub issue where applicable:
+> This document is intended to supplement and connect with GitHub issues and meant to provide AI agents with context regarding planned revisions and active development on the project to alleviate chat context memory issues. This document should follow the following format and should like to the GitHub issue where applicable:
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
