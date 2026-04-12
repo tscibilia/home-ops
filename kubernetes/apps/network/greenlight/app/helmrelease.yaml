@@ -73,7 +73,7 @@ spec:
         annotations:
           gatus.home-operations.com/enabled: "true"
           gatus.home-operations.com/endpoint: |
-            group: "network"
+            group: "services"
     route:
       app:
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
