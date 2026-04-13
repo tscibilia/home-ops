@@ -17,8 +17,8 @@ services:
       LLAMA_ARG_CTX_SIZE: "32768"
       LLAMA_ARG_PARALLEL: "3"
       # Update when changing models and Unsloth recommended sampling params
-      LLAMA_ARG_MODEL: /models/gemma-4-31B-it-UD-Q5_K_M-GGUF/gemma-4-31B.gguf
-      LLAMA_ARG_MMPROJ: /models/gemma-4-31B-it-UD-Q5_K_M-GGUF/mmproj-BF16.gguf
+      LLAMA_ARG_MODEL: /models/gemma-4-26B-A4B-it-UD-Q5_K_XL-GGUF/gemma-4-26B-A4B.gguf
+      LLAMA_ARG_MMPROJ: /models/gemma-4-26B-A4B-it-UD-Q5_K_XL-GGUF/mmproj-BF16.gguf
       LLAMA_ARG_TEMP: "1.0"
       LLAMA_ARG_TOP_P: "0.95"
       LLAMA_ARG_TOP_K: "64"
