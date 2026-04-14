@@ -57,7 +57,7 @@ spec:
         RESTIC_PASSWORD: "{{ .RESTIC_PASSWORD }}"
   dataFrom:
     - extract:
-        key: /aws-creds
+        key: /kubernetes/volsync
 ---
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationDestination
