@@ -1,0 +1,98 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tududi
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: docker.io/chrisvel/tududi
+              tag: 1.0.0@sha256:ad3618ad09e12d192bbda45d6957fbe3791c7b7f6d063f9b1f7905e3dbc4d840
+            env:
+              TZ: "${TIMEZONE:-UTC}"
+              PUID: &UID 1000
+              PGID: *UID
+              DB_FILE: /app/backend/db/tududi.sqlite3
+              TUDUDI_UPLOAD_PATH: /app/backend/uploads
+              TUDUDI_ALLOWED_ORIGINS: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN};http://localhost:3002"
+              OIDC_ENABLED: true
+              OIDC_PROVIDER_NAME: Authentik
+              OIDC_PROVIDER_SLUG: authentik
+              OIDC_SCOPE: "openid profile email"
+              OIDC_AUTO_PROVISION: true
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: &port 3002
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: *UID
+        runAsGroup: *UID
+        fsGroup: *UID
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /app/backend
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
