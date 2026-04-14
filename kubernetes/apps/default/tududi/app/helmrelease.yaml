@@ -22,7 +22,7 @@ spec:
               tag: 1.0.0@sha256:ad3618ad09e12d192bbda45d6957fbe3791c7b7f6d063f9b1f7905e3dbc4d840
             env:
               TZ: "${TIMEZONE:-UTC}"
-              PUID: &UID 1001 # TODO: cant use non-root or readOnlyRootFilesystem w/ custom UID
+              PUID: &UID 1000 # TODO: cant use non-root or readOnlyRootFilesystem w/ any UID
               PGID: *UID
               DB_FILE: /app/backend/db/tududi.sqlite3
               TUDUDI_UPLOAD_PATH: /app/backend/uploads
@@ -61,7 +61,7 @@ spec:
                 memory: 1Gi
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true # TODO: script chowns the /app dir to custom UID
+              readOnlyRootFilesystem: true # TODO: script chowns the /app dir to any UID
               capabilities: { drop: [ALL] }
     defaultPodOptions:
       securityContext:
