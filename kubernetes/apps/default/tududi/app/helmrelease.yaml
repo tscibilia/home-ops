@@ -91,7 +91,7 @@ spec:
       data:
         existingClaim: *app
         globalMounts:
-          - path: /app/backend
+          - path: /app
       tmp:
         type: emptyDir
         globalMounts:
