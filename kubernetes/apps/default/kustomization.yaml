@@ -23,5 +23,5 @@ resources:
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
   - ./thelounge/ks.yaml
-  - ./tududi/ks.yaml # issue upstream w/ chown script running against readOnlyRootFilesystem
+  - ./tasktrove/ks.yaml
   - ./vaultwarden/ks.yaml

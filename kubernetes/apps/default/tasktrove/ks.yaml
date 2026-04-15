@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app tududi
+  name: &app tasktrove
 spec:
   components:
     - ../../../../components/volsync
@@ -15,7 +15,7 @@ spec:
     - name: rook-ceph-cluster
       namespace: rook-ceph
   interval: 1h
-  path: ./kubernetes/apps/default/tududi/app
+  path: ./kubernetes/apps/default/tasktrove/app
   postBuild:
     substitute:
       APP: *app
