@@ -20,7 +20,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: todo
-      GATUS_PATH: /health
+      GATUS_PATH: /api/health
       VOLSYNC_CAPACITY: 5Gi
     substituteFrom:
       - kind: Secret

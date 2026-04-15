@@ -15,18 +15,21 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        # TODO: open issue with upstream dev to support non-root users and readOnlyRootFilesystem
         containers:
           app:
             image:
-              repository: docker.io/chrisvel/tududi
-              tag: 1.0.0@sha256:ad3618ad09e12d192bbda45d6957fbe3791c7b7f6d063f9b1f7905e3dbc4d840
+              repository: ghcr.io/tscibilia/tududi
+              tag: v1.1.0-dev.14@sha256:703a929556a87774d1cc5f9460c54800bb3cfc453577ff0d15d138ee1d7d4482
             env:
               TZ: "${TIMEZONE:-UTC}"
-              PUID: &UID 1000 # TODO: cant use non-root or readOnlyRootFilesystem w/ any UID
+              PUID: &UID 1000
               PGID: *UID
-              DB_FILE: /app/backend/db/tududi.sqlite3
-              TUDUDI_UPLOAD_PATH: /app/backend/uploads
-              TUDUDI_ALLOWED_ORIGINS: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN};http://localhost:3002"
+              DB_FILE: /config/tududi.sqlite3
+              TUDUDI_UPLOAD_PATH: /config/uploads
+              TUDUDI_TRUST_PROXY: "true"
+              TUDUDI_ALLOWED_ORIGINS: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN},http://localhost:3002,http://localhost:8080"
+              BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}" # TODO: misdocumented upstream
               OIDC_ENABLED: true
               OIDC_PROVIDER_NAME: Authentik
               OIDC_PROVIDER_SLUG: authentik
@@ -61,7 +64,7 @@ spec:
                 memory: 1Gi
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true # TODO: script chowns the /app dir to any UID
+              readOnlyRootFilesystem: true
               capabilities: { drop: [ALL] }
     defaultPodOptions:
       securityContext:
@@ -88,13 +91,10 @@ spec:
               - identifier: app
                 port: *port
     persistence:
-      data:
+      config:
         existingClaim: *app
         globalMounts:
-          - path: /app/backend/db
-            subPath: db
-          - path: /app/backend/uploads
-            subPath: uploads
+          - path: /config
       tmp:
         type: emptyDir
         globalMounts:
