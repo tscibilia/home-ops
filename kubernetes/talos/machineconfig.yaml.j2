@@ -63,7 +63,7 @@ machine:
       featureGates:
         ResourceHealthStatus: true # New
       serializeImagePulls: false
-    image: ghcr.io/siderolabs/kubelet:v1.35.3
+    image: ghcr.io/siderolabs/kubelet:v1.35.4
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
@@ -150,11 +150,11 @@ cluster:
       oidc-issuer-url: ak://talos-m70q/OIDC_ISSUER_URL
       oidc-groups-claim: groups
       oidc-username-claim: preferred_username #}
-    image: registry.k8s.io/kube-apiserver:v1.35.3
+    image: registry.k8s.io/kube-apiserver:v1.35.4
   controllerManager:
     extraArgs:
       bind-address: 0.0.0.0
-    image: registry.k8s.io/kube-controller-manager:v1.35.3
+    image: registry.k8s.io/kube-controller-manager:v1.35.4
   coreDNS:
     disabled: true
   etcd:
@@ -167,7 +167,7 @@ cluster:
       listen-metrics-urls: http://0.0.0.0:2381
   proxy:
     disabled: true
-    image: registry.k8s.io/kube-proxy:v1.35.3
+    image: registry.k8s.io/kube-proxy:v1.35.4
   scheduler:
     config:
       apiVersion: kubescheduler.config.k8s.io/v1
@@ -188,7 +188,7 @@ cluster:
                     whenUnsatisfiable: ScheduleAnyway
     extraArgs:
       bind-address: 0.0.0.0
-    image: registry.k8s.io/kube-scheduler:v1.35.3
+    image: registry.k8s.io/kube-scheduler:v1.35.4
   secretboxEncryptionSecret: ak://talos-m70q/CLUSTER_SECRETBOXENCRYPTIONSECRET
   serviceAccount:
     key: ak://talos-m70q/CLUSTER_SERVICEACCOUNT_KEY
