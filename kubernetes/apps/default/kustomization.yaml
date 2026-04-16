@@ -23,5 +23,4 @@ resources:
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
   - ./thelounge/ks.yaml
-  - ./tasktrove/ks.yaml
   - ./vaultwarden/ks.yaml
