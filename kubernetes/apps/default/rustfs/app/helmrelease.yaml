@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: rustfs/rustfs
-              tag: 1.0.0-alpha.94@sha256:7d49faa88c045af618a9ca6e1a9dc5b6cb87ea6fb407a682d825478e4001b40c
+              tag: 1.0.0-alpha.96@sha256:ecd2fc11d5091bed4c3b7ae61d066229b9a4cd33296a61b534b3dd67ce6912be
             args: ["--console-enable", "/data"]
             env:
               RUSTFS_ADDRESS: ":9000"
