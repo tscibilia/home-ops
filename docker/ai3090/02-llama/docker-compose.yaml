@@ -14,7 +14,7 @@ services:
       LLAMA_ARG_HOST: 0.0.0.0
       LLAMA_ARG_PORT: "10000"
       LLAMA_ARG_N_GPU_LAYERS: "99"
-      LLAMA_ARG_CTX_SIZE: "32768"
+      LLAMA_ARG_CTX_SIZE: "65536"
       LLAMA_ARG_PARALLEL: "3"
       # Update when changing models and Unsloth recommended sampling params
       LLAMA_ARG_MODEL: /models/gemma-4-26B-A4B-it-UD-Q5_K_XL-GGUF/gemma-4-26B-A4B.gguf
