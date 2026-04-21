@@ -58,12 +58,12 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 3000
-        runAsGroup: 3000
-        fsGroup: 3000
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
-        supplementalGroups: [4002]
+        supplementalGroups: [3000, 4002]
     service:
       app:
         controller: *app
