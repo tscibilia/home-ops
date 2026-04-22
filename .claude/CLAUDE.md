@@ -74,7 +74,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 All tools (kubectl, talosctl, just, flux, helm) are managed by mise and require explicit activation:
 
 ```bash
-eval "$(mise activate zsh)" && <command>
+mise <command>
 ```
 
 The Bash tool does NOT auto-source `~/.zshenv`. Always prefix commands with the above.
@@ -103,14 +103,12 @@ The Bash tool does NOT auto-source `~/.zshenv`. Always prefix commands with the 
 
 ```
 kubernetes/apps/{namespace}/{app-name}/
-├── ks.yaml                  # Flux Kustomization — deps, postBuild substitutions, components
 ├── app/
 │   ├── kustomization.yaml   # Kustomize — resources, configMapGenerator, patches
 │   ├── helmrelease.yaml     # Chart ref + values
 │   ├── ocirepository.yaml   # Helm chart source
-│   ├── externalsecret.yaml  # aKeyless → Kubernetes Secret
-│   └── referencegrant.yaml  # Cross-namespace gateway access
-└── namespace.yaml
+│   └── externalsecret.yaml  # aKeyless → Kubernetes Secret
+└── ks.yaml                  # Flux Kustomization — deps, postBuild substitutions, components
 ```
 
 `ks.yaml` is the entry point. It defines `dependsOn`, `postBuild.substitute`/`substituteFrom`, and `components`.
@@ -176,7 +174,7 @@ All secrets in aKeyless → synced via `ExternalSecret` CRDs. Cluster-wide vars 
 
 ### Flux / GitOps
 - `kubectl edit` changes are ephemeral — Flux resets them. Always edit, `git add <dir/> && git commit -m`. Flux will auto-reconcile.
-- Check Kustomization failures: `eval "$(mise activate zsh)" && kubectl get ks -A | grep -v True`
+- Check Kustomization failures: `mise && kubectl get ks -A | grep -v True`
 - If a HelmRelease is stuck in a bad state, delete it and let Flux recreate: `kubectl delete hr <name> -n <ns>`
 
 ### Talos
