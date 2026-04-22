@@ -20,7 +20,6 @@ Organized by area. Each entry: what you see, what to check, how to fix it.
 | LAN DNS not resolving | `kubectl logs -n network deploy/unifi-dns` | Check UniFi controller connectivity |
 | External access broken | `kubectl get pods -n network -l app=cloudflared` | Verify cloudflared tunnel status, check Cloudflare dashboard |
 | Cert not issuing | `kubectl get cert -A`, `kubectl get challenges -A` | Check cert-manager logs, verify Cloudflare DNS-01 permissions |
-| Can't reach service cross-namespace | Check for ReferenceGrant | Create a ReferenceGrant in the target namespace |
 
 **Remember**: There is no kube-proxy. Cilium is the eBPF replacement. Use `cilium` CLI or Hubble for network debugging, not iptables.
 

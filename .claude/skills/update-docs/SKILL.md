@@ -52,7 +52,6 @@ docs/
    - Specific CNPG cluster or Dragonfly DB number
    - GPU access
    - External access specifics
-   - Cross-namespace ReferenceGrant
    - Unusual dependencies or component usage
 5. **Update the app count** in `docs/apps/index.md` namespace table
 6. **Update `mkdocs.yml`** if adding a new namespace page (unlikely)

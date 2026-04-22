@@ -1,6 +1,12 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
 Home-ops monorepo. Kubernetes cluster managed with Flux CD GitOps on three bare-metal Talos nodes with Rook Ceph storage. Also includes Docker-based server configs for other homelab services.
+
+**Stack:** Talos Linux → Kubernetes → Flux CD → Helm/Kustomize
 
 **Repo layout:**
 - `/kubernetes/` — everything K8s cluster related:
@@ -69,19 +75,9 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## CRITICAL: Environment Setup
-
-All tools (kubectl, talosctl, just, flux, helm) are managed by mise and require explicit activation:
-
-```bash
-mise <command>
-```
-
-The Bash tool does NOT auto-source `~/.zshenv`. Always prefix commands with the above.
-
 ## Task Runner
 
-`just` with three modules: `bootstrap`, `kube`, `talos`.
+`just` with three modules: `bootstrap`, `kube`, `talos`. Run `just <module>` to list all available commands.
 
 **Most-used `just kube` commands:**
 - `sync-ks <ns> <name>` / `sync-hr <ns> <name>` / `sync-es <ns> <name>` — force sync single resource
@@ -99,7 +95,46 @@ The Bash tool does NOT auto-source `~/.zshenv`. Always prefix commands with the 
 - `apply-node <node>` — apply config to node
 - `upgrade-node <node>` / `upgrade-k8s <version>` — upgrades
 
-## App Structure
+## Architecture
+
+```
+docker
+├── unraid                    # Docker-based services hosted on Unraid
+├── truenas                   # Docker-based services hosted on TrueNAS
+└── ai3090                    # Docker-based services on RTX3090 node
+docs                          # Repo documentation by MKDocs
+kubernetes
+├── apps                      # Applications organized by namespace
+│   ├── actions-runner-system # GitHub Actions runners
+│   ├── cert-manager          # TLS certificate management
+│   ├── database              # PostgreSQL (CNPG) and Dragonfly (Redis)
+│   ├── default               # General purpose self-hosted applications
+│   ├── external-secrets      # ExternalSecrets for syncing aKeyless secrets to K8s
+│   ├── flux-system           # Flux CD controllers and configuration
+│   ├── home-automation       # Home Automation stack (HA, ESPHome, etc.)
+│   ├── kube-system           # Core cluster infrastructure (Cilium, CoreDNS, etc.)
+│   ├── media                 # Media stack (Plex, Jellyfin, *arrs)
+│   ├── network               # Networking infrastructure (Cloudflared, DNS, Tailscale, etc.)
+│   ├── observability         # Monitoring and logging (Prometheus, Grafana, VictoriaLogs)
+│   ├── openebs-system        # OpenEBS local storage management
+│   ├── rook-ceph             # Rook-Ceph distributed storage
+│   └── volsync-system        # VolSync for PVC backup and restore
+├── bootstrap                 # Directory to bootstrap Talos nodes
+│   ├── cnpg                  # CNPG patches applied during cluster bootstrap
+│   ├── helmfile.d            # Helmreleases required for cluster bootstrap
+│   ├── scripts               # Bootstrap helper scripts
+│   └── mod.just              # .justfile Bootstrap module
+├── components                # Reusable Kustomize components for apps
+├── flux                      # Flux CD system configuration
+├── talos                     # Talos node OS configurations
+│   ├── nodes                 # Talos node-specific configuration overrides
+│   ├── machineconfig.yaml.j2 # Jinja2 template for base Talos machine config
+│   ├── mod.just              # .justfile Talos module
+│   └── schematic.yaml.j2     # Talos image factory schematic template
+└── mod.just                  # .justfile Kubernetes module
+```
+
+## Key Patterns & Structure
 
 ```
 kubernetes/apps/{namespace}/{app-name}/
@@ -112,6 +147,13 @@ kubernetes/apps/{namespace}/{app-name}/
 ```
 
 `ks.yaml` is the entry point. It defines `dependsOn`, `postBuild.substitute`/`substituteFrom`, and `components`.
+
+## Commit Protocol
+
+Before requesting a commit, ensure:
+- **Validation**: YAML files are schema-validated, linted, and formatted.
+- **Constraint**: The agent must NOT attempt to commit directly (GPG key restriction).
+- **Handoff**: A complete, formatted commit message is prepared for the user to review and execute.
 
 ## Kustomize Components (`/kubernetes/components/`)
 
@@ -152,7 +194,6 @@ All secrets in aKeyless → synced via `ExternalSecret` CRDs. Cluster-wide vars 
 - **Ingress**: `envoy-external` (cloudflared tunnel) + `envoy-internal` (LAN only)
 - **DNS**: CoreDNS (cluster), unifi-dns (LAN → UniFi), external-dns (Cloudflare)
 - **VPN**: Multus CNI secondary interface (net1, 192.168.99.0/24) — qBittorrent
-- **Cross-namespace**: Requires `ReferenceGrant` when HTTPRoute/SecurityPolicy references Service in another namespace
 
 ## Conventions
 

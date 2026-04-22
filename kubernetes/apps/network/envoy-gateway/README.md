@@ -45,9 +45,6 @@ route:
 ```yaml
 route:
   app:
-    annotations:
-      gatus.home-operations.com/endpoint: |-
-        conditions: ["[STATUS] == 200"]
     hostnames: ["app.${SECRET_DOMAIN}"]
     parentRefs:
       - name: envoy-external
@@ -104,9 +101,7 @@ kubectl logs -n network -l gateway.envoyproxy.io/owning-gateway-name=envoy-exter
 ## Special Cases
 
 - **Plex**: Custom Range header removal for subtitle streaming (401 health check)
-- **Minio**: Dual routes (app + s3)
 - **Gatus**: Self-monitoring disabled
-- **Kromgo**: 404 health check status
 
 ## Troubleshooting
 

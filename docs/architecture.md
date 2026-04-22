@@ -39,7 +39,6 @@ UniFi controller manages the `.internal` domain for non-cluster hosts:
 - **Load balancing**: Cilium L2 ARP announcements, IP pool 192.168.5.200–250
 - **Routing**: HTTPRoute resources, not legacy Ingress objects
 - **Auth**: Authentik SSO via Envoy SecurityPolicy forward-auth
-- **Cross-namespace**: Requires a ReferenceGrant when an HTTPRoute or SecurityPolicy references a Service in another namespace
 
 **Ingress** — Envoy Gateway runs two instances:
 
