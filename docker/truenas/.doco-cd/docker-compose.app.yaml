@@ -6,20 +6,24 @@
 secrets:
   gh_token:
     file: /mnt/nas/data/users/sysadmin/.config/doco-cd/gh_token
+  akeyless_access_id:
+    file: /mnt/nas/data/users/sysadmin/.config/doco-cd/akeyless_access_id
+  akeyless_access_key:
+    file: /mnt/nas/data/users/sysadmin/.config/doco-cd/akeyless_access_key
 
 services:
   doco-cd:
-    image: ghcr.io/kimdre/doco-cd:0.82.0-rc.1@sha256:4a5e231a020a2527118cdfdf10097052f91d04fb5c0414f71aa47422c7ddc7a4
+    image: ghcr.io/kimdre/doco-cd:0.79.0@sha256:a8386dc5d7aa89df5be9550dda9a1c2cb1b4d0f7e2e3ef79542431463552ae2a
     container_name: doco-cd
     restart: unless-stopped
+    depends_on:
+      akeyless-proxy:
+        condition: service_healthy
     networks:
       - doco-cd
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - data:/data
-    env_file:
-      - path: /mnt/nas/data/users/sysadmin/.config/doco-cd/.env
-        required: true
     environment:
       LOG_LEVEL: info
       DEPLOY_CONFIG_BASE_DIR: ./docker/truenas/
@@ -28,21 +32,9 @@ services:
           reference: refs/heads/main
           interval: 3600
       SECRET_PROVIDER: webhook
-      SECRET_PROVIDER_WEBHOOK_STORES: |
-        name: akeyless
-        version: v1
-        url: "https://api.akeyless.io/v2/get-secret-value"
-        method: POST
-        headers:
-          Content-Type: application/json
-          Authorization: "Basic {{ print .auth.username \":\" .auth.password | b64enc }}"
-        body: '{"secret_name":"{{ .remote_ref.key }}","auth_method_access_token":"{{ .auth.token }}"}'
-        json_path: "value"
-      SECRET_PROVIDER_AUTH_USERNAME: ${AKEYLESS_ACCESS_ID}
-      SECRET_PROVIDER_AUTH_PASSWORD: ${AKEYLESS_ACCESS_KEY}
+      SECRET_PROVIDER_SITE_URL: "http://akeyless-proxy:8080/secret?name={{ urlquery .remoteRef }}"
+      SECRET_PROVIDER_RESULT_JMES_PATH: "values(@)[0]"
       TZ: America/New_York
-    cap_drop:
-      - ALL
     healthcheck:
       test:
         - CMD
@@ -54,6 +46,23 @@ services:
       retries: 3
     secrets:
       - gh_token
+
+  akeyless-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: akeyless-proxy
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    expose:
+      - "8080"
+    environment:
+      AKEYLESS_ACCESS_ID_FILE: /run/secrets/akeyless_access_id
+      AKEYLESS_ACCESS_KEY_FILE: /run/secrets/akeyless_access_key
+    secrets:
+      - akeyless_access_id
+      - akeyless_access_key
 
 networks:
   doco-cd:

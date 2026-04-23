@@ -42,6 +42,7 @@ fetch_and_compare() {
 }
 
 fetch_and_compare "docker-compose.app.yaml"
+fetch_and_compare "Dockerfile"
 
 if [ "$CHANGED" -eq 1 ]; then
   log "Rebuilding and restarting doco-cd stack..."
