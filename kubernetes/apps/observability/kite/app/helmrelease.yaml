@@ -30,7 +30,7 @@ spec:
             env:
               HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               ENABLE_ANALYTICS: true
-              KITE_CONFIG_FILE: /config/config.yaml
+              KITE_CONFIG_FILE: /kite/config.yaml
               DB_TYPE: postgres
               DB_DSN:
                 valueFrom:
@@ -101,7 +101,7 @@ spec:
         type: secret
         name: "{{ .Release.Name }}-config-secret"
         globalMounts:
-          - path: /config
+          - path: /kite
     serviceAccount:
       *app : {}
     rbac:

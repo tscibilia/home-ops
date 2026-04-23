@@ -7,8 +7,8 @@ clusters:
       kind: Config
       clusters:
         - cluster:
-            server: https://k8s.example.com
-            certificate-authority-data: ${CLUSTER_CA_CRT}
+            server: https://192.168.5.210:6443
+            certificate-authority-data: {{ .CLUSTER_CA_CRT }}
           name: main
       contexts:
         - context:
@@ -19,15 +19,15 @@ clusters:
       users:
         - name: admin@main
           user:
-            client-certificate-data: ${CLIENT_CERTIFICATE_DATA}
-            client-key-data: ${CLIENT_KEY_DATA}
+            client-certificate-data: {{ .CLIENT_CERTIFICATE_DATA }}
+            client-key-data: {{ .CLIENT_KEY_DATA }}
     prometheusURL: "http://prometheus-operated.observability.svc.cluster.local:9090"
     default: true
 
 oauth:
   - name: authentik
-    clientId: "{{ .KITE_OAUTH2_CLIENT_ID }}"
-    clientSecret: "{{ .KITE_OAUTH2_CLIENT_SECRET }}"
+    clientId: "{{ .KITE_OIDC_CLIENT_ID }}"
+    clientSecret: "{{ .KITE_OIDC_CLIENT_SECRET }}"
     issuer: "https://{{ .AUTHENTIK_SSO_SUBDOMAIN }}.${SECRET_DOMAIN}/application/o/${APP}/"
     scopes: "openid,profile,email,groups,offline_access"
     usernameClaim: "email"
