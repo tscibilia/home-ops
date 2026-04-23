@@ -34,12 +34,12 @@ services:
         url: "https://api.akeyless.io/v2/get-secret-value"
         method: POST
         headers:
-          Accept: application/json
           Content-Type: application/json
-        body: '{"names":["{{ .remote_ref.key }}"],"access-type":"access_key","access-id":"{{ .auth.token | trim }}","access-key":"{{ .auth.api_key | trim }}"}'
-        json_path: "response[0]"
-      SECRET_PROVIDER_AUTH_TOKEN: ${AKEYLESS_ACCESS_ID}
-      SECRET_PROVIDER_AUTH_APIKEY: ${AKEYLESS_ACCESS_KEY}
+          Authorization: "Basic {{ print .auth.username \":\" .auth.password | b64enc }}"
+        body: '{"secret_name":"{{ .remote_ref.key }}","auth_method_access_token":"{{ .auth.token }}"}'
+        json_path: "value"
+      SECRET_PROVIDER_AUTH_USERNAME: ${AKEYLESS_ACCESS_ID}
+      SECRET_PROVIDER_AUTH_PASSWORD: ${AKEYLESS_ACCESS_KEY}
       TZ: America/New_York
     cap_drop:
       - ALL
