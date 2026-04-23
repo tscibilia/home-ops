@@ -1,123 +1,72 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working in this repository.
 
 ## Project Overview
-
-Home-ops monorepo. Kubernetes cluster managed with Flux CD GitOps on three bare-metal Talos nodes with Rook Ceph storage. Also includes Docker-based server configs for other homelab services.
-
+Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-metal nodes with Rook Ceph.
 **Stack:** Talos Linux → Kubernetes → Flux CD → Helm/Kustomize
-
-**Repo layout:**
-- `/kubernetes/` — everything K8s cluster related:
-  - `apps/` — Flux-managed app manifests
-  - `talos/` — Talos OS config (minijinja templates + node patches)
-  - `bootstrap/` — Helmfile initial cluster setup (cilium, coredns, external-secrets, etc.)
-- `/docker/` — additional homelab server configs
+**Layout:** `/kubernetes/` (apps, talos, bootstrap), `/docker/` (server configs), `docs/` (MKDocs).
 
 ## Karpathy Skills
-
-**Behavioral guidelines to reduce common LLM coding mistakes. These guidelines bias toward caution over speed. For trivial tasks, use judgment.**
+**Behavioral guidelines to reduce common LLM coding mistakes. Bias toward caution over speed.**
 
 ### 1. Think Before Coding
-
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them; don't pick silently.
+- If a simpler approach exists, push back when warranted.
+- If something is unclear, stop. Name what's confusing and ask.
 
 ### 2. Simplicity First
-
 **Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
+- No features, abstractions, or configurability beyond what was asked.
 - No error handling for impossible scenarios.
 - If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+- Ask: "Would a senior engineer say this is overcomplicated?"
 
 ### 3. Surgical Changes
-
 **Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
 - Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
+- Don't refactor working code. Match existing style.
+- When changes create orphans: remove imports/variables/funcs that *your* changes made unused.
+- Do not remove pre-existing dead code unless asked.
+- Every changed line should trace directly to the user's request.
 
 ### 4. Goal-Driven Execution
-
 **Define success criteria. Loop until verified.**
+- Transform tasks into verifiable goals (e.g., "Fix bug" → "Write failing test, then make it pass").
+- For multi-step tasks, state a brief plan:
+  1. [Step] → verify: [check]
+  2. [Step] → verify: [check]
 
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+## Task Runner & Workflow
+`just` modules: `bootstrap`, `kube`, `talos`.
 
-For multi-step tasks, state a brief plan:
+**`just kube` (most used):**
+- `sync-ks/hr/es <ns> <name>` — force sync resource
+- `ks-reconcile/hr-reconcile <ns> <name>` — reconcile from source
+- `ks-reconcile-all/hr-reconcile-all` — reconcile everything
+- `ks-restart/hr-restart <ns>` — suspend/resume failed resources
+- `apply-ks <ns> <ks>` — validate locally with flux-local
+- `node-shell <node>`, `view-secret <ns> <secret>`, `snapshot <ns> <name>`
+
+**Workflow:**
+1. New app: use `add-app` skill
+2. Secrets: aKeyless → `externalsecret.yaml`
+3. Test/Sync: `apply-ks` → `ks-reconcile`
+4. Docs: use `update-docs` skill
+
+**`just talos`:** `apply-node <node>`, `upgrade-node <node>/upgrade-k8s <version>`
+
+## Architecture & Structure
+**Monorepo Layout:**
 ```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
-## Task Runner
-
-`just` with three modules: `bootstrap`, `kube`, `talos`. Run `just <module>` to list all available commands.
-
-**Most-used `just kube` commands:**
-- `sync-ks <ns> <name>` / `sync-hr <ns> <name>` / `sync-es <ns> <name>` — force sync single resource
-- `ks-reconcile <ns> <name>` / `hr-reconcile <ns> <name>` — reconcile from source
-- `ks-reconcile-all` / `hr-reconcile-all` — reconcile everything
-- `ks-restart` / `hr-restart` — suspend/resume all failed resources
-- `apply-ks <ns> <ks>` — validate locally with flux-local before pushing
-- `browse-pvc <ns> <claim>` — mount PVC to debug pod
-- `node-shell <node>` — interactive shell on node
-- `view-secret <ns> <secret>` — decode and view secret
-- `snapshot <ns> <name>` / `volsync-restore <ns> <name> <previous>` — VolSync backup/restore
-- `restart-network` — restart network stack in order
-
-**`just talos` commands:**
-- `apply-node <node>` — apply config to node
-- `upgrade-node <node>` / `upgrade-k8s <version>` — upgrades
-
-## Architecture
-
-```
-docker
-├── unraid                    # Docker-based services hosted on Unraid
-├── truenas                   # Docker-based services hosted on TrueNAS
-└── ai3090                    # Docker-based services on RTX3090 node
-docs                          # Repo documentation by MKDocs
-kubernetes
+docker                        # Server configs (unraid, truenas, ai3090)
+docs                          # MKDocs documentation
+kubernetes                    # K8s cluster
 ├── apps                      # Applications organized by namespace
-│   ├── actions-runner-system # GitHub Actions runners
-│   ├── cert-manager          # TLS certificate management
-│   ├── database              # PostgreSQL (CNPG) and Dragonfly (Redis)
 │   ├── default               # General purpose self-hosted applications
-│   ├── external-secrets      # ExternalSecrets for syncing aKeyless secrets to K8s
-│   ├── flux-system           # Flux CD controllers and configuration
-│   ├── home-automation       # Home Automation stack (HA, ESPHome, etc.)
-│   ├── kube-system           # Core cluster infrastructure (Cilium, CoreDNS, etc.)
-│   ├── media                 # Media stack (Plex, Jellyfin, *arrs)
-│   ├── network               # Networking infrastructure (Cloudflared, DNS, Tailscale, etc.)
-│   ├── observability         # Monitoring and logging (Prometheus, Grafana, VictoriaLogs)
-│   ├── openebs-system        # OpenEBS local storage management
-│   ├── rook-ceph             # Rook-Ceph distributed storage
+│   ├── ...
 │   └── volsync-system        # VolSync for PVC backup and restore
 ├── bootstrap                 # Directory to bootstrap Talos nodes
 │   ├── cnpg                  # CNPG patches applied during cluster bootstrap
@@ -133,117 +82,42 @@ kubernetes
 │   └── schematic.yaml.j2     # Talos image factory schematic template
 └── mod.just                  # .justfile Kubernetes module
 ```
+*(For detailed references, prioritize reading the relevant sub-directory's `README.md`, e.g., `kubernetes/bootstrap/cnpg/README.md`)*
 
-## Key Patterns & Structure
+**Apps:** `kubernetes/apps/{namespace}/{app-name}/`
+- `app/` (kustomization, helmrelease, ocirepository, externalsecret)
+- `ks.yaml` (Flux Kustomization entry point: defines `dependsOn`, `substitutions`, `components`)
 
-```
-kubernetes/apps/{namespace}/{app-name}/
-├── app/
-│   ├── kustomization.yaml   # Kustomize — resources, configMapGenerator, patches
-│   ├── helmrelease.yaml     # Chart ref + values
-│   ├── ocirepository.yaml   # Helm chart source
-│   └── externalsecret.yaml  # aKeyless → Kubernetes Secret
-└── ks.yaml                  # Flux Kustomization — deps, postBuild substitutions, components
-```
+**Components (`/kubernetes/components/`):** `common/`, `cnpg/`, `ext-auth-internal/`, `ext-auth-external/`, `keda/`, `volsync/`.
 
-`ks.yaml` is the entry point. It defines `dependsOn`, `postBuild.substitute`/`substituteFrom`, and `components`.
+**Conventions:**
+- YAML anchors (`&app` → `*app`)
+- Renovate: `# renovate: datasource=docker depName=...`
+- `configMapGenerator` for embedded files
+- Always declare `dependsOn` in `ks.yaml`
+
+**Storage Classes:**
+- `ceph-ssd` (default) — Rook Ceph, all persistent workloads
+- `openebs-hostpath` — local node storage (CNPG, logs, actions-runner)
+- `nfs-media` — external NFS for media library
+
+**Infrastructure:**
+- **CNPG Clusters:** `pgsql-cluster` (PG17), `immich17` (vectorchord). Use `<cluster>-rw.database.svc.cluster.local`.
+- **Networking:** SSO via `ext-auth-external`/`internal`. Ingress via `envoy-external`/`internal`.
+- **Secrets:** Synced via `ExternalSecret` from aKeyless.
 
 ## Commit Protocol
-
 Before requesting a commit, ensure:
 - **Validation**: YAML files are schema-validated, linted, and formatted.
-- **Constraint**: The agent must NOT attempt to commit directly (GPG key restriction).
-- **Handoff**: A complete, formatted commit message is prepared for the user to review and execute.
-
-## Kustomize Components (`/kubernetes/components/`)
-
-Include via `components: [../../../../components/<name>]` in `ks.yaml`:
-- `common/` — standard alerts + secrets for all namespaces
-- `cnpg/` — DB user init CronJob + ExternalSecret
-- `ext-auth-internal/` / `ext-auth-external/` — Authentik SSO via Envoy forward auth
-- `keda/` — KEDA ScaledObject auto-scaling
-- `volsync/` — PVC backup/restore (requires `APP` and `VOLSYNC_CAPACITY` substitutions)
-
-## Storage Classes
-
-Only 3 storage classes exist:
-- **`ceph-ssd`** (default) — Rook Ceph, Samsung SSDs — all persistent workloads
-- **`openebs-hostpath`** — local node storage — CNPG clusters, victoria-logs, actions-runner
-- **`nfs-media`** — external NFS — media library
-
-## Shared Infrastructure
-
-**CNPG clusters** (in `database` namespace):
-- `pgsql-cluster` — general PostgreSQL 17 (`ghcr.io/cloudnative-pg/postgresql:17`)
-- `immich17` — PostgreSQL 17 + vectorchord (`ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.2`)
-
-Apps declare: `dependsOn: [{name: cnpg-cluster, namespace: database}]`
-
-**Service endpoints:**
-- DB (read-write): `<cluster>-rw.database.svc.cluster.local`
-- Cache: `dragonfly-cluster.database.svc.cluster.local:6379` (immich=db2, searxng=db3)
-- Authentik outpost: `ak-outpost-authentik-embedded-outpost.default.svc.cluster.local:9000`
-
-## Secrets
-
-All secrets in aKeyless → synced via `ExternalSecret` CRDs. Cluster-wide vars injected via `postBuild.substituteFrom: cluster-secrets`.
-
-## Networking
-
-- **SSO Auth**: `ext-auth-external` (Authentik forward auth) + `ext-auth-internal` (Authentik forward auth, LAN only) — for apps without native OIDC support
-- **Ingress**: `envoy-external` (cloudflared tunnel) + `envoy-internal` (LAN only)
-- **DNS**: CoreDNS (cluster), unifi-dns (LAN → UniFi), external-dns (Cloudflare)
-- **VPN**: Multus CNI secondary interface (net1, 192.168.99.0/24) — qBittorrent
-
-## Conventions
-
-- YAML anchors: `name: &app foo` referenced as `*app`
-- Renovate annotations: `# renovate: datasource=docker depName=...` on image tags
-- `configMapGenerator` in `kustomization.yaml` to embed config files, mounted via HelmRelease
-- Always declare `dependsOn` in `ks.yaml` — never assume deployment order
-
-## Modifying Apps
-
-1. New app: use the skill `add-app`
-2. Secrets: add to aKeyless → reference in `externalsecret.yaml`
-3. Test before push: `just kube apply-ks <ns> <app>` (flux-local validation)
-4. Force sync after push: `just kube ks-reconcile <ns> <app>`
-5. `kubectl edit` changes are ephemeral — Flux resets them
-6. Update docs: use skill `update-docs`, triggered by "add X to docs", "update docs", "reflect changes in docs"
+- **Constraint**: The agent must NOT attempt to commit directly (GPG restriction).
+- **Handoff**: Provide a complete, formatted commit message for user review.
 
 ## Troubleshooting
+- **Flux/GitOps**: `kubectl edit` is ephemeral; always use `git`. Check failures: `mise && kubectl get ks -A | grep -v True`.
+- **Talos**: No SSH. Use `talosctl`. Edit templates in `kubernetes/talos/`, then `just talos apply-node <node>`.
+- **Cilium**: eBPF replacement for kube-proxy. Use `cilium` CLI for network debugging.
+- **CNPG**: Use `-rw` endpoint for app connections. Check health: `kubectl get cluster -n database`.
+- **VolSync**: Restore via `just kube volsync-restore <ns> <name> <previous>`.
 
-### Flux / GitOps
-- `kubectl edit` changes are ephemeral — Flux resets them. Always edit, `git add <dir/> && git commit -m`. Flux will auto-reconcile.
-- Check Kustomization failures: `mise && kubectl get ks -A | grep -v True`
-- If a HelmRelease is stuck in a bad state, delete it and let Flux recreate: `kubectl delete hr <name> -n <ns>`
-
-### Talos
-- No SSH — all node access via `talosctl -n <node-ip>`
-- Configs are generated from minijinja templates in `kubernetes/talos/`. Never edit rendered output directly; edit the templates and run `just talos apply-node <node>`.
-- Upgrade order matters: Talos first (`just talos upgrade-node <node>`), then Kubernetes (`just kube upgrade-k8s <version>`)
-
-### Cilium
-- kube-proxy does not exist — Cilium is the eBPF replacement. Standard kube-proxy debug tools won't apply.
-- LoadBalancer IP unreachable → check `CiliumL2AnnouncementPolicy` and `CiliumLoadBalancerIPPool`
-- Use `cilium` CLI (or Hubble) for network/policy debugging, not iptables
-
-### CNPG
-- Two clusters with different images — don't mix them up: `pgsql-cluster` (standard PG17) and `immich17` (vectorchord)
-- Read-write endpoint: `<cluster>-rw.database.svc.cluster.local` — always use `-rw` for app connections
-- Recovery from scratch uses B2 backups via `just bootstrap cnpg` — don't try to manually recreate clusters
-- Check cluster health: `kubectl get cluster -n database` and inspect `.status.conditions`
-
-### VolSync
-- Restore flow: suspend app → delete existing PVC → create new PVC with `dataSourceRef` → VolSync Volume Populator auto-populates → resume app
-- Use `just kube volsync-restore <ns> <name> <previous>` which handles the suspend/delete/restore sequence
-- If backup jobs are failing repeatedly with lock errors: `just kube volsync-unlock`
-- Check available snapshots before restoring: `just kube volsync-list <ns> <name>`
-
-## Active Work & Known Issues
-
-Check [`../ACTIVE-WIP.md`](../ACTIVE-WIP.md) at the start of any task for:
-- **In Progress** — ongoing work to avoid conflicts or duplication
-- **Known Issues** — active bugs/limitations to be aware of
-- **Blocked** — items waiting on external dependencies
-- **Resolved/Unresolved** — history and closed-as-won't-fix decisions
+## Active Work
+Check `../ACTIVE-WIP.md` for: **In Progress**, **Known Issues**, **Blocked**, or **Resolved**.
