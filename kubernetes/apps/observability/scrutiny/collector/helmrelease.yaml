@@ -27,12 +27,17 @@ spec:
               COLLECTOR_API_ENDPOINT: http://scrutiny.observability.svc.cluster.local:8080
             securityContext:
               privileged: true
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"], add: ["SYS_RAWIO"] }
             resources:
               requests:
                 cpu: 10m
                 memory: 64Mi
               limits:
                 memory: 128Mi
+    defaultPodOptions:
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
     persistence:
       dev:
         type: hostPath
