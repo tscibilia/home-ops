@@ -13,7 +13,7 @@ secrets:
 
 services:
   doco-cd:
-    image: ghcr.io/kimdre/doco-cd:0.79.0@sha256:a8386dc5d7aa89df5be9550dda9a1c2cb1b4d0f7e2e3ef79542431463552ae2a
+    image: ghcr.io/kimdre/doco-cd:0.82.0@sha256:7f4827024e596d903a4ef3469e5528927b35d35e333e61991654ea65d31415a6
     container_name: doco-cd
     restart: unless-stopped
     depends_on:
@@ -32,8 +32,12 @@ services:
           reference: refs/heads/main
           interval: 3600
       SECRET_PROVIDER: webhook
-      SECRET_PROVIDER_SITE_URL: "http://akeyless-proxy:8080/secret?name={{ urlquery .remoteRef }}"
-      SECRET_PROVIDER_RESULT_JMES_PATH: "values(@)[0]"
+      SECRET_PROVIDER_WEBHOOK_STORES: |
+        name: akeyless
+        version: v1
+        url: "http://akeyless-proxy:8080/secret?name={{ .remote_ref.key | urlencode }}"
+        method: GET
+        json_path: "values(@)[0]"
       TZ: America/New_York
     healthcheck:
       test:
