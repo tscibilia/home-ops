@@ -30,6 +30,7 @@ spec:
             env:
               HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               ENABLE_ANALYTICS: true
+              KITE_CONFIG_FILE: /config/config.yaml
               DB_TYPE: postgres
               DB_DSN:
                 valueFrom:
@@ -96,6 +97,11 @@ spec:
     persistence:
       config:
         type: emptyDir
+      config-files:
+        type: secret
+        name: "{{ .Release.Name }}-config-secret"
+        globalMounts:
+          - path: /config
     serviceAccount:
       *app : {}
     rbac:
