@@ -22,5 +22,6 @@ resources:
   - ./rustfs/ks.yaml
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
+  - ./smtp-relay/ks.yaml
   - ./thelounge/ks.yaml
   - ./vaultwarden/ks.yaml
