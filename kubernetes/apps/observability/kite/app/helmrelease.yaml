@@ -26,10 +26,11 @@ spec:
           app:
             image:
               repository: ghcr.io/kite-org/kite
-              tag: v0.9.0@sha256:fb990a065732e6234c8321c771448a477ed6327e99f7716d43f0bbf165a442a9
+              tag: v0.10.0@sha256:f13cb88982fdbc39e1ebb0a2a1909726392fe0280f6a1aace030e50e1eafe4e4
             env:
               HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               ENABLE_ANALYTICS: true
+              KITE_CONFIG_FILE: /config/config.yaml
               DB_TYPE: postgres
               DB_DSN:
                 valueFrom:
@@ -96,6 +97,11 @@ spec:
     persistence:
       config:
         type: emptyDir
+      config-files:
+        type: secret
+        name: "{{ .Release.Name }}-config-secret"
+        globalMounts:
+          - path: /config
     serviceAccount:
       *app : {}
     rbac:

@@ -6,3 +6,11 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+configMapGenerator:
+  - name: kite-config-tpl
+    files:
+      - ./resources/config.yaml
+configurations:
+  - ./resources/kustomizeconfig.yaml
+generatorOptions:
+  disableNameSuffixHash: true

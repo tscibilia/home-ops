@@ -1,0 +1,56 @@
+---
+clusters:
+  - name: main
+    description: "home-ops cluster"
+    config: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+        - cluster:
+            server: https://k8s.example.com
+            certificate-authority-data: ${CLUSTER_CA_CRT}
+          name: main
+      contexts:
+        - context:
+            cluster: main
+            user: admin@main
+          name: main
+      current-context: main
+      users:
+        - name: admin@main
+          user:
+            client-certificate-data: ${CLIENT_CERTIFICATE_DATA}
+            client-key-data: ${CLIENT_KEY_DATA}
+    prometheusURL: "http://prometheus-operated.observability.svc.cluster.local:9090"
+    default: true
+
+oauth:
+  - name: authentik
+    clientId: "{{ .KITE_OAUTH2_CLIENT_ID }}"
+    clientSecret: "{{ .KITE_OAUTH2_CLIENT_SECRET }}"
+    issuer: "https://{{ .AUTHENTIK_SSO_SUBDOMAIN }}.${SECRET_DOMAIN}/application/o/${APP}/"
+    scopes: "openid,profile,email,groups,offline_access"
+    usernameClaim: "email"
+    groupsClaim: "groups"
+    enabled: true
+
+rbac:
+  roles:
+    - name: admin
+      description: "Administrator role with full access"
+      clusters: ["*"]
+      namespaces: ["*"]
+      resources: ["*"]
+      verbs: ["*"]
+    - name: viewer
+      description: "Read-only access"
+      clusters: ["*"]
+      namespaces: ["*"]
+      resources: ["*"]
+      verbs: ["get", "log"]
+  roleMapping:
+    - name: admin
+      users: ["sysadmin"]
+      oidcGroups: ["authentik-Admins"]
+    - name: viewer
+      users: ["*"]
