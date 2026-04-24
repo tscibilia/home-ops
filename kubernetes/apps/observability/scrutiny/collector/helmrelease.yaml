@@ -17,7 +17,7 @@ spec:
           app:
             image:
               repository: ghcr.io/analogj/scrutiny
-              tag: v0.9.0-collector@sha256:3ff9e9ba8c0c4dbb83a3537222de8eb1be4115b38a14ec4f57004684973308df
+              tag: v0.9.1-collector@sha256:6c238e9996e8b19dc64916d32d2a0be1dc0619907fc107d7d437f8a5be8449ac
             env:
               TZ: ${TIMEZONE:-UTC}
               COLLECTOR_HOST_ID:
