@@ -13,7 +13,7 @@ secrets:
 
 services:
   doco-cd:
-    image: ghcr.io/kimdre/doco-cd:0.82.1@sha256:48ed1bfe4d20f563021b4de7a618a855b4efbcd162e73a4f14f9ba412c17bde7
+    image: ghcr.io/kimdre/doco-cd:0.83.0@sha256:7987d1628f787e51b71a499f82e8be714e6d6150b716e24911b1c546c17c9888
     container_name: doco-cd
     restart: unless-stopped
     depends_on:
