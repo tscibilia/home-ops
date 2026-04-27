@@ -1,7 +1,7 @@
 ---
 services:
   llama-server:
-    image: ghcr.io/ggml-org/llama.cpp:server-cuda@sha256:aa125372d3e4c09dd4e79b556341032cc90d0634f6070714b0a37281d3e40a1c
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda@sha256:4b53266493eb6189d959918f986e609cec636155933441dd47b16a1af542f888
     container_name: llama-server
     restart: unless-stopped
     networks:
