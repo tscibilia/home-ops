@@ -15,7 +15,7 @@ spec:
     - name: rook-ceph-cluster
       namespace: rook-ceph
   interval: 1h
-  path: ./kubernetes/apps/default/open-webui/app
+  path: ./kubernetes/apps/ai/open-webui/app
   postBuild:
     substitute:
       APP: *app
@@ -30,5 +30,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  targetNamespace: default
+  targetNamespace: ai
   wait: false
