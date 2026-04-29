@@ -1,3 +1,4 @@
+---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/source.toolkit.fluxcd.io/ocirepository_v1.json
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
@@ -9,6 +10,5 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    # renovate: datasource=docker depName=nvcr.io/nvidia/k8s-device-plugin
-    tag: v0.17.0
-  url: oci://nvcr.io/nvidia/k8s-device-plugin
+    tag: 0.19.0
+  url: oci://ghcr.io/home-operations/charts-mirror/nvidia-device-plugin
