@@ -11,6 +11,16 @@ nodes := `talosctl config info -o yaml | yq -e '.nodes | join (",")'`
 default:
     just -l talos
 
+[private]
+node-dir node:
+    if [ -f "{{ talos_dir }}/controlplane/{{ node }}.yaml.j2" ]; then \
+        echo "{{ talos_dir }}/controlplane"; \
+    elif [ -f "{{ talos_dir }}/worker/{{ node }}.yaml.j2" ]; then \
+        echo "{{ talos_dir }}/worker"; \
+    else \
+        echo "ERROR: no config found for node {{ node }}" >&2; exit 1; \
+    fi
+
 [doc('Apply Talos config to a node')]
 apply-node node *args:
     just check-tools talosctl
@@ -28,7 +38,8 @@ download-image version schematic:
 [doc('Generate schematic ID from Talos schematic')]
 gen-schematic-id node:
     just check-tools curl jq minijinja-cli akeyless
-    curl -sX POST --data-binary @<(just template "{{ talos_dir }}/schematic.yaml.j2") "https://factory.talos.dev/schematics" | jq -r '.id'
+    node_dir="$(just talos node-dir {{ node }})"; \
+    curl -sX POST --data-binary @<(just template "$node_dir/schematic.yaml.j2") "https://factory.talos.dev/schematics" | jq -r '.id'
 
 [doc('Reboot a node')]
 reboot-node node:
@@ -39,11 +50,12 @@ reboot-node node:
 [doc('Render Talos config for a node')]
 render-config node:
     just check-tools talosctl minijinja-cli akeyless yq gum
+    export node_dir="$(just talos node-dir {{ node }})"; \
     export IS_CONTROLLER="$(just talos machine-controller {{ node }})"; \
     export SCHEMATIC_ID="$(just talos gen-schematic-id {{ node }})"; \
-    gum spin --title "Injecting secrets..." -- bash -c '\
-        talosctl machineconfig patch <(just template "{{ talos_dir }}/machineconfig.yaml.j2") \
-            -p @<(just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2")'
+    gum spin --title "Injecting secrets..." -- bash -c "\
+        talosctl machineconfig patch <(just template '{{ talos_dir }}/machineconfig.yaml.j2') \
+            -p @<(just template '$node_dir/{{ node }}.yaml.j2')"
 
 [doc('Reset a node')]
 reset-node node *args:
@@ -69,7 +81,8 @@ upgrade-node node *args:
 
 [private]
 machine-controller node:
-    just template "{{ talos_dir }}/nodes/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.type == "controlplane") // ""'
+    node_dir="$(just talos node-dir {{ node }})"; \
+    just template "$node_dir/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.type == "controlplane") // ""'
 
 [private]
 machine-image:

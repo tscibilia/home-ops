@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app nvidia-device-plugin
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+    nodeSelector:
+      feature.node.kubernetes.io/pci-10de.present: "true"
+    config:
+      map:
+        default: |-
+          version: v1
+          flags:
+            migStrategy: none
