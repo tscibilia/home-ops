@@ -1,0 +1,16 @@
+---
+machine:
+  type: worker
+  network:
+    interfaces:
+      - interface: bond0
+        # Override base config — remove the k8s API VIP (controllers only)
+  nodeLabels:
+    topology.kubernetes.io/zone: ai
+    feature.node.kubernetes.io/pci-10de.present: "true"
+  nodeTaints:
+    nvidia.com/gpu: "present:NoSchedule"
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: ai3090
