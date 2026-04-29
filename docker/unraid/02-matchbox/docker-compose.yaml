@@ -8,7 +8,8 @@ services:
     command:
       - -address=0.0.0.0:8080
       - -data-path=/var/lib/matchbox
-      - -assets-path=
+      - -assets-path=/var/lib/matchbox/assets
     volumes:
       - ./matchbox/profiles:/var/lib/matchbox/profiles:ro
       - ./matchbox/groups:/var/lib/matchbox/groups:ro
+      - ./matchbox/assets:/var/lib/matchbox/assets:ro
