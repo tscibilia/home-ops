@@ -62,6 +62,8 @@ spec:
             args:
               - --models-preset
               - &presetFile /config/presets.ini
+              - --models-max
+              - "1"
             env:
               LLAMA_ARG_HOST: 0.0.0.0
               LLAMA_ARG_PORT: &port 10000
