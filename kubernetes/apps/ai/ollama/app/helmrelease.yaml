@@ -1,0 +1,155 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app ollama
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          pull-models:
+            image:
+              repository: docker.io/ollama/ollama
+              tag: 0.22.0@sha256:05ab093b257a54318fba39293f1640d53b507d1edec8fa6ca2d3e1817c02e53b
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -e
+                MANIFEST_DIR="/models/manifests/registry.ollama.ai/library/gemma4-26b"
+                if [ -d "${MANIFEST_DIR}" ]; then
+                  echo "Model already imported, skipping."
+                  exit 0
+                fi
+
+                echo "Starting Ollama server..."
+                ollama serve &
+                OLLAMA_PID=$!
+
+                echo "Waiting for Ollama to be ready..."
+                for i in $(seq 1 60); do
+                  if curl -sf http://127.0.0.1:11434/ >/dev/null 2>&1; then
+                    echo "Ollama ready."
+                    break
+                  fi
+                  sleep 2
+                done
+
+                mkdir -p /models/import
+
+                echo "Downloading main GGUF (~21GB)..."
+                curl -L --retry 5 --retry-delay 30 \
+                  -o /models/import/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf \
+                  "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf"
+
+                echo "Downloading vision projector GGUF  (~1GB)..."
+                curl -L --retry 5 --retry-delay 10 \
+                  -o /models/import/mmproj-BF16.gguf \
+                  "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/mmproj-BF16.gguf"
+
+                cat > /models/import/Modelfile << 'EOF'
+                FROM /models/import/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf
+                PROJECTOR /models/import/mmproj-BF16.gguf
+                EOF
+
+                echo "Importing model into Ollama..."
+                ollama create gemma4-26b -f /models/import/Modelfile
+
+                rm -rf /models/import
+                echo "Import complete."
+
+                kill $OLLAMA_PID
+                wait $OLLAMA_PID 2>/dev/null || true
+            env:
+              OLLAMA_HOST: 0.0.0.0
+              OLLAMA_MODELS: /models
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 2Gi
+                nvidia.com/gpu: "1"
+        containers:
+          app:
+            image:
+              repository: docker.io/ollama/ollama
+              tag: 0.22.0@sha256:05ab093b257a54318fba39293f1640d53b507d1edec8fa6ca2d3e1817c02e53b
+            env:
+              TZ: "${TIMEZONE:-UTC}"
+              OLLAMA_HOST: 0.0.0.0
+              OLLAMA_ORIGINS: "*"
+              OLLAMA_MODELS: /models
+              OLLAMA_NUM_PARALLEL: 1
+              OLLAMA_CONTEXT_LENGTH: 32768
+              OLLAMA_MAX_LOADED_MODELS: 1
+              OLLAMA_FLASH_ATTENTION: 1
+              OLLAMA_KV_CACHE_TYPE: q8_0
+              OLLAMA_KEEP_ALIVE: 30m
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 2Gi
+                nvidia.com/gpu: "1"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: &port 11434
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    defaultPodOptions:
+      runtimeClassName: nvidia
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      nodeSelector:
+        feature.node.kubernetes.io/pci-10de.present: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    persistence:
+      models:
+        existingClaim: *app
+        globalMounts:
+          - path: /models
+      tmp:
+        type: emptyDir
