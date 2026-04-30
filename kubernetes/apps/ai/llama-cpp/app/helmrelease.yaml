@@ -66,6 +66,11 @@ spec:
               LLAMA_ARG_HOST: 0.0.0.0
               LLAMA_ARG_PORT: &port 10000
               LLAMA_OFFLINE: "1"
+            ports:
+              - name: http
+                containerPort: *port
+                hostPort: *port
+                protocol: TCP
             resources:
               requests:
                 cpu: 100m
