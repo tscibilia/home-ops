@@ -60,6 +60,9 @@ spec:
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
+      - kind: Secret
+        name: toolhive-secret
+        optional: true
   prune: true
   sourceRef:
     kind: GitRepository
