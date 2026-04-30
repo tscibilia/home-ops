@@ -44,13 +44,13 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 
 ---
 
-### 🔎 Support
+## 🔎 Support
 
 If you like this project, please consider supporting the work of [onedr0p](https://github.com/sponsors/onedr0p?frequency=one-time) and [bjw-s](https://github.com/sponsors/bjw-s?frequency=one-time).
 
 ---
 
-### <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/kubernetes.svg" alt="☸️" width="20" height="20"> Kubernetes
+## <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/svg/kubernetes.svg" alt="☸️" width="20" height="20"> Kubernetes
 
 My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https://www.talos.dev) on three bare-metal nodes. Workloads and block storage share the same available resources backed by [Rook Ceph](https://rook.io/) on Samsung SSDs, while I have a separate server with NFS shares for media libraries and backups.
 
@@ -99,7 +99,7 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 
 ---
 
-### GitOps
+## GitOps
 
 [Flux](https://github.com/fluxcd/flux2) watches the clusters in my [kubernetes](./kubernetes/) folder (see Directories below) and makes the changes to my clusters based on the state of my Git repository.
 
@@ -138,6 +138,27 @@ This Git repository contains the following directories.
 📝 kubeconfig
 📝 talosconfig
 ```
+
+---
+
+## <img src="https://cdn.jsdelivr.net/gh/selfhst/icons@main/svg/buildbot.svg" alt="⚙" width="20" height="20"> Hardware
+
+
+### Main Kubernetes Cluster
+
+| Name   | Device     | CPU       | OS Disk    | Local Disk | Rook Disk  | RAM  | OS    | Purpose           |
+|--------|------------|-----------|------------|------------|------------|------|-------|-------------------|
+| k8s-1  | M70q-Gen3  | i7-12700T | 500GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
+| k8s-2  | M70q-Gen3  | i7-12700T | 512GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
+| k8s-3  | M70q-Gen3  | i7-12700T | 512GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
+| ai3090 | Precision Tower 3620 | i7-7700K | 256GB NVMe | - | -          | 16GB | Talos | k8s worker (LLM)  |
+
+### Supporting Hardware
+
+| Name    | Device               | CPU         | OS Disk    | Data Disk            | RAM   | OS      | Purpose   |
+|---------|----------------------|-------------|------------|----------------------|-------|---------|-----------|
+| TrueNAS | X10SDV-8C + KTN-STL3 | Xeon D-1541 | 512GB NVMe | 2x18TB 2x14TB 2x10TB | 64GB  | Truenas | NAS/NFS   |
+| UnRAID  | Dell R510            | Xeon E5640  | 16GB USB   | Mixture of 12x6TB+   | 64GB  | Unraid  | Backup    |
 
 ---
 

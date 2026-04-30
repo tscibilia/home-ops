@@ -66,12 +66,14 @@ machine:
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
+  {% if ENV.IS_CONTROLLER %}
   # Remove once l2 is removed in lieu of bgp
   network:
     interfaces:
       - interface: bond0
         vip:
           ip: 192.168.5.210
+  {% endif %}
   nodeLabels:
     node.kubernetes.io/gpu: "true"
     topology.kubernetes.io/region: main

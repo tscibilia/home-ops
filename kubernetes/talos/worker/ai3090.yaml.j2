@@ -5,12 +5,27 @@ machine:
     interfaces:
       - interface: bond0
         # Override base config — remove the k8s API VIP (controllers only)
-  nodeLabels:
-    topology.kubernetes.io/zone: ai
-    feature.node.kubernetes.io/pci-10de.present: "true"
+  kernel:
+    modules:
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
   nodeTaints:
     nvidia.com/gpu: "present:NoSchedule"
+  nodeLabels:
+    topology.kubernetes.io/zone: w
+    gpu.io/vendor: nvidia
+    feature.node.kubernetes.io/pci-10de.present: "true"
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig
 hostname: ai3090
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 75GiB
