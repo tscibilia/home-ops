@@ -6,6 +6,7 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] move cloudflare tunnels to pangolin
 - [ ] move github to forgejo
+- [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 - [ ] follow upstream [rustfs issue](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
 
 ## Known Issues
