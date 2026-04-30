@@ -6,6 +6,7 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] move cloudflare tunnels to pangolin
 - [ ] move github to forgejo
+- [ ] follow upstream [rustfs issue](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
 
 ## Known Issues
 - RustFS: authentik-Admin group -> rustfsAdmin, Plex Users need a RustFS group policy for access

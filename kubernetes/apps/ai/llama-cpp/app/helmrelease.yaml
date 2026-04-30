@@ -36,7 +36,24 @@ spec:
                 uv venv /tmp/.venv
                 uv pip install --no-cache --python /tmp/.venv/bin/python huggingface_hub
                 export PATH="/tmp/.venv/bin:$PATH"
+                for d in /llama-models/models--*/; do
+                  [ -d "$d" ] || continue
+                  name=$(basename "$d")
+                  if [ ! -d "/models/$name" ]; then
+                    echo ">> restoring $name from NAS cache"
+                    cp -a "$d" "/models/$name"
+                  fi
+                done
+                download-model "TeichAI/Qwen3.6-27B-Claude-Opus-Reasoning-Distill-v2-GGUF:q5_k_m"
                 download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q5_K_XL"
+                for d in /models/models--*/; do
+                  [ -d "$d" ] || continue
+                  name=$(basename "$d")
+                  if [ ! -d "/llama-models/$name" ]; then
+                    echo ">> caching $name to NAS"
+                    cp -a "$d" "/llama-models/$name"
+                  fi
+                done
         containers:
           app:
             image:
@@ -132,6 +149,15 @@ spec:
             download-models:
               - path: /models
                 readOnly: false
+      model-cache:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/shares
+        advancedMounts:
+          *app :
+            download-models:
+              - path: /llama-models
+                subPath: llama-models
       tmp:
         type: emptyDir
         globalMounts:
