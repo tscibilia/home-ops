@@ -2,11 +2,10 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: ai
-components:
-  - ../../components/common
 resources:
-  - ./namespace.yaml
-  - ./llama-cpp/ks.yaml
-  - ./open-webui/ks.yaml
-  - ./toolhive/ks.yaml
+  - ./embeddingserver.yaml
+  - ./externalsecret.yaml
+  - ./httproute.yaml
+  - ./mcpgroup.yaml
+  - ./mcpoidcconfig.yaml
+  - ./virtualmcpserver.yaml

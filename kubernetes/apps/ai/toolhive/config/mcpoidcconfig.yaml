@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://crd.movishell.pl/toolhive.stacklok.dev/mcpoidcconfig_v1beta1.json
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPOIDCConfig
+metadata:
+  name: authentik
+spec:
+  type: inline
+  inline:
+    issuer: https://mcp-direct.${SECRET_DOMAIN}
+    jwksAllowPrivateIP: true
+    # protectedResourceAllowPrivateIP: true
