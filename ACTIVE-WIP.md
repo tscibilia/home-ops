@@ -4,6 +4,8 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
+- [ ] move cloudflare tunnels to pangolin
+- [ ] move github to forgejo
 
 ## Known Issues
 - RustFS: authentik-Admin group -> rustfsAdmin, Plex Users need a RustFS group policy for access
@@ -16,6 +18,8 @@
 
 ## Resolved
 `Descending order, newest on top`
+- ✅ move llama.cpp to cluser - **2026-04-29** (See commit [08dde6f])
+- ✅ move ai3090 to talos worker - **2026-04-28** (See [#2201](https://github.com/tscibilia/home-ops/pull/2201) and commit [4a8b97c])
 - ✅ ESO remapping/reorganization - **2026-04-07** (See [#2032](https://github.com/tscibilia/home-ops/pull/2032))
 - ✅ Migrate minio -> RustFS - **2026-04-07** (See [#842](https://github.com/tscibilia/home-ops/issues/842))
 - ✅ NFS `fileid` error w/ volsync - **2026-04-03** (See [#1887](https://github.com/tscibilia/home-ops/issues/1887))

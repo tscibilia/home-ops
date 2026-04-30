@@ -20,4 +20,4 @@ spec:
     - ^bond0$
   nodeSelector:
     matchLabels:
-      kubernetes.io/os: linux
+      node-role.kubernetes.io/control-plane: ""
