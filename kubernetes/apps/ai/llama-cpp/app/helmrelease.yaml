@@ -1,0 +1,137 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app llama-cpp
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          download-models:
+            image:
+              repository: ghcr.io/astral-sh/uv
+              tag: python3.14-alpine
+            env:
+              HOME: /tmp
+              UV_CACHE_DIR: /tmp/uv-cache
+              HF_HUB_CACHE: /models
+              HF_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: llama-cpp-secret
+                    key: HF_TOKEN
+            command:
+              - /bin/sh
+              - -ec
+              - |
+                uv venv /tmp/.venv
+                uv pip install --no-cache --python /tmp/.venv/bin/python huggingface_hub
+                export PATH="/tmp/.venv/bin:$PATH"
+                download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q5_K_XL"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ggml-org/llama.cpp
+              tag: server-cuda@sha256:dea38daeef9a2aa7448543f759940184bcd890295dcff2c18934143a289b89c7
+            args:
+              - --models-preset
+              - &presetFile /config/presets.ini
+            env:
+              LLAMA_ARG_HOST: 0.0.0.0
+              LLAMA_ARG_PORT: &port 10000
+              LLAMA_OFFLINE: "1"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 64Gi
+                nvidia.com/gpu: "1"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /health
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    defaultPodOptions:
+      runtimeClassName: nvidia
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      nodeSelector:
+        feature.node.kubernetes.io/pci-10de.present: "true"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        type: configMap
+        name: llama-cpp-config
+        globalMounts:
+          - path: *presetFile
+            subPath: presets.ini
+            readOnly: true
+      download-script:
+        type: configMap
+        name: llama-cpp-download-script
+        defaultMode: 0o755
+        advancedMounts:
+          *app :
+            download-models:
+              - path: /usr/bin/download-model
+                subPath: download-model.sh
+                readOnly: true
+      models:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Gi
+        storageClass: openebs-hostpath
+        advancedMounts:
+          *app :
+            app:
+              - path: /models
+                readOnly: true
+            download-models:
+              - path: /models
+                readOnly: false
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
