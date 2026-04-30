@@ -1,0 +1,12 @@
+---
+# yaml-language-server: $schema=https://crd.movishell.pl/toolhive.stacklok.dev/mcpserver_v1beta1.json
+apiVersion: toolhive.stacklok.dev/v1beta1
+kind: MCPServer
+metadata:
+  name: kubectl
+spec:
+  image: ghcr.io/rohitg00/kubectl-mcp-server:1.24.0
+  transport: stdio
+  groupRef:
+    name: mcp-tools
+  serviceAccount: kubectl-sa
