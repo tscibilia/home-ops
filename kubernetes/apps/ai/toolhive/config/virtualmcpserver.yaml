@@ -21,7 +21,7 @@ spec:
       - name: authentik
         type: oidc
         oidcConfig:
-          issuerUrl: https://${AUTH_HOSTNAME}/application/o/toolhive/
+          issuerUrl: https://${AUTHENTIK_SSO_SUBDOMAIN}.${SECRET_DOMAIN}/application/o/toolhive/
           clientId: toolhive
           clientSecretRef:
             name: toolhive-secret
