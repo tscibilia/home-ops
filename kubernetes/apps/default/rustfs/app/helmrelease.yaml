@@ -14,6 +14,18 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          mc-setup:
+            image:
+              repository: minio/mc
+              tag: RELEASE.2024-11-17T19-35-25Z
+            command:
+              - sh
+              - -c
+              - cp /usr/bin/mc /tools/mc
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
         containers:
           app:
             image:
@@ -38,7 +50,20 @@ spec:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             probes:
-              liveness: &probes
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - 'MC_HOST_local="http://$RUSTFS_ACCESS_KEY:$RUSTFS_SECRET_KEY@localhost:9000" /tools/mc ls local >/dev/null 2>&1'
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 15
+                  failureThreshold: 3
+              readiness:
                 enabled: true
                 custom: true
                 spec:
@@ -49,7 +74,6 @@ spec:
                   periodSeconds: 30
                   timeoutSeconds: 10
                   failureThreshold: 6
-              readiness: *probes
               startup:
                 enabled: false
             resources:
@@ -111,3 +135,7 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /logs
+      tools:
+        type: emptyDir
+        globalMounts:
+          - path: /tools
