@@ -45,7 +45,7 @@ spec:
                   fi
                 done
                 download-model "TeichAI/Qwen3.6-27B-Claude-Opus-Reasoning-Distill-v2-GGUF:q5_k_m"
-                download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q5_K_XL"
+                download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q5_K_S"
                 for d in /models/models--*/; do
                   [ -d "$d" ] || continue
                   name=$(basename "$d")

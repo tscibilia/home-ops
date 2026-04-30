@@ -37,7 +37,7 @@ spec:
               uv venv /tmp/.venv
               uv pip install --no-cache --python /tmp/.venv/bin/python huggingface_hub
               export PATH="/tmp/.venv/bin:$PATH"
-              hf download unsloth/gemma-4-26B-A4B-it-GGUF --include "*UD-Q5_K_XL*.gguf"
+              hf download unsloth/gemma-4-26B-A4B-it-GGUF --include "*UD-Q5_K_S*.gguf"
               hf download unsloth/gemma-4-26B-A4B-it-GGUF mmproj-BF16.gguf
               hf download TeichAI/Qwen3.6-27B-Claude-Opus-Reasoning-Distill-v2-GGUF --include "*q5_k_m*.gguf"
               hf download TeichAI/Qwen3.6-27B-Claude-Opus-Reasoning-Distill-v2-GGUF mmproj-BF16.gguf
