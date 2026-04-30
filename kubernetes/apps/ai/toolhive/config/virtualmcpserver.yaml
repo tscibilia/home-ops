@@ -78,6 +78,8 @@ spec:
       conflictResolution: prefix
       conflictResolutionConfig:
         prefixFormat: "{workload}."
+  embeddingServerRef:
+    name: mcp-tools-embedding
   groupRef:
     name: mcp-tools
   incomingAuth:
