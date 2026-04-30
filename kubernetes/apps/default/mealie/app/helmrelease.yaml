@@ -65,9 +65,9 @@ spec:
               OIDC_REMEMBER_ME: "true"
               OIDC_USER_CLAIM: email
               # OpenAI Values
-              OPENAI_BASE_URL: "http://ollama.ai.svc.cluster.local:10000/v1"
+              OPENAI_BASE_URL: "http://llama-cpp.ai.svc.cluster.local:10000/v1"
               OPENAI_API_KEY: "sk-no-key"
-              OPENAI_MODEL: gemma-4-26B-A4B.gguf
+              OPENAI_MODEL: "unsloth/gemma-4-26B-A4B"
               OPENAI_ENABLE_IMAGE_SERVICES: "true" #creating recipes via image
             envFrom:
               - secretRef:

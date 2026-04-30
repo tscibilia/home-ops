@@ -25,7 +25,7 @@ spec:
               JWT_EXPIRES_IN: 604800
               CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN};http://localhost:8080"
               WEBUI_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-              OPENAI_API_BASE_URLS: "http://ollama.ai.svc.cluster.local:10000/v1"
+              OPENAI_API_BASE_URLS: "http://llama-cpp.ai.svc.cluster.local:10000/v1"
               OPENAI_API_KEYS: "sk-no-key"
               ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: "searxng"
