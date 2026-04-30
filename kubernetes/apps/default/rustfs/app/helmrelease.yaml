@@ -22,8 +22,10 @@ spec:
             command:
               - sh
               - -c
-              - cp /usr/bin/mc /tools/mc
+              - cp /usr/bin/mc /tools/mc && chmod 755 /tools/mc
             securityContext:
+              runAsUser: 0
+              runAsNonRoot: false
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
         containers:
