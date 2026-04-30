@@ -35,13 +35,20 @@ spec:
                 OLLAMA_PID=$!
 
                 echo "Waiting for Ollama to be ready..."
+                READY=0
                 for i in $(seq 1 60); do
                   if curl -sf http://127.0.0.1:11434/ >/dev/null 2>&1; then
                     echo "Ollama ready."
+                    READY=1
                     break
                   fi
                   sleep 2
                 done
+                if [ "$READY" = "0" ]; then
+                  echo "ERROR: Ollama failed to start."
+                  kill $OLLAMA_PID 2>/dev/null || true
+                  exit 1
+                fi
 
                 mkdir -p /models/import
 
@@ -50,15 +57,13 @@ spec:
                   -o /models/import/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf \
                   "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf"
 
-                echo "Downloading vision projector GGUF  (~1GB)..."
+                echo "Downloading vision projector GGUF (~1GB)..."
                 curl -L --retry 5 --retry-delay 10 \
                   -o /models/import/mmproj-BF16.gguf \
                   "https://huggingface.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/main/mmproj-BF16.gguf"
 
-                cat > /models/import/Modelfile << 'EOF'
-                FROM /models/import/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf
-                PROJECTOR /models/import/mmproj-BF16.gguf
-                EOF
+                printf 'FROM /models/import/gemma-4-26B-A4B-it-UD-Q5_K_XL.gguf\nPROJECTOR /models/import/mmproj-BF16.gguf\n' \
+                  > /models/import/Modelfile
 
                 echo "Importing model into Ollama..."
                 ollama create gemma4-26b -f /models/import/Modelfile
