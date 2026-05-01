@@ -7,6 +7,7 @@
 - [ ] move cloudflare tunnels to pangolin
 - [ ] move github to forgejo
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
+- [ ] use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs
 - [ ] follow upstream [rustfs issue](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
 
 ## Known Issues

@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app matterbridge
+spec:
+  components:
+    - ../../../../components/volsync
+  dependsOn:
+    - name: multus-networks
+      namespace: network
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  interval: 1h
+  path: ./kubernetes/apps/home-automation/matterbridge/app
+  postBuild:
+    substitute:
+      APP: *app
+      CONTROLLER: StatefulSet
+      VOLSYNC_CAPACITY: 5Gi
+      VOLSYNC_PGID: "0"
+      VOLSYNC_PUID: "0"
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: home-automation
+  wait: false
