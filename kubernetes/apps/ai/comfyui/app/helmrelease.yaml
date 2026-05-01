@@ -1,0 +1,92 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app comfyui
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        strategy: Recreate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ai-dock/comfyui
+              tag: v2-cuda-12.1.1-base-22.04-v0.2.7@sha256:ca4c95d4d4743d7d5683e57f5e0358fe586bc57578f66c2a844e9fa0650cc619
+            env:
+              TZ: "${TIMEZONE:-UTC}"
+              AUTO_UPDATE: "false"
+              CF_QUICK_TUNNELS: "false"
+              DIRECT_ADDRESS_GET_WAN: "true"
+              PROVISIONING_SCRIPT: "https://raw.githubusercontent.com/ai-dock/comfyui/main/config/provisioning/flux.sh"
+              SERVERLESS: "false"
+              SERVICEPORTAL_URL: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+              WEB_ENABLE_AUTH: "false"
+              WORKSPACE: "/workspace"
+            resources:
+              requests:
+                cpu: 1
+                memory: 8Gi
+              limits:
+                memory: 12Gi
+                nvidia.com/gpu: "1"
+            securityContext:
+              privileged: true
+    defaultPodOptions:
+      hostIPC: true
+      nodeSelector:
+        feature.node.kubernetes.io/pci-10de.present: "true"
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: &port 8188
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      comfyui:
+        existingClaim: *app
+        globalMounts:
+          - path: /workspace/ComfyUI/
+      config:
+        type: configMap
+        name: comfyui-configmap
+        advancedMounts:
+          *app :
+            app:
+              - path: /workspace/ComfyUI/custom_nodes/ComfyUI-Manager/config.ini
+                subPath: config.ini
+                readOnly: true
+      data:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/shares/comfyui
+        globalMounts:
+          - path: /workspace/ComfyUI/output
+            subPath: output
+          - path: /workspace/ComfyUI/input
+            subPath: input
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
