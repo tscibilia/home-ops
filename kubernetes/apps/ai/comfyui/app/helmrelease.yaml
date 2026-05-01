@@ -25,6 +25,8 @@ spec:
               AUTO_UPDATE: "false"
               CF_QUICK_TUNNELS: "false"
               DIRECT_ADDRESS_GET_WAN: "true"
+              NVIDIA_DRIVER_CAPABILITIES: compute,utility
+              NVIDIA_VISIBLE_DEVICES: all
               PROVISIONING_SCRIPT: "https://raw.githubusercontent.com/ai-dock/comfyui/main/config/provisioning/flux.sh"
               SERVERLESS: "false"
               SERVICEPORTAL_URL: "{{ .Release.Name }}.${SECRET_DOMAIN}"
@@ -36,11 +38,11 @@ spec:
                 memory: 8Gi
               limits:
                 memory: 12Gi
-                nvidia.com/gpu: "1"
             securityContext:
               privileged: true
     defaultPodOptions:
       hostIPC: true
+      runtimeClassName: nvidia
       nodeSelector:
         feature.node.kubernetes.io/pci-10de.present: "true"
       tolerations:
