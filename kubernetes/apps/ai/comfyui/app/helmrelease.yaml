@@ -84,6 +84,8 @@ spec:
         server: truenas.internal
         path: /mnt/nas/data/shares/comfyui
         globalMounts:
+          - path: /workspace/ComfyUI/models
+            subPath: models
           - path: /workspace/ComfyUI/output
             subPath: output
           - path: /workspace/ComfyUI/input
