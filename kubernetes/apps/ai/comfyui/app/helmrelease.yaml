@@ -86,6 +86,8 @@ spec:
         globalMounts:
           - path: /opt/ComfyUI/models
             subPath: models
+          - path: /opt/ComfyUI/custom_nodes/
+            subPath: custom_nodes
           - path: /workspace/ComfyUI/output
             subPath: output
           - path: /workspace/ComfyUI/input
