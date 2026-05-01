@@ -1,0 +1,91 @@
+{
+  "4": {
+    "inputs": {
+      "ckpt_name": "FLUX1/flux1-dev-fp8.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": { "title": "Load Checkpoint" }
+  },
+  "6": {
+    "inputs": {
+      "text": "a cinematic photo of a futuristic city at dusk, neon reflections on wet pavement, ultra detailed",
+      "clip": ["4", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "Positive Prompt" }
+  },
+  "8": {
+    "inputs": {
+      "samples": ["13", 0],
+      "vae": ["4", 2]
+    },
+    "class_type": "VAEDecode",
+    "_meta": { "title": "VAE Decode" }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": ["8", 0]
+    },
+    "class_type": "SaveImage",
+    "_meta": { "title": "Save Image" }
+  },
+  "13": {
+    "inputs": {
+      "noise": ["25", 0],
+      "guider": ["22", 0],
+      "sampler": ["16", 0],
+      "sigmas": ["17", 0],
+      "latent_image": ["27", 0]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": { "title": "SamplerCustomAdvanced" }
+  },
+  "16": {
+    "inputs": { "sampler_name": "euler" },
+    "class_type": "KSamplerSelect",
+    "_meta": { "title": "KSamplerSelect" }
+  },
+  "17": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 20,
+      "denoise": 1.0,
+      "model": ["4", 0]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": { "title": "BasicScheduler" }
+  },
+  "22": {
+    "inputs": {
+      "model": ["4", 0],
+      "conditioning": ["26", 0]
+    },
+    "class_type": "BasicGuider",
+    "_meta": { "title": "BasicGuider" }
+  },
+  "25": {
+    "inputs": {
+      "noise_seed": 219670278747233
+    },
+    "class_type": "RandomNoise",
+    "_meta": { "title": "RandomNoise" }
+  },
+  "26": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": ["6", 0]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": { "title": "FluxGuidance" }
+  },
+  "27": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": { "title": "EmptySD3LatentImage" }
+  }
+}
