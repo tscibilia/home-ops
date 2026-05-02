@@ -7,15 +7,15 @@ metadata:
   namespace: network
 spec:
   endpoints:
-    - dnsName: tun.t0m.co
+    - dnsName: ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
       targets:
         - 198.23.244.18
-    - dnsName: api.tun.t0m.co
+    - dnsName: api.${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
       targets:
         - 198.23.244.18
-    - dnsName: doco.tun.t0m.co
+    - dnsName: doco.${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
       targets:
         - 198.23.244.18

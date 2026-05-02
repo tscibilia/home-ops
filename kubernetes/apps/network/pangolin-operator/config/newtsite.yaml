@@ -3,9 +3,9 @@
 apiVersion: pangolin.home-operations.com/v1alpha1
 kind: NewtSite
 metadata:
-  name: k8s-cluster
+  name: &name k8s-cluster
 spec:
-  name: k8s-cluster
+  name: *name
   autoDiscover:
     annotationPrefix: pangolin-operator
     denyCountries: RU,CN,KP,IR,BY,IL

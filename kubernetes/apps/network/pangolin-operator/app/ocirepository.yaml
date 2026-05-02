@@ -10,6 +10,5 @@ spec:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
     operation: copy
   ref:
-    # renovate: datasource=docker depName=ghcr.io/home-operations/charts/pangolin-operator
     tag: 0.1.1
   url: oci://ghcr.io/home-operations/charts/pangolin-operator

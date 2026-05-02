@@ -98,7 +98,7 @@ services:
     container_name: traefik
     restart: unless-stopped
     environment:
-      - CF_API_TOKEN=${CF_CLOUDFLARE_TOKEN}
+      - CLOUDFLARE_DNS_API_TOKEN=${CF_CLOUDFLARE_TOKEN}
       - CROWDSEC_API_KEY=${CROWDSEC_TRAEFIK_API_KEY}
       - DOMAIN=${DOMAIN}
     network_mode: service:gerbil
