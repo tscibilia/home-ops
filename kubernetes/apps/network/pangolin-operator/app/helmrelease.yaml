@@ -14,7 +14,7 @@ spec:
       repository: ghcr.io/home-operations/pangolin-operator
       tag: 0.1.1
     pangolin:
-      existingSecret: "{{ .Release.Name }}-secret"
+      existingSecret: pangolin-operator-secret
     resources:
       limits:
         memory: 256Mi
