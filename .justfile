@@ -3,6 +3,7 @@
 set quiet := true
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
+mod ansible "ansible"
 mod bootstrap "kubernetes/bootstrap"
 mod kube "kubernetes"
 mod talos "kubernetes/talos"
