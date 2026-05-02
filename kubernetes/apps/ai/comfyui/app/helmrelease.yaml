@@ -15,6 +15,19 @@ spec:
         strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          custom-nodes:
+            image:
+              repository: ghcr.io/ai-dock/comfyui
+              tag: v2-cuda-12.1.1-base-22.04-v0.2.7@sha256:ca4c95d4d4743d7d5683e57f5e0358fe586bc57578f66c2a844e9fa0650cc619
+            command:
+              - /bin/bash
+              - -c
+              - |
+                if [ -z "$(ls -A /mnt/custom_nodes/)" ]; then
+                  echo "NFS custom_nodes empty, seeding from image..."
+                  cp -r /opt/ComfyUI/custom_nodes/. /mnt/custom_nodes/
+                fi
         containers:
           app:
             image:
@@ -32,12 +45,24 @@ spec:
               SERVICEPORTAL_URL: "{{ .Release.Name }}.${SECRET_DOMAIN}"
               WEB_ENABLE_AUTH: "false"
               WORKSPACE: "/workspace"
+              PYTHONPATH: "/workspace/.python-deps"
+              PIP_TARGET: "/workspace/.python-deps"
             resources:
               requests:
                 cpu: 1
                 memory: 8Gi
               limits:
                 memory: 12Gi
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - /bin/bash
+                    - -c
+                    - |
+                      if [ -d /opt/ComfyUI/custom_nodes/ComfyUI-Manager ]; then
+                        cp /tmp/comfyui-config/config.ini /opt/ComfyUI/custom_nodes/ComfyUI-Manager/config.ini
+                      fi
             securityContext:
               privileged: true
     defaultPodOptions:
@@ -76,22 +101,29 @@ spec:
         advancedMounts:
           *app :
             app:
-              - path: /workspace/ComfyUI/custom_nodes/ComfyUI-Manager/config.ini
+              - path: /tmp/comfyui-config/config.ini
                 subPath: config.ini
                 readOnly: true
       data:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/shares/comfyui
-        globalMounts:
-          - path: /opt/ComfyUI/models
-            subPath: models
-          - path: /opt/ComfyUI/custom_nodes/
-            subPath: custom_nodes
-          - path: /workspace/ComfyUI/output
-            subPath: output
-          - path: /workspace/ComfyUI/input
-            subPath: input
+        advancedMounts:
+          *app :
+            custom-nodes:
+              - path: /mnt/custom_nodes
+                subPath: custom_nodes
+            app:
+              - path: /opt/ComfyUI/models
+                subPath: models
+              - path: /opt/ComfyUI/custom_nodes
+                subPath: custom_nodes
+              - path: /workspace/ComfyUI/output
+                subPath: output
+              - path: /workspace/ComfyUI/input
+                subPath: input
+              - path: /workspace/.python-deps
+                subPath: python-deps
       tmp:
         type: emptyDir
         globalMounts:
