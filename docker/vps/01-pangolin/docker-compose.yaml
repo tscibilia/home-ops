@@ -100,6 +100,7 @@ services:
     environment:
       - CF_API_TOKEN=${CF_CLOUDFLARE_TOKEN}
       - CROWDSEC_API_KEY=${CROWDSEC_TRAEFIK_API_KEY}
+      - DOMAIN=${DOMAIN}
     network_mode: service:gerbil
     depends_on:
       crowdsec:
@@ -137,7 +138,41 @@ networks:
 
 configs:
   pangolin_config:
-    file: ./config/pangolin/config.yaml
+    content: |
+      gerbil:
+        start_port: 51820
+        base_endpoint: "tun.${DOMAIN}"
+      app:
+        dashboard_url: "https://tun.${DOMAIN}"
+        log_level: "info"
+        telemetry:
+          anonymous_usage: false
+      domains:
+        domain1:
+          base_domain: "${DOMAIN}"
+          cert_resolver: "letsencrypt"
+      server:
+        cors:
+          origins:
+            - "https://tun.${DOMAIN}"
+          methods:
+            - "GET"
+            - "POST"
+            - "PUT"
+            - "DELETE"
+            - "PATCH"
+          allowed_headers:
+            - "X-CSRF-Token"
+            - "Content-Type"
+          credentials: false
+        maxmind_db_path: "/app/config/GeoLite2/GeoLite2-Country.mmdb"
+        maxmind_asn_path: "/app/config/GeoLite2/GeoLite2-ASN.mmdb"
+      flags:
+        require_email_verification: false
+        disable_signup_without_invite: true
+        disable_user_create_org: false
+        allow_raw_resources: true
+        enable_integration_api: true
   crowdsec_acquis:
     file: ./config/crowdsec/acquis.yaml
   crowdsec_allowlist:

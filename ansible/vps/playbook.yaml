@@ -6,7 +6,6 @@
   vars:
     ansible_user: ubuntu
     ansible_python_interpreter: auto_silent
-    pangolin_hostname: tun.t0m.co
     pangolin_org_id: homelab
     pangolin_org_name: Homelab
     pangolin_org_subnet: 100.100.0.0/16
@@ -30,6 +29,7 @@
         - docker/vps-pangolin/admin-password
         - docker/vps-pangolin/crowdsec-traefik-api-key
         - docker/vps-pangolin/crowdsec-enroll-key
+        - docker/secret-domain
       check_mode: false
       changed_when: false
       no_log: true
@@ -44,6 +44,8 @@
         pangolin_admin_password: "{{ secrets_raw.results[4].stdout }}"
         crowdsec_traefik_api_key: "{{ secrets_raw.results[5].stdout }}"
         crowdsec_enroll_key: "{{ secrets_raw.results[6].stdout }}"
+        pangolin_base_domain: "{{ secrets_raw.results[7].stdout }}"
+        pangolin_hostname: "tun.{{ secrets_raw.results[7].stdout }}"
       no_log: true
 
     - name: user
@@ -178,6 +180,10 @@
         - name: doco-cd | Create pangolin Docker network
           community.docker.docker_network:
             name: pangolin
+            driver: bridge
+            labels:
+              com.docker.compose.network: default
+              com.docker.compose.project: 01-pangolin
             state: present
 
         - name: doco-cd | Run docker-compose
