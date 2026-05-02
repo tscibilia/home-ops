@@ -1,0 +1,71 @@
+---
+# This file is not managed by doco-cd because it can't manage itself.
+
+secrets:
+  gh_token:
+    file: /opt/doco-cd/gh_token
+  akeyless_access_id:
+    file: /opt/doco-cd/akeyless_access_id
+  akeyless_access_key:
+    file: /opt/doco-cd/akeyless_access_key
+
+services:
+  doco-cd:
+    image: ghcr.io/kimdre/doco-cd:0.83.0@sha256:7987d1628f787e51b71a499f82e8be714e6d6150b716e24911b1c546c17c9888
+    container_name: doco-cd
+    restart: unless-stopped
+    depends_on:
+      akeyless-proxy:
+        condition: service_healthy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/data
+    environment:
+      LOG_LEVEL: info
+      DEPLOY_CONFIG_BASE_DIR: ./docker/vps/
+      POLL_CONFIG: |-
+        - url: https://github.com/tscibilia/home-ops.git
+          reference: refs/heads/main
+          interval: 3600
+      SECRET_PROVIDER: webhook
+      SECRET_PROVIDER_WEBHOOK_STORES: |
+        name: akeyless
+        version: v1
+        url: "http://akeyless-proxy:8080/secret?name={{ .remote_ref.key | urlencode }}"
+        method: GET
+        json_path: "values(@)[0]"
+      TZ: America/New_York
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - gh_token
+
+  akeyless-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: akeyless-proxy
+    restart: unless-stopped
+    expose:
+      - "8080"
+    environment:
+      AKEYLESS_ACCESS_ID_FILE: /run/secrets/akeyless_access_id
+      AKEYLESS_ACCESS_KEY_FILE: /run/secrets/akeyless_access_key
+    secrets:
+      - akeyless_access_id
+      - akeyless_access_key
+
+networks:
+  default:
+    name: pangolin
+    external: true
+
+volumes:
+  data: {}

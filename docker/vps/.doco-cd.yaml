@@ -1,0 +1,29 @@
+---
+working_dir: ./docker/vps
+auto_discover: true
+auto_discover_opts:
+  depth: 1
+  delete: true
+
+# Must be stored as individual text-based static secrets in aKeyless (not JSON)
+external_secrets:
+  PANGOLIN_SERVER_SECRET:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-pangolin/server-secret
+  CF_CLOUDFLARE_TOKEN:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-cloudflare/dns-token
+  CROWDSEC_TRAEFIK_API_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-pangolin/crowdsec-traefik-api-key
+  MAXMIND_ACCOUNT_ID:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-maxmind/account-id
+  MAXMIND_PANGOLIN_LICENSE_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-maxmind/license-key

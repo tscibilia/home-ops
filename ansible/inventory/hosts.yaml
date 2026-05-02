@@ -1,0 +1,16 @@
+---
+all:
+  children:
+    truenas:
+      hosts:
+        truenas.internal:
+          ansible_user: sysadmin
+          ansible_ssh_private_key_file: ~/.ssh/home-ops
+          ansible_python_interpreter: auto_silent
+    vps:
+      hosts:
+        198.23.244.18:
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ~/.ssh/home-ops
+          ansible_python_interpreter: auto_silent
+          ansible_port: 22222

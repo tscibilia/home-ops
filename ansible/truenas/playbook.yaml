@@ -1,0 +1,111 @@
+---
+- name: Bootstrap TrueNAS doco-cd
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    ansible_user: sysadmin
+    ansible_python_interpreter: auto_silent
+    dococd_config_dir: /mnt/nas/data/users/sysadmin/.config/doco-cd
+
+  tasks:
+    - name: Check host connectivity
+      ansible.builtin.ping:
+
+    - name: Read secrets from aKeyless
+      ansible.builtin.shell: "akeyless get-secret-value --name '{{ item }}'"
+      delegate_to: localhost
+      become: false
+      loop:
+        - docker/doco-cd/github-token
+        - docker/doco-cd/akeyless-access-id
+        - docker/doco-cd/akeyless-access-key
+      check_mode: false
+      changed_when: false
+      no_log: true
+      register: secrets_raw
+
+    - name: Set secret facts
+      ansible.builtin.set_fact:
+        doco_github_token: "{{ secrets_raw.results[0].stdout }}"
+        doco_akeyless_access_id: "{{ secrets_raw.results[1].stdout }}"
+        doco_akeyless_access_key: "{{ secrets_raw.results[2].stdout }}"
+      no_log: true
+
+    - name: doco-cd
+      block:
+        - name: doco-cd | Create config directory
+          ansible.builtin.file:
+            path: "{{ dococd_config_dir }}"
+            state: directory
+            owner: sysadmin
+            mode: "0700"
+
+        - name: doco-cd | Copy docker-compose app file
+          ansible.builtin.copy:
+            src: ../../docker/truenas/.doco-cd/docker-compose.app.yaml
+            dest: "{{ dococd_config_dir }}/docker-compose.yaml"
+            owner: sysadmin
+            mode: "0644"
+
+        - name: doco-cd | Copy Dockerfile
+          ansible.builtin.copy:
+            src: ../../docker/truenas/.doco-cd/Dockerfile
+            dest: "{{ dococd_config_dir }}/Dockerfile"
+            owner: sysadmin
+            mode: "0644"
+
+        - name: doco-cd | Copy proxy.py
+          ansible.builtin.copy:
+            src: ../../docker/truenas/.doco-cd/proxy.py
+            dest: "{{ dococd_config_dir }}/proxy.py"
+            owner: sysadmin
+            mode: "0644"
+
+        - name: doco-cd | Create secret files
+          ansible.builtin.copy:
+            dest: "{{ dococd_config_dir }}/{{ item.name }}"
+            content: "{{ item.content }}"
+            owner: sysadmin
+            mode: "0600"
+          no_log: true
+          loop:
+            - name: gh_token
+              content: "{{ doco_github_token }}"
+            - name: akeyless_access_id
+              content: "{{ doco_akeyless_access_id }}"
+            - name: akeyless_access_key
+              content: "{{ doco_akeyless_access_key }}"
+
+        - name: doco-cd | Ensure doco-cd Docker network exists
+          community.docker.docker_network:
+            name: doco-cd
+            state: present
+
+        - name: doco-cd | Run docker-compose
+          community.docker.docker_compose_v2:
+            project_src: "{{ dococd_config_dir }}"
+            files:
+              - docker-compose.yaml
+            build: always
+            pull: always
+            state: present
+          when: not ansible_check_mode
+
+        - name: doco-cd | Wait for akeyless-proxy healthy
+          community.docker.docker_container_info:
+            name: akeyless-proxy
+          register: proxy_info
+          until: proxy_info.container.State.Health.Status == "healthy"
+          retries: 30
+          delay: 5
+          when: not ansible_check_mode
+
+        - name: doco-cd | Wait for doco-cd healthy
+          community.docker.docker_container_info:
+            name: doco-cd
+          register: dococd_info
+          until: dococd_info.container.State.Health.Status == "healthy"
+          retries: 30
+          delay: 10
+          when: not ansible_check_mode
