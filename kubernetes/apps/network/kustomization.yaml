@@ -14,7 +14,6 @@ resources:
   - ./external-dns/ks.yaml
   - ./greenlight/ks.yaml
   - ./multus/ks.yaml
-  # TODO: uncomment after Pangolin API key is stored in aKeyless (kubernetes/network/pangolin-operator/api-key)
-  # - ./pangolin-operator/ks.yaml
+  - ./pangolin-operator/ks.yaml
   - ./tailscale/ks.yaml
   - ./unifi-dns/ks.yaml
