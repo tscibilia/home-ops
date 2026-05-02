@@ -3,7 +3,7 @@ name: pangolin
 services:
   pangolin:
     # renovate: datasource=docker depName=ghcr.io/fosrl/pangolin
-    image: ghcr.io/fosrl/pangolin:1.17.1
+    image: ghcr.io/fosrl/pangolin:1.18.1
     container_name: pangolin
     restart: unless-stopped
     environment:
