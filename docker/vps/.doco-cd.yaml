@@ -10,7 +10,7 @@ external_secrets:
   PANGOLIN_SERVER_SECRET:
     store_ref: akeyless
     remote_ref:
-      key: docker/vps-pangolin/server-secret
+      key: docker/vps-pangolin/secret-domain
   CF_CLOUDFLARE_TOKEN:
     store_ref: akeyless
     remote_ref:
