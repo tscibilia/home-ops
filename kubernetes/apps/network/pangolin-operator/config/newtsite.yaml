@@ -17,6 +17,5 @@ spec:
   newt:
     # renovate: datasource=github-releases depName=fosrl/newt
     tag: 1.12.3
-    replicas: 0
     mtu: 1380
     acceptClients: true
