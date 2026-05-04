@@ -80,12 +80,11 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: {add: ["NET_RAW"], drop: ["ALL"]}
+              capabilities: {drop: ["ALL"]}
         serviceAccount:
           identifier: *app
     defaultPodOptions:
       automountServiceAccountToken: true
-      hostUsers: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
