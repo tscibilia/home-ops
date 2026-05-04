@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.2.0@sha256:08eb7ed4c7fe70425064d58154c35fccc89fafffd64ce9d1affed399e173ff20
+              tag: 5.1.4@sha256:f8ded91789511af07db8e47bcfde9440f3c2d235e85b7eee13c9d03a7a4107c9
             env:
               TZ: ${TIMEZONE:-UTC}
               QBT_TORRENTING_PORT: &vpnPort 55635
