@@ -7,6 +7,6 @@ metadata:
 spec:
   type: inline
   inline:
-    issuer: https://mcp-direct.${SECRET_DOMAIN}
+    issuer: https://mcp.${SECRET_DOMAIN}
     jwksAllowPrivateIP: true
     # protectedResourceAllowPrivateIP: true

@@ -3,7 +3,7 @@
 apiVersion: toolhive.stacklok.dev/v1beta1
 kind: MCPGroup
 metadata:
-  name: mcp-tools
+  name: mcp-int
 spec:
   description: Aggregated MCP tools for AI assistants
 ---
@@ -11,6 +11,6 @@ spec:
 apiVersion: toolhive.stacklok.dev/v1beta1
 kind: MCPGroup
 metadata:
-  name: mcp-direct
+  name: mcp-ext
 spec:
   description: Direct MCP tools for AI assistants

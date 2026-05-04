@@ -3,10 +3,10 @@
 apiVersion: toolhive.stacklok.dev/v1beta1
 kind: VirtualMCPServer
 metadata:
-  name: mcp-gateway-direct
+  name: mcp-gateway-ext
 spec:
   authServerConfig:
-    issuer: https://mcp-direct.${SECRET_DOMAIN}
+    issuer: https://mcp.${SECRET_DOMAIN}
     signingKeySecretRefs:
       - name: toolhive-secret
         key: EC_SIGNING_KEY
@@ -26,7 +26,7 @@ spec:
           clientSecretRef:
             name: toolhive-secret
             key: OIDC_CLIENT_SECRET
-          redirectUri: https://mcp-direct.${SECRET_DOMAIN}/oauth/callback
+          redirectUri: https://mcp.${SECRET_DOMAIN}/oauth/callback
           scopes:
             - openid
             - profile
@@ -40,13 +40,13 @@ spec:
   # telemetryConfigRef:
   #   name: prometheus
   groupRef:
-    name: mcp-direct
+    name: mcp-ext
   incomingAuth:
     type: oidc
     oidcConfigRef:
       name: authentik
-      audience: https://mcp-direct.${SECRET_DOMAIN}/mcp
-      resourceUrl: https://mcp-direct.${SECRET_DOMAIN}/mcp
+      audience: https://mcp.${SECRET_DOMAIN}/mcp
+      resourceUrl: https://mcp.${SECRET_DOMAIN}/mcp
       scopes:
         - openid
         - profile
@@ -71,7 +71,7 @@ spec:
 apiVersion: toolhive.stacklok.dev/v1beta1
 kind: VirtualMCPServer
 metadata:
-  name: mcp-gateway-internal
+  name: mcp-gateway-int
 spec:
   config:
     aggregation:
@@ -81,7 +81,7 @@ spec:
   embeddingServerRef:
     name: mcp-tools-embedding
   groupRef:
-    name: mcp-tools
+    name: mcp-int
   incomingAuth:
     type: anonymous
   outgoingAuth:
