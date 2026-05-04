@@ -56,6 +56,7 @@ spec:
         serviceAccount:
           identifier: *app
     defaultPodOptions:
+      automountServiceAccountToken: true
       securityContext:
         runAsUser: 1000
         runAsGroup: 100
@@ -100,8 +101,6 @@ spec:
             subPath: settings.yaml
           - path: /app/config/widgets.yaml
             subPath: widgets.yaml
-    serviceAccount:
-      *app : {}
     rbac:
       bindings:
         *app :

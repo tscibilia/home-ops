@@ -67,6 +67,7 @@ spec:
         serviceAccount:
           identifier: *app
     defaultPodOptions:
+      automountServiceAccountToken: true
       securityContext:
         runAsUser: 1000
         runAsGroup: 100
@@ -102,8 +103,6 @@ spec:
         name: "{{ .Release.Name }}-config-secret"
         globalMounts:
           - path: /kite
-    serviceAccount:
-      *app : {}
     rbac:
       bindings:
         *app :

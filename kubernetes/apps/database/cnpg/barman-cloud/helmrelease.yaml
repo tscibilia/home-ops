@@ -44,6 +44,7 @@ spec:
         serviceAccount:
           identifier: *app
     defaultPodOptions:
+      automountServiceAccountToken: true
       securityContext:
         runAsNonRoot: true
         runAsGroup: 10001
@@ -76,9 +77,6 @@ spec:
         type: secret
         name: *clientCert
         globalMounts: [ { path: /client } ]
-    serviceAccount:
-      *app :
-        forceRename: *app
     rbac:
       roles:
         leader-election-role:
@@ -172,9 +170,9 @@ spec:
           subjects: *subject
     rawResources:
       client: &cert
-        apiVersion: cert-manager.io/v1
-        kind: Certificate
-        spec:
+        manifest: &certManifest
+          apiVersion: cert-manager.io/v1
+          kind: Certificate
           spec: &certSpec
             commonName: barman-cloud-client
             duration: 2160h
@@ -188,7 +186,8 @@ spec:
             usages: [ "client auth" ]
       server:
         <<: *cert
-        spec:
+        manifest:
+          <<: *certManifest
           spec:
             <<: *certSpec
             commonName: barman-cloud
