@@ -23,8 +23,7 @@ kind: HTTPRoute
 metadata:
   name: mcp-gateway-int
   annotations:
-    gatus.home-operations.com/endpoint: |-
-      conditions: ["[STATUS] == 406"]
+    gatus.home-operations.com/enabled: "false"
 spec:
   hostnames: ["mcp-int.${SECRET_DOMAIN}"]
   parentRefs:

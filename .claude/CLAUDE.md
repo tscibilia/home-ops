@@ -105,6 +105,7 @@ kubernetes                    # K8s cluster
 - **CNPG Clusters:** `pgsql-cluster` (PG17), `immich17` (vectorchord). Use `<cluster>-rw.database.svc.cluster.local`.
 - **Networking:** SSO via `ext-auth-external`/`internal`. Ingress via `envoy-external`/`internal`.
 - **Secrets:** Synced via `ExternalSecret` from aKeyless.
+- **Gatus:** Endpoints are annotation-driven via `gatus.home-operations.com`. The gatus-sidecar auto-discovers routes.
 
 ## Commit Protocol
 Before requesting a commit, ensure:
