@@ -84,7 +84,14 @@ spec:
         serviceAccount:
           identifier: *app
     defaultPodOptions:
+      automountServiceAccountToken: true
       hostUsers: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
     service:
       app:
         controller: *app
@@ -132,5 +139,3 @@ spec:
             identifier: *app
           subjects:
             - identifier: *app
-    serviceAccount:
-      *app : {}
