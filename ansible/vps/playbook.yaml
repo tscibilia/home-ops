@@ -1,7 +1,6 @@
 ---
 - name: Bootstrap Pangolin VPS
   hosts: all
-  become: true
   gather_facts: false
   vars:
     ansible_user: ubuntu
@@ -20,7 +19,6 @@
     - name: Read secrets from aKeyless
       ansible.builtin.shell: "akeyless get-secret-value --name '{{ item }}'"
       delegate_to: localhost
-      become: false
       loop:
         - docker/doco-cd/github-token
         - docker/doco-cd/akeyless-access-id
@@ -49,6 +47,8 @@
       no_log: true
 
     - name: user
+      become: true
+      when: bootstrap_mode | default(false)
       block:
         - name: user | Create ubuntu user
           ansible.builtin.user:
@@ -63,6 +63,8 @@
             key: "{{ lookup('file', '~/.ssh/home-ops.pub') }}"
 
     - name: packages
+      become: true
+      when: bootstrap_mode | default(false)
       block:
         - name: packages | Install Docker
           ansible.builtin.shell: curl -fsSL https://get.docker.com | sh
@@ -77,6 +79,8 @@
             append: true
 
     - name: ssh
+      become: true
+      when: bootstrap_mode | default(false)
       block:
         - name: ssh | Update SSH socket port
           ansible.builtin.replace:
@@ -100,6 +104,8 @@
           notify: Restart ssh.socket
 
     - name: firewall
+      become: true
+      when: bootstrap_mode | default(false)
       block:
         - name: firewall | Allow ports
           community.general.ufw:
@@ -128,6 +134,7 @@
             policy: deny
 
     - name: doco-cd
+      become: false
       block:
         - name: doco-cd | Create config directory
           ansible.builtin.file:
@@ -160,6 +167,23 @@
             owner: ubuntu
             group: ubuntu
             mode: "0644"
+
+        - name: doco-cd | Copy cron-update.sh
+          ansible.builtin.copy:
+            src: ../../docker/vps/.doco-cd/cron-update.sh
+            dest: "{{ dococd_config_dir }}/cron-update.sh"
+            owner: ubuntu
+            group: ubuntu
+            mode: "0755"
+
+        - name: doco-cd | Install nightly update cron job
+          ansible.builtin.cron:
+            name: doco-cd stack update
+            minute: "0"
+            hour: "3"
+            job: "{{ dococd_config_dir }}/cron-update.sh"
+            user: ubuntu
+            state: present
 
         - name: doco-cd | Create secret files
           ansible.builtin.copy:
@@ -215,6 +239,7 @@
           when: not ansible_check_mode
 
     - name: pangolin
+      become: false
       block:
         - name: pangolin | Wait for pangolin healthy (doco-cd deploys it, ~60s after first poll)
           community.docker.docker_container_info:
@@ -291,6 +316,7 @@
           when: not ansible_check_mode
 
     - name: crowdsec
+      become: false
       block:
         - name: crowdsec | Wait for crowdsec healthy
           community.docker.docker_container_info:

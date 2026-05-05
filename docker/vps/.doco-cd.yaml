@@ -30,6 +30,22 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/secret-domain
+  MONGO_INITDB_ROOT_USERNAME:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/mongo-root-username
+  MONGO_INITDB_ROOT_PASSWORD:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/mongo-root-password
+  MONGO_USER:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/mongo-user
+  MONGO_PASS:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/mongo-pass
 force_recreate: false
 reconciliation:
   enabled: true

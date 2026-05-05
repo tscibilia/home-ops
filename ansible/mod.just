@@ -18,13 +18,14 @@ bootstrap-vps *args:
 bootstrap-vps-init *args:
     ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/vps/playbook.yaml \
         --limit vps \
-        --extra-vars "ansible_user=root ansible_port=22" \
+        --extra-vars "ansible_user=root ansible_port=22 bootstrap_mode=true" \
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
 [doc('Bootstrap TrueNAS doco-cd')]
 bootstrap-truenas *args:
     ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/truenas/playbook.yaml \
+        --limit truenas \
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
