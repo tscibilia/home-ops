@@ -62,6 +62,13 @@ entryPoints:
         allowEncodedQuestionMark: true
   tcp-22:
     address: ":22"
+  websecure-unifi:
+    address: ":8443"
+    http:
+      tls:
+        certResolver: "letsencrypt"
+      middlewares:
+        - crowdsec@file
 
 serversTransport:
   insecureSkipVerify: true

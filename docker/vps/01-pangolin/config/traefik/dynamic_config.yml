@@ -115,6 +115,13 @@ http:
         - websecure
       tls:
         certResolver: letsencrypt
+    unifi-router:
+      rule: 'Host(`unf.{{ env "DOMAIN" }}`)'
+      service: unifi-svc
+      entryPoints:
+        - websecure-unifi
+      tls:
+        certResolver: letsencrypt
 
   services:
     next-service:
@@ -133,3 +140,7 @@ http:
       loadBalancer:
         servers:
           - url: "http://doco-cd:8880"
+    unifi-svc:
+      loadBalancer:
+        servers:
+          - url: "https://unifi-network-application:8443"

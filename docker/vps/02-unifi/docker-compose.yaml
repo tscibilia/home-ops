@@ -47,7 +47,6 @@ services:
       - /opt/unifi/config:/config
     ports:
       - 8080:8080
-      - 8443:8443
       - 8843:8843
       - 6789:6789
       - 3478:3478/udp
