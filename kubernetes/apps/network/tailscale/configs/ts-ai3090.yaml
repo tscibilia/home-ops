@@ -1,0 +1,50 @@
+---
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/statefulset.json
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: &app ts-ai3090
+spec:
+  serviceName: *app
+  replicas: 1
+  selector:
+    matchLabels:
+      app: *app
+  template:
+    metadata:
+      labels:
+        app: *app
+    spec:
+      serviceAccountName: proxies
+      nodeSelector:
+        feature.node.kubernetes.io/pci-10de.present: "true"
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: tailscale
+          image: ghcr.io/tailscale/tailscale:v1.96.5@sha256:dbeff02d2337344b351afac203427218c4d0a06c43fc10a865184063498472a6
+          env:
+            - name: TS_KUBE_SECRET
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name  # → ts-ai3090-0
+            - name: TS_HOSTNAME
+              value: ai3090
+            - name: TS_USERSPACE
+              value: "true"
+            - name: TS_DEBUG_FIREWALL_MODE
+              value: nftables
+          securityContext:
+            privileged: true
+---
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: &name ts-ai3090
+spec:
+  clusterIP: None
+  selector:
+    app: *name
