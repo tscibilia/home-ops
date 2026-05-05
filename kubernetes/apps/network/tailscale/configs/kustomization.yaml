@@ -5,4 +5,4 @@ kind: Kustomization
 resources:
   - ./externalsecret.yaml
   - ./ts-exit-node.yaml
-  - ./ts-ai3090.yaml
+  - ./ts-ai3090-node.yaml

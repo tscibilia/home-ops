@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: &app ts-ai3090
+  name: &app ts-ai3090-node
 spec:
   serviceName: *app
   replicas: 1
@@ -43,7 +43,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: &name ts-ai3090
+  name: &name ts-ai3090-node
 spec:
   clusterIP: None
   selector:
