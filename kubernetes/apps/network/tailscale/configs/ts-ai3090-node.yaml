@@ -29,15 +29,47 @@ spec:
             - name: TS_KUBE_SECRET
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name  # → ts-ai3090-0
+                  fieldPath: metadata.name  # → ts-ai3090-node-0
             - name: TS_HOSTNAME
               value: ai3090
             - name: TS_USERSPACE
               value: "true"
             - name: TS_DEBUG_FIREWALL_MODE
               value: nftables
+            - name: TS_SERVE_CONFIG
+              value: /serve/serve.json
+          volumeMounts:
+            - name: serve-config
+              mountPath: /serve
           securityContext:
             privileged: true
+      volumes:
+        - name: serve-config
+          configMap:
+            name: ts-ai3090-node-serve
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ts-ai3090-node-serve
+data:
+  serve.json: |
+    {
+      "TCP": {
+        "443": {
+          "HTTPS": true
+        }
+      },
+      "Web": {
+        "$${TS_CERT_DOMAIN}:443": {
+          "Handlers": {
+            "/": {
+              "Proxy": "http://llama-cpp.ai.svc.cluster.local:10000"
+            }
+          }
+        }
+      }
+    }
 ---
 # yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
 apiVersion: v1
