@@ -101,6 +101,8 @@ kubernetes                    # K8s cluster
 - `openebs-hostpath` — local node storage (CNPG, logs, actions-runner)
 - `nfs-media` — external NFS for media library
 
+**Nodes:** See `.claude/context/nodes.md` — taints, labels, USB devices, GPU workload pattern, storage class guidance.
+
 **Infrastructure:**
 - **CNPG Clusters:** `pgsql-cluster` (PG17), `immich17` (vectorchord). Use `<cluster>-rw.database.svc.cluster.local`.
 - **Networking:** SSO via `ext-auth-external`/`internal`. Ingress via `envoy-external`/`internal`.

@@ -21,6 +21,9 @@ node-compile-cache/
 .pytest_cache/
 .claude/*
 !.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/context/
+!.claude/plugins/
 !.claude/skills/
 .git/
 .private/

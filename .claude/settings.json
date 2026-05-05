@@ -1,0 +1,67 @@
+{
+  "env": {},
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"KARPATHY CHECK (before every edit):\\n1. Think Before Coding: state assumptions; if unclear stop and ask\\n2. Simplicity First: minimum code to solve the problem; nothing speculative\\n3. Surgical Changes: touch only what you must; no adjacent cleanup\\n4. Goal-Driven: every changed line traces directly to the user request\"}}'",
+            "statusMessage": "Karpathy check..."
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "WebSearch",
+      "WebFetch",
+      "Edit",
+      "Write",
+      "Glob",
+      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_doctor",
+      "mcp__plugin_context-mode_context-mode__ctx_search",
+      "mcp__plugin_context-mode_context-mode__ctx_fetch_and_index",
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_execute_file"
+    ],
+    "deny": [
+      "Write(/home/tscibilia/home-ops/CLAUDE.md)",
+      "Bash(rm *)",
+      "Bash(del *)",
+      "Bash(rmdir *)",
+      "Bash(rd *)",
+      "Bash(unlink *)",
+      "Bash(sudo *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)"
+    ],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true,
+    "context-mode@context-mode": true,
+    "superpowers@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "context-mode": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/mksglu/context-mode.git"
+      }
+    }
+  }
+}
