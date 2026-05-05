@@ -3,7 +3,7 @@ name: unifi
 services:
   unifi-db:
     # renovate: datasource=docker depName=docker.io/mongo
-    image: docker.io/mongo:7.0
+    image: docker.io/mongo:8.2
     container_name: unifi-db
     restart: unless-stopped
     environment:
