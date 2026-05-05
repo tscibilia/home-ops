@@ -9,7 +9,7 @@ external_secrets:
   TAILSCALE_AUTH_KEY:
     store_ref: akeyless
     remote_ref:
-      key: /truenas/tailscale/auth-key
+      key: /docker/truenas/tailscale-auth-key
 force_recreate: false
 reconciliation:
   enabled: true

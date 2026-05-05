@@ -62,6 +62,22 @@
             owner: sysadmin
             mode: "0644"
 
+        - name: doco-cd | Copy cron-update.sh
+          ansible.builtin.copy:
+            src: ../../docker/truenas/.doco-cd/cron-update.sh
+            dest: "{{ dococd_config_dir }}/cron-update.sh"
+            owner: sysadmin
+            mode: "0755"
+
+        - name: doco-cd | Install nightly update cron job
+          ansible.builtin.cron:
+            name: doco-cd stack update
+            minute: "0"
+            hour: "3"
+            job: "{{ dococd_config_dir }}/cron-update.sh"
+            user: sysadmin
+            state: present
+
         - name: doco-cd | Create secret files
           ansible.builtin.copy:
             dest: "{{ dococd_config_dir }}/{{ item.name }}"
