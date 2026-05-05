@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: docker.io/library/influxdb
-              tag: 2.8.0@sha256:71f2bce68b47a3e26c1ed38f7480a9372b008ba9b7c8a35cb2c913d3102d377f
+              tag: 2.8.0@sha256:35d7c6c3be561dd602ff091b8ced714f37fbb50677283cae092662fb79e4a20f
             env:
               TZ: ${TIMEZONE:-UTC}
               DOCKER_INFLUXDB_INIT_MODE: setup
