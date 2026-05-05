@@ -63,7 +63,7 @@ entryPoints:
   tcp-22:
     address: ":22"
   websecure-unifi:
-    address: ":8443"
+    address: ":4443"
     http:
       tls:
         certResolver: "letsencrypt"
