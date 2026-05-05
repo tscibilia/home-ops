@@ -4,7 +4,6 @@ auto_discover: true
 auto_discover_opts:
   depth: 1
   delete: true
-
 # Must be stored as individual text-based static secrets in aKeyless (not JSON)
 external_secrets:
   PANGOLIN_SERVER_SECRET:
@@ -31,3 +30,7 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/secret-domain
+force_recreate: false
+reconciliation:
+  enabled: true
+  events: ["unhealthy", "die"]

@@ -4,3 +4,7 @@ auto_discover: true
 auto_discover_opts:
   depth: 1
   delete: true
+force_recreate: false
+reconciliation:
+  enabled: true
+  events: ["unhealthy", "die"]
