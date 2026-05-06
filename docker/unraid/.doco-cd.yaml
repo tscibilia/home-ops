@@ -1,7 +1,7 @@
 ---
 working_dir: ./docker/unraid
-auto_discover: true
-auto_discover_opts:
+auto_discovery:
+  enabled: true
   depth: 1
   delete: true
 force_recreate: false
