@@ -1,7 +1,7 @@
 ---
 services:
   matchbox:
-    image: quay.io/poseidon/matchbox:v0.11.0
+    image: quay.io/poseidon/matchbox:v0.11.0@sha256:06bcdae85335fd00e8277b007b55cfb49d96a0114628c0f70db2b92b079d246a
     container_name: matchbox
     restart: unless-stopped
     network_mode: host

@@ -2,8 +2,7 @@
 name: pangolin
 services:
   pangolin:
-    # renovate: datasource=docker depName=ghcr.io/fosrl/pangolin
-    image: ghcr.io/fosrl/pangolin:1.18.2
+    image: ghcr.io/fosrl/pangolin:1.18.2@sha256:f28fc9d293c1fdcc8d449cc9f15ec50326bb00ea3895325d160316b92a89aa6f
     container_name: pangolin
     restart: unless-stopped
     environment:
@@ -30,8 +29,7 @@ services:
       retries: 15
 
   crowdsec:
-    # renovate: datasource=docker depName=ghcr.io/crowdsecurity/crowdsec
-    image: ghcr.io/crowdsecurity/crowdsec:v1.7.7
+    image: ghcr.io/crowdsecurity/crowdsec:v1.7.7@sha256:6ca53ad26196ca59ddd4fa692a586b73d8fcde085046163b9ca2f04887dca563
     container_name: crowdsec
     restart: unless-stopped
     environment:
@@ -69,8 +67,7 @@ services:
         target: /etc/crowdsec/scenarios/ban-asn.yaml
 
   gerbil:
-    # renovate: datasource=docker depName=ghcr.io/fosrl/gerbil
-    image: ghcr.io/fosrl/gerbil:1.4.0
+    image: ghcr.io/fosrl/gerbil:1.4.0@sha256:887355e66deac61df9583d9df23e630897f785a8e20bc66081c66e40687cc713
     container_name: gerbil
     restart: unless-stopped
     depends_on:
@@ -94,8 +91,7 @@ services:
       - 4443:4443
 
   traefik:
-    # renovate: datasource=docker depName=docker.io/traefik
-    image: docker.io/traefik:v3.6
+    image: ghcr.io/traefik/traefik:3.7.0@sha256:eb328e2c806c53aafbbace6c451fa54d268961261a85452fcf0fb752a30c17be
     container_name: traefik
     restart: unless-stopped
     environment:
@@ -120,8 +116,7 @@ services:
         target: /etc/traefik/dynamic_config.yml
 
   geoipupdate:
-    # renovate: datasource=docker depName=ghcr.io/maxmind/geoipupdate
-    image: ghcr.io/maxmind/geoipupdate:v7.1.1
+    image: ghcr.io/maxmind/geoipupdate:v7.1.1@sha256:faecdca22579730ab0b7dea5aa9af350bb3c93cb9d39845c173639ead30346d2
     container_name: geoipupdate
     restart: unless-stopped
     environment:
