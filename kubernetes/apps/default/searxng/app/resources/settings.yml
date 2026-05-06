@@ -8,7 +8,7 @@ server:
   method: GET # https://github.com/searxng/searxng/pull/3619
 
 outgoing:
-  request_timeout: 1.0
+  request_timeout: 3.0
 
 general:
   instance_name: SearXNG
@@ -108,4 +108,6 @@ engines:
   - name: lib.rs
     disabled: true
   - name: sourcehut
+    disabled: true
+  - name: karmasearch videos
     disabled: true
