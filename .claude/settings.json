@@ -1,6 +1,18 @@
 {
   "env": {},
   "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in */kubernetes/apps/*/ks.yaml|*/kubernetes/apps/*/kustomization.yaml) echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Context reminder: if an app was added or removed, update .claude/context/02_apps_inventory.md\"}}';;  */kubernetes/components/*) echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Context reminder: if a component changed, update .claude/context/06_components.md\"}}';;  */docker/*/docker-compose.yaml) echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"Context reminder: if a docker service was added or removed, update .claude/context/08_docker_hosts.md\"}}';; esac",
+            "statusMessage": "Checking context files..."
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Write|Edit",

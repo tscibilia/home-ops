@@ -92,7 +92,6 @@ kubernetes                    # K8s cluster
 
 **Conventions:**
 - YAML anchors (`&app` → `*app`)
-- Renovate: `# renovate: datasource=docker depName=...`
 - `configMapGenerator` for embedded files
 - Always declare `dependsOn` in `ks.yaml`
 
@@ -101,13 +100,20 @@ kubernetes                    # K8s cluster
 - `openebs-hostpath` — local node storage (CNPG, logs, actions-runner)
 - `nfs-media` — external NFS for media library
 
-**Nodes:** See `.claude/context/nodes.md` — taints, labels, USB devices, GPU workload pattern, storage class guidance.
+## Context Reference Files
 
-**Infrastructure:**
-- **CNPG Clusters:** `pgsql-cluster` (PG17), `immich17` (vectorchord). Use `<cluster>-rw.database.svc.cluster.local`.
-- **Networking:** SSO via `ext-auth-external`/`internal`. Ingress via `envoy-external`/`internal`.
-- **Secrets:** Synced via `ExternalSecret` from aKeyless.
-- **Gatus:** Endpoints are annotation-driven via `gatus.home-operations.com`. The gatus-sidecar auto-discovers routes.
+Targeted reference docs in `.claude/context/`. **Read the relevant file(s) before touching code** — don't grep READMEs.
+
+| File | Read when… |
+|------|-----------|
+| `01_nodes.md` | Scheduling a pod, adding node selectors/tolerations, GPU workloads, storage class choice by node |
+| `02_apps_inventory.md` | Checking if an app exists, finding its namespace, understanding what's deployed |
+| `03_networking.md` | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS |
+| `04_storage.md` | Adding a PVC, wiring VolSync backup, connecting to CNPG, choosing a storage class |
+| `05_secrets.md` | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars |
+| `06_components.md` | Adding volsync/cnpg/ext-auth/keda to an app — exact ks.yaml stanzas |
+| `07_flux_conventions.md` | Writing or reviewing a ks.yaml, dependsOn chains, YAML anchor pattern, configMapGenerator |
+| `08_docker_hosts.md` | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps |
 
 ## Commit Protocol
 Before requesting a commit, ensure:
