@@ -16,7 +16,8 @@ services:
       - /run/udev:/run/udev:ro
     device_cgroup_rules:
       - 'b 8:* r'    # /dev/sda-sdd (SATA, major 8)
-      - 'b 259:* r'  # /dev/nvme0 (NVMe, major 259)
+      - 'c 245:* r'  # /dev/nvme0 (NVMe controller, major 245)
+      - 'b 259:* r'  # /dev/nvme0 (NVMe blk device, major 259)
     environment:
       COLLECTOR_API_ENDPOINT: http://scrutiny.internal
       COLLECTOR_HOST_ID: truenas
