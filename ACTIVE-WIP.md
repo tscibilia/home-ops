@@ -4,6 +4,7 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
+- [ ] establish restic backup for unifi-network-application
 - [ ] move cloudflare tunnels to pangolin
 - [ ] move github to forgejo
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys

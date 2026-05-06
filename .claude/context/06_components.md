@@ -2,7 +2,7 @@
 
 Components live in `kubernetes/components/`. Add them to `ks.yaml` (not app `kustomization.yaml` unless noted).
 
-## volsync — PVC backup to Backblaze B2
+## volsync — PVC backup to NFS (unraid)
 
 ```yaml
 # ks.yaml
