@@ -32,96 +32,88 @@
         doco_akeyless_access_key: "{{ secrets_raw.results[2].stdout }}"
       no_log: true
 
-    - name: doco-cd
-      block:
-        - name: doco-cd | Create config directory
-          ansible.builtin.file:
-            path: "{{ dococd_config_dir }}"
-            state: directory
-            owner: sysadmin
-            mode: "0700"
+    - name: doco-cd | Create config directory
+      ansible.builtin.shell:
+        cmd: mkdir -p {{ dococd_config_dir | quote }}
+        creates: "{{ dococd_config_dir }}"
+      become: false
 
-        - name: doco-cd | Copy docker-compose app file
-          ansible.builtin.copy:
-            src: ../../docker/truenas/.doco-cd/docker-compose.app.yaml
-            dest: "{{ dococd_config_dir }}/docker-compose.yaml"
-            owner: sysadmin
-            mode: "0644"
+    - name: doco-cd | Copy docker-compose app file
+      ansible.builtin.copy:
+        src: ../../docker/truenas/.doco-cd/docker-compose.app.yaml
+        dest: "{{ dococd_config_dir }}/docker-compose.yaml"
+      become: false
 
-        - name: doco-cd | Copy Dockerfile
-          ansible.builtin.copy:
-            src: ../../docker/truenas/.doco-cd/Dockerfile
-            dest: "{{ dococd_config_dir }}/Dockerfile"
-            owner: sysadmin
-            mode: "0644"
+    - name: doco-cd | Copy Dockerfile
+      ansible.builtin.copy:
+        src: ../../docker/truenas/.doco-cd/Dockerfile
+        dest: "{{ dococd_config_dir }}/Dockerfile"
+      become: false
 
-        - name: doco-cd | Copy proxy.py
-          ansible.builtin.copy:
-            src: ../../docker/truenas/.doco-cd/proxy.py
-            dest: "{{ dococd_config_dir }}/proxy.py"
-            owner: sysadmin
-            mode: "0644"
+    - name: doco-cd | Copy proxy.py
+      ansible.builtin.copy:
+        src: ../../docker/truenas/.doco-cd/proxy.py
+        dest: "{{ dococd_config_dir }}/proxy.py"
+      become: false
 
-        - name: doco-cd | Copy cron-update.sh
-          ansible.builtin.copy:
-            src: ../../docker/truenas/.doco-cd/cron-update.sh
-            dest: "{{ dococd_config_dir }}/cron-update.sh"
-            owner: sysadmin
-            mode: "0755"
+    - name: doco-cd | Copy cron-update.sh
+      ansible.builtin.copy:
+        src: ../../docker/truenas/.doco-cd/cron-update.sh
+        dest: "{{ dococd_config_dir }}/cron-update.sh"
+      become: false
 
-        - name: doco-cd | Install nightly update cron job
-          ansible.builtin.cron:
-            name: doco-cd stack update
-            minute: "0"
-            hour: "3"
-            job: "{{ dococd_config_dir }}/cron-update.sh"
-            user: sysadmin
-            state: present
+    - name: doco-cd | Install nightly update cron job
+      ansible.builtin.cron:
+        name: doco-cd stack update
+        minute: "0"
+        hour: "3"
+        job: "{{ dococd_config_dir }}/cron-update.sh"
+        user: sysadmin
+        state: present
 
-        - name: doco-cd | Create secret files
-          ansible.builtin.copy:
-            dest: "{{ dococd_config_dir }}/{{ item.name }}"
-            content: "{{ item.content }}"
-            owner: sysadmin
-            mode: "0600"
-          no_log: true
-          loop:
-            - name: gh_token
-              content: "{{ doco_github_token }}"
-            - name: akeyless_access_id
-              content: "{{ doco_akeyless_access_id }}"
-            - name: akeyless_access_key
-              content: "{{ doco_akeyless_access_key }}"
+    - name: doco-cd | Create secret files
+      ansible.builtin.copy:
+        dest: "{{ dococd_config_dir }}/{{ item.name }}"
+        content: "{{ item.content }}"
+      no_log: true
+      become: false
+      loop:
+        - name: gh_token
+          content: "{{ doco_github_token }}"
+        - name: akeyless_access_id
+          content: "{{ doco_akeyless_access_id }}"
+        - name: akeyless_access_key
+          content: "{{ doco_akeyless_access_key }}"
 
-        - name: doco-cd | Ensure doco-cd Docker network exists
-          community.docker.docker_network:
-            name: doco-cd
-            state: present
+    - name: doco-cd | Ensure doco-cd Docker network exists
+      community.docker.docker_network:
+        name: doco-cd
+        state: present
 
-        - name: doco-cd | Run docker-compose
-          community.docker.docker_compose_v2:
-            project_src: "{{ dococd_config_dir }}"
-            files:
-              - docker-compose.yaml
-            build: always
-            pull: always
-            state: present
-          when: not ansible_check_mode
+    - name: doco-cd | Run docker-compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ dococd_config_dir }}"
+        files:
+          - docker-compose.yaml
+        build: always
+        pull: always
+        state: present
+      when: not ansible_check_mode
 
-        - name: doco-cd | Wait for akeyless-proxy healthy
-          community.docker.docker_container_info:
-            name: akeyless-proxy
-          register: proxy_info
-          until: proxy_info.container.State.Health.Status == "healthy"
-          retries: 30
-          delay: 5
-          when: not ansible_check_mode
+    - name: doco-cd | Wait for akeyless-proxy healthy
+      community.docker.docker_container_info:
+        name: akeyless-proxy
+      register: proxy_info
+      until: proxy_info.container.State.Health.Status == "healthy"
+      retries: 30
+      delay: 5
+      when: not ansible_check_mode
 
-        - name: doco-cd | Wait for doco-cd healthy
-          community.docker.docker_container_info:
-            name: doco-cd
-          register: dococd_info
-          until: dococd_info.container.State.Health.Status == "healthy"
-          retries: 30
-          delay: 10
-          when: not ansible_check_mode
+    - name: doco-cd | Wait for doco-cd healthy
+      community.docker.docker_container_info:
+        name: doco-cd
+      register: dococd_info
+      until: dococd_info.container.State.Health.Status == "healthy"
+      retries: 30
+      delay: 10
+      when: not ansible_check_mode
