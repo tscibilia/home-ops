@@ -61,6 +61,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - csi-driver-nfs
 - descheduler
 - intel-gpu-resource-driver
+- k8tz *(timezone injection admission controller)*
 - metrics-server
 - nvidia-device-plugin
 - reloader
