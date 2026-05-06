@@ -20,7 +20,6 @@ spec:
               repository: ghcr.io/home-operations/tautulli
               tag: "2.17.1@sha256:2183820d45a1413b4b8868fc18ad5eb9259630ea0151348cdc9cfb4017a0dd33"
             env:
-              TZ: ${TIMEZONE:-UTC}
               TAUTULLI__PORT: &port 8181
             probes:
               liveness: &probes

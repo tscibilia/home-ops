@@ -4,24 +4,25 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [ ] establish restic backup for unifi-network-application
 - [ ] move cloudflare tunnels to pangolin
 - [ ] move github to forgejo
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
-- [ ] use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs
-- [ ] follow upstream [rustfs issue](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
 
-## Known Issues
-- RustFS: authentik-Admin group -> rustfsAdmin, Plex Users need a RustFS group policy for access
-- Fairtrail: Chromium 146 crashes even when run as root (Alpine or Talos issue?)
-- Donetick: SSE realtime disconnects through Cloudflare tunnel
-- etcd noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
+## ⚠️ Known Issues
+- ⚠️ **Toolhive:** issues connecting open-webui via tool calls
+- ⚠️ **RustFS:** follow upstream [issue](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
+- ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?)
+- ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel
+- ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
 
-## Blocked
+## ⛔ Blocked
 `- Task name - blocking factor (waiting for X)`
+- ⛔ [ ] **Restic:** backup for unifi-network-application - **VPS has no means to connect to unraid dest**
+- ⛔ [ ] **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
 
-## Resolved
+## ✅ Resolved
 `Descending order, newest on top`
+- ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))
 - ✅ move llama.cpp to cluser - **2026-04-29** (See commit [08dde6f])
 - ✅ move ai3090 to talos worker - **2026-04-28** (See [#2201](https://github.com/tscibilia/home-ops/pull/2201) and commit [4a8b97c])
 - ✅ ESO remapping/reorganization - **2026-04-07** (See [#2032](https://github.com/tscibilia/home-ops/pull/2032))
@@ -59,8 +60,8 @@
 - ✅ Grafana Operator Migration - **2025-11-19** (See PR [#1157](https://github.com/tscibilia/home-ops/pull/1157))
 - ✅ HTTPRoute instead of Ingress - **2025-11-13** (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
-## Unresolved/Closed
-- ⛔ Qwen3 thinking enable/disable - **2026-04-03 Not Planned, changed model** [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
-- ⛔ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
-- ⛔ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
-- ⛔ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**
+## ❌ Unresolved/Closed
+- ❌ Qwen3 thinking enable/disable - **2026-04-03 Not Planned, changed model** [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
+- ❌ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
+- ❌ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
+- ❌ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**

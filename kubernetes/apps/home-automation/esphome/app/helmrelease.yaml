@@ -21,8 +21,6 @@ spec:
             image:
               repository: ghcr.io/home-operations/esphome
               tag: 2026.4.4@sha256:fe4a8f6e9bbeecb9342777a26e560df525508682685c67458b7637ab887202c9
-            env:
-              TZ: "${TIMEZONE:-UTC}"
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

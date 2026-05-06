@@ -20,7 +20,6 @@ spec:
               repository: ghcr.io/egalitarianmonkey/hometube
               tag: 2.9.1@sha256:936c299ec03204eff4cba36c0040073a5772c4c5ac181d9799ba2d8c98c0cd93
             env:
-              TZ: ${TIMEZONE:-UTC}
               TMP_DOWNLOAD_FOLDER: /app/media/downloads/incomplete
               VIDEOS_FOLDER: /app/media/youtube
               YOUTUBE_COOKIES_FILE_PATH: /app/cookies.txt

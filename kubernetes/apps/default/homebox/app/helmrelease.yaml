@@ -28,7 +28,6 @@ spec:
               repository: ghcr.io/sysadminsmedia/homebox
               tag: 0.25.0@sha256:6506480a3dfadd2cc885fa97b32d11b0ee28ec58629fa34a76afdb4ac540c7fc
             env:
-              TZ: "${TIMEZONE:-UTC}"
               HBOX_LOG_LEVEL: info
               HBOX_LOG_FORMAT: json
               HBOX_WEB_HOST: 0.0.0.0

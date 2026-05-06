@@ -20,7 +20,6 @@ spec:
               repository: ghcr.io/gethomepage/homepage
               tag: v1.12.3
             env:
-              TZ: ${TIMEZONE:-UTC}
               HOMEPAGE_ALLOWED_HOSTS: "*"
             resources:
               requests:

@@ -30,7 +30,6 @@ spec:
               AUTOBRR__OIDC_ENABLED: true
               AUTOBRR__OIDC_DISABLE_BUILT_IN_LOGIN: true
               AUTOBRR__OIDC_REDIRECT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/auth/oidc/callback"
-              TZ: ${TIMEZONE:-UTC}
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"

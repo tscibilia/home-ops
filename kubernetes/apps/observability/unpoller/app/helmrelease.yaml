@@ -18,7 +18,6 @@ spec:
               repository: ghcr.io/unpoller/unpoller
               tag: v2.39.0@sha256:1cf63ad43121acc6995da1bd636063de9023b4bfc16599a4297951a6fb6b7fd2
             env:
-              TZ: ${TIMEZONE:-UTC}
               UP_UNIFI_DEFAULT_ROLE: home-ops
               UP_UNIFI_DEFAULT_URL: https://192.168.1.1
               UP_PROMETHEUS_HTTP_LISTEN: 0.0.0.0:80

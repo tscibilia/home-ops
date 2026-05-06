@@ -20,7 +20,6 @@ spec:
               repository: docker.io/library/influxdb
               tag: 2.8.0@sha256:35d7c6c3be561dd602ff091b8ced714f37fbb50677283cae092662fb79e4a20f
             env:
-              TZ: ${TIMEZONE:-UTC}
               DOCKER_INFLUXDB_INIT_MODE: setup
               DOCKER_INFLUXDB_INIT_USERNAME: admin
               DOCKER_INFLUXDB_INIT_ORG: homelab

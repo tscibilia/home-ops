@@ -17,14 +17,12 @@ spec:
         type: cronjob
         cronjob:
           schedule: "05 2 * * *"
-          timeZone: ${TIMEZONE:-UTC}
         containers:
           app:
             image:
               repository: docker.io/kometateam/imagemaid
               tag: v1.2.0@sha256:94cf9ed79a264238c64cdcbf241822fc3569225cc103de542a6390bfaf393034
             env:
-              TZ: ${TIMEZONE:-UTC}
               PLEX_URL: http://plex.media.svc.cluster.local:32400
               PLEX_PATH: /data/plex_config/Library/Application Support/Plex Media Server
               MODE: remove

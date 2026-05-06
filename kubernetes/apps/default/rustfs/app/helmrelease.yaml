@@ -35,7 +35,6 @@ spec:
               RUSTFS_IDENTITY_OPENID_SCOPES: "openid,profile,email"
               RUSTFS_IDENTITY_OPENID_CLAIM_NAME: "groups"
               RUSTFS_IDENTITY_OPENID_DISPLAY_NAME: "Authentik"
-              TZ: ${TIMEZONE:-UTC}
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
