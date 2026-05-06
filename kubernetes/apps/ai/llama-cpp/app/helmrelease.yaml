@@ -68,7 +68,6 @@ spec:
               LLAMA_ARG_HOST: 0.0.0.0
               LLAMA_ARG_PORT: &port 10000
               LLAMA_OFFLINE: "1"
-              LLAMA_ARG_SLEEP_IDLE_SECONDS: "1800"
             ports:
               - name: http
                 containerPort: *port
