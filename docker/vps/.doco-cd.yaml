@@ -1,7 +1,7 @@
 ---
 working_dir: ./docker/vps
-auto_discover: true
-auto_discover_opts:
+auto_discovery:
+  enabled: true
   depth: 1
   delete: true
 # Must be stored as individual text-based static secrets in aKeyless (not JSON)
