@@ -37,6 +37,10 @@ spec:
     defaultPodOptions:
       securityContext:
         seccompProfile: { type: RuntimeDefault }
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
     persistence:
       dev:
         type: hostPath
