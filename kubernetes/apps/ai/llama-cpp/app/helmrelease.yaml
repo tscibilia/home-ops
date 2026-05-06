@@ -33,7 +33,7 @@ spec:
               - /bin/sh
               - -ec
               - |
-                uv venv /tmp/.venv
+                uv venv --clear /tmp/.venv
                 uv pip install --no-cache --python /tmp/.venv/bin/python huggingface_hub
                 export PATH="/tmp/.venv/bin:$PATH"
                 for d in /llama-models/models--*/; do
