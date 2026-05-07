@@ -6,7 +6,7 @@ Organized by area. Each entry: what you see, what to check, how to fix it.
 
 | Symptom | Check | Fix |
 | ------- | ----- | --- |
-| App not updating after push | `kubectl get ks -A \| grep -v True` | `just kube ks-reconcile <ns> <app>` |
+| App not updating after push | `kubectl get ks -A \| grep -v True` | `just kube reconcile-ks <ns> <app>` |
 | HelmRelease stuck | `kubectl get hr -n <ns> <name>` | Delete the HR: `kubectl delete hr <name> -n <ns>`, Flux recreates it |
 | `kubectl edit` changes reverted | Expected — Flux owns all state | Edit in Git, push, reconcile |
 | Kustomization dependency failed | Check the dependency: `kubectl get ks -n <dep-ns> <dep-name>` | Fix the upstream dependency first |

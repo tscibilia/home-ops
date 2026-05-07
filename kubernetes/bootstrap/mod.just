@@ -1,16 +1,25 @@
-set positional-arguments := true
-set quiet := true
+set lazy
+set positional-arguments
+set quiet
+set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
-kubernetes_dir := justfile_dir() + '/kubernetes'
 bootstrap_dir := kubernetes_dir + '/bootstrap'
+kubernetes_dir := justfile_dir() + '/kubernetes'
 controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
 nodes := `talosctl config info -o yaml | yq -e '.nodes | join (" ")'`
 
 [private]
-default: talos kube (kubeconfig "node") wait namespaces resources crds apps cnpg kubeconfig
+[script]
+default:
+    just -l bootstrap
 
-[doc('Install Talos')]
+[doc('Bootstrap Cluster')]
+[script]
+cluster: talos kube (kubeconfig "node") wait namespaces resources crds apps cnpg kubeconfig
+
+[private]
+[script]
 talos:
     just log info "Running stage..." "stage" "$0"
     just check-tools talosctl yq
@@ -24,7 +33,8 @@ talos:
         fi; \
     done
 
-[doc('Install Kubernetes')]
+[private]
+[script]
 kube:
     just log info "Running stage..." "stage" "$0"
     just check-tools talosctl
@@ -33,7 +43,8 @@ kube:
         sleep 5; \
     done
 
-[doc('Fetch kubeconfig')]
+[private]
+[script]
 kubeconfig lb="cilium":
     just log info "Running stage..." "stage" "$0"
     just check-tools talosctl kubectl
@@ -46,7 +57,8 @@ kubeconfig lb="cilium":
         fi; \
     fi
 
-[doc('Wait for nodes to be not-ready')]
+[private]
+[script]
 wait:
     just log info "Running stage..." "stage" "$0"
     just check-tools kubectl
@@ -57,7 +69,8 @@ wait:
         done \
     fi
 
-[doc('Apply Kubernetes namespaces')]
+[private]
+[script]
 namespaces:
     just log info "Running stage..." "stage" "$0"
     just check-tools kustomize yq kubectl
@@ -67,15 +80,8 @@ namespaces:
         fi; \
     done
 
-[doc('Import external Rook-Ceph cluster resources')]
-rook-ceph-external:
-    just log info "Running stage..." "stage" "$0"
-    just check-tools akeyless jq kubectl gum
-    if ! gum spin --title "Injecting secrets..." -- bash -c 'cat "{{ bootstrap_dir }}/scripts/import-external-rook-ceph.sh" | bash "{{ bootstrap_dir }}/scripts/akeyless-inject.sh" | bash'; then \
-        just log fatal "Failed to import rook-ceph resources" "stage" "$0"; \
-    fi;
-
-[doc('Apply Kubernetes resources')]
+[private]
+[script]
 resources:
     just log info "Running stage..." "stage" "$0"
     just check-tools minijinja-cli kubectl akeyless jq gum
@@ -83,7 +89,8 @@ resources:
         just log fatal "Failed to apply resources" "stage" "$0"; \
     fi;
 
-[doc('Apply Helmfile CRDs')]
+[private]
+[script]
 crds:
     just log info "Running stage..." "stage" "$0"
     just check-tools helmfile kubectl
@@ -91,7 +98,8 @@ crds:
         just log fatal "Failed to apply crds" "stage" "$0"; \
     fi;
 
-[doc('Apply Helmfile Apps')]
+[private]
+[script]
 apps:
     just log info "Running stage..." "stage" "$0"
     just check-tools helmfile

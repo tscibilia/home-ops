@@ -1,4 +1,7 @@
-set quiet := true
+set lazy
+set positional-arguments
+set quiet
+set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
 kubernetes_dir := justfile_dir() + '/kubernetes'
@@ -8,25 +11,18 @@ controller := `talosctl config info -o yaml | yq -e '.endpoints[0]'`
 nodes := `talosctl config info -o yaml | yq -e '.nodes | join (",")'`
 
 [private]
+[script]
 default:
     just -l talos
 
-[private]
-node-dir node:
-    if [ -f "{{ talos_dir }}/controlplane/{{ node }}.yaml.j2" ]; then \
-        echo "{{ talos_dir }}/controlplane"; \
-    elif [ -f "{{ talos_dir }}/worker/{{ node }}.yaml.j2" ]; then \
-        echo "{{ talos_dir }}/worker"; \
-    else \
-        echo "ERROR: no config found for node {{ node }}" >&2; exit 1; \
-    fi
-
 [doc('Apply Talos config to a node')]
+[script]
 apply-node node *args:
     just check-tools talosctl
     just talos render-config "{{ node }}" | talosctl -n "{{ node }}" apply-config -f /dev/stdin {{ args }}
 
 [doc('Download Talos machine image')]
+[script]
 download-image version schematic:
     just check-tools curl jq
     gum spin --title "Downloading Talos {{ version }} ..." -- \
@@ -36,18 +32,21 @@ download-image version schematic:
     just log info "Downloaded Talos" version "{{ version }}" schematic "{{ schematic }}"
 
 [doc('Generate schematic ID from Talos schematic')]
+[script]
 gen-schematic-id node:
     just check-tools curl jq minijinja-cli akeyless
     node_dir="$(just talos node-dir {{ node }})"; \
     curl -sX POST --data-binary @<(just template "$node_dir/schematic.yaml.j2") "https://factory.talos.dev/schematics" | jq -r '.id'
 
 [doc('Reboot a node')]
+[script]
 reboot-node node:
     just check-tools talosctl gum
     gum confirm "Reboot node {{ node }}?" --default="No" && \
         talosctl -n {{ node }} reboot -m powercycle || exit 0
 
 [doc('Render Talos config for a node')]
+[script]
 render-config node:
     just check-tools talosctl minijinja-cli akeyless yq gum
     export node_dir="$(just talos node-dir {{ node }})"; \
@@ -58,32 +57,49 @@ render-config node:
             -p @<(just template '$node_dir/{{ node }}.yaml.j2')"
 
 [doc('Reset a node')]
+[script]
 reset-node node *args:
     just check-tools talosctl gum
     gum confirm "Reset node {{ node }}?" --default="No" && \
         talosctl -n "{{ node }}" reset --system-labels-to-wipe EPHEMERAL,STATE,u-local-hostpath --graceful=false --reboot {{ args }} || exit 0
 
 [doc('Shutdown a node')]
+[script]
 shutdown-node node *args:
     just check-tools talosctl gum
     gum confirm "Shutdown node {{ node }}?" --default="No" && \
         talosctl -n "{{ node }}" shutdown --force {{ args }} || exit 0
 
 [doc('Upgrade Kubernetes version on the cluster')]
+[script]
 upgrade-k8s version:
     just check-tools talosctl
     talosctl -n "{{ controller }}" upgrade-k8s --to {{ version }}
 
 [doc('Upgrade Talos version on a node')]
+[script]
 upgrade-node node *args:
     just check-tools talosctl
     talosctl -n "{{ node }}" upgrade -i "$(just talos machine-image)" -m powercycle --timeout=10m {{ args }}
 
 [private]
+[script]
 machine-controller node:
     node_dir="$(just talos node-dir {{ node }})"; \
     just template "$node_dir/{{ node }}.yaml.j2" | yq -e 'select(.machine) | (.machine.type == "controlplane") // ""'
 
 [private]
+[script]
 machine-image:
     just template "{{ talos_dir }}/machineconfig.yaml.j2" | yq -e 'select(.machine) | .machine.install.image'
+
+[private]
+[script]
+node-dir node:
+    if [ -f "{{ talos_dir }}/controlplane/{{ node }}.yaml.j2" ]; then \
+        echo "{{ talos_dir }}/controlplane"; \
+    elif [ -f "{{ talos_dir }}/worker/{{ node }}.yaml.j2" ]; then \
+        echo "{{ talos_dir }}/worker"; \
+    else \
+        echo "ERROR: no config found for node {{ node }}" >&2; exit 1; \
+    fi

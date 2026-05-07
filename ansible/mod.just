@@ -1,25 +1,35 @@
-set quiet := true
+set lazy
+set positional-arguments
+set quiet
+set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
 ansible_dir := justfile_dir() + '/ansible'
 
 [private]
+[script]
 default:
     just -l ansible
 
 [doc('Install Ansible collections required for VPS playbook')]
+[script]
 install-collections:
+    just check-tools ansible-galaxy
     ansible-galaxy collection install -r "{{ ansible_dir }}/requirements.yml"
 
 [doc('Bootstrap VPS (subsequent runs — ubuntu user, port 22222)')]
+[script]
 bootstrap-vps *args:
+    just check-tools ansible-playbook
     ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/vps/playbook.yaml \
         --limit vps \
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
 [doc('Bootstrap VPS first run (root user, port 22)')]
+[script]
 bootstrap-vps-init *args:
+    just check-tools ansible-playbook
     ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/vps/playbook.yaml \
         --limit vps \
         --extra-vars "ansible_user=root ansible_port=22 bootstrap_mode=true" \
@@ -27,22 +37,28 @@ bootstrap-vps-init *args:
         {{ args }}
 
 [doc('Bootstrap TrueNAS doco-cd')]
+[script]
 bootstrap-truenas *args:
+    just check-tools ansible-playbook
     ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/truenas/playbook.yaml \
         --limit truenas \
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
 [doc('Dry-run VPS bootstrap')]
+[script]
 check-vps:
     just ansible bootstrap-vps --check
 
 [doc('Dry-run TrueNAS bootstrap')]
+[script]
 check-truenas:
     just ansible bootstrap-truenas --check
 
 [doc('Restart doco-cd container on a docker host (truenas|unraid|vps)')]
+[script]
 restart-doco-cd host:
+    just check-tools ssh
     #!/usr/bin/env bash
     set -euo pipefail
     case "{{ host }}" in
@@ -62,7 +78,9 @@ restart-doco-cd host:
     esac
 
 [doc('Emergency: SCP compose file directly to VPS and restart service (bypasses doco-cd/git)')]
+[script]
 deploy-direct service:
+    just check-tools ssh scp
     #!/usr/bin/env bash
     set -euo pipefail
     deploy_dir="/var/lib/docker/volumes/doco-cd_data/_data/github.com/tscibilia/home-ops/docker/vps/{{ service }}"

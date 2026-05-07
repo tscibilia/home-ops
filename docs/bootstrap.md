@@ -17,17 +17,16 @@ flowchart TD
     B --> C["3. Fetch kubeconfig"]
     C --> D["4. Wait for nodes"]
     D --> E["5. Apply namespaces"]
-    E --> F["6. Import Rook-Ceph ¹"]
-    F --> G["7. Apply resources"]
-    G --> H["8. Apply CRDs"]
-    H --> I["9. Apply core apps ²"]
-    I --> J(["10. Flux takes over"])
-    J --> K["11. Restore CNPG from B2"]
+    E --> F["6. Apply resources"]
+    F --> G["7. Apply CRDs"]
+    G --> H["8. Apply core apps ¹"]
+    H --> I(["9. Flux takes over"])
+    I --> J["10. Restore CNPG from B2"]
 
-    style J fill:#4051b5,color:#fff
+    style I fill:#4051b5,color:#fff
 ```
 
-<small>¹ Only if restoring an existing cluster &nbsp; ² Cilium → CoreDNS → cert-manager → external-secrets</small>
+<small>¹ Cilium → CoreDNS → cert-manager → external-secrets</small>
 
 | Stage | Command | Notes |
 | ----- | ------- | ----- |
@@ -36,12 +35,11 @@ flowchart TD
 | 3. Fetch kubeconfig | `just bootstrap kubeconfig` | |
 | 4. Wait for nodes | `just bootstrap wait` | |
 | 5. Apply namespaces | `just bootstrap namespaces` | |
-| 6. Import Rook-Ceph | `just bootstrap rook-ceph-external` | Only if restoring |
-| 7. Apply resources | `just bootstrap resources` | |
-| 8. Apply CRDs | `just bootstrap crds` | |
-| 9. Apply core apps | `just bootstrap apps` | Cilium → CoreDNS → cert-manager → external-secrets |
-| 10. Flux takes over | — | Reconciles everything else from Git |
-| 11. Restore databases | `just bootstrap cnpg` | Recovers CNPG clusters from B2 backups |
+| 6. Apply resources | `just bootstrap resources` | |
+| 7. Apply CRDs | `just bootstrap crds` | |
+| 8. Apply core apps | `just bootstrap apps` | Cilium → CoreDNS → cert-manager → external-secrets |
+| 9. Flux takes over | — | Reconciles everything else from Git |
+| 10. Restore databases | `just bootstrap cnpg` | Recovers CNPG clusters from B2 backups |
 
 ## Post-Bootstrap Checks
 

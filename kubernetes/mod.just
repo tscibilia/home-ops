@@ -1,41 +1,51 @@
-set quiet := true
+set lazy
+set positional-arguments
+set quiet
+set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
 kubernetes_dir := justfile_dir() + '/kubernetes'
 
 [private]
+[script]
 default:
     just -l kube
 
+[doc('Apply local Flux Kustomization')]
+[script]
+apply-ks ns ks:
+    just check-tools flux-local kubectl
+    just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl apply --server-side --field-manager=kustomize-controller -f /dev/stdin
+
+[doc('Delete local Flux Kustomization')]
+[script]
+delete-ks ns ks:
+    just check-tools flux-local kubectl
+    just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl delete -f /dev/stdin
+
 [doc('Browse a PVC')]
-browse-pvc namespace claim:
+[script]
+browse-pvc ns claim:
     just check-tools kubectl
-    kubectl browse-pvc -n {{ namespace }} -i mirror.gcr.io/alpine:latest {{ claim }}
+    kubectl browse-pvc -n {{ ns }} -i mirror.gcr.io/alpine:latest {{ claim }}
 
 [doc('Open a shell on a node')]
+[script]
 node-shell node:
     just check-tools kubectl
     kubectl debug node/{{ node }} -n default -it --image="mirror.gcr.io/alpine:latest" --profile sysadmin
     kubectl delete pod -n default -l app.kubernetes.io/managed-by=kubectl-debug
 
 [doc('Prune pods in Failed, Pending, or Succeeded state')]
+[script]
 prune-pods:
     just check-tools kubectl
     for phase in Failed Pending Succeeded; do \
         kubectl delete pods -A --field-selector status.phase="$phase" --ignore-not-found=true; \
     done
 
-[doc('Apply local Flux Kustomization')]
-apply-ks ns ks:
-    just check-tools flux-local kubectl
-    just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl apply --server-side --field-manager=kustomize-controller -f /dev/stdin
-
-[doc('Delete local Flux Kustomization')]
-delete-ks ns ks:
-    just check-tools flux-local kubectl
-    just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl delete -f /dev/stdin
-
 [doc('Sync GitRepositories')]
+[script]
 sync-git:
     just check-tools kubectl
     kubectl get gitrepo --no-headers -A | while read -r ns name _; do \
@@ -43,6 +53,7 @@ sync-git:
     done
 
 [doc('Sync OCIRepositories')]
+[script]
 sync-oci:
     just check-tools kubectl
     kubectl get ocirepo --no-headers -A | while read -r ns name _; do \
@@ -50,51 +61,64 @@ sync-oci:
     done
 
 [doc('Sync a single ExternalSecret')]
+[script]
 sync-es ns name:
     just check-tools kubectl
     kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite es "{{ name }}" force-sync="$(date +%s)"; \
 
-[doc('Sync a single Flux HelmRelease')]
-sync-hr ns name:
-    just check-tools kubectl
-    kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite hr "{{ name }}" reconcile.fluxcd.io/requestedAt="$(date +%s)" reconcile.fluxcd.io/forceAt="$(date +%s)"; \
-
-[doc('Sync a single Flux Kustomization')]
-sync-ks ns name:
-    just check-tools kubectl
-    kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite ks "{{ name }}" reconcile.fluxcd.io/requestedAt="$(date +%s)"; \
-
 [doc('Sync all ExternalSecrets')]
-sync-all-es:
+[script]
+sync-es-all:
     just check-tools kubectl
     kubectl get es --no-headers -A | while read -r ns name _; do \
         just kube sync-es "$ns" "$name"; \
     done
 
+[doc('Sync a single Flux HelmRelease')]
+[script]
+sync-hr ns name:
+    just check-tools kubectl
+    kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite hr "{{ name }}" reconcile.fluxcd.io/requestedAt="$(date +%s)" reconcile.fluxcd.io/forceAt="$(date +%s)"; \
+
 [doc('Sync all Flux HelmReleases')]
-sync-all-hr:
+[script]
+sync-hr-all:
     just check-tools kubectl
     kubectl get hr --no-headers -A | while read -r ns name _; do \
         just kube sync-hr "$ns" "$name"; \
     done
 
+[doc('Sync a single Flux Kustomization')]
+[script]
+sync-ks ns name:
+    just check-tools kubectl
+    kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite ks "{{ name }}" reconcile.fluxcd.io/requestedAt="$(date +%s)"; \
+
 [doc('Sync all Flux Kustomizations')]
-sync-all-ks:
+[script]
+sync-ks-all:
     just check-tools kubectl
     kubectl get ks --no-headers -A | while read -r ns name _; do \
         just kube sync-ks "$ns" "$name"; \
     done
 
-[doc('Restart all failed Flux Kustomizations')]
-ks-restart:
+[doc('Force a single HelmRelease to reconcile from Source')]
+[script]
+reconcile-hr ns name:
+    just check-tools flux
+    flux reconcile helmrelease "{{ name }}" -n "{{ ns }}" --with-source
+
+[doc('Force all HelmReleases to reconcile from Source')]
+[script]
+reconcile-hr-all:
     just check-tools kubectl flux
-    kubectl get ks --all-namespaces | grep False | awk '{print $2, $1}' | while read -r name namespace; do \
-        flux suspend kustomization "$name" -n "$namespace"; \
-        flux resume kustomization "$name" -n "$namespace" & \
+    kubectl get hr --all-namespaces --no-headers | while read -r namespace name _; do \
+        flux reconcile helmrelease "$name" -n "$namespace" --with-source; \
     done
 
 [doc('Restart all failed Flux HelmReleases')]
-hr-restart:
+[script]
+restart-hr:
     just check-tools kubectl flux
     kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | while read -r name namespace; do \
         flux suspend helmrelease "$name" -n "$namespace"; \
@@ -102,54 +126,44 @@ hr-restart:
     done
 
 [doc('Force a single Kustomization to reconcile from Source')]
-ks-reconcile ns name:
+[script]
+reconcile-ks ns name:
     just check-tools flux
     flux reconcile kustomization "{{ name }}" -n "{{ ns }}" --with-source
 
-[doc('Force a single HelmRelease to reconcile from Source')]
-hr-reconcile ns name:
-    just check-tools flux
-    flux reconcile helmrelease "{{ name }}" -n "{{ ns }}" --with-source
-
 [doc('Force all Flux Kustomizations to reconcile from Source')]
-ks-reconcile-all:
+[script]
+reconcile-ks-all:
     just check-tools kubectl flux
     kubectl get ks --all-namespaces --no-headers | while read -r namespace name _; do \
         flux reconcile kustomization "$name" -n "$namespace" --with-source; \
     done
 
-[doc('Force all HelmReleases to reconcile from Source')]
-hr-reconcile-all:
+[doc('Restart all failed Flux Kustomizations')]
+[script]
+restart-ks:
     just check-tools kubectl flux
-    kubectl get hr --all-namespaces --no-headers | while read -r namespace name _; do \
-        flux reconcile helmrelease "$name" -n "$namespace" --with-source; \
+    kubectl get ks --all-namespaces | grep False | awk '{print $2, $1}' | while read -r name namespace; do \
+        flux suspend kustomization "$name" -n "$namespace"; \
+        flux resume kustomization "$name" -n "$namespace" & \
     done
 
 [doc('Suspend or resume a Keda ScaledObject')]
+[script]
 keda state ns name:
     just check-tools kubectl
     kubectl -n "{{ ns }}" annotate --field-manager flux-client-side-apply --overwrite so "{{ name }}" autoscaling.keda.sh/paused{{ if state != "suspend" { "-" } else { "=true" } }}
 
 [doc('Suspend or resume all Keda ScaledObjects')]
+[script]
 keda-all state:
     just check-tools kubectl
     kubectl get scaledobjects --no-headers -A | while read -r ns name _; do \
         just kube keda "{{ state }}" "$ns" "$name"; \
     done
 
-[doc('Snapshot a single VolSync PVC')]
-snapshot ns name:
-    just check-tools kubectl
-    kubectl -n "{{ ns }}" patch replicationsources "{{ name }}" --type merge -p '{"spec":{"trigger":{"manual":"$(date +%s)"}}}'; \
-
-[doc('Snapshot all VolSync PVCs')]
-snapshot-all:
-    just check-tools kubectl
-    kubectl get replicationsources --no-headers -A | while read -r ns name _; do \
-        kubectl -n "$ns" patch replicationsources "$name" --type merge -p '{"spec":{"trigger":{"manual":"$(date +%s)"}}}'; \
-    done
-
 [doc('Suspend or resume VolSync')]
+[script]
 volsync state:
     just check-tools flux kubectl
     flux -n volsync-system {{ state }} kustomization volsync
@@ -157,7 +171,22 @@ volsync state:
     just kube keda {{ if state != "suspend" { "resume" } else { "suspend" } }} volsync-system volsync
     kubectl -n volsync-system scale deployment volsync --replicas {{ if state != "suspend" { "1" } else { "0" } }}
 
+[doc('Snapshot a single VolSync PVC')]
+[script]
+volsync-snapshot ns name:
+    just check-tools kubectl
+    kubectl -n "{{ ns }}" patch replicationsources "{{ name }}" --type merge -p '{"spec":{"trigger":{"manual":"$(date +%s)"}}}'; \
+
+[doc('Snapshot all VolSync PVCs')]
+[script]
+volsync-snapshot-all:
+    just check-tools kubectl
+    kubectl get replicationsources --no-headers -A | while read -r ns name _; do \
+        kubectl -n "$ns" patch replicationsources "$name" --type merge -p '{"spec":{"trigger":{"manual":"$(date +%s)"}}}'; \
+    done
+
 [doc('Unlock all VolSync restic source repos')]
+[script]
 volsync-unlock:
     just check-tools kubectl
     kubectl get replicationsources --all-namespaces --no-headers -o jsonpath='{range .items[*]}{.metadata.namespace},{.metadata.name}{"\n"}{end}' | while IFS=',' read -r ns name; do \
@@ -165,6 +194,7 @@ volsync-unlock:
     done
 
 [doc('List VolSync snapshots for an application')]
+[script]
 volsync-list ns name:
     just check-tools kubectl envsubst
     @echo "Listing snapshots for {{ name }} in {{ ns }} namespace..."
@@ -175,6 +205,7 @@ volsync-list ns name:
     @kubectl -n {{ ns }} delete job {{ name }}-list-snapshots
 
 [doc('Restore VolSync backup for an application')]
+[script]
 volsync-restore ns name previous:
     just check-tools kubectl flux envsubst jq
     @echo "Starting restore for {{ name }} in {{ ns }} namespace from snapshot {{ previous }}..."
@@ -201,12 +232,8 @@ volsync-restore ns name previous:
     fi
     @echo "Restore complete!"
 
-[doc('View a secret')]
-view-secret namespace secret:
-    just check-tools kubectl
-    kubectl view-secret -n {{ namespace }} {{ secret }}
-
 [doc('Restart network stack in dependency order')]
+[script]
 restart-network:
     just check-tools kubectl
     just log info "Restarting CoreDNS..."
@@ -236,23 +263,27 @@ restart-network:
     just log info "Network stack restart complete"
 
 [private]
+[script]
 render-local-ks ns ks:
     flux-local build ks --namespace "{{ ns }}" --path "{{ kubernetes_dir }}/flux/cluster" "{{ ks }}"
 
 [private]
 [doc('Suspend Flux resources for an app')]
+[script]
 flux-suspend ns name:
     @flux suspend kustomization {{ name }} -n {{ ns }}
     @flux suspend helmrelease {{ name }} -n {{ ns }}
 
 [private]
 [doc('Resume Flux resources for an app')]
+[script]
 flux-resume ns name:
     @flux resume kustomization {{ name }} -n {{ ns }}
     @flux resume helmrelease {{ name }} -n {{ ns }}
     @flux reconcile helmrelease {{ name }} -n {{ ns }} --force
 
 [private]
+[script]
 [doc('Scale down an app (deployment or statefulset)')]
 app-scale-down ns name:
     @CONTROLLER=$(kubectl -n {{ ns }} get deployment {{ name }} &>/dev/null && echo deployment || echo statefulset); \

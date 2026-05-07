@@ -456,7 +456,7 @@ After generating all manifests:
    - If configMapGenerator: populate the config file in resources/
    - If custom chart: verify the OCI URL and chart version
    - Test: `just kube apply-ks {NAMESPACE} {APP_NAME}`
-   - Push and reconcile: `just kube ks-reconcile {NAMESPACE} {APP_NAME}`
+   - Push and reconcile: `just kube reconcile-ks {NAMESPACE} {APP_NAME}`
 
 ## Important Notes
 
