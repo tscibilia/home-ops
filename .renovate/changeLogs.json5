@@ -61,6 +61,12 @@
       changelogUrl: "https://forums.plex.tv/t/plex-media-server/30447/last",
     },
     {
+      description: "Changelog URL for Toolhive",
+      matchPackageNames: ["/toolhive/"],
+      changelogUrl: "https://github.com/stacklok/toolhive/releases",
+      sourceUrl: "https://github.com/stacklok/toolhive",
+    },
+    {
       description: "Changelog URL for VictoriaMetrics Logs",
       matchPackageNames: ["/victoria-logs-single/"],
       changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-logs-single/CHANGELOG.md",

@@ -121,5 +121,13 @@
       },
       minimumGroupSize: 2,
     },
+    {
+      description: "Toolhive Group",
+      groupName: "toolhive",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/toolhive/"],
+      group: {commitMessageTopic: "{{{groupName}}} group"},
+      minimumGroupSize: 2,
+    },
   ],
 }
