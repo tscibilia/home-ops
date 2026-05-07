@@ -9,7 +9,6 @@
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 
 ## ⚠️ Known Issues
-- ⚠️ **Toolhive:** issues connecting open-webui via tool calls
 - ⚠️ **RustFS:** follow upstream [issue](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
 - ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?)
 - ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel
@@ -22,6 +21,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))
 - ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))
 - ✅ move llama.cpp to cluser - **2026-04-29** (See commit [08dde6f])
 - ✅ move ai3090 to talos worker - **2026-04-28** (See [#2201](https://github.com/tscibilia/home-ops/pull/2201) and commit [4a8b97c])
