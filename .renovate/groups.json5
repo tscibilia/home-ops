@@ -96,6 +96,14 @@
       sourceUrl: "https://github.com/gabe565/docker-obico",
     },
     {
+      description: "Qbittorrent Group",
+      groupName: "qbittorrent",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/qbittorrent/"],
+      group: {commitMessageTopic: "{{{groupName}}} group"},
+      minimumGroupSize: 2,
+    },
+    {
       description: "Rook-Ceph Group",
       groupName: "rook-ceph",
       matchDatasources: ["docker"],
