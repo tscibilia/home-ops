@@ -25,27 +25,29 @@ spec:
               MATTER_SERVER__APPLICATION_URL: &host "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               MATTER_SERVER__LOG_LEVEL: info
             args:
-            - --storage-path=/data
-            - --primary-interface=net1
-            - --log-level=debug
-            - --log-level-sdk=info
+              - --storage-path=/data
+              - --primary-interface=net1
+              - --log-level=debug
+              - --log-level-sdk=info
             resources:
               requests:
                 cpu: 50m
                 memory: 100M
               limits:
                 memory: 100M
+            securityContext:
+              privileged: true
         pod:
           nodeSelector:
             feature.node.kubernetes.io/usb-zigbee: "true"
     defaultPodOptions:
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: "${GATUS_SUBDOMAIN}.internal"
+        external-dns.alpha.kubernetes.io/hostname: *host
         k8s.v1.cni.cncf.io/networks: |
           [{
             "name": "iot",
             "namespace": "network",
-            "ips": ["192.168.107.52/24", "2600:4040:a5bf:6c00::cafe:babe/64"],
+            "ips": ["192.168.107.52/24", "fdaf:2e15:3c47::c001:d00d/64"],
             "mac": "02:7f:b4:4d:a8:72"
           }]
       hostUsers: false
@@ -58,6 +60,7 @@ spec:
         supplementalGroups: [34]
     service:
       app:
+        controller: *app
         ports:
           http:
             port: *port

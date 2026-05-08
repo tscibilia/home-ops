@@ -1,0 +1,106 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app otbr
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/ownbee/hass-otbr-docker
+              tag: v0.3.0@sha256:5ca7008462e94d4c937aca8c1c9a60e709d6d300625363c161b946683032d5b1
+            env:
+              DEVICE: /dev/ttyACM0
+              BACKBONE_IF: net1
+              OTBR_REST_PORT: &port 8081
+              BAUDRATE: "460800"
+              FLOW_CONTROL: "1"
+              NAT64: "0"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /node
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 10
+                  periodSeconds: 30
+                  timeoutSeconds: 1
+            resources:
+              requests:
+                cpu: 10m
+                memory: 256M
+              limits:
+                memory: 512M
+            securityContext:
+              privileged: true
+        pod:
+          nodeSelector:
+            feature.node.kubernetes.io/usb-zigbee: "true"
+    defaultPodOptions:
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "{{ .Release.Name }}.internal"
+        k8s.v1.cni.cncf.io/networks: |
+          [{
+            "name": "iot",
+            "namespace": "network",
+            "ips": ["192.168.107.53/24", "fdaf:2e15:3c47::cafe:babe/64"],
+            "mac": "02:7f:b4:4d:ba:be"
+          }]
+      securityContext:
+        runAsNonRoot: false # Must be run as root user
+        runAsUser: 0        # Must be run as root user
+        runAsGroup: 0
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+        sysctls:
+          - name: net.ipv6.conf.all.forwarding
+            value: "1"
+          - name: net.ipv6.conf.net1.forwarding
+            value: "1"
+          - name: net.ipv6.conf.net1.accept_ra
+            value: "2"
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+        - name: envoy-internal
+          namespace: network
+        rules:
+        - backendRefs:
+          - name: *app
+            port: *port
+    persistence:
+      data:
+        existingClaim: *app
+      tmp:
+        type: emptyDir
