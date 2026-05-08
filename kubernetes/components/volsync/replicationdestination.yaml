@@ -21,8 +21,15 @@ spec:
     enableFileDeletion: true
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
-      runAsGroup: ${VOLSYNC_PGID:=100}
-      fsGroup: ${VOLSYNC_PGID:=100}
+      runAsGroup: ${VOLSYNC_PGID:=1000}
+      fsGroup: ${VOLSYNC_PGID:=1000}
+    # TODO: Kopia
+    # moverVolumes:
+    #   - mountPath: repository
+    #     volumeSource:
+    #       nfs:
+    #         path: /mnt/user/backup/kubernetes/volsync
+    #         server: unraid.internal
     repository: "${APP}-volsync-secret"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-ssd}"
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"
