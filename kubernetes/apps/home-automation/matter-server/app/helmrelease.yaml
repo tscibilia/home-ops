@@ -1,0 +1,78 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app matter-server
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-assistant-libs/python-matter-server
+              tag: 8.1.0@sha256:170aa093ce91c76cde4cc390918307590f0f5558fcec93f913af3cb019e6562a
+            env:
+              MATTER_SERVER__INSTANCE_NAME: "{{ .Release.Name }}"
+              MATTER_SERVER__PORT: &port 5580
+              MATTER_SERVER__APPLICATION_URL: &host "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+              MATTER_SERVER__LOG_LEVEL: info
+            args:
+            - --storage-path=/data
+            - --primary-interface=net1
+            - --log-level=debug
+            - --log-level-sdk=info
+            resources:
+              requests:
+                cpu: 50m
+                memory: 100M
+              limits:
+                memory: 100M
+        pod:
+          nodeSelector:
+            feature.node.kubernetes.io/usb-zigbee: "true"
+    defaultPodOptions:
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "${GATUS_SUBDOMAIN}.internal"
+        k8s.v1.cni.cncf.io/networks: |
+          [{
+            "name": "iot",
+            "namespace": "network",
+            "ips": ["192.168.107.50/24"],
+            "mac": "02:7f:b4:4d:a8:72"
+          }]
+      hostUsers: false
+      securityContext:
+        runAsNonRoot: false # Must be run as root user
+        runAsUser: 0        # Must be run as root user
+        runAsGroup: 0
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [34]
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: [*host]
+        parentRefs:
+        - name: envoy-internal
+          namespace: network
+        rules:
+        - backendRefs:
+          - name: *app
+            port: *port
+    persistence:
+      data:
+        existingClaim: *app
+      tmp:
+        type: emptyDir
