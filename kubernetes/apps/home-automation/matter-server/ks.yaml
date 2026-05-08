@@ -20,6 +20,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: matter
+      VOLSYNC_CAPACITY: 2Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
