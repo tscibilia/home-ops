@@ -12,5 +12,5 @@ resources:
   - ./matter-server/ks.yaml
   - ./matterbridge/ks.yaml
   - ./mosquitto/ks.yaml
-  # - ./otbr/ks.yaml
+  - ./otbr/ks.yaml
   - ./zwave/ks.yaml
