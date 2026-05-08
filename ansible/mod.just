@@ -45,6 +45,15 @@ bootstrap-truenas *args:
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
+[doc('Bootstrap Unraid doco-cd')]
+[script]
+bootstrap-unraid *args:
+    just check-tools ansible-playbook
+    ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/unraid/playbook.yaml \
+        --limit unraid \
+        --private-key ~/.ssh/home-ops \
+        {{ args }}
+
 [doc('Dry-run VPS bootstrap')]
 [script]
 check-vps:
@@ -54,6 +63,11 @@ check-vps:
 [script]
 check-truenas:
     just ansible bootstrap-truenas --check
+
+[doc('Dry-run Unraid bootstrap')]
+[script]
+check-unraid:
+    just ansible bootstrap-unraid --check
 
 [doc('Restart doco-cd container on a docker host (truenas|unraid|vps)')]
 [script]

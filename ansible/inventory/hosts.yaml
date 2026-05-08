@@ -7,6 +7,12 @@ all:
           ansible_user: sysadmin
           ansible_ssh_private_key_file: ~/.ssh/home-ops
           ansible_python_interpreter: auto_silent
+    unraid:
+      hosts:
+        unraid.internal:
+          ansible_user: root
+          ansible_ssh_private_key_file: ~/.ssh/home-ops
+          ansible_python_interpreter: auto_silent
     vps:
       hosts:
         vps.internal:
