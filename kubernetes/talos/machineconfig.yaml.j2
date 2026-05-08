@@ -59,6 +59,8 @@ machine:
     defaultRuntimeSeccompProfileEnabled: true
     disableManifestsDirectory: true
     extraConfig:
+      allowedUnsafeSysctls:
+        - net.ipv6.conf.*
       featureGates:
         ResourceHealthStatus: true # New
       serializeImagePulls: false
