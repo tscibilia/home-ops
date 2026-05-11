@@ -118,6 +118,7 @@ nav:
   - Architecture: architecture.md
   - Applications:
       - apps/index.md
+      - AI: apps/ai.md
       - Default: apps/default.md
       - Media: apps/media.md
       - Database: apps/database.md

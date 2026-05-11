@@ -6,17 +6,18 @@ Namespace: `default`
 | ------------ | --------- | -------------------------------------------------- |
 | actual       | —         |                                                    |
 | authentik    | ceph-ssd  | SSO provider, Postgres + Dragonfly, external access, cross-namespace ReferenceGrant |
+| filebrowser  | ceph-ssd  | File manager, external access (drive.domain), volsync backup |
 | homebox      | ceph-ssd  | Postgres (cnpg component), volsync backup          |
 | homepage     | —         |                                                    |
 | immich       | ceph-ssd  | Postgres (immich17 cluster), Dragonfly (db2), GPU, external access |
 | komga        | ceph-ssd  | External access, keda/nfs-scaler, volsync backup   |
 | mealie       | ceph-ssd  | Postgres (cnpg component), external access, volsync backup |
-| open-webui   | ceph-ssd  | External access, volsync backup                    |
 | pairdrop     | —         |                                                    |
 | radicale     | ceph-ssd  | CalDAV/CardDAV server, external access, volsync backup |
 | rclone       | —         | NFS backup scaler via keda                         |
 | rustfs       | ceph-ssd  | S3-compatible object storage, external access, native OIDC, volsync backup |
 | searxng      | ceph-ssd  | Dragonfly (db3), volsync backup                    |
+| smtp-relay   | —         | Outbound email relay, cluster-internal only        |
 | spoolman     | ceph-ssd  | ext-auth-internal, volsync backup                  |
 | thelounge    | ceph-ssd  | IRC client, volsync backup                         |
 | vaultwarden  | ceph-ssd  | Password manager, external access, volsync backup  |

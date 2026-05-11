@@ -28,10 +28,11 @@ Include via `components: [../../../../components/<name>]` in `ks.yaml`.
 
 | Namespace                                  | Apps | Purpose                                    |
 | ------------------------------------------ | ---- | ------------------------------------------ |
-| [default](default.md)                      | 16   | SSO, dashboard, photos, recipes, passwords |
+| [ai](ai.md)                                | 5    | LLMs, image gen, MCP tools                 |
+| [default](default.md)                      | 17   | SSO, dashboard, photos, recipes, passwords |
 | [media](media.md)                          | 18   | Plex, *arr stack, downloads                |
 | [database](database.md)                    | 3    | CNPG clusters, Dragonfly, pgAdmin          |
-| [home-automation](home-automation.md)      | 5    | Home Assistant, MQTT, ESPHome, Z-Wave      |
+| [home-automation](home-automation.md)      | 6    | Home Assistant, MQTT, ESPHome, Matter/Thread |
 | [observability](observability.md)          | 14   | Prometheus, Grafana, logs, alerting        |
 | [network](network.md)                      | 8    | Envoy, Cloudflared, DNS, Tailscale         |
-| [system](system.md)                        | 19   | Cilium, Flux, Rook-Ceph, cert-manager     |
+| [system](system.md)                        | 21   | Cilium, Flux, Rook-Ceph, cert-manager     |

@@ -11,7 +11,9 @@ Infrastructure namespaces that keep the cluster running. You rarely interact wit
 | csi-driver-nfs           | NFS CSI driver for nfs-media storage class      |
 | descheduler              | Rebalances pods across nodes                    |
 | intel-gpu-resource-driver| Exposes Intel iGPU to pods (Plex, Jellyfin, Immich) |
+| k8tz                     | Timezone injection into pods via mutating webhook   |
 | metrics-server           | Cluster resource metrics for HPA/kubectl top    |
+| nvidia-device-plugin     | Exposes NVIDIA GPU to pods (ai3090)             |
 | reloader                 | Restarts pods when their ConfigMaps or Secrets change |
 | snapshot-controller      | Volume snapshot CRDs for VolSync                |
 | spegel                   | P2P container image distribution between nodes  |

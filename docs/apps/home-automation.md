@@ -9,6 +9,7 @@ Namespace: `home-automation`
 | mosquitto       | ceph-ssd | MQTT broker                                  |
 | zwave           | ceph-ssd | USB device passthrough, volsync              |
 | matter-server   | —        |                                              |
+| otbr            | ceph-ssd | OpenThread Border Router, Multus iot (net1), IPv6 forwarding, volsync |
 
 ## Config Notes
 
