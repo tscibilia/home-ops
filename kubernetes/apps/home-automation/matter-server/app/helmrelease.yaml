@@ -72,8 +72,8 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-            - name: *app
-              port: *port
+              - identifier: app
+                port: *port
     persistence:
       data:
         existingClaim: *app
