@@ -24,7 +24,7 @@
       matchDatasources: ["docker"],
       matchPackagePatterns: ["rustfs/rustfs"],
       versioning: "loose",
-      allowedVersions: "/^\\d+\\.\\d+\\.\\d+-alpha\\.\\d+$/",
+      allowedVersions: "/^\\d+\\.\\d+\\.\\d+-(alpha|beta)\\.\\d+$/",
     },
     {
       description: "Cal-commit versioning for SearXNG (weekly updates)",
