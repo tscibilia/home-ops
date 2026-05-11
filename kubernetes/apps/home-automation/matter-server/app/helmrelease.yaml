@@ -47,7 +47,7 @@ spec:
           [{
             "name": "iot",
             "namespace": "network",
-            "ips": ["192.168.107.52/24", "fdaf:2e15:3c47::c001:d00d/64"],
+            "ips": ["192.168.107.52/24", "fda1:107::c001:d00d/64"],
             "mac": "02:7f:b4:4d:a8:72"
           }]
       hostUsers: false
