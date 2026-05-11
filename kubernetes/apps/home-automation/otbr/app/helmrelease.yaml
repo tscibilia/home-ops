@@ -23,6 +23,7 @@ spec:
               DEVICE: /dev/ttyUSB0
               BACKBONE_IF: net1
               OTBR_REST_PORT: &port 8081
+              OTBR_WEB_PORT: &web 7586
               BAUDRATE: "460800"
               FLOW_CONTROL: "1"
               NAT64: "0"
@@ -89,16 +90,30 @@ spec:
         ports:
           http:
             port: *port
+      web:
+        controller: *app
+        ports:
+          http:
+            port: *web
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
-        - name: envoy-internal
-          namespace: network
+          - name: envoy-internal
+            namespace: network
         rules:
-        - backendRefs:
-          - name: *app
-            port: *port
+          - backendRefs:
+              - identifier: app
+                port: *port
+      web:
+        hostnames: ["{{ .Release.Name }}-web.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: web
+                port: *web
     persistence:
       data:
         existingClaim: *app
