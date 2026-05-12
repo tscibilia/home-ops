@@ -114,8 +114,8 @@ spec:
                 subPath: "rclone.conf"
       data:
         type: nfs
-        server: unraid.internal
-        path: /mnt/user/backup
+        server: truenas.internal
+        path: /mnt/nas/data/backups
         globalMounts:
           - path: /data
             readOnly: true
