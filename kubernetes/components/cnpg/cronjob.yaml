@@ -49,5 +49,5 @@ spec:
           volumes:
             - name: backups
               nfs:
-                path: /mnt/user/backup/kubernetes/postgres
-                server: unraid.internal
+                path: /mnt/nas/data/backups/kubernetes/postgres
+                server: truenas.internal
