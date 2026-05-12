@@ -67,6 +67,12 @@
       sourceUrl: "https://github.com/stacklok/toolhive",
     },
     {
+      description: "Changelog URL for Traefik",
+      matchPackageNames: ["/traefik/"],
+      changelogUrl: "https://github.com/traefik/traefik/releases",
+      sourceUrl: "https://github.com/traefik/traefik",
+    },
+    {
       description: "Changelog URL for VictoriaMetrics Logs",
       matchPackageNames: ["/victoria-logs-single/"],
       changelogUrl: "https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-logs-single/CHANGELOG.md",
