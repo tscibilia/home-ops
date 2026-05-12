@@ -43,12 +43,11 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 `just` modules: `bootstrap`, `kube`, `talos`.
 
 **`just kube` (most used):**
-- `sync-ks/hr/es <ns> <name>` — force sync resource
-- `reconcile-ks/reconcile-hr <ns> <name>` — reconcile from source
-- `reconcile-ks-all/reconcile-hr-all` — reconcile everything
+- `sync <hr|ks|es|gitrepo|ocirepo> [<ns> <app>]` — force sync resource (or all)
+- `reconcile-ks/reconcile-hr [<ns> <app>]` — reconcile from source (or all)
 - `restart-ks/restart-hr` — suspend/resume failed resources
 - `apply-ks <ns> <ks>` — validate locally with flux-local
-- `node-shell <node>`, `volsync-snapshot <ns> <name>`
+- `node-shell <node>`, `volsync-snapshot [<ns> <app>]`
 
 **Workflow:**
 1. New app: use `add-app` skill

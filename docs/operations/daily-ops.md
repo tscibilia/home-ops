@@ -13,12 +13,12 @@ Renovate opens PRs for dependency updates (container images, Helm charts, tools)
 
 | Task                          | Command                                     |
 | ----------------------------- | ------------------------------------------- |
-| Force sync a stuck resource   | `just kube sync-ks <ns> <name>`             |
+| Force sync a stuck resource   | `just kube sync ks <ns> <app>`              |
 | Reconcile from source         | `just kube reconcile-ks <ns> <name>`        |
 | Restart all failed resources  | `just kube restart-ks` / `just kube restart-hr` |
 | Browse a PVC                  | `just kube browse-pvc <ns> <claim>`         |
-| Snapshot a PVC                | `just kube volsync-snapshot <ns> <name>`    |
-| List VolSync snapshots        | `just kube volsync-list <ns> <name>`        |
+| Snapshot a PVC                | `just kube volsync-snapshot <ns> <app>`     |
+| List VolSync snapshots        | `just kube volsync-list <ns> <app>`         |
 
 Full command reference: [Task Runner](task-runner.md)
 
@@ -47,6 +47,6 @@ kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeed
 
 Flux watches the repo and reconciles automatically. If something isn't picking up:
 
-1. Check if the GitRepository source is synced: `just kube sync-git`
+1. Check if the GitRepository source is synced: `just kube sync gitrepo`
 2. Force reconcile the specific app: `just kube reconcile-ks <ns> <app>`
 3. If a HelmRelease is stuck in a bad state, delete it and let Flux recreate: `kubectl delete hr <name> -n <ns>`

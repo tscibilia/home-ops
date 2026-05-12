@@ -8,37 +8,24 @@ just <module> <command> [args]
 
 ## Kube
 
-| Command              | Args                  | What it does                                 |
-| -------------------- | --------------------- | -------------------------------------------- |
-| `sync-ks`            | `<ns> <name>`         | Sync a single Flux Kustomization             |
-| `sync-hr`            | `<ns> <name>`         | Sync a single Flux HelmRelease               |
-| `sync-es`            | `<ns> <name>`         | Sync a single ExternalSecret                 |
-| `sync-all-ks`        | —                     | Sync all Flux Kustomizations                 |
-| `sync-all-hr`        | —                     | Sync all Flux HelmReleases                   |
-| `sync-all-es`        | —                     | Sync all ExternalSecrets                     |
-| `sync-git`           | —                     | Sync GitRepositories                         |
-| `sync-oci`           | —                     | Sync OCIRepositories                         |
-| `ks-reconcile`       | `<ns> <name>`         | Force Kustomization to reconcile from source |
-| `hr-reconcile`       | `<ns> <name>`         | Force HelmRelease to reconcile from source   |
-| `ks-reconcile-all`   | —                     | Force all Kustomizations to reconcile        |
-| `hr-reconcile-all`   | —                     | Force all HelmReleases to reconcile          |
-| `ks-restart`         | —                     | Restart all failed Kustomizations (suspend/resume) |
-| `hr-restart`         | —                     | Restart all failed HelmReleases (suspend/resume) |
-| `apply-ks`           | `<ns> <ks>`           | Validate locally with flux-local before push |
-| `delete-ks`          | `<ns> <ks>`           | Delete a local Flux Kustomization            |
-| `view-secret`        | `<ns> <secret>`       | Decode and display a secret                  |
-| `browse-pvc`         | `<ns> <claim>`        | Mount PVC to a debug pod                     |
-| `node-shell`         | `<node>`              | Interactive shell on a node                  |
-| `prune-pods`         | —                     | Clean up Failed, Pending, Succeeded pods     |
-| `snapshot`           | `<ns> <name>`         | VolSync snapshot a single PVC                |
-| `snapshot-all`       | —                     | VolSync snapshot all PVCs                    |
-| `volsync`            | `<action>`            | Suspend or resume VolSync                    |
-| `volsync-unlock`     | —                     | Unlock all VolSync restic source repos       |
-| `volsync-list`       | `<ns> <name>`         | List available VolSync snapshots             |
-| `volsync-restore`    | `<ns> <name> <prev>`  | Restore VolSync backup for an app            |
-| `keda`               | `<action>`            | Suspend or resume a Keda ScaledObject        |
-| `keda-all`           | `<action>`            | Suspend or resume all Keda ScaledObjects     |
-| `restart-network`    | —                     | Restart network stack in dependency order    |
+| Command              | Args                          | What it does                                 |
+| -------------------- | ----------------------------- | -------------------------------------------- |
+| `sync`               | `<resource> [<ns> <app>]`     | Sync hr/ks/es/gitrepo/ocirepo — targeted or all |
+| `reconcile-ks`       | `[<ns> <app>]`                | Force Kustomization(s) to reconcile from source |
+| `reconcile-hr`       | `[<ns> <app>]`                | Force HelmRelease(s) to reconcile from source |
+| `restart-ks`         | —                             | Restart all failed Kustomizations (suspend/resume) |
+| `restart-hr`         | —                             | Restart all failed HelmReleases (suspend/resume) |
+| `apply-ks`           | `<ns> <ks>`                   | Validate locally with flux-local before push |
+| `delete-ks`          | `<ns> <ks>`                   | Delete a local Flux Kustomization            |
+| `browse-pvc`         | `<ns> <claim>`                | Mount PVC to a debug pod                     |
+| `node-shell`         | `<node>`                      | Interactive shell on a node                  |
+| `prune-pods`         | —                             | Clean up Failed, Pending, Succeeded pods     |
+| `volsync`            | `<suspend\|resume>`           | Suspend or resume VolSync                    |
+| `volsync-snapshot`   | `[<ns> <app>]`                | Snapshot VolSync PVC(s) — targeted or all    |
+| `volsync-unlock`     | —                             | Unlock all VolSync restic source repos       |
+| `volsync-list`       | `<ns> <app>`                  | List available VolSync snapshots             |
+| `volsync-restore`    | `<ns> <app> [<prev>]`         | Restore VolSync backup for an app            |
+| `restart-network`    | —                             | Restart network stack in dependency order    |
 
 ## Talos
 
