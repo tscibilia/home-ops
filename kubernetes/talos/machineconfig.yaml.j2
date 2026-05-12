@@ -63,6 +63,9 @@ machine:
         - net.ipv6.conf.*
       featureGates:
         ResourceHealthStatus: true # New
+      imageGCHighThresholdPercent: 85
+      imageGCLowThresholdPercent: 75
+      imageMinimumGCAge: "2m"
       serializeImagePulls: false
     image: ghcr.io/siderolabs/kubelet:v1.36.0
     nodeIP:

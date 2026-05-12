@@ -11,6 +11,11 @@ machine:
       - name: nvidia_uvm
       - name: nvidia_drm
       - name: nvidia_modeset
+  kubelet:
+    extraConfig:
+      imageGCHighThresholdPercent: 60
+      imageGCLowThresholdPercent: 50
+      imageMinimumGCAge: "5m"
   nodeTaints:
     nvidia.com/gpu: "present:NoSchedule"
   nodeLabels:
