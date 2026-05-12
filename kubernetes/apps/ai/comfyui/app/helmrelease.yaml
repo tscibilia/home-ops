@@ -121,8 +121,6 @@ spec:
                 subPath: output
               - path: /workspace/ComfyUI/input
                 subPath: input
-              - path: /workspace/.python-deps
-                subPath: python-deps
       tmp:
         type: emptyDir
         globalMounts:
