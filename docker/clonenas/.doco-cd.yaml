@@ -1,0 +1,9 @@
+working_dir: ./docker/clonenas
+auto_discovery:
+  enabled: true
+  depth: 1
+  delete: true
+force_recreate: false
+reconciliation:
+  enabled: true
+  events: ["unhealthy", "die"]

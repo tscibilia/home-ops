@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  scrutiny-collector:
+    image: ghcr.io/analogj/scrutiny:v0.9.2-collector@sha256:a0ba60a1f3734ef82871c658a7e5545fd6b70b560935c451149ec102e35bb054
+    container_name: scrutiny-collector
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    cap_add:
+      - SYS_RAWIO    # required for smartctl SMART queries
+      - SYS_ADMIN    # required for NVMe (/dev/nvme0)
+    volumes:
+      - /dev:/dev    # bind-mount avoids runc cgroup "p" type error on TrueNAS kernel
+      - /run/udev:/run/udev:ro
+    device_cgroup_rules:
+      - 'b 8:* r'    # /dev/sda+ (SATA/SAS, major 8)
+    environment:
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal
+      COLLECTOR_HOST_ID: clonenas
+
+networks:
+  doco-cd:
+    external: true

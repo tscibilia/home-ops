@@ -1,0 +1,14 @@
+services:
+  matchbox:
+    image: quay.io/poseidon/matchbox:v0.11.0@sha256:06bcdae85335fd00e8277b007b55cfb49d96a0114628c0f70db2b92b079d246a
+    container_name: matchbox
+    restart: unless-stopped
+    network_mode: host
+    command:
+      - -address=0.0.0.0:8080
+      - -data-path=/var/lib/matchbox
+      - -assets-path=/var/lib/matchbox/assets
+    volumes:
+      - ./matchbox/profiles:/var/lib/matchbox/profiles:ro
+      - ./matchbox/groups:/var/lib/matchbox/groups:ro
+      - ./matchbox/assets:/var/lib/matchbox/assets:ro

@@ -1,5 +1,4 @@
----
-- name: Bootstrap TrueNAS doco-cd
+- name: Bootstrap clonenas doco-cd
   hosts: all
   become: true
   gather_facts: false
@@ -7,7 +6,7 @@
     ansible_user: sysadmin
     ansible_python_interpreter: auto_silent
     ansible_remote_tmp: /tmp
-    dococd_config_dir: /mnt/nas/data/users/sysadmin/.config/doco-cd
+    dococd_config_dir: /mnt/vault/data/sysadmin/.config/doco-cd
 
   tasks:
     - name: Check host connectivity
@@ -41,26 +40,27 @@
 
     - name: doco-cd | Copy docker-compose app file
       ansible.builtin.copy:
-        src: ../../docker/truenas/.doco-cd/docker-compose.app.yaml
+        src: ../../docker/clonenas/.doco-cd/docker-compose.app.yaml
         dest: "{{ dococd_config_dir }}/docker-compose.yaml"
       become: false
 
     - name: doco-cd | Copy Dockerfile
       ansible.builtin.copy:
-        src: ../../docker/truenas/.doco-cd/Dockerfile
+        src: ../../docker/clonenas/.doco-cd/Dockerfile
         dest: "{{ dococd_config_dir }}/Dockerfile"
       become: false
 
     - name: doco-cd | Copy proxy.py
       ansible.builtin.copy:
-        src: ../../docker/truenas/.doco-cd/proxy.py
+        src: ../../docker/clonenas/.doco-cd/proxy.py
         dest: "{{ dococd_config_dir }}/proxy.py"
       become: false
 
     - name: doco-cd | Copy cron-update.sh
       ansible.builtin.copy:
-        src: ../../docker/truenas/.doco-cd/cron-update.sh
+        src: ../../docker/clonenas/.doco-cd/cron-update.sh
         dest: "{{ dococd_config_dir }}/cron-update.sh"
+        mode: "0755"
       become: false
 
     - name: doco-cd | Install nightly update cron job
@@ -76,6 +76,7 @@
       ansible.builtin.copy:
         dest: "{{ dococd_config_dir }}/{{ item.name }}"
         content: "{{ item.content }}"
+        mode: "0600"
       no_log: true
       become: false
       loop:
@@ -126,14 +127,5 @@
       until: proxy_health.stdout.strip() == "healthy"
       retries: 30
       delay: 5
-      changed_when: false
-      when: not ansible_check_mode
-
-    - name: doco-cd | Wait for doco-cd healthy
-      ansible.builtin.shell: "docker inspect --format '{% raw %}{{.State.Health.Status}}{% endraw %}' doco-cd"
-      register: dococd_health
-      until: dococd_health.stdout.strip() == "healthy"
-      retries: 30
-      delay: 10
       changed_when: false
       when: not ansible_check_mode

@@ -1,0 +1,75 @@
+# This file is not managed by doco-cd because it can't manage itself.
+# A cron job on clonenas pulls `docker-compose.app.yaml` and `Dockerfile`
+# from GitHub, compares hashes, and rebuilds only when something changed.
+
+secrets:
+  gh_token:
+    file: /mnt/vault/data/sysadmin/.config/doco-cd/gh_token
+  akeyless_access_id:
+    file: /mnt/vault/data/sysadmin/.config/doco-cd/akeyless_access_id
+  akeyless_access_key:
+    file: /mnt/vault/data/sysadmin/.config/doco-cd/akeyless_access_key
+
+services:
+  doco-cd:
+    image: ghcr.io/kimdre/doco-cd:0.88.0@sha256:1b62d6f90e160ca8f368814f70616ca5b3d3b488bbf8ee9a9ca271a67212e8e7
+    container_name: doco-cd
+    restart: unless-stopped
+    depends_on:
+      akeyless-proxy:
+        condition: service_healthy
+    networks:
+      - doco-cd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/data
+    environment:
+      LOG_LEVEL: info
+      DEPLOY_CONFIG_BASE_DIR: ./docker/clonenas/
+      POLL_CONFIG: |-
+        - url: https://github.com/tscibilia/home-ops.git
+          reference: refs/heads/main
+          interval: 3600
+      SECRET_PROVIDER: webhook
+      SECRET_PROVIDER_WEBHOOK_STORES: |
+        name: akeyless
+        version: v1
+        url: "http://akeyless-proxy:8080/secret?name={{ .remote_ref.key | urlencode }}"
+        method: GET
+        json_path: "values(@)[0]"
+      TZ: America/New_York
+    healthcheck:
+      test:
+        - CMD
+        - /doco-cd
+        - healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - gh_token
+
+  akeyless-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: akeyless-proxy
+    restart: unless-stopped
+    networks:
+      - doco-cd
+    expose:
+      - "8080"
+    environment:
+      AKEYLESS_ACCESS_ID_FILE: /run/secrets/akeyless_access_id
+      AKEYLESS_ACCESS_KEY_FILE: /run/secrets/akeyless_access_key
+    secrets:
+      - akeyless_access_id
+      - akeyless_access_key
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  data: {}

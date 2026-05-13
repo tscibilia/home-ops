@@ -45,6 +45,15 @@ bootstrap-truenas *args:
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
+[doc('Bootstrap CloneNAS doco-cd')]
+[script]
+bootstrap-clonenas *args:
+    just check-tools ansible-playbook
+    ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/clonenas/playbook.yaml \
+        --limit clonenas \
+        --private-key ~/.ssh/home-ops \
+        {{ args }}
+
 [doc('Bootstrap Unraid doco-cd')]
 [script]
 bootstrap-unraid *args:
@@ -64,6 +73,11 @@ check-vps:
 check-truenas:
     just ansible bootstrap-truenas --check
 
+[doc('Dry-run clonenas bootstrap')]
+[script]
+check-clonenas:
+    just ansible bootstrap-clonenas --check
+
 [doc('Dry-run Unraid bootstrap')]
 [script]
 check-unraid:
@@ -82,11 +96,14 @@ restart-doco-cd host:
       unraid)
         ssh -i ~/.ssh/home-ops root@unraid.internal "docker restart doco-cd"
         ;;
+      clonenas)
+        ssh -i ~/.ssh/home-ops sysadmin@clonenas.internal "docker restart doco-cd"
+        ;;
       vps)
         ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal "docker restart doco-cd"
         ;;
       *)
-        echo "Unknown host: {{ host }}. Valid: truenas, unraid, vps" >&2
+        echo "Unknown host: {{ host }}. Valid: truenas, unraid, clonenas, vps" >&2
         exit 1
         ;;
     esac

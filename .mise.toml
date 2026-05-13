@@ -18,6 +18,7 @@ _.file = [
 "uv" = "0.11.14"
 "just" = "1.51.0"
 "gum" = "0.17.0"
+"pipx:ansible-core" = "latest"
 "pipx:flux-local" = "8.2.0"
 "aqua:mitsuhiko/minijinja" = "2.19.0"
 "aqua:cilium/cilium-cli" = "0.19.2"

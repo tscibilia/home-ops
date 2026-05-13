@@ -13,6 +13,15 @@ Path: `docker/truenas/`
 
 NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
 
+### clonenas
+Path: `docker/clonenas/`
+| # | Service | Compose file |
+|---|---------|-------------|
+| 01 | scrutiny (collector) | `01-scrutiny/docker-compose.yaml` |
+| 02 | matchbox | `02-matchbox/docker-compose.yaml` |
+
+clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/data/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
+
 ### unraid
 Path: `docker/unraid/`
 | # | Service | Compose file |
@@ -20,7 +29,7 @@ Path: `docker/unraid/`
 | 01 | scrutiny (collector) | `01-scrutiny/docker-compose.yaml` |
 | 02 | matchbox | `02-matchbox/docker-compose.yaml` |
 
-Unraid role: secondary/backup NFS, GPU workloads (ai3090 node).
+Unraid role: secondary/backup NFS, GPU workloads (ai3090 node). **Archived** — replaced by clonenas.
 
 ### vps
 Path: `docker/vps/`
