@@ -6,7 +6,6 @@ metadata:
   name: &app tracearr
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/cnpg
   dependsOn:
     - name: secret-stores
@@ -15,8 +14,6 @@ spec:
       namespace: database
     - name: dragonfly-cluster
       namespace: database
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
   interval: 1h
   path: ./kubernetes/apps/media/tracearr/app
   postBuild:
