@@ -58,8 +58,8 @@ spec:
       automountServiceAccountToken: true
       securityContext:
         runAsUser: 1000
-        runAsGroup: 100
-        fsGroup: 100
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
     service:
