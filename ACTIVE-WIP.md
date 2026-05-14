@@ -10,7 +10,6 @@
 
 ## ⚠️ Known Issues
 - ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely
-- ⚠️ **RustFS:** follow upstream [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686) for cluster health
 - ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?)
 - ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel
 - ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
@@ -22,6 +21,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ commit [2010ffa] resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686)
 - ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))
 - ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))
 - ✅ move llama.cpp to cluser - **2026-04-29** (See commit [08dde6f])

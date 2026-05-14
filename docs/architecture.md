@@ -108,11 +108,14 @@ Apps declare `dependsOn: [{name: cnpg-cluster, namespace: database}]` in their `
 
 Dragonfly (Redis-compatible) at `dragonfly-cluster.database.svc.cluster.local:6379`:
 
-| DB  | Consumer |
-| --- | -------- |
-| 0   | Default  |
-| 2   | Immich   |
-| 3   | Searxng  |
+| DB | Consumer   |
+| -- | ---------- |
+| 0  | Default    |
+| 1  | SSO (old)  |
+| 2  | Immich     |
+| 3  | Searxng    |
+| 4  | MCP Server |
+| 5  | Tracearr   |
 
 ## Secrets
 
