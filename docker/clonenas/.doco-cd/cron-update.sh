@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-WORK_DIR="/mnt/vault/data/sysadmin/.config/doco-cd"
+WORK_DIR="/mnt/vault/sysadmin/.config/doco-cd"
 BASE_URL="https://raw.githubusercontent.com/tscibilia/home-ops/main/docker/clonenas/.doco-cd"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 LOG_FILE="$WORK_DIR/update.log"

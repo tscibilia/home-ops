@@ -4,11 +4,11 @@
 
 secrets:
   gh_token:
-    file: /mnt/vault/data/sysadmin/.config/doco-cd/gh_token
+    file: /mnt/vault/sysadmin/.config/doco-cd/gh_token
   akeyless_access_id:
-    file: /mnt/vault/data/sysadmin/.config/doco-cd/akeyless_access_id
+    file: /mnt/vault/sysadmin/.config/doco-cd/akeyless_access_id
   akeyless_access_key:
-    file: /mnt/vault/data/sysadmin/.config/doco-cd/akeyless_access_key
+    file: /mnt/vault/sysadmin/.config/doco-cd/akeyless_access_key
 
 services:
   doco-cd:

@@ -6,7 +6,7 @@
     ansible_user: sysadmin
     ansible_python_interpreter: auto_silent
     ansible_remote_tmp: /tmp
-    dococd_config_dir: /mnt/vault/data/sysadmin/.config/doco-cd
+    dococd_config_dir: /mnt/vault/sysadmin/.config/doco-cd
 
   tasks:
     - name: Check host connectivity
@@ -64,13 +64,61 @@
       become: false
 
     - name: doco-cd | Install nightly update cron job
-      ansible.builtin.cron:
-        name: doco-cd stack update
-        minute: "0"
-        hour: "3"
-        job: "{{ dococd_config_dir }}/cron-update.sh"
-        user: sysadmin
-        state: present
+      ansible.builtin.shell: |
+        result=$(midclt call cronjob.query '[["description","=","doco-cd self update"]]')
+        [ "$result" = "[]" ] || exit 0
+        python3 <<'EOF'
+        import subprocess, json
+        job = {
+            "user": "root",
+            "command": "{{ dococd_config_dir }}/cron-update.sh",
+            "description": "doco-cd self update",
+            "schedule": {"minute": "0", "hour": "3", "dom": "*", "month": "*", "dow": "*"},
+            "enabled": True,
+            "stdout": True,
+            "stderr": False,
+        }
+        subprocess.run(["midclt", "call", "cronjob.create", json.dumps(job)], check=True)
+        EOF
+      changed_when: false
+
+    - name: smart | Install weekly short SMART test
+      ansible.builtin.shell: |
+        result=$(midclt call cronjob.query '[["description","=","SMART Test: Short"]]')
+        [ "$result" = "[]" ] || exit 0
+        python3 <<'EOF'
+        import subprocess, json
+        job = {
+            "user": "root",
+            "command": 'midclt call disk.smart_test SHORT ["*"]',
+            "description": "SMART Test: Short",
+            "schedule": {"minute": "0", "hour": "1", "dom": "*", "month": "*", "dow": "0"},
+            "enabled": True,
+            "stdout": True,
+            "stderr": False,
+        }
+        subprocess.run(["midclt", "call", "cronjob.create", json.dumps(job)], check=True)
+        EOF
+      changed_when: false
+
+    - name: smart | Install monthly long SMART test
+      ansible.builtin.shell: |
+        result=$(midclt call cronjob.query '[["description","=","SMART Test: Long"]]')
+        [ "$result" = "[]" ] || exit 0
+        python3 <<'EOF'
+        import subprocess, json
+        job = {
+            "user": "root",
+            "command": 'midclt call disk.smart_test LONG ["*"]',
+            "description": "SMART Test: Long",
+            "schedule": {"minute": "0", "hour": "1", "dom": "1", "month": "*", "dow": "*"},
+            "enabled": True,
+            "stdout": True,
+            "stderr": False,
+        }
+        subprocess.run(["midclt", "call", "cronjob.create", json.dumps(job)], check=True)
+        EOF
+      changed_when: false
 
     - name: doco-cd | Create secret files
       ansible.builtin.copy:

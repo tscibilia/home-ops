@@ -69,7 +69,7 @@
         minute: "0"
         hour: "3"
         job: "{{ dococd_config_dir }}/cron-update.sh"
-        user: sysadmin
+        user: root
         state: present
 
     - name: doco-cd | Create secret files

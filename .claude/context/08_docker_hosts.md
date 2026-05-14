@@ -20,7 +20,7 @@ Path: `docker/clonenas/`
 | 01 | scrutiny (collector) | `01-scrutiny/docker-compose.yaml` |
 | 02 | matchbox | `02-matchbox/docker-compose.yaml` |
 
-clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/data/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
+clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
 
 ### unraid
 Path: `docker/unraid/`
