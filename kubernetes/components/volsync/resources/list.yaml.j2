@@ -10,6 +10,10 @@ spec:
     spec:
       automountServiceAccountToken: false
       restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: list
           image: docker.io/restic/restic:0.17.3
@@ -23,5 +27,5 @@ spec:
       volumes:
         - name: repository
           nfs:
-            server: unraid.internal
-            path: /mnt/user/backup/kubernetes/volsync
+            server: clonenas.internal
+            path: /mnt/vault/data/kubernetes/volsync

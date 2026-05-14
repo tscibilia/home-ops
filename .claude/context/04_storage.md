@@ -10,7 +10,7 @@
 
 ## VolSync (PVC Backup/Restore)
 
-VolSync backs up PVCs to Backblaze B2 via Restic. Add component `../../../../components/volsync` in `ks.yaml`.
+VolSync backs up PVCs via Restic to an NFS share on `clonenas.internal` (`/mnt/vault/data/kubernetes/volsync`), injected by a MutatingAdmissionPolicy. rclone syncs the NFS repo to B2 separately. Add component `../../../../components/volsync` in `ks.yaml`.
 
 ### Required ks.yaml postBuild vars
 ```yaml
@@ -39,6 +39,8 @@ just kube volsync-restore <namespace> <app> <previous>
 `<previous>` is a Restic snapshot ID or `r:latest`.
 
 ## CNPG (PostgreSQL)
+
+**Backups:** Two layers — pgdumps (via `cnpg` component CronJob) to NFS on `clonenas.internal` (`/mnt/vault/data/kubernetes/postgres`), and continuous WAL archival via barman-cloud to Backblaze B2.
 
 Two clusters in the `database` namespace:
 

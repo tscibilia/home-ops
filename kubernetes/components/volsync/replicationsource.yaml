@@ -23,8 +23,8 @@ spec:
     #   - mountPath: repository
     #     volumeSource:
     #       nfs:
-    #         path: /mnt/user/backup/kubernetes/volsync
-    #         server: unraid.internal
+    #         path: /mnt/vault/data/kubernetes/volsync
+    #         server: clonenas.internal
     pruneIntervalDays: 14
     repository: "${APP}-volsync-secret"
     retain:

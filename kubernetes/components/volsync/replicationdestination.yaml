@@ -28,8 +28,8 @@ spec:
     #   - mountPath: repository
     #     volumeSource:
     #       nfs:
-    #         path: /mnt/user/backup/kubernetes/volsync
-    #         server: unraid.internal
+    #         path: /mnt/vault/data/kubernetes/volsync
+    #         server: clonenas.internal
     repository: "${APP}-volsync-secret"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-ssd}"
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"

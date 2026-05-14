@@ -2,7 +2,7 @@
 
 Components live in `kubernetes/components/`. Add them to `ks.yaml` (not app `kustomization.yaml` unless noted).
 
-## volsync — PVC backup to NFS (unraid)
+## volsync — PVC backup to NFS (clonenas)
 
 ```yaml
 # ks.yaml
@@ -58,7 +58,7 @@ components:
   - ../../../../components/ext-auth-external
 ```
 
-## keda/nfs-scaler — scale-to-zero when NFS (unraid) is unreachable
+## keda/nfs-scaler — scale-to-zero when TrueNAS media NFS is unreachable
 
 ```yaml
 # ks.yaml
@@ -69,16 +69,20 @@ dependsOn:
     namespace: observability
 ```
 
-Scales deployment to 0 when `unraid.internal:2049` is unreachable (Prometheus probe). Restores original replicas when reachable.
+Scales deployment to 0 when `truenas.internal:2049` is unreachable (Prometheus probe). Restores original replicas when reachable. Use for media apps (Plex, *arr, AI) that mount the media library from TrueNAS.
 
-## keda/nfs-bkup-scaler — same but for TrueNAS backup NFS
+**Prerequisite:** `truenas.internal:2049` must be in the blackbox-exporter `nfs` probe (`apps/observability/exporters/blackbox-exporter/app/probes.yaml`). If missing, KEDA gets a null metric → `ignoreNullValues: "0"` treats it as 0 → app scales to 0 permanently.
+
+## keda/nfs-bkup-scaler — scale-to-zero when clonenas backup NFS is unreachable
 
 ```yaml
 components:
   - ../../../../components/keda/nfs-bkup-scaler
 ```
 
-Probes `truenas.internal:2049`.
+Probes `clonenas.internal:2049`. Use for apps that depend on the backup NFS (postgres dumps, volsync repository).
+
+**Prerequisite:** `clonenas.internal:2049` must be in the blackbox-exporter `nfs` probe — same reason as above.
 
 ## common — Flux alerts + GitHub status notifications
 

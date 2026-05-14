@@ -142,12 +142,12 @@ volsync-unlock:
 [script]
 volsync-list ns app:
     just check-tools kubectl envsubst
-    @echo "Listing snapshots for {{ app }} in {{ ns }} namespace..."
-    @export NS="{{ ns }}" APP="{{ app }}" && \
+    echo "Listing snapshots for {{ app }} in {{ ns }} namespace..."
+    export NS="{{ ns }}" APP="{{ app }}" && \
         envsubst < {{ kubernetes_dir }}/components/volsync/resources/list.yaml.j2 | kubectl apply -f -
-    @kubectl -n {{ ns }} wait job/{{ app }}-list-snapshots --for=condition=complete --timeout=5m
-    @kubectl -n {{ ns }} logs job/{{ app }}-list-snapshots
-    @kubectl -n {{ ns }} delete job {{ app }}-list-snapshots
+    kubectl -n {{ ns }} wait job/{{ app }}-list-snapshots --for=condition=complete --timeout=5m
+    kubectl -n {{ ns }} logs job/{{ app }}-list-snapshots
+    kubectl -n {{ ns }} delete job {{ app }}-list-snapshots
 
 [doc('Restore VolSync backup for an application')]
 [script]
