@@ -269,10 +269,6 @@ sonarr:
   plex_path:
   upgrade_existing: false
 
-tautulli:
-  url: http://tautulli.media:8181
-  apikey: <<TAUTULLI_API_KEY>>
-
 tmdb:
   apikey: <<TMDB_API_KEY>>
   language: en

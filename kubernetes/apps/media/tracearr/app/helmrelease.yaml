@@ -89,16 +89,7 @@ spec:
               - identifier: app
                 port: *port
     persistence:
-      data:
-        type: persistentVolumeClaim
-        accessMode: ReadWriteOnce
-        size: 1Gi
-        storageClass: openebs-hostpath
-        advancedMounts:
-          *app :
-            app:
-              - path: /app/data
-      tmp:
+      tmpfs:
         type: emptyDir
         sizeLimit: 5Gi
         advancedMounts:

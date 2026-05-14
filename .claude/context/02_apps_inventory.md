@@ -85,8 +85,6 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - recyclarr
 - seerr *(Overseerr fork)*
 - sonarr
-- tautulli
-- threadfin *(IPTV proxy)*
 - tracearr *(Plex/Jellyfin tracker)*
 
 ## network

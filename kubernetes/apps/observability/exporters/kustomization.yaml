@@ -11,4 +11,3 @@ resources:
   - ./radarr-exporter/ks.yaml
   # - ./snmp-exporter/ks.yaml   # disabled: Synology decommissioned, re-enable for TrueNAS
   - ./sonarr-exporter/ks.yaml
-  - ./tautulli-exporter/ks.yaml

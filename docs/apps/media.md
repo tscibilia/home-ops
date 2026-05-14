@@ -13,14 +13,13 @@ Namespace: `media`
 | maintainerr  | ceph-ssd  | Plex library cleanup, volsync backup               |
 | plex         | nfs-media | External access, GPU transcoding, keda/nfs-scaler, volsync |
 | prowlarr     | ceph-ssd  | Indexer manager, ext-auth-internal, volsync        |
-| qbittorrent  | nfs-media | Multus VPN (192.168.99.x, VLAN 99)                |
+| qbittorrent  | nfs-media | Multus VPN (192.168.99.x, VLAN 99)                 |
 | qui          | ceph-ssd  | qBittorrent UI, depends on qbittorrent, keda/nfs-scaler, volsync |
 | radarr       | ceph-ssd  | Movie management, ext-auth-internal, keda/nfs-scaler, volsync |
 | recyclarr    | —         | Quality profile sync, depends on radarr + sonarr   |
 | seerr        | ceph-ssd  | Media requests, external access, volsync           |
 | sonarr       | ceph-ssd  | TV management, ext-auth-internal, keda/nfs-scaler, volsync |
-| tautulli     | ceph-ssd  | Plex analytics, ext-auth-internal, depends on plex, volsync |
-| threadfin    | ceph-ssd  | IPTV proxy, volsync backup                         |
+| tracearr     | openebs   | Plex and Jellyfin analytics                        |
 | ytptube      | ceph-ssd  | YouTube downloader, ext-auth-external, keda/nfs-scaler, volsync |
 
 ## Config Notes
