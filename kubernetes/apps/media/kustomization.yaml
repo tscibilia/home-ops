@@ -25,3 +25,4 @@ resources:
   - ./sonarr/ks.yaml
   - ./tautulli/ks.yaml
   - ./threadfin/ks.yaml
+  - ./tracearr/ks.yaml
