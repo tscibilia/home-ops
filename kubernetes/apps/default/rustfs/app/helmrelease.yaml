@@ -19,9 +19,7 @@ spec:
             image:
               repository: rustfs/rustfs
               tag: 1.0.0-beta.3@sha256:378642b05b7dcb4849fb77ebe6aca4ced1c3f66e7e504247df95a5c9018d3358
-            command: ["/bin/sh", "-c"]
-            args:
-              - rustfs --console-enable /data 2>&1 | tee /logs/rustfs.log
+            args: ["/data"]
             env:
               RUSTFS_ADDRESS: ":9000"
               RUSTFS_CONSOLE_ADDRESS: ":9001"
@@ -63,33 +61,7 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-          watchdog:
-            image:
-              repository: ghcr.io/home-operations/busybox
-              tag: 1.37.0@sha256:026ed7273270ec08f6902b4ae8334c23b473e5394bec3bbbdbfe580c710d50bc
-            command:
-              - /bin/sh
-              - -c
-              - |
-                until [ -f /logs/rustfs.log ]; do sleep 1; done
-                tail -F /logs/rustfs.log | while IFS= read -r line; do
-                  case "$line" in
-                    *"health is faulty"*)
-                      echo "rustfs disk faulty detected, restarting"
-                      killall rustfs
-                      exit 0
-                      ;;
-                  esac
-                done
-            resources:
-              requests:
-                cpu: 5m
-                memory: 16Mi
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      shareProcessNamespace: true
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -134,7 +106,3 @@ spec:
         existingClaim: *app
         globalMounts:
           - path: /data
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /logs
