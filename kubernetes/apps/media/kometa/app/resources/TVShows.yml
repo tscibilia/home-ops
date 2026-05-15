@@ -27,7 +27,7 @@ collections:
 ###########################
 
   Trending This Week:
-    template: {name: Charts, sort_title: +_1Trending, url_poster: https://i.imgur.com/dKGkfdL.jpg, visible_library: true, visible_home: true, visible_shared: true}
+    template: {name: Charts, sort_title: +_1Trending, url_poster: https://i.imgur.com/dKGkfdL.jpg}
     tmdb_trending_weekly: 30
     collection_order: custom
     sync_mode: sync
