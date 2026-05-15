@@ -33,5 +33,12 @@
       versioning: "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d{1,2})-[0-9a-f]+$",
       schedule: ["before 3am on Monday"],
     },
+    {
+      description: "Wait for aqua GitHub releases to fully publish before alerting",
+      matchDatasources: ["github-releases"],
+      matchManagers: ["mise"],
+      matchDepPatterns: ["^aqua:"],
+      minimumReleaseAge: "3 days",
+    },
   ],
 }
