@@ -114,8 +114,8 @@ spec:
                 subPath: "rclone.conf"
       data:
         type: nfs
-        server: truenas.internal
-        path: /mnt/nas/data/backups
+        server: clonenas.internal
+        path: /mnt/vault/data
         globalMounts:
           - path: /data
             readOnly: true
