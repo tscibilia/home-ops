@@ -99,7 +99,7 @@ spec:
                 name: "repository",
                 nfs: Object.spec.template.spec.volumes.nfs{
                   server: "clonenas.internal",
-                  path: "/mnt/vault/data/kubernetes/volsync"
+                  path: "/mnt/vault/backups/kubernetes/volsync"
                 }
               }
             }

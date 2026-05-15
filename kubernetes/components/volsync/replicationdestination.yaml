@@ -28,7 +28,7 @@ spec:
     #   - mountPath: repository
     #     volumeSource:
     #       nfs:
-    #         path: /mnt/vault/data/kubernetes/volsync
+    #         path: /mnt/vault/backups/kubernetes/volsync
     #         server: clonenas.internal
     repository: "${APP}-volsync-secret"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-ssd}"

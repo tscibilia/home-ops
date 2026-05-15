@@ -115,7 +115,7 @@ spec:
       data:
         type: nfs
         server: clonenas.internal
-        path: /mnt/vault/data
+        path: /mnt/vault/backups
         globalMounts:
           - path: /data
             readOnly: true

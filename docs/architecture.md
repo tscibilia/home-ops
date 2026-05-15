@@ -85,8 +85,8 @@ cert-manager handles TLS via Let's Encrypt with DNS-01 challenges through Cloudf
 
 ### Backups
 
-- **VolSync**: Restic-based PVC snapshots → NFS on `clonenas.internal` (`/mnt/vault/data/kubernetes/volsync`); rclone syncs to Backblaze B2
-- **CNPG**: pgdumps (daily) → NFS on `clonenas.internal` (`/mnt/vault/data/kubernetes/postgres`); Barman-cloud WAL archiving → Backblaze B2
+- **VolSync**: Restic-based PVC snapshots → NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/volsync`); rclone syncs to Backblaze B2
+- **CNPG**: pgdumps (daily) → NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/postgres`); Barman-cloud WAL archiving → Backblaze B2
 
 ## Databases
 
