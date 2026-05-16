@@ -58,7 +58,7 @@ spec:
           app:
             image:
               repository: ghcr.io/ggml-org/llama.cpp
-              tag: server-cuda@sha256:5a0c09daf7428333fa1517ffdf350a329ea8cae9f48fa1268955a1437ad97a53
+              tag: server-cuda@sha256:ecc747ae68e35d2308d87603813bafa4a55f1ff1d75db6851f6801226d90c071
             args:
               - --models-preset
               - &presetFile /config/presets.ini
