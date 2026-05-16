@@ -114,6 +114,13 @@
       ansible.builtin.shell: docker network inspect doco-cd >/dev/null 2>&1 || docker network create doco-cd
       changed_when: false
 
+    - name: doco-cd | Stop existing containers
+      ansible.builtin.shell: >-
+        docker compose -f {{ dococd_config_dir }}/docker-compose.yaml down
+      args:
+        removes: true
+      when: not ansible_check_mode
+
     - name: doco-cd | Run docker-compose
       ansible.builtin.shell: >-
         docker compose -f {{ dococd_config_dir }}/docker-compose.yaml
