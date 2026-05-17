@@ -53,8 +53,9 @@ kubectl get ks -A | grep -v True
 # DNS resolving
 dig @10.43.0.10 kubernetes.default.svc.cluster.local
 
-# Cloudflared tunnel running
-kubectl get pods -n network -l app=cloudflared
+# Pangolin operator + Newt tunnel running
+kubectl get pods -n network -l app.kubernetes.io/name=pangolin-operator
+kubectl get newtsite -n network
 
 # CNPG clusters healthy
 kubectl get cluster -n database

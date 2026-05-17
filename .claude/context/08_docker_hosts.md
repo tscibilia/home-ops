@@ -38,7 +38,7 @@ Path: `docker/vps/`
 | 01 | pangolin | `01-pangolin/docker-compose.yaml` |
 | 02 | unifi | `02-unifi/docker-compose.yaml` |
 
-VPS role: Cloudflare tunnel exit node, UniFi controller, Pangolin tunnel proxy.
+VPS role: Pangolin ingress gateway (Cloudflare → VPS → Newt WireGuard tunnel → in-cluster `envoy-external`), UniFi controller. Ansible bootstrap owns `/opt/doco-cd/`; doco-cd owns the `01-pangolin/` and `02-unifi/` stacks via its own git clone of the repo.
 
 ## doco-cd GitOps Pattern
 

@@ -18,7 +18,7 @@ Organized by area. Each entry: what you see, what to check, how to fix it.
 | LoadBalancer IP unreachable | `kubectl get svc -A -o wide \| grep LoadBalancer` | Check `CiliumL2AnnouncementPolicy` and `CiliumLoadBalancerIPPool` |
 | External DNS not resolving | `kubectl logs -n network deploy/external-dns` | Verify Cloudflare API token in secret, check HTTPRoute exists |
 | LAN DNS not resolving | `kubectl logs -n network deploy/unifi-dns` | Check UniFi controller connectivity |
-| External access broken | `kubectl get pods -n network -l app=cloudflared` | Verify cloudflared tunnel status, check Cloudflare dashboard |
+| External access broken | `kubectl get newtsite -n network`; check `ONLINE=true` | Verify Newt WireGuard tunnel to Pangolin VPS; check VPS Traefik logs and Cloudflare A record for `external.t0m.co` resolves to VPS IP |
 | Cert not issuing | `kubectl get cert -A`, `kubectl get challenges -A` | Check cert-manager logs, verify Cloudflare DNS-01 permissions |
 
 **Remember**: There is no kube-proxy. Cilium is the eBPF replacement. Use `cilium` CLI or Hubble for network debugging, not iptables.

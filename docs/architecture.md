@@ -44,7 +44,7 @@ UniFi controller manages the `.internal` domain for non-cluster hosts:
 
 === "envoy-external"
 
-    Internet-facing. Cloudflared terminates the Cloudflare tunnel and forwards traffic here. All `*.t0m.co` requests enter through this gateway.
+    Internet-facing. A Pangolin VPS terminates the Cloudflare-proxied A record and forwards traffic through a Newt WireGuard tunnel to this gateway. All `*.t0m.co` requests enter through this gateway.
 
 === "envoy-internal"
 
@@ -60,7 +60,7 @@ flowchart LR
     LAN["LAN Client"] -->|*.t0m.co| UniFi["unifi-dns\n→ UniFi Controller"]
     Internet -->|*.t0m.co| CF["external-dns\n→ Cloudflare"]
     UniFi --> EI[envoy-internal]
-    CF --> Tunnel[cloudflared] --> EE[envoy-external]
+    CF --> VPS["Pangolin VPS\n+ Newt tunnel"] --> EE[envoy-external]
 ```
 
 | Layer        | Service      | Scope                                      |

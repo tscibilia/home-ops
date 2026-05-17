@@ -4,9 +4,9 @@ Namespace: `network`
 
 | App            | Notes                                                  |
 | -------------- | ------------------------------------------------------ |
-| envoy-gateway  | Two gateway instances: envoy-external + envoy-internal |
-| cloudflared    | Cloudflare tunnel for external access (*.t0m.co)       |
-| external-dns   | Syncs envoy-external HTTPRoutes → Cloudflare DNS       |
+| envoy-gateway     | Two gateway instances: envoy-external + envoy-internal                 |
+| pangolin-operator | Manages Pangolin VPS resources + Newt WireGuard tunnel for `*.t0m.co`  |
+| external-dns      | Syncs envoy-external HTTPRoutes → Cloudflare DNS                       |
 | unifi-dns      | Syncs HTTPRoutes → UniFi controller for LAN resolution |
 | multus         | CNI for secondary network interfaces (VPN VLAN)        |
 | tailscale      | Mesh VPN access to the cluster                         |
@@ -18,7 +18,7 @@ Namespace: `network`
 ??? note "Envoy Gateway"
     The ingress layer. Two separate gateway instances handle different traffic:
 
-    - **envoy-external**: Internet-facing. Cloudflared terminates the Cloudflare tunnel and forwards to this gateway. All `*.t0m.co` traffic enters here.
+    - **envoy-external**: Internet-facing. A Pangolin VPS (RackNerd) terminates the Cloudflare-proxied A record at `external.t0m.co` and forwards through a Newt WireGuard tunnel to this gateway. All `*.t0m.co` traffic enters here.
     - **envoy-internal**: LAN-only. UniFi DNS points LAN clients directly to this gateway's LoadBalancer IP.
 
     Apps attach to one or both gateways via HTTPRoute resources. Authentication is handled by SecurityPolicy resources that forward to the Authentik outpost.
@@ -31,7 +31,7 @@ Namespace: `network`
 ```mermaid
 flowchart LR
     subgraph External
-        A1["App creates HTTPRoute"] --> B1["external-dns"] --> C1["Cloudflare DNS\n(proxied)"] --> D1["cloudflared\ntunnel"] --> E1["envoy-external"]
+        A1["App creates HTTPRoute"] --> B1["external-dns"] --> C1["Cloudflare DNS\n(proxied)"] --> D1["Pangolin VPS\n+ Newt tunnel"] --> E1["envoy-external"]
     end
     subgraph Internal
         A2["App creates HTTPRoute"] --> B2["unifi-dns"] --> C2["UniFi\nController"] --> E2["envoy-internal"]

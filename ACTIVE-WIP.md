@@ -4,7 +4,6 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [ ] move cloudflare tunnels to pangolin
 - [ ] move github to forgejo
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 
@@ -21,6 +20,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ Cloudflared -> Pangolin switch (see PR [#2383])
 - ✅ commit [2010ffa] resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686)
 - ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))
 - ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))

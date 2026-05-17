@@ -59,13 +59,13 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 - [actions-runner-controller](https://github.com/actions/actions-runner-controller): Self-hosted Github runners using [Renovate](https://github.com/renovatebot/renovate).
 - [cert-manager](https://github.com/cert-manager/cert-manager): Automates SSL/TLS certificate management.
 - [cilium](https://github.com/cilium/cilium): eBPF-based Kubernetes CNI.
-- [cloudflared](https://github.com/cloudflare/cloudflared): Enables Cloudflare's Zero Trust Network Access.
 - [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs DNS records to my DNS provider.
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
 - [generic-device-plugin](https://github.com/squat/generic-device-plugin): Allocates linux devices to pods (squat.ai/tun).
 - [envoy-gateway](https://github.com/envoyproxy/gateway): Envoy Proxy to manage service-to-service communication and proxying.
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
+- [pangolin](https://github.com/fosrl/pangolin): Enables Pangolin's Zero Trust Access via VPS.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
 - [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
@@ -155,10 +155,11 @@ This Git repository contains the following directories.
 
 ### Supporting Hardware
 
-| Name    | Device               | CPU         | OS Disk    | Data Disk            | RAM   | OS      | Purpose   |
-|---------|----------------------|-------------|------------|----------------------|-------|---------|-----------|
-| TrueNAS | X10SDV-8C + KTN-STL3 | Xeon D-1541 | 512GB NVMe | 2x18TB 2x14TB 2x10TB | 64GB  | Truenas | NAS/NFS   |
-| UnRAID  | Dell R510            | Xeon E5640  | 16GB USB   | Mixture of 12x6TB+   | 64GB  | Unraid  | Backup    |
+| Name     | Device               | CPU         | OS Disk    | Data Disk            | RAM   | OS      | Purpose   |
+|----------|----------------------|-------------|------------|----------------------|-------|---------|-----------|
+| TrueNAS  | X10SDV-8C + KTN-STL3 | Xeon D-1541 | 512GB NVMe | 2x18TB 2x14TB 2x10TB | 64GB  | Truenas | NAS/NFS   |
+| CloneNAS | Dell R510            | Xeon E5640  | 900GB SAS  | Mixture of 12x6TB+   | 64GB  | Truenas | Backup    |
+| VPS      | RackNerd KVM VPS     | 2-Cores     | 45GB SSD   | -                    | 2.5GB | Ubuntu  | Tunnel    |
 
 ---
 
