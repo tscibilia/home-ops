@@ -8,12 +8,12 @@ components:
 resources:
   - ./namespace.yaml
   - ./certificates/ks.yaml
-  - ./cloudflared/ks.yaml
+  # - ./cloudflared/ks.yaml  # superseded by pangolin-operator cut-over
   - ./echo/ks.yaml
   - ./envoy-gateway/ks.yaml
   - ./external-dns/ks.yaml
   - ./greenlight/ks.yaml
   - ./multus/ks.yaml
-  # - ./pangolin-operator/ks.yaml
+  - ./pangolin-operator/ks.yaml
   - ./tailscale/ks.yaml
   - ./unifi-dns/ks.yaml

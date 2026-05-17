@@ -89,12 +89,12 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## network
 - certificates
-- cloudflared *(Cloudflare tunnel)*
 - echo
 - envoy-gateway
 - external-dns
 - greenlight
 - multus
+- pangolin-operator *(VPS tunnel ingress via Newt/WireGuard)*
 - tailscale
 - unifi-dns
 
