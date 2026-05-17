@@ -139,7 +139,7 @@ http:
     doco-cd-svc:
       loadBalancer:
         servers:
-          - url: "http://doco-cd:8880"
+          - url: "http://doco-cd:80"
     unifi-svc:
       loadBalancer:
         servers:
