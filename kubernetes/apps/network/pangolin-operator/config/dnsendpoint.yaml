@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/externaldns.k8s.io/dnsendpoint_v1alpha1.json
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: pangolin
+  namespace: network
+spec:
+  endpoints:
+    - dnsName: external.${SECRET_DOMAIN}
+      recordType: A
+      targets:
+        - ${VPS_IP}
+    - dnsName: ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
+      recordType: A
+      targets:
+        - ${VPS_IP}
+    - dnsName: api.${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
+      recordType: A
+      targets:
+        - ${VPS_IP}
+    - dnsName: doco.${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
+      recordType: A
+      targets:
+        - ${VPS_IP}

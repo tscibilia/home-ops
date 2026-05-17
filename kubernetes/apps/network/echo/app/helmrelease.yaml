@@ -9,9 +9,6 @@ spec:
     kind: OCIRepository
     name: *app
   interval: 1h
-  dependsOn:
-    - name: cloudflared
-      namespace: network
   values:
     controllers:
       *app :
