@@ -3,7 +3,7 @@ set -euo pipefail
 
 WORK_DIR="/opt/doco-cd"
 REPO_RAW="https://raw.githubusercontent.com/tscibilia/home-ops/main/docker/vps/.doco-cd"
-LOG_FILE="/var/log/doco-cd-update.log"
+LOG_FILE="${WORK_DIR}/update.log"
 
 log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*" | tee -a "$LOG_FILE"; }
 
