@@ -9,7 +9,7 @@ After several failed automated attempts via an initContainer, I decided to manua
 tar -czf /mnt/Media/library/plex/migrate/Plex.tar.gz -C "/var/lib/plexmediaserver/Library/Application Support/Plex Media Server" .
 ```
 3. init plex deployment
-4. scale back plex deployment to 0 (see step 9 if using keda)
+4. scale back plex deployment to 0 (see step 9 — the HPA will rescale to 1 if `probe_success{job="nfs_probe"}=1`)
 5. spin up temp migration pod with plex pvc and nfs volumeMounts
 ```yaml
 apiVersion: v1
@@ -47,4 +47,4 @@ chown -R 1044:100 "/config/Library/Application Support/Plex Media Server"
 ```
 7. evict the migration pod
 8. scale plex deployment to 1
-9. (optionally) add keda back to the kustomization file and reconcile. This was omitted originally because keda would automatically scale back up the deployment to 1 even though I set it to 0.
+9. (optionally) add the `zeroscaler` component back to ks.yaml and reconcile. Omitted originally because the HPA would automatically scale the deployment back to 1 (since `probe_success` was 1) even when manually scaled to 0.

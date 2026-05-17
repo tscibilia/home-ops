@@ -7,7 +7,7 @@ metadata:
 spec:
   components:
     - ../../../../components/cnpg
-    # Uses separate keda scaledobject.yaml
+    # Uses separate app/horizontalpodautoscaler.yaml for immich-server
   dependsOn:
     - name: cnpg-immich17
       namespace: database
@@ -15,8 +15,6 @@ spec:
       namespace: database
     - name: secret-stores
       namespace: external-secrets
-    - name: keda
-      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/default/immich/app
   postBuild:

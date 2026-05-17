@@ -60,7 +60,7 @@ docs/
 
 Look at the app's `ks.yaml` for:
 - `dependsOn` — notable dependencies
-- `components` — which reusable components (volsync, cnpg, ext-auth-*, keda)
+- `components` — which reusable components (volsync, cnpg, ext-auth-*, zeroscaler)
 - `postBuild.substitute` — any special substitutions
 
 Look at `app/helmrelease.yaml` or `app/kustomization.yaml` for:

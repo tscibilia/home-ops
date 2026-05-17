@@ -11,7 +11,7 @@ kind: Kustomization
 metadata:
   name: &app myapp          # YAML anchor — reused below as *app
 spec:
-  components:               # optional — add volsync, cnpg, ext-auth, keda
+  components:               # optional — add volsync, cnpg, ext-auth, zeroscaler
     - ../../../../components/volsync
   dependsOn:                # always declare; see common chains below
     - name: secret-stores
@@ -44,7 +44,7 @@ spec:
 | Using volsync component | `rook-ceph-cluster` / `rook-ceph` + `volsync` / `volsync-system` |
 | Using cnpg component | `cnpg-cluster` / `database` |
 | Using ceph-ssd storage (no volsync) | `rook-ceph-cluster` / `rook-ceph` |
-| Using KEDA scaler | `keda` / `observability` |
+| Using zeroscaler | (no extra dependsOn — HPA gracefully degrades if prometheus-adapter is down) |
 | Depends on another app (same ns) | just `name:` without `namespace:` |
 
 ## Namespace kustomization.yaml

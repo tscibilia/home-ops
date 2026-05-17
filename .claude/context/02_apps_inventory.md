@@ -105,10 +105,10 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - grafana
 - guacamole *(remote desktop)*
 - karma *(alertmanager UI)*
-- keda *(event-driven autoscaler)*
 - kite
 - kromgo
 - kube-prometheus-stack
+- prometheus-adapter *(external-metrics API for HPA, replaces keda)*
 - scrutiny *(SMART disk monitoring)*
 - silence-operator
 - unpoller *(UniFi metrics)*

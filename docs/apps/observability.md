@@ -17,7 +17,7 @@ Namespace: `observability`
 | unpoller               | —                | UniFi metrics exporter, depends on kube-prometheus-stack |
 | exporters              | —                | SNMP, blackbox, and other Prometheus exporters |
 | silence-operator       | —                | Auto-silences for maintenance windows    |
-| keda                   | —                | Cluster-wide autoscaler (lives here, used by many namespaces) |
+| prometheus-adapter     | —                | External-metrics API for native HPAs (serves `probe_success`); replaced keda 2026-05-17 |
 
 ## Config Notes
 
@@ -27,8 +27,8 @@ Namespace: `observability`
 ??? note "victoria-logs"
     Uses `openebs-hostpath` for local fast storage (write-heavy log ingestion). Protected by ext-auth-internal for web UI access. Fluent-bit ships logs from all pods into victoria-logs.
 
-??? note "KEDA"
-    The autoscaler itself lives in observability, but its ScaledObjects are used across media and default namespaces via the `keda` component. Apps with `keda/nfs-scaler` scale based on NFS mount availability.
+??? note "prometheus-adapter (zero-scaling)"
+    Serves the external metrics API for `probe_success`. Native HPAs in `media`, `default`, and `volsync-system` (via the `zeroscaler` component) query this to scale to 0 when their NFS target is unreachable. Split probes: `jobName: nfs_probe` (truenas) for media/photo apps; `jobName: nfs_bkup_probe` (clonenas) for volsync/rclone.
 
 ??? note "Grafana"
     Uses Postgres (in the database namespace) for dashboard and user storage. No dedicated PVC — state is in the database.

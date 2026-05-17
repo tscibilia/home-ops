@@ -58,31 +58,46 @@ components:
   - ../../../../components/ext-auth-external
 ```
 
-## keda/nfs-scaler — scale-to-zero when TrueNAS media NFS is unreachable
+## zeroscaler — scale-to-zero via native HPA + prometheus-adapter
+
+Generic HPA component driven by Prometheus `probe_success` metric. Replaced `keda/nfs-scaler` + `keda/nfs-bkup-scaler` (2026-05-17).
 
 ```yaml
-# ks.yaml
+# ks.yaml — defaults to truenas (job: nfs_probe)
 components:
-  - ../../../../components/keda/nfs-scaler
-dependsOn:
-  - name: keda
-    namespace: observability
+  - ../../../../components/zeroscaler
+postBuild:
+  substitute:
+    APP: *app
 ```
 
-Scales deployment to 0 when `truenas.internal:2049` is unreachable (Prometheus probe). Restores original replicas when reachable. Use for media apps (Plex, *arr, AI) that mount the media library from TrueNAS.
-
-**Prerequisite:** `truenas.internal:2049` must be in the blackbox-exporter `nfs` probe (`apps/observability/exporters/blackbox-exporter/app/probes.yaml`). If missing, KEDA gets a null metric → `ignoreNullValues: "0"` treats it as 0 → app scales to 0 permanently.
-
-## keda/nfs-bkup-scaler — scale-to-zero when clonenas backup NFS is unreachable
-
+For clonenas-backed apps (volsync, rclone), override the probe job:
 ```yaml
-components:
-  - ../../../../components/keda/nfs-bkup-scaler
+postBuild:
+  substitute:
+    APP: *app
+    ZEROSCALER_JOB_NAME: nfs_bkup_probe
 ```
 
-Probes `clonenas.internal:2049`. Use for apps that depend on the backup NFS (postgres dumps, volsync repository).
+No `dependsOn` on observability — the HPA uses the external metrics API served by `prometheus-adapter` (in `observability` namespace). If the API isn't available, HPA shows `TARGETS: <unknown>/1` and holds replicas — no scaling decisions made.
 
-**Prerequisite:** `clonenas.internal:2049` must be in the blackbox-exporter `nfs` probe — same reason as above.
+**Substitution variables:**
+| Var | Default | Purpose |
+|---|---|---|
+| `${APP}` | (required) | Target Deployment/StatefulSet name |
+| `${CONTROLLER}` | `Deployment` | Workload kind |
+| `${ZEROSCALER_METRIC_NAME}` | `probe_success` | External metric name from adapter |
+| `${ZEROSCALER_JOB_NAME}` | `nfs_probe` | `job` label selector value |
+
+**Behavior:** `stabilizationWindowSeconds: 0` on both scaleDown/scaleUp; `periodSeconds: 15`. Workload reacts within ~15 s of probe state change.
+
+**Prerequisites:**
+- `prometheus-adapter` deployed in `observability` (kustomization auto-applies on cluster bootstrap)
+- A Prometheus `Probe` CR with `spec.jobName` matching `${ZEROSCALER_JOB_NAME}`. Current Probes (in `apps/observability/exporters/blackbox-exporter/app/probes.yaml`):
+  - `nfs` → `jobName: nfs_probe` → `truenas.internal:2049`
+  - `nfs-bkup` → `jobName: nfs_bkup_probe` → `clonenas.internal:2049`
+
+For a custom HPA targeting a different deployment in the same app (e.g., immich's `immich-server`), don't use the component — add an explicit `horizontalpodautoscaler.yaml` in `app/` with the same `probe_success` + `job: nfs_probe` selector pattern.
 
 ## common — Flux alerts + GitHub status notifications
 

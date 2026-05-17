@@ -7,13 +7,11 @@ metadata:
 spec:
   components:
     - ../../../../components/ext-auth-external
-    - ../../../../components/keda/nfs-scaler
+    - ../../../../components/zeroscaler
     - ../../../../components/volsync
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: keda
-      namespace: observability
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync

@@ -4,23 +4,23 @@ Namespace: `media`
 
 | App          | Storage   | Notes                                              |
 | ------------ | --------- | -------------------------------------------------- |
-| autobrr      | ceph-ssd  | Depends on qbittorrent, keda/nfs-scaler, volsync   |
-| bazarr       | ceph-ssd  | Subtitle management, ext-auth-internal, keda/nfs-scaler, volsync |
+| autobrr      | ceph-ssd  | Depends on qbittorrent, zeroscaler, volsync   |
+| bazarr       | ceph-ssd  | Subtitle management, ext-auth-internal, zeroscaler, volsync |
 | flaresolverr | —         | Captcha solver, depends on prowlarr                |
 | imagemaid    | —         | Image cleanup, depends on plex                     |
 | jellyfin     | ceph-ssd  | Media server, ceph storage (not NFS)               |
 | kometa       | ceph-ssd  | Plex metadata manager, depends on plex, volsync    |
 | maintainerr  | ceph-ssd  | Plex library cleanup, volsync backup               |
-| plex         | nfs-media | External access, GPU transcoding, keda/nfs-scaler, volsync |
+| plex         | nfs-media | External access, GPU transcoding, zeroscaler, volsync |
 | prowlarr     | ceph-ssd  | Indexer manager, ext-auth-internal, volsync        |
 | qbittorrent  | nfs-media | Multus VPN (192.168.99.x, VLAN 99)                 |
-| qui          | ceph-ssd  | qBittorrent UI, depends on qbittorrent, keda/nfs-scaler, volsync |
-| radarr       | ceph-ssd  | Movie management, ext-auth-internal, keda/nfs-scaler, volsync |
+| qui          | ceph-ssd  | qBittorrent UI, depends on qbittorrent, zeroscaler, volsync |
+| radarr       | ceph-ssd  | Movie management, ext-auth-internal, zeroscaler, volsync |
 | recyclarr    | —         | Quality profile sync, depends on radarr + sonarr   |
 | seerr        | ceph-ssd  | Media requests, external access, volsync           |
-| sonarr       | ceph-ssd  | TV management, ext-auth-internal, keda/nfs-scaler, volsync |
+| sonarr       | ceph-ssd  | TV management, ext-auth-internal, zeroscaler, volsync |
 | tracearr     | openebs   | Plex and Jellyfin analytics                        |
-| ytptube      | ceph-ssd  | YouTube downloader, ext-auth-external, keda/nfs-scaler, volsync |
+| ytptube      | ceph-ssd  | YouTube downloader, ext-auth-external, zeroscaler, volsync |
 
 ## Config Notes
 
