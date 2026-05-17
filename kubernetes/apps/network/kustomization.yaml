@@ -8,7 +8,6 @@ components:
 resources:
   - ./namespace.yaml
   - ./certificates/ks.yaml
-  # - ./cloudflared/ks.yaml  # superseded by pangolin-operator cut-over
   - ./echo/ks.yaml
   - ./envoy-gateway/ks.yaml
   - ./external-dns/ks.yaml

@@ -189,9 +189,6 @@ restart-network:
     kubectl rollout restart deployment/cilium-operator -n kube-system
     kubectl rollout status daemonset/cilium -n kube-system --timeout=180s
     kubectl rollout status deployment/cilium-operator -n kube-system --timeout=60s
-    just log info "Restarting Cloudflared..."
-    kubectl rollout restart deployment/cloudflared -n network
-    kubectl rollout status deployment/cloudflared -n network --timeout=120s
     just log info "Restarting External-DNS..."
     kubectl rollout restart deployment/external-dns -n network
     kubectl rollout status deployment/external-dns -n network --timeout=120s
