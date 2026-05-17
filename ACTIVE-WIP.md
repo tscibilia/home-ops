@@ -6,7 +6,6 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] move github to forgejo
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
-- [ ] KEDA → native HPA migration - Started 2026-05-17 - branch `feat/keda-to-hpa-migration`; replaces KEDA ScaledObjects with prometheus-adapter + zeroscaler component. **Cutover requires manual KEDA pre-removal** to free the external-metrics APIService (see plan `.claude/superpowers/plans/2026-05-14-keda-to-hpa-migration.md`).
 
 ## ⚠️ Known Issues
 - ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
@@ -22,7 +21,8 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
-- ✅ Cloudflared -> Pangolin switch (see PR [#2383])
+- ✅ KEDA → native HPA migration (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388)).
+- ✅ Cloudflared -> Pangolin switch (see PR [#2383](https://github.com/tscibilia/home-ops/pull/2383))
 - ✅ commit [2010ffa] resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686)
 - ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))
 - ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))
