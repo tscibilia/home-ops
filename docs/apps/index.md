@@ -6,7 +6,7 @@ All apps are deployed via Flux CD. Each has a `ks.yaml` entry point in `kubernet
 
 Use the `/add-app` AI skill — it interactively scaffolds all manifests from scratch.
 
-1. Run `/add-app` in Claude Code — it prompts for app name, namespace, helm chart type, ingress, auth, and optional features (VolSync, CNPG, KEDA, Gatus), then generates all files
+1. Run `/add-app` in Claude Code — it prompts for app name, namespace, helm chart type, ingress, auth, and optional features (VolSync, CNPG, zeroscaler, Gatus), then generates all files
 2. Add secrets to aKeyless at the path referenced in `externalsecret.yaml`
 3. Fill in `{IMAGE_REPO}` and `{IMAGE_TAG}` in `helmrelease.yaml` (add Renovate annotation)
 4. Validate locally: `just kube apply-ks <ns> <app>`
@@ -20,7 +20,7 @@ Reusable components live in `kubernetes/components/`:
 | cnpg               | DB user init CronJob + ExternalSecret           |
 | ext-auth-internal  | Authentik SSO for internal apps                 |
 | ext-auth-external  | Authentik SSO for external apps                 |
-| keda               | ScaledObject auto-scaling                       |
+| zeroscaler         | Native HPA scale-to-zero based on Prometheus `probe_success` (replaces keda) |
 
 Include via `components: [../../../../components/<name>]` in `ks.yaml`.
 

@@ -112,7 +112,6 @@ volsync state:
     just check-tools flux kubectl
     flux -n volsync-system {{ state }} kustomization volsync
     flux -n volsync-system {{ state }} helmrelease volsync
-    just kube keda {{ if state != "suspend" { "resume" } else { "suspend" } }} volsync-system volsync
     kubectl -n volsync-system scale deployment volsync --replicas {{ if state != "suspend" { "1" } else { "0" } }}
 
 [doc('Snapshot a VolSync PVC')]
@@ -153,9 +152,6 @@ volsync-list ns app:
 [script]
 volsync-restore ns app previous='0':
     just check-tools kubectl flux envsubst jq
-    if kubectl -n {{ ns }} get scaledobject {{ app }} &>/dev/null; then \
-        just kube keda suspend "{{ ns }}" "{{ app }}"; \
-    fi
     flux -n {{ ns }} suspend kustomization {{ app }}
     flux -n {{ ns }} suspend helmrelease {{ app }}
     kubectl -n {{ ns }} get deploy,sts -l app.kubernetes.io/name={{ app }} -o name \
@@ -172,9 +168,6 @@ volsync-restore ns app previous='0':
     flux -n {{ ns }} resume helmrelease {{ app }}
     flux -n {{ ns }} reconcile helmrelease {{ app }} --force
     kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ app }}" --timeout=5m || true
-    if kubectl -n {{ ns }} get scaledobject {{ app }} &>/dev/null; then \
-        just kube keda resume "{{ ns }}" "{{ app }}"; \
-    fi
     echo "Restore complete!"
 
 [doc('Restart network stack in dependency order')]
@@ -209,17 +202,3 @@ restart-network:
 render-local-ks ns ks:
     flux-local build ks --namespace "{{ ns }}" --path "{{ kubernetes_dir }}/flux/cluster" "{{ ks }}"
 
-[private]
-[script]
-keda state ns='' app='':
-    just check-tools kubectl
-    _keda() {
-        kubectl -n "$1" annotate --field-manager flux-client-side-apply --overwrite so "$2" autoscaling.keda.sh/paused{{ if state != "suspend" { "-" } else { "=true" } }}
-    }
-    if [ -n "{{ ns }}" ] && [ -n "{{ app }}" ]; then
-        _keda "{{ ns }}" "{{ app }}"
-    else
-        kubectl get scaledobjects --no-headers -A | while read -r ns app _; do
-            _keda "$ns" "$app"
-        done
-    fi

@@ -6,15 +6,13 @@ metadata:
   name: &app komga
 spec:
   components:
-    - ../../../../components/keda/nfs-scaler
+    - ../../../../components/zeroscaler
     - ../../../../components/volsync
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
     - name: rook-ceph-cluster
       namespace: rook-ceph
-    - name: keda
-      namespace: observability
     - name: volsync
       namespace: volsync-system
   interval: 1h

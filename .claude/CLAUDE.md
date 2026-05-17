@@ -87,7 +87,7 @@ kubernetes                    # K8s cluster
 - `app/` (kustomization, helmrelease, ocirepository, externalsecret)
 - `ks.yaml` (Flux Kustomization entry point: defines `dependsOn`, `substitutions`, `components`)
 
-**Components (`/kubernetes/components/`):** `common/`, `cnpg/`, `ext-auth-internal/`, `ext-auth-external/`, `keda/`, `volsync/`.
+**Components (`/kubernetes/components/`):** `common/`, `cnpg/`, `ext-auth-internal/`, `ext-auth-external/`, `volsync/`, `zeroscaler/`.
 
 **Conventions:**
 - YAML anchors (`&app` → `*app`)
@@ -110,7 +110,7 @@ Targeted reference docs in `.claude/context/`. **Read the relevant file(s) befor
 | `03_networking.md` | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS |
 | `04_storage.md` | Adding a PVC, wiring VolSync backup, connecting to CNPG, choosing a storage class |
 | `05_secrets.md` | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars |
-| `06_components.md` | Adding volsync/cnpg/ext-auth/keda to an app — exact ks.yaml stanzas |
+| `06_components.md` | Adding volsync/cnpg/ext-auth/zeroscaler to an app — exact ks.yaml stanzas |
 | `07_flux_conventions.md` | Writing or reviewing a ks.yaml, dependsOn chains, YAML anchor pattern, configMapGenerator |
 | `08_docker_hosts.md` | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps |
 

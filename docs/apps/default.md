@@ -10,11 +10,11 @@ Namespace: `default`
 | homebox      | ceph-ssd  | Postgres (cnpg component), volsync backup          |
 | homepage     | —         |                                                    |
 | immich       | ceph-ssd  | Postgres (immich17 cluster), Dragonfly (db2), GPU, external access |
-| komga        | ceph-ssd  | External access, keda/nfs-scaler, volsync backup   |
+| komga        | ceph-ssd  | External access, zeroscaler, volsync backup   |
 | mealie       | ceph-ssd  | Postgres (cnpg component), external access, volsync backup |
 | pairdrop     | —         |                                                    |
 | radicale     | ceph-ssd  | CalDAV/CardDAV server, external access, volsync backup |
-| rclone       | —         | NFS backup scaler via keda                         |
+| rclone       | —         | NFS backup scaler via zeroscaler (nfs_bkup_probe)  |
 | rustfs       | ceph-ssd  | S3-compatible object storage, external access, native OIDC, volsync backup |
 | searxng      | ceph-ssd  | Dragonfly (db3), volsync backup                    |
 | smtp-relay   | —         | Outbound email relay, cluster-internal only        |

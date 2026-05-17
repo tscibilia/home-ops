@@ -6,11 +6,9 @@ metadata:
   name: &app jellyfin
 spec:
   components:
-    - ../../../../components/keda/nfs-scaler
+    - ../../../../components/zeroscaler
     - ../../../../components/volsync
   dependsOn:
-    - name: keda
-      namespace: observability
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync

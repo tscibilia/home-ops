@@ -54,7 +54,7 @@ Infrastructure namespaces that keep the cluster running. You rarely interact wit
 
 | App     | Notes                                                        |
 | ------- | ------------------------------------------------------------ |
-| volsync | PVC backup/restore orchestrator. Depends on keda, openebs, snapshot-controller. Uses keda/nfs-bkup-scaler. |
+| volsync | PVC backup/restore orchestrator. Depends on openebs, snapshot-controller. Uses zeroscaler with `nfs_bkup_probe` (clonenas). |
 
 ## system-upgrade
 

@@ -80,7 +80,7 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 - [gatus](https://github.com/TwiN/gatus): High level status dashboard.
 - [grafana](https://github.com/grafana/grafana): Data visualization platform.
 - [karma](https://github.com/prymitive/karma): Alertmanager dashboard, based on Cloudflare's unsee.
-- [keda](https://github.com/kedacore/keda): Autoscales containers on events (i.e. blackbox reports NFS share is down).
+- [prometheus-adapter](https://github.com/kubernetes-sigs/prometheus-adapter): Exposes metrics (blackbox `probe_success`) so native HPAs can scale.
 - [kromgo](https://github.com/kashalls/kromgo): Expose prometheus metrics "safely" to GitHub.
 - [silence-operator](https://github.com/giantswarm/silence-operator): Manages Alertmanager silences via custom resources.
 - [unpoller](https://github.com/unpoller/unpoller): Collect UniFi Controller data for Prometheus.

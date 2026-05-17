@@ -6,10 +6,8 @@ metadata:
   name: &app volsync
 spec:
   components:
-    - ../../../../components/keda/nfs-bkup-scaler
+    - ../../../../components/zeroscaler
   dependsOn:
-    - name: keda
-      namespace: observability
     - name: openebs
       namespace: openebs-system
     - name: snapshot-controller
@@ -19,6 +17,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
+      ZEROSCALER_JOB_NAME: nfs_bkup_probe
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

@@ -6,7 +6,7 @@ metadata:
   name: &app qbittorrent
 spec:
   components:
-    - ../../../../components/keda/nfs-scaler
+    - ../../../../components/zeroscaler
     - ../../../../components/volsync
   dependsOn:
     - name: multus-networks
@@ -38,7 +38,7 @@ metadata:
   name: &app qbittorrent-race
 spec:
   components:
-    - ../../../../components/keda/nfs-scaler
+    - ../../../../components/zeroscaler
     - ../../../../components/volsync
   dependsOn:
     - name: rook-ceph-cluster

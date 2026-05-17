@@ -6,6 +6,7 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] move github to forgejo
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
+- [ ] KEDA → native HPA migration - Started 2026-05-17 - branch `feat/keda-to-hpa-migration`; replaces KEDA ScaledObjects with prometheus-adapter + zeroscaler component. **Cutover requires manual KEDA pre-removal** to free the external-metrics APIService (see plan `.claude/superpowers/plans/2026-05-14-keda-to-hpa-migration.md`).
 
 ## ⚠️ Known Issues
 - ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr

@@ -1,6 +1,6 @@
 ---
 name: add-app
-description: Scaffold a new Kubernetes app in the home-ops monorepo. Prompts for app name, namespace, helm chart type, and optional features (volsync, cnpg, auth, keda, gatus, ESO, configMapGenerator, ingress). Generates all manifests following repo conventions.
+description: Scaffold a new Kubernetes app in the home-ops monorepo. Prompts for app name, namespace, helm chart type, and optional features (volsync, cnpg, auth, zeroscaler, gatus, ESO, configMapGenerator, ingress). Generates all manifests following repo conventions.
 ---
 
 # Add App Skill
@@ -34,8 +34,8 @@ Use `AskUserQuestion` to collect the following. Ask up to 4 questions per call, 
 5. **Which optional features does this app need?** (multiSelect: true)
    - `VolSync backups` — PVC backup/restore via restic (needs VOLSYNC_CAPACITY)
    - `CNPG PostgreSQL` — shared PostgreSQL database via cnpg component
-   - `KEDA NFS scaler` — scale to zero when TrueNAS NFS is down
-   - `KEDA NFS backup scaler` — scale to zero when UnRaid NFS is down
+   - `Zeroscaler (truenas)` — native HPA scale to zero when `truenas.internal:2049` is down (default `ZEROSCALER_JOB_NAME=nfs_probe`)
+   - `Zeroscaler (clonenas backup)` — native HPA scale to zero when `clonenas.internal:2049` is down (sets `ZEROSCALER_JOB_NAME=nfs_bkup_probe`)
 
 **Batch 4 — Auth & Config (conditional — only ask if ingress is NOT "None"):**
 
@@ -110,8 +110,7 @@ spec:
     - ../../../../components/volsync              # if volsync selected
     - ../../../../components/ext-auth-internal    # if forward-auth internal
     - ../../../../components/ext-auth-external    # if forward-auth external
-    - ../../../../components/keda/nfs-scaler      # if keda-nfs selected
-    - ../../../../components/keda/nfs-bkup-scaler # if keda-nfs-backup selected
+    - ../../../../components/zeroscaler           # if zeroscaler selected (any variant)
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -121,8 +120,6 @@ spec:
       namespace: rook-ceph
     - name: volsync               # if volsync
       namespace: volsync-system
-    - name: keda                  # if any keda scaler
-      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/{NAMESPACE}/{APP_NAME}/app
   postBuild:
@@ -131,6 +128,7 @@ spec:
       GATUS_SUBDOMAIN: {SUBDOMAIN}       # omit if subdomain == app name
       CNPG_NAME: &postgresAppName pgsql-cluster  # if cnpg
       VOLSYNC_CAPACITY: {CAPACITY}       # if volsync
+      ZEROSCALER_JOB_NAME: nfs_bkup_probe # ONLY if Zeroscaler (clonenas backup) variant; omit for truenas default
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

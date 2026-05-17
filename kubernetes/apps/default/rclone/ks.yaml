@@ -6,17 +6,16 @@ metadata:
   name: &app rclone
 spec:
   components:
-    - ../../../../components/keda/nfs-bkup-scaler
+    - ../../../../components/zeroscaler
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: keda
-      namespace: observability
   interval: 1h
   path: ./kubernetes/apps/default/rclone/app
   postBuild:
     substitute:
       APP: *app
+      ZEROSCALER_JOB_NAME: nfs_bkup_probe
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

@@ -7,7 +7,7 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./resourceclaimtemplate.yaml
-  - ./scaledobject.yaml
+  - ./horizontalpodautoscaler.yaml
   - ./grafanaalert.yaml
 configMapGenerator:
   - name: immich-config-tpl

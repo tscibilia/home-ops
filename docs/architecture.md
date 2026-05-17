@@ -126,7 +126,7 @@ All secrets live in aKeyless and sync into the cluster via ExternalSecret CRDs. 
 Flux CD watches this repo and reconciles on every push.
 
 - **Entry point**: `ks.yaml` per app — defines `dependsOn`, `postBuild` substitutions, and `components`
-- **Components**: Reusable patterns in `kubernetes/components/` — volsync, cnpg, ext-auth-internal, ext-auth-external, keda
+- **Components**: Reusable patterns in `kubernetes/components/` — volsync, cnpg, ext-auth-internal, ext-auth-external, zeroscaler
 
 !!! danger "kubectl edits are ephemeral"
     Flux resets them on the next reconciliation. Always edit in Git, push, and reconcile.
