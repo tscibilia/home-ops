@@ -8,6 +8,7 @@
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 
 ## ⚠️ Known Issues
+- ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
 - ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely
 - ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?)
 - ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel
