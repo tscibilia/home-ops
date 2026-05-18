@@ -4,6 +4,7 @@ Namespace: `media`
 
 | App          | Storage   | Notes                                              |
 | ------------ | --------- | -------------------------------------------------- |
+| agregarr     | ceph-ssd  | Home media aggregator dashboard, ext-auth-internal, volsync |
 | autobrr      | ceph-ssd  | Depends on qbittorrent, zeroscaler, volsync   |
 | bazarr       | ceph-ssd  | Subtitle management, ext-auth-internal, zeroscaler, volsync |
 | flaresolverr | —         | Captcha solver, depends on prowlarr                |
@@ -20,7 +21,7 @@ Namespace: `media`
 | seerr        | ceph-ssd  | Media requests, external access, volsync           |
 | sonarr       | ceph-ssd  | TV management, ext-auth-internal, zeroscaler, volsync |
 | tracearr     | openebs   | Plex and Jellyfin analytics                        |
-| ytptube      | ceph-ssd  | YouTube downloader, ext-auth-external, zeroscaler, volsync |
+| hometube      | ceph-ssd  | YouTube downloader, ext-auth-external, zeroscaler, volsync |
 
 ## Config Notes
 
@@ -33,7 +34,7 @@ Namespace: `media`
 ??? note "Jellyfin"
     Uses ceph-ssd for config storage, not nfs-media. Media access is separate from Plex's NFS mount.
 
-??? note "ytptube"
+??? note "hometube"
     Uses `ext-auth-external` (not internal) — accessible from outside the LAN with Authentik SSO.
 
 ??? note "recyclarr"
