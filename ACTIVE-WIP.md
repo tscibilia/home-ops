@@ -4,26 +4,33 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
+- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas), reference the [site](https://k8s-schemas.home-operations.com/)
 - [ ] move github to forgejo
+- [ ] move cilium L2Announcement -> BGP
+- [ ] add kopia to volsync
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
+- [ ] use yamlfmt and lefthook
 
 ## ⚠️ Known Issues
-- ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
-- ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely
-- ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?)
-- ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel
-- ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **lookup localhost: operation was canceled**
+- [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
+- [ ] ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
+- [ ] ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely
+- [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
+- [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
+- [ ] ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
+- [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
 
 ## ⛔ Blocked
 `- Task name - blocking factor (waiting for X)`
-- ⛔ [ ] **Restic:** backup for unifi-network-application - **VPS has no means to connect to unraid dest**
-- ⛔ [ ] **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
+- [ ] ⛔ **Restic:** backup for unifi-network-application - **VPS has no means to connect to unraid dest**
+- [ ] ⛔ **ComfyUI:** need larger local volume to store nodes and modules - **Pending drive relocation**
 
 ## ✅ Resolved
 `Descending order, newest on top`
-- ✅ KEDA → native HPA migration (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388)).
-- ✅ Cloudflared -> Pangolin switch (see PR [#2383](https://github.com/tscibilia/home-ops/pull/2383))
-- ✅ commit [2010ffa] resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686)
+- ✅ Rewire network rack with patch cables - **2026-05-16**
+- ✅ KEDA → native HPA migration (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388)) - **2026-05-17**
+- ✅ Cloudflared -> Pangolin switch (see PR [#2383](https://github.com/tscibilia/home-ops/pull/2383)) - **2026-05-16**
+- ✅ commit [2010ffa](https://github.com/tscibilia/home-ops/commit/2010ffa) resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686) - **2026-05-14**
 - ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))
 - ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))
 - ✅ move llama.cpp to cluser - **2026-04-29** (See commit [08dde6f])
