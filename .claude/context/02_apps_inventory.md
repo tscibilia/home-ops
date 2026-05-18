@@ -1,5 +1,11 @@
 # Apps Inventory
 
+## ⚠️ Gotchas & Interactions
+
+- **Namespace = directory name:** Verify the the `targetNamespace` in the app's `ks.yaml` before referencing it in manifests.
+- **kustomization.yaml must include the new app:** When adding a new app, its `ks.yaml` path must be added to `kubernetes/apps/{namespace}/kustomization.yaml` or Flux will never reconcile it.
+- **Component flags listed here:** Each app's entry notes which components it uses (volsync, cnpg, zeroscaler). Check before assuming.
+
 Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for quick lookup.
 
 ## actions-runner-system

@@ -1,5 +1,11 @@
 # Storage
 
+## ⚠️ Gotchas & Interactions
+
+- **CNPG endpoint suffix:** The app database connection endpoint is always `{app}-cnpg-rw`. Never use `-ro` (read replica) or the bare cluster resource name for app connections.
+- **VolSync NFS securityContext:** ALL VolSync NFS job templates require an explicit `securityContext`, including `list.yaml.j2`. Omitting it causes silent permission failures — the job runs but cannot access the NFS share.
+- **openebs-hostpath is node-local:** Data is tied to the node. A pod rescheduling to a different node loses access to its PVC.
+
 ## Storage Classes
 
 | Class | Backend | Use case |

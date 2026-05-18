@@ -1,5 +1,10 @@
 # Networking
 
+## ⚠️ Gotchas & Interactions
+
+- **DNS source partitioning:** `external-dns` writes to Cloudflare; `unifi-dns` writes to UniFi LAN. The `service` source is UniFi-only. Gateway annotations create split-horizon LAN entries — not a Cloudflare conflict.
+- **SSO requires a component:** Authentik SSO requires `ext-auth-internal` or `ext-auth-external` component in `ks.yaml`, not just a HTTPRoute annotation.
+
 ## Gateways
 
 | Gateway | Namespace | Use case |

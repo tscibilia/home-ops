@@ -1,5 +1,10 @@
 # Docker Hosts
 
+## ⚠️ Gotchas & Interactions
+
+- **aKeyless secret format:** Use JSON format (`{"key":"value"}`) for secrets with multiple key/value pairs. Use text format for single-value secrets. Wrong format = secret parsed incorrectly at runtime.
+- **Docker network isolation:** Services can only communicate if on the same named Docker network. The default bridge network does not span compose projects.
+
 Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each host runs a cron that pulls from this repo and applies `docker compose up -d`.
 
 ## Hosts

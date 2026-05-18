@@ -1,5 +1,10 @@
 # Cluster Nodes
 
+## ⚠️ Gotchas & Interactions
+
+- **ai3090 GPU toleration required:** Any pod targeting ai3090 must include `tolerations: [{key: "nvidia.com/gpu", operator: "Exists", effect: "NoSchedule"}]` — there is no fallback node; the pod will be unschedulable without it.
+- **openebs-hostpath is node-local:** If a pod using `openebs-hostpath` reschedules to a different node, the PVC data is inaccessible. Do not use for workloads that may move nodes.
+
 ## All Nodes (base config)
 - Region: `topology.kubernetes.io/region: main`
 - Primary network: `bond0` (192.168.5.0/24)

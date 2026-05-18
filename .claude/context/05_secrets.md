@@ -1,5 +1,10 @@
 # Secrets
 
+## ⚠️ Gotchas & Interactions
+
+- **aKeyless path:** `/{namespace}/{app}` — most secrets are stored as a single static secret with multiple key/value pairs. Wrong path = silent empty secret, no error logged.
+- **cluster-secrets scope:** `cluster-secrets` variables are cluster-wide postBuild substitutions. App-specific credentials belong in a dedicated ExternalSecret, not in cluster-secrets.
+
 ## Secret Store
 
 All secrets come from aKeyless via the `akeyless-secret-store` ClusterSecretStore in `external-secrets` namespace. Every app's `ks.yaml` includes `substituteFrom: cluster-secrets` — see `07_flux_conventions.md` for the full ks.yaml pattern.

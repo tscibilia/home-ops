@@ -1,5 +1,11 @@
 # Kustomize Components
 
+## ⚠️ Gotchas & Interactions
+
+- **zeroscaler requires a prometheus-adapter metric:** Adding the `zeroscaler` component to `ks.yaml` is not enough — the app also needs a custom metric entry in the `prometheus-adapter` ConfigMap. Component without metric = scaling never triggers, silently.
+- **cnpg creates a CronJob:** The `cnpg` component creates a Secret AND an init CronJob in the app's namespace. Verify the namespace before applying.
+- **Update 02_apps_inventory.md:** When adding or removing a component from an app, update the app's entry in `02_apps_inventory.md`.
+
 Components live in `kubernetes/components/`. Add them to `ks.yaml` (not app `kustomization.yaml` unless noted).
 
 ## volsync — PVC backup to NFS (clonenas)
