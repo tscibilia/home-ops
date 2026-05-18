@@ -4,7 +4,7 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas), reference the [site](https://k8s-schemas.home-operations.com/)
+- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - See PR #2395
 - [ ] move github to forgejo
 - [ ] move cilium L2Announcement -> BGP
 - [ ] add kopia to volsync

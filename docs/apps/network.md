@@ -12,6 +12,7 @@ Namespace: `network`
 | tailscale      | Mesh VPN access to the cluster                         |
 | certificates   | Shared TLS certificate resources                       |
 | echo           | Test endpoint for debugging ingress, external access   |
+| greenlight     | Custom UniFi network status dashboard                  |
 
 ## Config Notes
 

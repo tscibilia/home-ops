@@ -57,8 +57,8 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - esphome
 - home-assistant
 - matter-server
-- matterbridge
 - mosquitto *(MQTT broker)*
+- otbr *(OpenThread Border Router)*
 - zwave
 
 ## kube-system
@@ -75,6 +75,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - spegel *(OCI mirror)*
 
 ## media
+- agregarr *(home media aggregator dashboard)*
 - autobrr *(torrent automation)*
 - bazarr *(subtitles)*
 - flaresolverr
@@ -98,7 +99,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - echo
 - envoy-gateway
 - external-dns
-- greenlight
+- greenlight *(custom UniFi network status app)*
 - multus
 - pangolin-operator *(VPS tunnel ingress via Newt/WireGuard)*
 - tailscale
