@@ -15,11 +15,11 @@
 
 ## Control Plane
 
-| Node   | Special hardware |
-|--------|------------------|
-| k8s-1  | —                |
-| k8s-2  | Zigbee — `feature.node.kubernetes.io/usb-zigbee: "true"` |
-| k8s-3  | Z-Wave — `feature.node.kubernetes.io/usb-zwave: "true"`  |
+| Node   | IP (bond0, DHCP reservation) | Ceph IP (ceph0, static) | Special hardware |
+|--------|------------------------------|-------------------------|------------------|
+| k8s-1  | `192.168.5.211`              | `192.168.43.11/24`      | —                |
+| k8s-2  | `192.168.5.212`              | `192.168.43.12/24`      | Zigbee — `feature.node.kubernetes.io/usb-zigbee: "true"` |
+| k8s-3  | `192.168.5.213`              | `192.168.43.13/24`      | Z-Wave — `feature.node.kubernetes.io/usb-zwave: "true"`  |
 
 ---
 
