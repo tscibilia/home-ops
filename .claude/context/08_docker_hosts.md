@@ -4,6 +4,8 @@
 
 - **aKeyless secret format:** Use JSON format (`{"key":"value"}`) for secrets with multiple key/value pairs. Use text format for single-value secrets. Wrong format = secret parsed incorrectly at runtime.
 - **Docker network isolation:** Services can only communicate if on the same named Docker network. The default bridge network does not span compose projects.
+- **Ansible on TrueNAS/clonenas — no `community.docker.*`:** TrueNAS SCALE's system Python is locked down; `pip` is unavailable so the `docker` SDK can't be installed. Use `ansible.builtin.shell` + raw `docker`/`docker compose` CLI instead of `docker_compose_v2`, `docker_container_info`, etc. (VPS runs Ubuntu — SDK installs fine there, so `community.docker.*` is fine on VPS.)
+- **Ansible on TrueNAS/clonenas — no `ansible.builtin.cron`:** TrueNAS SCALE may not honour `/etc/cron.d`. Register cron jobs via `midclt call cronjob.create` (TrueNAS API) — see the shell task pattern in `ansible/truenas/playbook.yaml`.
 
 Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each host runs a cron that pulls from this repo and applies `docker compose up -d`.
 

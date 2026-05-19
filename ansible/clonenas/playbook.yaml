@@ -42,26 +42,29 @@
       ansible.builtin.copy:
         src: ../../docker/clonenas/.doco-cd/docker-compose.app.yaml
         dest: "{{ dococd_config_dir }}/docker-compose.yaml"
-      become: false
+        owner: sysadmin
+        unsafe_writes: true
 
     - name: doco-cd | Copy Dockerfile
       ansible.builtin.copy:
         src: ../../docker/clonenas/.doco-cd/Dockerfile
         dest: "{{ dococd_config_dir }}/Dockerfile"
-      become: false
+        owner: sysadmin
+        unsafe_writes: true
 
     - name: doco-cd | Copy proxy.py
       ansible.builtin.copy:
         src: ../../docker/clonenas/.doco-cd/proxy.py
         dest: "{{ dococd_config_dir }}/proxy.py"
-      become: false
+        owner: sysadmin
+        unsafe_writes: true
 
     - name: doco-cd | Copy cron-update.sh
       ansible.builtin.copy:
         src: ../../docker/clonenas/.doco-cd/cron-update.sh
         dest: "{{ dococd_config_dir }}/cron-update.sh"
-        mode: "0755"
-      become: false
+        owner: sysadmin
+        unsafe_writes: true
 
     - name: doco-cd | Install nightly update cron job
       ansible.builtin.shell: |
@@ -71,7 +74,7 @@
         import subprocess, json
         job = {
             "user": "root",
-            "command": "{{ dococd_config_dir }}/cron-update.sh",
+            "command": "bash {{ dococd_config_dir }}/cron-update.sh",
             "description": "doco-cd self update",
             "schedule": {"minute": "0", "hour": "3", "dom": "*", "month": "*", "dow": "*"},
             "enabled": True,
@@ -124,9 +127,9 @@
       ansible.builtin.copy:
         dest: "{{ dococd_config_dir }}/{{ item.name }}"
         content: "{{ item.content }}"
-        mode: "0600"
+        owner: sysadmin
+        unsafe_writes: true
       no_log: true
-      become: false
       loop:
         - name: gh_token
           content: "{{ doco_github_token }}"
@@ -159,6 +162,10 @@
         groups: docker
         append: true
 
+    # community.docker.* modules require the 'docker' Python SDK on the remote
+    # host. TrueNAS SCALE's system Python is locked down — pip is unavailable
+    # and the SDK cannot be installed. Raw shell + docker CLI is the only
+    # reliable approach here as opposed to the VPS playbook running Ubuntu.
     - name: doco-cd | Ensure doco-cd Docker network exists
       ansible.builtin.shell: docker network inspect doco-cd >/dev/null 2>&1 || docker network create doco-cd
       changed_when: false
