@@ -46,8 +46,10 @@ spec:
     k8sServicePort: 7445
     kubeProxyReplacement: true
     kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
-    l2announcements:
+    bgpControlPlane:
       enabled: true
+    l2announcements:
+      enabled: false
     loadBalancer:
       algorithm: maglev
       mode: "dsr"
