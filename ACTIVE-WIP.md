@@ -6,7 +6,6 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - See PR [#2395]((https://github.com/tscibilia/home-ops/pull/2388))
 - [ ] move github to forgejo - Unsure, postponed
-- [ ] move cilium L2Announcement -> BGP - Started **2026-04-10**
 - [ ] add kopia to volsync - Started **2026-05-18**
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 - [ ] use yamlfmt and lefthook
@@ -27,8 +26,9 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
-- ✅ Rewire network rack with patch cables - **2026-05-16**
+- ✅ Cilium L2Announcement -> BGP (see PR [#2398](https://github.com/tscibilia/home-ops/pull/2398)) - **2026-05-19**
 - ✅ KEDA → native HPA migration (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388)) - **2026-05-17**
+- ✅ Rewire network rack with patch cables - **2026-05-16**
 - ✅ Cloudflared -> Pangolin switch (see PR [#2383](https://github.com/tscibilia/home-ops/pull/2383)) - **2026-05-16**
 - ✅ commit [2010ffa](https://github.com/tscibilia/home-ops/commit/2010ffa) resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686) - **2026-05-14**
 - ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))

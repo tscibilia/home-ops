@@ -49,7 +49,6 @@ machine:
         noatime=True
   install:
     disk: /dev/nvme0n1
-    # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
     image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC_ID | safe }}:v1.13.2
     wipe: false
   kernel:
@@ -71,14 +70,6 @@ machine:
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
-  {% if ENV.IS_CONTROLLER %}
-  # Remove once l2 is removed in lieu of bgp
-  network:
-    interfaces:
-      - interface: bond0
-        vip:
-          ip: 192.168.5.210
-  {% endif %}
   nodeLabels:
     node.kubernetes.io/gpu: "true"
     topology.kubernetes.io/region: main
@@ -114,7 +105,7 @@ cluster:
     {% endif %}
   clusterName: main
   controlPlane:
-    endpoint: https://192.168.5.210:6443
+    endpoint: https://192.168.5.250:6443
   discovery:
     enabled: true
     registries:
@@ -146,7 +137,7 @@ cluster:
         - level: Metadata
     certSANs:
       - k8s.internal
-      - 192.168.5.210
+      - 192.168.5.250
     disablePodSecurityPolicy: true
     extraArgs:
       enable-aggregator-routing: "true"

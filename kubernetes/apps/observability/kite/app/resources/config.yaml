@@ -7,7 +7,7 @@ clusters:
       kind: Config
       clusters:
         - cluster:
-            server: https://192.168.5.210:6443
+            server: https://192.168.5.250:6443
             certificate-authority-data: {{ .CLUSTER_CA_CRT }}
           name: main
       contexts:

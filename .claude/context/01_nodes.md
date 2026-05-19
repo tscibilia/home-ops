@@ -9,7 +9,7 @@
 - Region: `topology.kubernetes.io/region: main`
 - Primary network: `bond0` (192.168.5.0/24)
 - Pod subnet: 10.42.0.0/16 | Service subnet: 10.43.0.0/16
-- K8s API VIP: 192.168.5.210:6443 (controlplane only)
+- K8s API endpoint: 192.168.5.250:6443 (BGP-announced LoadBalancer)
 
 ---
 

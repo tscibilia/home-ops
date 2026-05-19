@@ -76,7 +76,7 @@ GitOps-managed Kubernetes cluster on three Lenovo M70q nodes, plus Docker servic
 
 | Item            | Value                                     |
 | --------------- | ----------------------------------------- |
-| **Cluster VIP** | 192.168.5.210                             |
+| **API endpoint** | 192.168.5.250 (BGP LB)                   |
 | **Nodes**       | k8s-1 (.211), k8s-2 (.212), k8s-3 (.213) |
 | **Domain**      | *.t0m.co (external), LAN via UniFi DNS    |
 | **Source of truth** | This repo — Flux reconciles on push   |

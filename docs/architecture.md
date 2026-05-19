@@ -10,7 +10,7 @@ Three Lenovo ThinkCentre M70q Tiny (Gen 3) running Talos Linux.
 | k8s-2 | 192.168.5.212  | 192.168.43.12  |
 | k8s-3 | 192.168.5.213  | 192.168.43.13  |
 
-- **VIP**: 192.168.5.210:6443
+- **API endpoint**: `192.168.5.250:6443` (BGP-announced LoadBalancer)
 - **GPU**: Intel i915 iGPU on all nodes — Plex and Jellyfin use it for hardware transcoding
 - **OS configs**: Minijinja templates in `kubernetes/talos/`, never edit rendered output directly
 
@@ -36,7 +36,7 @@ UniFi controller manages the `.internal` domain for non-cluster hosts:
     Cilium is the eBPF replacement. Standard kube-proxy debug tools don't apply. Use `cilium` CLI or Hubble for network debugging.
 
 - **CNI**: Cilium — eBPF-based, completely replaces kube-proxy
-- **Load balancing**: Cilium L2 ARP announcements, IP pool 192.168.5.200–250
+- **Load balancing**: Cilium BGP control plane — eBGP peers with UDM-Pro (ASN 64513/64514), ECMP across all 3 control-plane nodes. IP pool `192.168.5.0/24`, advertised as `/32` host routes.
 - **Routing**: HTTPRoute resources, not legacy Ingress objects
 - **Auth**: Authentik SSO via Envoy SecurityPolicy forward-auth
 
