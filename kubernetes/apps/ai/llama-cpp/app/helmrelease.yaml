@@ -44,8 +44,8 @@ spec:
                     cp -a "$d" "/models/$name"
                   fi
                 done
-                download-model "TeichAI/Qwen3.6-27B-Claude-Opus-Reasoning-Distill-v2-GGUF:q5_k_m"
-                download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-Q5_K_S"
+                download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_NL"
+                download-model "unsloth/Qwen3.6-27B-MTP-GGUF:IQ4_NL"
                 for d in /models/models--*/; do
                   [ -d "$d" ] || continue
                   name=$(basename "$d")
