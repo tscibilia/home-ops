@@ -30,6 +30,14 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/secret-domain
+  PROMETHEUS_USERNAME:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-prometheus/username
+  PROMETHEUS_PASSWORD:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-prometheus/password
   MONGO_INITDB_ROOT_USERNAME:
     store_ref: akeyless
     remote_ref:
