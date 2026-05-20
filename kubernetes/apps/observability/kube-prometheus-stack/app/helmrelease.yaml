@@ -79,13 +79,7 @@ spec:
               resources:
                 requests:
                   storage: 50Gi
-        additionalArgs:
-          - name: web.enable-remote-write-receiver
-            value: ""
-          - name: web.config.file
-            value: /etc/prometheus/secrets/prometheus-web-config/web-config.yaml
-        secrets:
-          - prometheus-web-config
+        enableRemoteWriteReceiver: true
     prometheus-node-exporter:
       fullnameOverride: node-exporter
     kube-state-metrics:

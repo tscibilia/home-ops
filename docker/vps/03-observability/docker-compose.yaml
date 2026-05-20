@@ -112,7 +112,7 @@ configs:
           Match docker
           Tag node_metrics
           Metric_Name container_log_errors_total
-          Metric_Type counter
+          metric_mode counter
           regex log (?i)error
           Label_Field container
           add_label host vps
@@ -122,7 +122,7 @@ configs:
           Match docker
           Tag node_metrics
           Metric_Name container_log_warnings_total
-          Metric_Type counter
+          metric_mode counter
           regex log (?i)warn
           Label_Field container
           add_label host vps

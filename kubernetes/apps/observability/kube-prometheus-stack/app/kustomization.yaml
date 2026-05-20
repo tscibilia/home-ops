@@ -9,6 +9,7 @@ resources:
   - ./helmrelease.yaml
   - ./httproute.yaml
   - ./ocirepository.yaml
+  - ./securitypolicy.yaml
   - ./scrapeconfigs
 configMapGenerator:
   - name: flux-metrics-configmap
