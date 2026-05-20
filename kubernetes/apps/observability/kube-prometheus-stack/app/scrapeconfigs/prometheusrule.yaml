@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: remote-hosts-rules
+spec:
+  groups:
+    - name: remote-hosts.rules
+      rules:
+        - alert: DocoCdLogErrors
+          expr: rate(container_log_errors_total{container="doco-cd"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "doco-cd errors on {{ $labels.instance }}"
+            description: "Error log lines detected in doco-cd. Check container logs on the affected host."

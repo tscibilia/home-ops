@@ -7,7 +7,9 @@ resources:
   - ./externalsecret.yaml
   - ./grafanadashboard.yaml
   - ./helmrelease.yaml
+  - ./httproute.yaml
   - ./ocirepository.yaml
+  - ./scrapeconfigs
 configMapGenerator:
   - name: flux-metrics-configmap
     files:

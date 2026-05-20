@@ -17,6 +17,7 @@ Path: `docker/truenas/`
 |---|---------|-------------|
 | 01 | tailscale | `01-tailscale/docker-compose.yaml` |
 | 02 | scrutiny (collector) | `02-scrutiny/docker-compose.yaml` |
+| 03 | node-exporter, fluent-bit | `03-exporters/docker-compose.yaml` |
 
 NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
 
@@ -44,6 +45,7 @@ Path: `docker/vps/`
 |---|---------|-------------|
 | 01 | pangolin | `01-pangolin/docker-compose.yaml` |
 | 02 | unifi | `02-unifi/docker-compose.yaml` |
+| 03 | node-exporter, fluent-bit, prometheus-agent | `03-observability/docker-compose.yaml` |
 
 VPS role: Pangolin ingress gateway (Cloudflare → VPS → Newt WireGuard tunnel → in-cluster `envoy-external`), UniFi controller. Ansible bootstrap owns `/opt/doco-cd/`; doco-cd owns the `01-pangolin/` and `02-unifi/` stacks via its own git clone of the repo.
 
