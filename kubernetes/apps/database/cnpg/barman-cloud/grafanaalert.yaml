@@ -24,7 +24,7 @@ spec:
           datasourceUid: victorialogs
           model:
             expr: |
-              k_namespace_name:"database" AND k_container_name:"plugin-barman-cloud"
+              k_namespace_name:"database" AND k_container_name:"postgres"
               | _msg:~"Failed archiving WAL"
             intervalMs: 60000
             maxDataPoints: 43200
@@ -59,6 +59,60 @@ spec:
       annotations:
         summary: "Barman WAL archiving is failing"
         description: "barman-cloud failed to archive WAL in the last 30 minutes. Check plugin-barman-cloud container logs in the database namespace."
+      labels:
+        severity: critical
+        app: cnpg
+      for: 0m
+      noDataState: OK
+      execErrState: Alerting
+
+    - uid: cnpg-barman-backup-error
+      title: CnpgBarmanBackupError
+      condition: C
+      data:
+        - refId: A
+          queryType: range
+          relativeTimeRange:
+            from: 7200
+            to: 0
+          datasourceUid: victorialogs
+          model:
+            expr: |
+              k_namespace_name:"database" AND k_container_name:"postgres"
+              | _msg:~"Error while requesting backup"
+            intervalMs: 60000
+            maxDataPoints: 43200
+
+        - refId: B
+          queryType: ""
+          relativeTimeRange:
+            from: 7200
+            to: 0
+          datasourceUid: __expr__
+          model:
+            type: reduce
+            expression: A
+            reducer: count
+
+        - refId: C
+          queryType: ""
+          relativeTimeRange:
+            from: 7200
+            to: 0
+          datasourceUid: __expr__
+          model:
+            type: threshold
+            expression: B
+            conditions:
+              - evaluator:
+                  params:
+                    - 0
+                  type: gt
+                operator:
+                  type: and
+      annotations:
+        summary: "Barman scheduled backup is failing"
+        description: "barman-cloud failed to complete a scheduled backup in the last 2 hours. Check postgres container logs in the database namespace and verify the barman-cloud operator pod is healthy."
       labels:
         severity: critical
         app: cnpg
