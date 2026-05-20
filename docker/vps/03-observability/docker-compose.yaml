@@ -34,7 +34,7 @@ services:
         target: /fluent-bit/etc/conf/enrich.lua
 
   prometheus-agent:
-    image: quay.io/prometheus/prometheus:v3.4.0
+    image: quay.io/prometheus/prometheus:v3.11.3
     container_name: prometheus-agent
     restart: unless-stopped
     network_mode: host
