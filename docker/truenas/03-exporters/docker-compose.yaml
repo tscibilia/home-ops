@@ -68,6 +68,7 @@ configs:
           Tag node_metrics
           Metric_Name container_log_errors_total
           metric_mode counter
+          metric_description Container log error count
           regex log (?i)error
           Label_Field container
           add_label host truenas
@@ -78,6 +79,7 @@ configs:
           Tag node_metrics
           Metric_Name container_log_warnings_total
           metric_mode counter
+          metric_description Container log warning count
           regex log (?i)warn
           Label_Field container
           add_label host truenas
