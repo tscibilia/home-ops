@@ -11,11 +11,35 @@ spec:
   groups:
     - name: remote-hosts.rules
       rules:
-        - alert: DocoCdLogErrors
-          expr: rate(log_metric_counter_container_log_errors_total{container="doco-cd"}[5m]) > 0
+        - alert: RemoteHostDown
+          expr: up{job="node-exporter-remote"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Remote host {{ $labels.instance }} is down"
+            description: "node-exporter on {{ $labels.instance }} is unreachable. The host may be offline."
+        - alert: RemoteContainerLogErrors
+          expr: rate(container_log_errors_total[5m]) > 0
           for: 1m
           labels:
             severity: warning
           annotations:
-            summary: "doco-cd errors on {{ $labels.instance }}"
-            description: "Error log lines detected in doco-cd. Check container logs on the affected host."
+            summary: "Container errors on {{ $labels.host }}: {{ $labels.container }}"
+            description: "Error log lines detected in container {{ $labels.container }} on {{ $labels.host }}."
+        - alert: RemoteContainerLogWarnings
+          expr: rate(container_log_warnings_total[5m]) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Sustained warnings on {{ $labels.host }}: {{ $labels.container }}"
+            description: "Container {{ $labels.container }} on {{ $labels.host }} has been emitting warnings for 5m."
+        - alert: RemoteHostDiskPressure
+          expr: (node_filesystem_avail_bytes{job="node-exporter-remote",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) < 0.10
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Disk almost full on {{ $labels.instance }}: {{ $labels.mountpoint }}"
+            description: "Filesystem {{ $labels.mountpoint }} on {{ $labels.instance }} has less than 10% free."
