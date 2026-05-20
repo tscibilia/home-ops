@@ -22,7 +22,7 @@ Domain variable: `${SECRET_DOMAIN}` (from `cluster-secrets` Secret).
 |----------|------|---------|------|
 | `prometheus-rw.${SECRET_DOMAIN}` | `/api/v1/write` | `kube-prometheus-stack-prometheus:9090` | `observability/kube-prometheus-stack/app/httproute.yaml` |
 
-Protected by basic auth via `prometheus-web-config` secret (bcrypt, sourced from `/observability/remote` in aKeyless).
+Unauthenticated (web-config secret exists but not mounted). Gatus disabled — POST-only path returns 404 on GET.
 
 ## HTTPRoute Pattern
 

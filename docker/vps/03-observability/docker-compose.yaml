@@ -73,9 +73,6 @@ configs:
 
       remote_write:
         - url: https://prometheus-rw.${DOMAIN}/api/v1/write
-          basic_auth:
-            username: ${username}
-            password: ${password}
 
   fluent_bit_config:
     content: |
