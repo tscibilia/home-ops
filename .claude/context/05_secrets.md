@@ -51,4 +51,6 @@ spec:
 | `/database/cnpg-users` | CNPG user passwords (all apps share one secret, fields per-app) |
 | `/cloud-providers/b2-creds` | Backblaze B2 (VolSync bucket) |
 | `/network/tailscale/operator` | Tailscale operator credentials |
+| `/observability/gatus` | Alertmanager: healthchecks.io URL, Pushover tokens |
+| `/observability/remote` | Prometheus remote_write basic auth: `username`, `password`, `password_bcrypt` (bcrypt hash for web-config), `REMOTE_WRITE_URL` (full URL: `https://prometheus-rw.${SECRET_DOMAIN}/api/v1/write`) |
 

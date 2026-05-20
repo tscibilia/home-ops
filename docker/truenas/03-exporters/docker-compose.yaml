@@ -1,0 +1,119 @@
+---
+name: exporters
+services:
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:v1.9.1
+    container_name: node-exporter
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    command:
+      - --path.rootfs=/host/root
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+    volumes:
+      - /:/host/root:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+
+  fluent-bit:
+    image: cr.fluentbit.io/fluent/fluent-bit:5.0
+    container_name: fluent-bit
+    restart: unless-stopped
+    network_mode: host
+    hostname: truenas
+    command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/conf/fluent-bit.conf"]
+    volumes:
+      - /mnt/.ix-apps/docker/containers:/var/lib/docker/containers:ro
+      - fluent-bit-data:/fluent-bit/data
+    configs:
+      - source: fluent_bit_config
+        target: /fluent-bit/etc/conf/fluent-bit.conf
+      - source: fluent_bit_enrich
+        target: /fluent-bit/etc/conf/enrich.lua
+
+volumes:
+  fluent-bit-data:
+
+configs:
+  fluent_bit_config:
+    content: |
+      [SERVICE]
+          Daemon Off
+          Flush 5
+          Log_Level info
+          Parsers_File /fluent-bit/etc/parsers.conf
+
+      [INPUT]
+          Name tail
+          Path /var/lib/docker/containers/*/*-json.log
+          Parser docker
+          Tag docker
+          Path_Key filename
+          Refresh_Interval 5
+          Mem_Buf_Limit 10MB
+          Skip_Long_Lines On
+          DB /fluent-bit/data/docker.db
+
+      [FILTER]
+          Name lua
+          Match docker
+          Script /fluent-bit/etc/conf/enrich.lua
+          call enrich_container_name
+
+      [FILTER]
+          Name log_to_metrics
+          Match docker
+          Tag node_metrics
+          Metric_Name container_log_errors_total
+          Metric_Type counter
+          regex log (?i)error
+          Label_Field container
+          add_label host truenas
+
+      [FILTER]
+          Name log_to_metrics
+          Match docker
+          Tag node_metrics
+          Metric_Name container_log_warnings_total
+          Metric_Type counter
+          regex log (?i)warn
+          Label_Field container
+          add_label host truenas
+
+      [OUTPUT]
+          Name prometheus_exporter
+          Match node_metrics
+          Host 0.0.0.0
+          Port 2020
+
+      [OUTPUT]
+          Name null
+          Match docker
+
+  fluent_bit_enrich:
+    content: |
+      function enrich_container_name(tag, timestamp, record)
+          local filename = record["filename"]
+          if filename then
+              local container_id = filename:match("/containers/([^/]+)/")
+              if container_id then
+                  local config_path = "/var/lib/docker/containers/" .. container_id .. "/config.v2.json"
+                  local f = io.open(config_path, "r")
+                  if f then
+                      local content = f:read("*all")
+                      f:close()
+                      local name = content:match('"Name":"/?([^"]+)"')
+                      if name then
+                          record["container"] = name
+                      end
+                  end
+                  if not record["container"] then
+                      record["container"] = container_id
+                  end
+              end
+              record["filename"] = nil
+          end
+          return 1, timestamp, record
+      end
