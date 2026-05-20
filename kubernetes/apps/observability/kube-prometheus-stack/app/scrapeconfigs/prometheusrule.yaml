@@ -12,7 +12,7 @@ spec:
     - name: remote-hosts.rules
       rules:
         - alert: DocoCdLogErrors
-          expr: rate(container_log_errors_total{container="doco-cd"}[5m]) > 0
+          expr: rate(log_metric_counter_container_log_errors_total{container="doco-cd"}[5m]) > 0
           for: 1m
           labels:
             severity: warning

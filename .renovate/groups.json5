@@ -96,6 +96,14 @@
       sourceUrl: "https://github.com/gabe565/docker-obico",
     },
     {
+      description: "Pangolin Group",
+      groupName: "pangolin",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/pangolin-operator/"],
+      group: {commitMessageTopic: "{{{groupName}}} group"},
+      minimumGroupSize: 2,
+    },
+    {
       description: "Qbittorrent Group",
       groupName: "qbittorrent",
       matchDatasources: ["docker"],
