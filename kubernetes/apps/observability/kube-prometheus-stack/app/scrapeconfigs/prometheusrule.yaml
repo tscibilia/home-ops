@@ -20,21 +20,21 @@ spec:
             summary: "Remote host {{ $labels.instance }} is down"
             description: "node-exporter on {{ $labels.instance }} is unreachable. The host may be offline."
         - alert: RemoteContainerLogErrors
-          expr: rate(container_log_errors_total[5m]) > 0
+          expr: rate(log_metric_counter_container_log_errors_total[5m]) > 0
           for: 1m
           labels:
             severity: warning
           annotations:
-            summary: "Container errors on {{ $labels.host }}: {{ $labels.container }}"
-            description: "Error log lines detected in container {{ $labels.container }} on {{ $labels.host }}."
+            summary: "Container errors on {{ $labels.instance }}: {{ $labels.container }}"
+            description: "Error log lines detected in container {{ $labels.container }} on {{ $labels.instance }}."
         - alert: RemoteContainerLogWarnings
-          expr: rate(container_log_warnings_total[5m]) > 0.1
+          expr: rate(log_metric_counter_container_log_warnings_total[5m]) > 0.1
           for: 5m
           labels:
             severity: warning
           annotations:
-            summary: "Sustained warnings on {{ $labels.host }}: {{ $labels.container }}"
-            description: "Container {{ $labels.container }} on {{ $labels.host }} has been emitting warnings for 5m."
+            summary: "Sustained warnings on {{ $labels.instance }}: {{ $labels.container }}"
+            description: "Container {{ $labels.container }} on {{ $labels.instance }} has been emitting warnings for 5m."
         - alert: RemoteHostDiskPressure
           expr: (node_filesystem_avail_bytes{job="node-exporter-remote",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes) < 0.10
           for: 5m

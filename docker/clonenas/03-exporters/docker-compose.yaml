@@ -25,7 +25,7 @@ services:
     hostname: clonenas
     command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/conf/fluent-bit.conf"]
     volumes:
-      - /mnt/.ix-apps/docker/containers:/var/lib/docker/containers:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - fluent-bit-data:/fluent-bit/data
     configs:
       - source: fluent_bit_config
@@ -71,7 +71,7 @@ configs:
           metric_description Container log error count
           regex log (?i)error
           Label_Field container
-          add_label host clonenas
+          Label_Field host
 
       [FILTER]
           Name log_to_metrics
@@ -82,7 +82,7 @@ configs:
           metric_description Container log warning count
           regex log (?i)warn
           Label_Field container
-          add_label host clonenas
+          Label_Field host
 
       [OUTPUT]
           Name prometheus_exporter
@@ -117,5 +117,6 @@ configs:
               end
               record["filename"] = nil
           end
+          record["host"] = "clonenas"
           return 1, timestamp, record
       end
