@@ -9,6 +9,7 @@
 - [ ] move github to forgejo - Unsure, postponed
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 - [ ] use yamlfmt and lefthook
+- [ ] restic backup for unifi-network-application to B2 - Started 2026-05-21 - 04-unfbkup on VPS; pending Ansible run + first backup verification
 
 ## ⚠️ Known Issues
 - [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
@@ -21,7 +22,6 @@
 
 ## ⛔ Blocked
 `- Task name - blocking factor (waiting for X)`
-- [ ] ⛔ **Restic:** backup for unifi-network-application - **VPS has no means to connect to unraid dest**
 - [ ] ⛔ **ComfyUI:** need larger local volume to store nodes and modules - **Pending drive relocation**
 
 ## ✅ Resolved
