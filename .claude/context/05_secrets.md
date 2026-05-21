@@ -52,7 +52,7 @@ spec:
 | `/cloud-providers/b2-creds` | Backblaze B2 (VolSync bucket) |
 | `/network/tailscale/operator` | Tailscale operator credentials |
 | `/observability/gatus` | Alertmanager: healthchecks.io URL, Pushover tokens |
-| `/observability/remote` | Prometheus remote_write basic auth: `username`, `password`, `password_sha1_b64` (SHA1 base64 for Envoy SecurityPolicy — compute: `echo -n "PASS" \| openssl dgst -sha1 -binary \| base64`), `REMOTE_WRITE_URL` |
-| `docker/vps-prometheus/username` | VPS prometheus-agent basic_auth username (text secret, mirrors `/observability/remote` username) |
-| `docker/vps-prometheus/password` | VPS prometheus-agent basic_auth password (text secret, mirrors `/observability/remote` password) |
+| `/observability/remote` | Prometheus remote_write basic auth: `password_sha1_b64` (SHA1 base64 for Envoy SecurityPolicy — compute: `echo -n "PASS" \| openssl dgst -sha1 -binary \| base64`), `REMOTE_WRITE_URL` |
+| `docker/vps-prometheus/username` | Prometheus basic_auth username — canonical source; used by VPS docker prometheus-agent AND K8s `prometheus-web-config` ExternalSecret |
+| `docker/vps-prometheus/password` | Prometheus basic_auth password — canonical source; used by VPS docker prometheus-agent |
 
