@@ -14,13 +14,24 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          init-db:
+          01-init-db:
             image:
               repository: ghcr.io/home-operations/postgres-init
               tag: "18.4.0@sha256:5086f94abc783f1147d7c2a32c01db00ab594820026e4f6a82ac2af3dbde7fc7"
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-initdb-secret"
+          02-migrate:
+            image:
+              repository: ghcr.io/plastic-labs/honcho
+              tag: v3.0.7@sha256:5d9d2c53bcc0297de497634a3611728f81d171cc428cc93d74c1f07c405c2d33
+            command:
+              - /app/.venv/bin/alembic
+              - upgrade
+              - head
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
         containers:
           app:
             image: &honcho-image
@@ -86,3 +97,14 @@ spec:
         ports:
           http:
             port: *port
+
+    route:
+      app:
+        hostnames: ["honcho.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: api
+                port: *port
