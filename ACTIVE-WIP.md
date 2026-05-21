@@ -26,11 +26,12 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
-- ✅ add metrics to docker (see PR [#2416](https://github.com/tscibilia/home-ops/pull/2398) and 7 subsequent commits) - **2026-05-20**
-- ✅ Cilium L2Announcement -> BGP (see PR [#2398](https://github.com/tscibilia/home-ops/pull/2398)) - **2026-05-19**
-- ✅ KEDA → native HPA migration (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388)) - **2026-05-17**
+- ✅ add nut ups monitoring - **2026-05-20** (see PR [#2427](https://github.com/tscibilia/home-ops/pull/2427))
+- ✅ add metrics to docker - **2026-05-20** (see PR [#2416](https://github.com/tscibilia/home-ops/pull/2416) and 7 subsequent commits)
+- ✅ Cilium L2Announcement -> BGP - **2026-05-19** (see PR [#2398](https://github.com/tscibilia/home-ops/pull/2398))
+- ✅ KEDA → native HPA migration - **2026-05-17** (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388))
 - ✅ Rewire network rack with patch cables - **2026-05-16**
-- ✅ Cloudflared -> Pangolin switch (see PR [#2383](https://github.com/tscibilia/home-ops/pull/2383)) - **2026-05-16**
+- ✅ Cloudflared -> Pangolin switch - **2026-05-16** (see PR [#2383](https://github.com/tscibilia/home-ops/pull/2383))
 - ✅ commit [2010ffa](https://github.com/tscibilia/home-ops/commit/2010ffa) resolves rustfs faulty-disk [issue #2686](https://redirect.github.com/rustfs/rustfs/issues/2686) - **2026-05-14**
 - ✅ resolved toolhive issues w/ open-webui & opencode - **2026-05-06** (See commit [96019f4](https://github.com/tscibilia/home-ops/commit/96019f4))
 - ✅ use [k8tz](https://github.com/k8tz/k8tz) to apply TZ to pods and cronjobs - **2026-05-06** (See [#2276](https://github.com/tscibilia/home-ops/pull/2276))
