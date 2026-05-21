@@ -53,7 +53,7 @@ Two clusters in the `database` namespace:
 | Cluster | Purpose | PG Version | Notes |
 |---------|---------|------------|-------|
 | `pgsql-cluster` | All general apps | PG17 | Default |
-| `immich17` | Immich only | PG17 + vectorchord | pgvector extension |
+| `pgvector-cluster` | Immich + pgvector apps | PG17 + vectorchord | Shared cluster for apps needing vector search |
 
 **Connection endpoints:**
 - Read-write: `${CNPG_NAME}-rw.database.svc.cluster.local:5432`
@@ -79,7 +79,7 @@ components:
 
 postBuild:
   substitute:
-    CNPG_NAME: &postgresAppName pgsql-cluster  # or immich17
+    CNPG_NAME: &postgresAppName pgsql-cluster  # or pgvector-cluster
 
 healthChecks:
   - apiVersion: &postgresVersion postgresql.cnpg.io/v1

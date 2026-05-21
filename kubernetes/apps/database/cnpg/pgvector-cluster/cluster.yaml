@@ -14,19 +14,30 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
 
-  bootstrap:
-    recovery:
-      source: immich17-source
-      recoveryTarget:
-        backupID: "20260521T183033"
-
-  externalClusters:
-    - name: immich17-source
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          barmanObjectName: immich17
-          serverName: immich17
+  # # Note: this is needed when recovering from an existing cnpg cluster
+  # # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  # bootstrap:
+  # #   initdb:
+  # #     postInitSQL:
+  # #       - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+  # #     import:
+  # #       databases: ["*"]
+  # #       roles: ["*"]
+  # #       source:
+  # #         externalCluster: &previousCluster immich-v1
+  # #       type: monolith
+  #   recovery:
+  #     source: source
+  #     # Only needed for point-in-time recovery
+  #     recoveryTarget:
+  #       backupID: 20260211T074935
+  # externalClusters:
+  #   - name: source
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         barmanObjectName: *name
+  #         serverName: *name
 
   superuserSecret:
     name: cnpg-secret
@@ -51,7 +62,9 @@ spec:
       memory: 2Gi
   monitoring:
     enablePodMonitor: true
+  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
   enablePDB: true
+  # Fix for non AWS backup https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
   env:
     - name: AWS_REQUEST_CHECKSUM_CALCULATION
       value: when_required

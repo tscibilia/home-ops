@@ -6,8 +6,8 @@ namespace: database
 resources:
   # PostgreSQL cluster
   - ../../apps/database/cnpg/pgsql-cluster
-  # Immich cluster
-  - ../../apps/database/cnpg/immich17
+  # PostgreSQL pgvector cluster
+  - ../../apps/database/cnpg/pgvector-cluster
 patches:
   # Add recovery for pgsql-cluster
   - patch: |-
@@ -28,7 +28,7 @@ patches:
     target:
       kind: Cluster
       name: pgsql-cluster
-  # Add recovery for immich17
+  # Add recovery for pgvector-cluster
   - patch: |-
       - op: add
         path: /spec/bootstrap
@@ -42,8 +42,8 @@ patches:
             plugin:
               name: barman-cloud.cloudnative-pg.io
               parameters:
-                barmanObjectName: immich17
-                serverName: immich17
+                barmanObjectName: pgvector-cluster
+                serverName: pgvector-cluster
     target:
       kind: Cluster
-      name: immich17
+      name: pgvector-cluster
