@@ -351,6 +351,45 @@
           changed_when: false
           when: not ansible_check_mode
 
+    - name: unfbkup
+      block:
+        - name: unfbkup | Read restic secrets from aKeyless
+          ansible.builtin.shell: "akeyless get-secret-value --name '{{ item }}'"
+          delegate_to: localhost
+          loop:
+            - docker/vps-unifi/restic-repository
+            - docker/vps-unifi/restic-password
+            - docker/vps-unifi/b2-account-id
+            - docker/vps-unifi/b2-account-key
+          check_mode: false
+          changed_when: false
+          no_log: true
+          register: restic_secrets_raw
+
+        - name: unfbkup | Set restic secret facts
+          ansible.builtin.set_fact:
+            restic_repository: "{{ restic_secrets_raw.results[0].stdout }}"
+            restic_password: "{{ restic_secrets_raw.results[1].stdout }}"
+            b2_account_id: "{{ restic_secrets_raw.results[2].stdout }}"
+            b2_account_key: "{{ restic_secrets_raw.results[3].stdout }}"
+          no_log: true
+
+        - name: unfbkup | Initialize restic B2 repository (idempotent)
+          ansible.builtin.shell: |
+            docker run --rm \
+              -e RESTIC_REPOSITORY="{{ restic_repository }}" \
+              -e RESTIC_PASSWORD="{{ restic_password }}" \
+              -e B2_ACCOUNT_ID="{{ b2_account_id }}" \
+              -e B2_ACCOUNT_KEY="{{ b2_account_key }}" \
+              docker.io/restic/restic:0.17.3@sha256:80361423ec2beca5646ff0a94aed3f28ac9ad7a6742fb24f66e617359b9754ce init
+          register: restic_init
+          failed_when:
+            - restic_init.rc != 0
+            - "'already initialized' not in restic_init.stderr"
+            - "'config file already exists' not in restic_init.stderr"
+          changed_when: restic_init.rc == 0
+          no_log: true
+
     - name: Display summary
       ansible.builtin.debug:
         msg:
