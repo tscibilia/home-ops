@@ -38,8 +38,7 @@ services:
     container_name: nut-server
     restart: unless-stopped
     network_mode: host
-    devices:
-      - /dev/bus/usb
+    privileged: true
     configs:
       - source: nut_conf
         target: /etc/nut/nut.conf
@@ -52,6 +51,9 @@ services:
         mode: 0644
       - source: upsd_users
         target: /etc/nut/upsd.users
+        mode: 0640
+      - source: upsmon_conf
+        target: /etc/nut/upsmon.conf
         mode: 0640
 
 volumes:
@@ -162,3 +164,17 @@ configs:
       [monitor]
         password = ${NUT_MONITOR_PASSWORD}
         upsmon master
+
+  upsmon_conf:
+    content: |
+      MONITOR clonenas_ups@localhost 1 monitor ${NUT_MONITOR_PASSWORD} master
+      MINSUPPLIES 1
+      SHUTDOWNCMD "/sbin/shutdown -h +0"
+      POLLFREQ 5
+      POLLFREQALERT 5
+      HOSTSYNC 15
+      DEADTIME 15
+      POWERDOWNFLAG /etc/killpower
+      RBWARNTIME 43200
+      NOCOMMWARNTIME 300
+      FINALDELAY 5

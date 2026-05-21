@@ -3,6 +3,12 @@ auto_discovery:
   enabled: true
   depth: 1
   delete: true
+external_secrets:
+  # Must be plain text secrets (not JSON)
+  NUT_MONITOR_PASSWORD:
+    store_ref: akeyless
+    remote_ref:
+      key: /docker/clonenas/nut-monitor-password
 force_recreate: false
 reconciliation:
   enabled: true
