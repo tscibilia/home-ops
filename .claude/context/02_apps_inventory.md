@@ -13,7 +13,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## ai
 - comfyui
-- honcho *(AI memory/context management — api (port 8000, internal only) + deriver worker; uses pgvector-cluster + dragonfly-cluster)*
+- honcho *(AI memory/context management)*
 - llama-cpp
 - mcp-servers
 - open-webui
@@ -26,7 +26,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - cnpg *(CloudNativePG operator + clusters)*
 - dragonfly *(Redis-compatible cache)*
 - pgadmin
-- pgvector-cluster *(shared Immich + pgvector apps, PG17+vectorchord)*
+- pgvector-cluster *(shared Immich + pgvector apps)*
 
 ## default
 - actual *(budgeting)*

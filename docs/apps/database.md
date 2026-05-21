@@ -39,6 +39,7 @@ Redis-compatible cache at `dragonfly-cluster.database.svc.cluster.local:6379`:
 | 3  | Searxng    |
 | 4  | MCP Server |
 | 5  | Tracearr   |
+| 6  | Honcho     |
 
 ### pgAdmin
 

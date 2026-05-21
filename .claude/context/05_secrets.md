@@ -47,7 +47,7 @@ spec:
 | Path pattern | Contents |
 |-------------|----------|
 | `/kubernetes/cluster-secrets` | Cluster-wide vars (domain, timezone) |
-| `/kubernetes/<app-name>` | App-specific secrets |
+| `/{namespace}/{app-name}` | App-specific secrets (e.g. `/ai/honcho`, `/default/open-webui`) |
 | `/database/cnpg-users` | CNPG user passwords (all apps share one secret, fields per-app) |
 | `/cloud-providers/b2-creds` | Backblaze B2 (VolSync bucket) |
 | `/network/tailscale/operator` | Tailscale operator credentials |

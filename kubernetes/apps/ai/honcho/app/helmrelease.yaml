@@ -1,0 +1,88 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app honcho
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      api:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: "18.4.0@sha256:5086f94abc783f1147d7c2a32c01db00ab594820026e4f6a82ac2af3dbde7fc7"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+        containers:
+          app:
+            image: &honcho-image
+              repository: ghcr.io/plastic-labs/honcho
+              tag: v3.0.7@sha256:5d9d2c53bcc0297de497634a3611728f81d171cc428cc93d74c1f07c405c2d33
+            env: &honcho-env
+              CACHE_URL: "redis://dragonfly-cluster.database.svc.cluster.local:6379/6"
+              CACHE_ENABLED: "true"
+            envFrom: &honcho-envfrom
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /health
+                    port: &port 8000
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources: &honcho-resources
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+        pod: &honcho-pod
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+
+      deriver:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image: *honcho-image
+            command:
+              - /app/.venv/bin/python
+              - -m
+              - src.deriver
+            env: *honcho-env
+            envFrom: *honcho-envfrom
+            resources: *honcho-resources
+        pod: *honcho-pod
+
+    service:
+      api:
+        controller: api
+        ports:
+          http:
+            port: *port
