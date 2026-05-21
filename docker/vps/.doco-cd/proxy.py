@@ -12,10 +12,16 @@ Exposes a single HTTP endpoint for doco-cd's webhook provider to call.
 import json
 import os
 import sys
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+import time
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 import urllib.request
 import urllib.error
+
+# Secret values are cached for 5 minutes; token for 50 minutes.
+_SECRET_TTL = 300
+_TOKEN_TTL = 3000
 
 
 class AKeylessProxy(BaseHTTPRequestHandler):
@@ -25,8 +31,60 @@ class AKeylessProxy(BaseHTTPRequestHandler):
     access_key = os.getenv("AKEYLESS_ACCESS_KEY")
     api_url = "https://api.akeyless.io"
 
+    _token = None
+    _token_expiry = 0.0
+    _token_lock = threading.Lock()
+
+    _secret_cache: dict = {}
+    _secret_lock = threading.Lock()
+
+    @classmethod
+    def _get_token(cls) -> str:
+        with cls._token_lock:
+            if cls._token and time.monotonic() < cls._token_expiry:
+                return cls._token
+            auth_payload = {
+                "access-id": cls.access_id,
+                "access-key": cls.access_key,
+                "access-type": "access_key",
+            }
+            req = urllib.request.Request(
+                f"{cls.api_url}/auth",
+                data=json.dumps(auth_payload).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req) as resp:
+                data = json.loads(resp.read())
+            token = data.get("token")
+            if not token:
+                raise ValueError("No token in auth response")
+            cls._token = token
+            cls._token_expiry = time.monotonic() + _TOKEN_TTL
+            return token
+
+    @classmethod
+    def _fetch_secret(cls, name: str) -> dict:
+        with cls._secret_lock:
+            entry = cls._secret_cache.get(name)
+            if entry and time.monotonic() < entry[1]:
+                return entry[0]
+
+        token = cls._get_token()
+        req = urllib.request.Request(
+            f"{cls.api_url}/get-secret-value",
+            data=json.dumps({"names": [name], "token": token}).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read())
+
+        with cls._secret_lock:
+            cls._secret_cache[name] = (data, time.monotonic() + _SECRET_TTL)
+        return data
+
     def do_GET(self):
-        """Handle GET /secret?name=path/to/secret"""
         parsed_url = urlparse(self.path)
 
         if parsed_url.path != "/secret":
@@ -35,7 +93,6 @@ class AKeylessProxy(BaseHTTPRequestHandler):
             self.wfile.write(b"Not found")
             return
 
-        # Parse query string: ?name=path/to/secret
         query_params = parse_qs(parsed_url.query)
         secret_name = query_params.get("name", [None])[0]
 
@@ -46,40 +103,7 @@ class AKeylessProxy(BaseHTTPRequestHandler):
             return
 
         try:
-            # Step 1: Get auth token
-            auth_payload = {
-                "access-id": self.access_id,
-                "access-key": self.access_key,
-                "access-type": "access_key",
-            }
-            auth_req = urllib.request.Request(
-                f"{self.api_url}/auth",
-                data=json.dumps(auth_payload).encode(),
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with urllib.request.urlopen(auth_req) as auth_resp:
-                auth_data = json.loads(auth_resp.read())
-                token = auth_data.get("token")
-
-            if not token:
-                raise ValueError("No token in auth response")
-
-            # Step 2: Get secret value
-            secret_payload = {
-                "names": [secret_name],
-                "token": token,
-            }
-            secret_req = urllib.request.Request(
-                f"{self.api_url}/get-secret-value",
-                data=json.dumps(secret_payload).encode(),
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with urllib.request.urlopen(secret_req) as secret_resp:
-                secret_data = json.loads(secret_resp.read())
-
-            # Return the response as-is for doco-cd's JMESPath to parse
+            secret_data = self._fetch_secret(secret_name)
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
@@ -98,13 +122,11 @@ class AKeylessProxy(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
     def log_message(self, format, *args):
-        """Log to stdout instead of stderr."""
         sys.stdout.write(f"[{self.log_date_time_string()}] {format % args}\n")
         sys.stdout.flush()
 
 
 if __name__ == "__main__":
-    # Read from env vars or files
     access_id = os.getenv("AKEYLESS_ACCESS_ID")
     access_id_file = os.getenv("AKEYLESS_ACCESS_ID_FILE")
     if access_id_file and not access_id:
@@ -118,12 +140,15 @@ if __name__ == "__main__":
             access_key = f.read().strip()
 
     if not access_id or not access_key:
-        print("Error: AKEYLESS_ACCESS_ID and AKEYLESS_ACCESS_KEY must be set (or their _FILE variants)", file=sys.stderr)
+        print(
+            "Error: AKEYLESS_ACCESS_ID and AKEYLESS_ACCESS_KEY must be set (or their _FILE variants)",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     AKeylessProxy.access_id = access_id
     AKeylessProxy.access_key = access_key
 
-    server = HTTPServer(("0.0.0.0", 8080), AKeylessProxy)
-    print(f"aKeyless proxy listening on http://0.0.0.0:8080", file=sys.stderr)
+    server = ThreadingHTTPServer(("0.0.0.0", 8080), AKeylessProxy)
+    print("aKeyless proxy listening on http://0.0.0.0:8080", file=sys.stderr)
     server.serve_forever()
