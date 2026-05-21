@@ -106,7 +106,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - unifi-dns
 
 ## observability
-- exporters
+- exporters *(blackbox, nut, plex, prowlarr, qbittorrent, radarr, seerr, sonarr)*
 - fluent-bit
 - gatus *(health monitoring)*
 - grafana

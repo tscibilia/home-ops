@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/monitoring.coreos.com/servicemonitor_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nut-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nut-exporter
+      app.kubernetes.io/instance: nut-exporter
+  endpoints:
+    - interval: 30s
+      path: /ups_metrics
+      port: metrics
+      scheme: http
+      scrapeTimeout: 30s
+      params:
+        server: ["clonenas.internal"]
+        ups: ["clonenas_ups"]
+      metricRelabelings:
+        - action: replace
+          replacement: clonenas_ups
+          sourceLabels: [instance]
+          targetLabel: instance
+        - action: replace
+          replacement: clonenas.internal
+          sourceLabels: [server]
+          targetLabel: server
+        - action: labeldrop
+          regex: pod

@@ -27,7 +27,7 @@ Path: `docker/clonenas/`
 |---|---------|-------------|
 | 01 | scrutiny (collector) | `01-scrutiny/docker-compose.yaml` |
 | 02 | matchbox | `02-matchbox/docker-compose.yaml` |
-| 03 | node-exporter, fluent-bit | `03-exporters/docker-compose.yaml` |
+| 03 | node-exporter, fluent-bit, nut-server | `03-exporters/docker-compose.yaml` |
 
 clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
 
