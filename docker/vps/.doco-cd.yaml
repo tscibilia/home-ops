@@ -54,6 +54,22 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-unifi/mongo-pass
+  RESTIC_REPOSITORY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/restic-repository
+  RESTIC_PASSWORD:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/restic-password
+  B2_ACCOUNT_ID:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/b2-account-id
+  B2_ACCOUNT_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/b2-account-key
 force_recreate: false
 reconciliation:
   enabled: true
