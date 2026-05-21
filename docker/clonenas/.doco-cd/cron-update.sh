@@ -9,10 +9,9 @@ set -euo pipefail
 
 WORK_DIR="/mnt/vault/sysadmin/.config/doco-cd"
 BASE_URL="https://raw.githubusercontent.com/tscibilia/home-ops/main/docker/clonenas/.doco-cd"
-TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 LOG_FILE="$WORK_DIR/update.log"
 
-log() { echo "[$TIMESTAMP] $*" | tee -a "$LOG_FILE"; }
+log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"; }
 
 cd "$WORK_DIR" || { log "ERROR: Cannot cd to $WORK_DIR"; exit 1; }
 
