@@ -9,7 +9,6 @@
 - [ ] move github to forgejo - Unsure, postponed
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 - [ ] use yamlfmt and lefthook
-- [ ] restic backup for unifi-network-application to B2 - Started 2026-05-21 - 04-unfbkup on VPS; pending Ansible run + first backup verification
 
 ## ⚠️ Known Issues
 - [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
@@ -26,6 +25,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ unifi-network-application restic -> B2 - **2026-05-21** (see commit [00fd5b5](https://github.com/tscibilia/home-ops/commit/00fd5b5))
 - ✅ add nut ups monitoring - **2026-05-20** (see PR [#2427](https://github.com/tscibilia/home-ops/pull/2427))
 - ✅ add metrics to docker - **2026-05-20** (see PR [#2416](https://github.com/tscibilia/home-ops/pull/2416) and 7 subsequent commits)
 - ✅ Cilium L2Announcement -> BGP - **2026-05-19** (see PR [#2398](https://github.com/tscibilia/home-ops/pull/2398))
@@ -76,4 +76,4 @@
 - ❌ Qwen3 thinking enable/disable - **2026-04-03 Not Planned, changed model** [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
 - ❌ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
 - ❌ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
-- ❌ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare**
+- ❌ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare, added to VPS**
