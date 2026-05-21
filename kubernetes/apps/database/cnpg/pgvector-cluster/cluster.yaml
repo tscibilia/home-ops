@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: &name pgvector-cluster
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+spec:
+  instances: 3
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.5-0.4.2
+  primaryUpdateStrategy: unsupervised
+  primaryUpdateMethod: switchover
+  storage:
+    size: 20Gi
+    storageClass: openebs-hostpath
+
+  bootstrap:
+    recovery:
+      source: immich17-source
+      recoveryTarget:
+        backupID: "20260521T183033"
+
+  externalClusters:
+    - name: immich17-source
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: immich17
+          serverName: immich17
+
+  superuserSecret:
+    name: cnpg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    shared_preload_libraries: ["vchord.so"]
+    pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
+    parameters:
+      max_connections: "100"
+      shared_buffers: 256MB
+      autovacuum_vacuum_scale_factor: "0.1"
+      autovacuum_analyze_scale_factor: "0.05"
+      autovacuum_vacuum_cost_limit: "1000"
+      effective_io_concurrency: "200"
+      random_page_cost: "1.2"
+      work_mem: 16MB
+  resources:
+    requests:
+      cpu: 200m
+      memory: 1Gi
+    limits:
+      memory: 2Gi
+  monitoring:
+    enablePodMonitor: true
+  enablePDB: true
+  env:
+    - name: AWS_REQUEST_CHECKSUM_CALCULATION
+      value: when_required
+    - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+      value: when_required
+    - name: TZ
+      value: ${TIMEZONE:-UTC}
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: *name
+        serverName: *name

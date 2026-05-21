@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgvector-cluster
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: "pgvector-cluster.${SECRET_DOMAIN}"
+spec:
+  type: ClusterIP
+  selector:
+    cnpg.io/cluster: pgvector-cluster
+    cnpg.io/instanceRole: primary
+  ports:
+    - name: postgres
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
