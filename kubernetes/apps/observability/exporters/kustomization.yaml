@@ -10,3 +10,4 @@ resources:
   - ./qbittorrent-exporter/ks.yaml
   - ./radarr-exporter/ks.yaml
   - ./sonarr-exporter/ks.yaml
+  - ./nut-exporter/ks.yaml

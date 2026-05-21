@@ -33,6 +33,27 @@ services:
       - source: fluent_bit_enrich
         target: /fluent-bit/etc/conf/enrich.lua
 
+  nut-server:
+    image: instantlinux/nut-upsd:latest
+    container_name: nut-server
+    restart: unless-stopped
+    network_mode: host
+    devices:
+      - /dev/bus/usb
+    configs:
+      - source: nut_conf
+        target: /etc/nut/nut.conf
+        mode: 0644
+      - source: ups_conf
+        target: /etc/nut/ups.conf
+        mode: 0644
+      - source: upsd_conf
+        target: /etc/nut/upsd.conf
+        mode: 0644
+      - source: upsd_users
+        target: /etc/nut/upsd.users
+        mode: 0640
+
 volumes:
   fluent-bit-data:
 
@@ -120,3 +141,24 @@ configs:
           record["host"] = "clonenas"
           return 1, timestamp, record
       end
+
+  nut_conf:
+    content: "MODE=netserver\n"
+
+  ups_conf:
+    content: |
+      [clonenas_ups]
+        driver = usbhid-ups
+        port = auto
+        vendorid = 0764
+        productid = 0601
+        desc = "CyberPower PR1500LCDRT2U"
+
+  upsd_conf:
+    content: "LISTEN 0.0.0.0 3493\n"
+
+  upsd_users:
+    content: |
+      [monitor]
+        password = ${NUT_MONITOR_PASSWORD}
+        upsmon master
