@@ -28,7 +28,7 @@ services:
       B2_ACCOUNT_KEY: ${B2_ACCOUNT_KEY}
     labels:
       ofelia.enabled: "true"
-      ofelia.job-exec.backup.schedule: "0 3 * * *"
+      ofelia.job-exec.backup.schedule: "0 0 3 * * *"
       ofelia.job-exec.backup.command: "sh -c 'restic backup /config && restic forget --keep-daily 7 --keep-weekly 4 --prune'"
 
 networks:

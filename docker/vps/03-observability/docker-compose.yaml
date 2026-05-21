@@ -103,6 +103,11 @@ configs:
           call enrich_container_name
 
       [FILTER]
+          Name grep
+          Match docker
+          Exclude log (?i)error:\s*none
+
+      [FILTER]
           Name log_to_metrics
           Match docker
           Tag node_metrics
