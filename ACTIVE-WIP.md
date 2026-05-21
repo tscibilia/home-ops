@@ -4,8 +4,7 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - See PR [#2395]((https://github.com/tscibilia/home-ops/pull/2388))
-- [ ] add metrics to docker - Started **2026-05-19**
+- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - See PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
 - [ ] add kopia to volsync - Started **2026-05-18**
 - [ ] move github to forgejo - Unsure, postponed
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
@@ -27,6 +26,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ add metrics to docker (see PR [#2416](https://github.com/tscibilia/home-ops/pull/2398) and 7 subsequent commits) - **2026-05-20**
 - ✅ Cilium L2Announcement -> BGP (see PR [#2398](https://github.com/tscibilia/home-ops/pull/2398)) - **2026-05-19**
 - ✅ KEDA → native HPA migration (see PR [#2388](https://github.com/tscibilia/home-ops/pull/2388)) - **2026-05-17**
 - ✅ Rewire network rack with patch cables - **2026-05-16**
