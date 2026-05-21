@@ -141,15 +141,15 @@ spec:
       users:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/users
+        path: /mnt/nas/data/users/tscibilia
         globalMounts:
-          - path: /mnt/home
-      # backups:
-      #   type: nfs
-      #   server: truenas.internal
-      #   path: /mnt/nas/data/backups
-      #   globalMounts:
-      #     - path: /mnt/backups
+          - path: /mnt/tscibilia
+      system:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/system
+        globalMounts:
+          - path: /mnt/system
       docs:
         type: nfs
         server: truenas.internal
@@ -167,10 +167,10 @@ spec:
         server: truenas.internal
         path: /mnt/nas/data/work/strata
         globalMounts:
-          - path: /mnt/work/strata
+          - path: /mnt/strata
       grey:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/work/grey
         globalMounts:
-          - path: /mnt/work/grey
+          - path: /mnt/grey
