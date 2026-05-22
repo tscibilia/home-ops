@@ -1,0 +1,9 @@
+---
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/storageclass.json
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-hdd
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain

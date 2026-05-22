@@ -11,7 +11,8 @@
 | Class | Backend | Use case |
 |-------|---------|----------|
 | `ceph-ssd` | Rook Ceph (default) | All persistent app workloads |
-| `openebs-hostpath` | Local node | CNPG, log DBs, actions-runner — node-local, no replication |
+| `openebs-hostpath` | Local node NVMe (`/var/mnt/local-hostpath`) | CNPG, log DBs, actions-runner — node-local, no replication |
+| `local-hdd` | Static PV, ai3090 HDD (`/var/mnt/local-hdd`) | ai3090-only bulk storage — comfyui workspace; no dynamic provisioning |
 | `nfs-media` | External NFS (TrueNAS) | Media library (Plex, *arr stack) |
 
 ## VolSync (PVC Backup/Restore)

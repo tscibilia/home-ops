@@ -5,6 +5,8 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+generatorOptions:
+  disableNameSuffixHash: true
 configMapGenerator:
   - name: honcho-initdb
     files:

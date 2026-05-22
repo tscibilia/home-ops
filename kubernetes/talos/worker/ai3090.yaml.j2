@@ -34,3 +34,11 @@ provisioning:
   diskSelector:
     match: disk.transport == "nvme"
   maxSize: 75GiB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-hdd
+provisioning:
+  diskSelector:
+    match: disk.wwid == "naa.5000c5007998081f"
+  minSize: 900GiB

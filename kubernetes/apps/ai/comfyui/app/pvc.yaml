@@ -5,8 +5,30 @@ kind: PersistentVolumeClaim
 metadata:
   name: comfyui
 spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: openebs-hostpath
+  accessModes: [ReadWriteOnce]
+  storageClassName: local-hdd
+  volumeName: local-hdd-ai
   resources:
     requests:
-      storage: 10Gi
+      storage: 900Gi
+---
+# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/persistentvolume.json
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-hdd-ai
+spec:
+  capacity:
+    storage: 900Gi
+  accessModes: [ReadWriteOnce]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-hdd
+  local:
+    path: /var/mnt/local-hdd
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values: [ai3090]

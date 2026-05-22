@@ -7,7 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./namespace.yaml
-  # - ./comfyui/ks.yaml
+  - ./comfyui/ks.yaml
   - ./honcho/ks.yaml
   - ./llama-cpp/ks.yaml
   - ./mcp-servers/ks.yaml
