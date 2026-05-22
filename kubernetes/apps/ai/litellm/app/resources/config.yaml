@@ -6,8 +6,8 @@ model_list:
       supports_function_calling: true
       supports_vision: true
     litellm_params:
-      model: unsloth/Qwen3.6-27B
-      api_base: https://llama.${SECRET_DOMAIN_INT}/v1
+      model: openai/unsloth/Qwen3.6-27B
+      api_base: http://llama-cpp.ai.svc.cluster.local:10000/v1
       api_key: os.environ/LLAMA_API_KEY
       drop_params: true
 
@@ -16,7 +16,7 @@ general_settings:
 
 router_settings:
   routing_strategy: simple-shuffle
-  redis_url: os.environ/REDIS_HOST
+  redis_host: os.environ/REDIS_HOST
   redis_port: os.environ/REDIS_PORT
 
 litellm_settings:
