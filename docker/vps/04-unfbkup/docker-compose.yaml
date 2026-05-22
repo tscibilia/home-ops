@@ -12,7 +12,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   unifi-backup:
-    image: docker.io/restic/restic:0.17.3@sha256:80361423ec2beca5646ff0a94aed3f28ac9ad7a6742fb24f66e617359b9754ce
+    image: docker.io/restic/restic:0.18.1@sha256:b43f00a24d9b2d9affb332a29d57042563eeb61219ae1a36dfccbdc34fbaa6b3
     container_name: unifi-backup
     restart: unless-stopped
     entrypoint: /bin/sh
