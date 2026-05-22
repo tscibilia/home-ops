@@ -14,6 +14,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 ## ai
 - comfyui
 - honcho *(AI memory/context management)*
+- litellm *(LLM API proxy)*
 - llama-cpp
 - mcp-servers
 - open-webui
