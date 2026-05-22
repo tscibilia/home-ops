@@ -6,7 +6,7 @@
 - **cnpg creates a CronJob:** The `cnpg` component creates a Secret AND an init CronJob in the app's namespace. Verify the namespace before applying.
 - **Update 02_apps_inventory.md:** When adding or removing a component from an app, update the app's entry in `02_apps_inventory.md`.
 
-Components live in `kubernetes/components/`. Add them to `ks.yaml` (not app `kustomization.yaml` unless noted).
+Components live in `kubernetes/components/`. Add them to `ks.yaml` (not app `kustomization.yaml`).
 
 ## volsync — PVC backup to NFS (clonenas)
 
@@ -24,6 +24,8 @@ dependsOn:
   - name: volsync
     namespace: volsync-system
 ```
+
+NFS injection is explicit via `moverVolumes` in the component spec — no MutatingAdmissionPolicy needed.
 
 See `04_storage.md` for all VolSync vars and restore command.
 
@@ -49,7 +51,7 @@ Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a C
 
 Add to the **app's `kustomization.yaml`** (not `ks.yaml`):
 ```yaml
-# kubernetes/apps/{ns}/{app}/app/kustomization.yaml
+# kubernetes/apps/{ns}/{app}/ks.yaml
 components:
   - ../../../../components/ext-auth-internal
 ```
@@ -104,13 +106,3 @@ No `dependsOn` on observability — the HPA uses the external metrics API served
   - `nfs-bkup` → `jobName: nfs_bkup_probe` → `clonenas.internal:2049`
 
 For a custom HPA targeting a different deployment in the same app (e.g., immich's `immich-server`), don't use the component — add an explicit `horizontalpodautoscaler.yaml` in `app/` with the same `probe_success` + `job: nfs_probe` selector pattern.
-
-## common — Flux alerts + GitHub status notifications
-
-Add to any namespace's `kustomization.yaml` for Flux alerting:
-```yaml
-components:
-  - ../../../components/common
-```
-
-Includes: Alertmanager provider, GitHub commit-status provider. Rarely needs to be added manually — already wired at the namespace level.

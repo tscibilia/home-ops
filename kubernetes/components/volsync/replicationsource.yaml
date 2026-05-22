@@ -7,30 +7,28 @@ metadata:
 spec:
   sourcePVC: "${VOLSYNC_CLAIM:-${APP}}"
   trigger:
-    schedule: "${VOLSYNC_SCHEDULE:=0 */6 * * *}" # every 6 hours
-  restic:
-    accessModes: ["${VOLSYNC_SNAP_ACCESSMODES:=ReadWriteOnce}"] # Use ReadOnlyMany for CephFS
+    schedule: "${VOLSYNC_SCHEDULE:=0 */6 * * *}"
+  kopia:
+    accessModes: ["${VOLSYNC_SNAP_ACCESSMODES:=ReadWriteOnce}"]
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
-    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=5Gi}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=openebs-hostpath}"
+    compression: zstd-fastest
     copyMethod: "${VOLSYNC_COPYMETHOD:=Snapshot}"
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=1000}
       fsGroup: ${VOLSYNC_PGID:=1000}
-    # TODO: Kopia
-    # moverVolumes:
-    #   - mountPath: repository
-    #     volumeSource:
-    #       nfs:
-    #         path: /mnt/vault/backups/kubernetes/volsync
-    #         server: clonenas.internal
-    pruneIntervalDays: 14
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            server: clonenas.internal
+            path: /mnt/vault/backups/kubernetes/kopia
+    parallelism: 2
     repository: "${APP}-volsync-secret"
     retain:
       hourly: 8
       daily: 7
-      weekly: 4
-      monthly: 1
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-ssd}"
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"

@@ -148,7 +148,7 @@ volsync-list ns app:
     kubectl -n {{ ns }} logs job/{{ app }}-list-snapshots
     kubectl -n {{ ns }} delete job {{ app }}-list-snapshots
 
-[doc('Restore VolSync backup for an application')]
+[doc('Restore VolSync backup for an application (previous=0 is latest, previous=N is Nth-from-latest)')]
 [script]
 volsync-restore ns app previous='0':
     just check-tools kubectl flux envsubst jq
@@ -157,9 +157,19 @@ volsync-restore ns app previous='0':
     kubectl -n {{ ns }} get deploy,sts -l app.kubernetes.io/name={{ app }} -o name \
         | xargs -r -I{} kubectl -n {{ ns }} scale {} --replicas=0
     kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
-    eval $(kubectl -n {{ ns }} get replicationsources/{{ app }} -o json | jq -r '"export CLAIM=\(.spec.sourcePVC) STORAGE_CLASS=\(.spec.restic.storageClassName) ACCESS_MODES=\(.spec.restic.accessModes[0]) PUID=\(.spec.restic.moverSecurityContext.runAsUser) PGID=\(.spec.restic.moverSecurityContext.runAsGroup)"') && \
-        export NS="{{ ns }}" APP="{{ app }}" PREVIOUS="{{ previous }}" && \
+    eval $(kubectl -n {{ ns }} get replicationsources/{{ app }} -o json | jq -r '"export CLAIM=\(.spec.sourcePVC) STORAGE_CLASS=\(.spec.kopia.storageClassName) ACCESS_MODES=\(.spec.kopia.accessModes[0]) PUID=\(.spec.kopia.moverSecurityContext.runAsUser) PGID=\(.spec.kopia.moverSecurityContext.runAsGroup)"')
+    if [ "{{ previous }}" = "0" ]; then
+        export NS="{{ ns }}" APP="{{ app }}"
         envsubst < {{ kubernetes_dir }}/components/volsync/resources/replicationdestination.yaml.j2 | kubectl apply -f -
+    else
+        export NS="{{ ns }}" APP="{{ app }}"
+        envsubst < {{ kubernetes_dir }}/components/volsync/resources/list-json.yaml.j2 | kubectl apply -f -
+        kubectl -n {{ ns }} wait job/{{ app }}-list-snapshots --for=condition=complete --timeout=5m
+        RESTORE_AS_OF=$(kubectl -n {{ ns }} logs job/{{ app }}-list-snapshots | jq -r --argjson p {{ previous }} 'sort_by(.endTime) | reverse | .[$p].endTime')
+        kubectl -n {{ ns }} delete job {{ app }}-list-snapshots
+        export NS="{{ ns }}" APP="{{ app }}" RESTORE_AS_OF="$RESTORE_AS_OF"
+        envsubst < {{ kubernetes_dir }}/components/volsync/resources/replicationdestination-previous.yaml.j2 | kubectl apply -f -
+    fi
     echo "Waiting for restore..."
     kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=create --timeout=120s
     kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=condition=complete --timeout=120m

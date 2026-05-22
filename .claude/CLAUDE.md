@@ -46,13 +46,12 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 - `sync <hr|ks|es|gitrepo|ocirepo> [<ns> <app>]` — force sync resource (or all)
 - `reconcile-ks/reconcile-hr [<ns> <app>]` — reconcile from source (or all)
 - `restart-ks/restart-hr` — suspend/resume failed resources
-- `apply-ks <ns> <ks>` — validate locally with flux-local
 - `node-shell <node>`, `volsync-snapshot [<ns> <app>]`
 
 **Workflow:**
 1. New app: use `add-app` skill
 2. Secrets: aKeyless → `externalsecret.yaml`
-3. Test/Sync: `apply-ks` → `reconcile-ks`
+3. Provide human in the loop with commit message
 4. Docs: use `update-docs` skill
 
 **`just talos`:** `apply-node <node>`, `upgrade-node <node>/upgrade-k8s <version>`

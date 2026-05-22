@@ -9,8 +9,7 @@ Use the `/add-app` AI skill — it interactively scaffolds all manifests from sc
 1. Run `/add-app` in Claude Code — it prompts for app name, namespace, helm chart type, ingress, auth, and optional features (VolSync, CNPG, zeroscaler, Gatus), then generates all files
 2. Add secrets to aKeyless at the path referenced in `externalsecret.yaml`
 3. Fill in `{IMAGE_REPO}` and `{IMAGE_TAG}` in `helmrelease.yaml` (add Renovate annotation)
-4. Validate locally: `just kube apply-ks <ns> <app>`
-5. Push and reconcile: `just kube reconcile-ks <ns> <app>`
+4. Validate
 
 Reusable components live in `kubernetes/components/`:
 

@@ -13,6 +13,7 @@ spec:
     copyMethod: Direct
     storageClassName: ${STORAGE_CLASS}
     accessModes: [${ACCESS_MODES}]
+    restoreAsOf: "${RESTORE_AS_OF}"
     moverSecurityContext:
       runAsUser: ${PUID}
       runAsGroup: ${PGID}

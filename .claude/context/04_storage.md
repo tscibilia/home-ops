@@ -17,7 +17,7 @@
 
 ## VolSync (PVC Backup/Restore)
 
-VolSync backs up PVCs via Restic to an NFS share on `clonenas.internal` (`/mnt/vault/backups/kubernetes/volsync`), injected by a MutatingAdmissionPolicy. rclone syncs the NFS repo to B2 separately. Add component `../../../../components/volsync` in `ks.yaml`.
+VolSync backs up PVCs via Kopia to an NFS share on `clonenas.internal` (`/mnt/vault/backups/kubernetes/kopia`). NFS is injected via `moverVolumes` in the component spec. rclone syncs the NFS repo to B2 separately. Add component `../../../../components/volsync` in `ks.yaml`.
 
 ### Required ks.yaml postBuild vars
 ```yaml
@@ -33,7 +33,7 @@ VOLSYNC_CAPACITY: 5Gi  # PVC size
 | `VOLSYNC_STORAGECLASS` | `ceph-ssd` | PVC storage class |
 | `VOLSYNC_SNAPSHOTCLASS` | `csi-ceph-blockpool` | Volume snapshot class |
 | `VOLSYNC_ACCESSMODES` | `ReadWriteOnce` | |
-| `VOLSYNC_CACHE_CAPACITY` | `1Gi` | Restic cache PVC size |
+| `VOLSYNC_CACHE_CAPACITY` | `5Gi` | Kopia cache PVC size |
 | `VOLSYNC_CACHE_SNAPSHOTCLASS` | `openebs-hostpath` | Cache storage class |
 | `VOLSYNC_PUID` | `1000` | mover runAsUser |
 | `VOLSYNC_PGID` | `1000` | mover runAsGroup/fsGroup |
@@ -41,9 +41,10 @@ VOLSYNC_CAPACITY: 5Gi  # PVC size
 
 ### Restore
 ```bash
-just kube volsync-restore <namespace> <app> <previous>
+just kube volsync-restore <namespace> <app>           # latest snapshot
+just kube volsync-restore <namespace> <app> <N>       # Nth-from-latest (1=one prior, 2=two prior, ...)
 ```
-`<previous>` is a Restic snapshot ID or `r:latest`.
+`<N>` is a sequence number. The recipe lists snapshots in JSON, picks the Nth newest by `endTime`, and uses `restoreAsOf`. Run `just kube volsync-list <namespace> <app>` to preview available snapshots.
 
 ## CNPG (PostgreSQL)
 

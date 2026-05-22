@@ -9,10 +9,10 @@ metadata:
 spec:
   trigger:
     manual: restore-once
-  restic:
+  kopia:
     accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
-    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=1Gi}"
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=5Gi}"
     cacheStorageClassName: "${VOLSYNC_CACHE_SNAPSHOTCLASS:=openebs-hostpath}"
     capacity: "${VOLSYNC_CAPACITY:=5Gi}"
     cleanupCachePVC: true
@@ -23,13 +23,14 @@ spec:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=1000}
       fsGroup: ${VOLSYNC_PGID:=1000}
-    # TODO: Kopia
-    # moverVolumes:
-    #   - mountPath: repository
-    #     volumeSource:
-    #       nfs:
-    #         path: /mnt/vault/backups/kubernetes/volsync
-    #         server: clonenas.internal
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            server: clonenas.internal
+            path: /mnt/vault/backups/kubernetes/kopia
     repository: "${APP}-volsync-secret"
+    sourceIdentity:
+      sourceName: "${APP}"
     storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-ssd}"
     volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"

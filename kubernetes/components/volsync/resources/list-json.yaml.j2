@@ -17,7 +17,7 @@ spec:
       containers:
         - name: list
           image: ghcr.io/home-operations/kopia:0.23.0@sha256:76865b421548b1d7bb26a8268f0f0bc828be4eec3f8d8b9c8ece991c99878f94
-          args: ["snapshot", "list", "--all"]
+          args: ["snapshot", "list", "--all", "--json"]
           envFrom:
             - secretRef:
                 name: ${APP}-volsync-secret

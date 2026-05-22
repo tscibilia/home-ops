@@ -21,6 +21,8 @@ spec:
       namespace: network
     - <<: *policy
       namespace: observability
+    - <<: *policy
+      namespace: volsync-system
   to:
     - group: ''
       kind: Service

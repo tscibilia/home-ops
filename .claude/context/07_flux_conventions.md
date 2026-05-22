@@ -4,7 +4,7 @@
 
 - **dependsOn uses Kustomization names:** `dependsOn` references the Kustomization resource name (defined in `ks.yaml`), NOT the HelmRelease name — these are different objects.
 - **kubectl edit is ephemeral:** Any `kubectl edit` change is overwritten by the next Flux reconciliation. All changes must go through git.
-- **apply-ks touches the live cluster:** `just kube apply-ks` runs `flux-local` validation against the live cluster API — it is not a dry run; do not run it speculatively.
+- **apply-ks touches the live cluster:** `just kube apply-ks` runs server-side apply against the live cluster API without pushing to git — it is not a dry run; do not run it speculatively.
 - **No renovate inline comments:** Never add `# renovate:` inline comments to YAML. This repo does not use them.
 
 ## ks.yaml Anatomy

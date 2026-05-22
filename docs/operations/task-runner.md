@@ -15,7 +15,7 @@ just <module> <command> [args]
 | `reconcile-hr`       | `[<ns> <app>]`                | Force HelmRelease(s) to reconcile from source |
 | `restart-ks`         | —                             | Restart all failed Kustomizations (suspend/resume) |
 | `restart-hr`         | —                             | Restart all failed HelmReleases (suspend/resume) |
-| `apply-ks`           | `<ns> <ks>`                   | Validate locally with flux-local before push |
+| `apply-ks`           | `<ns> <ks>`                   | Server-side apply, not for testing purposes  |
 | `delete-ks`          | `<ns> <ks>`                   | Delete a local Flux Kustomization            |
 | `browse-pvc`         | `<ns> <claim>`                | Mount PVC to a debug pod                     |
 | `node-shell`         | `<node>`                      | Interactive shell on a node                  |
