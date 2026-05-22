@@ -21,6 +21,12 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-initdb-secret"
+            securityContext: &initSec
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              readOnlyRootFilesystem: false
+              allowPrivilegeEscalation: true
           02-migrate:
             image:
               repository: ghcr.io/plastic-labs/honcho
@@ -32,6 +38,7 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
+            securityContext: *initSec
         containers:
           app:
             image: &honcho-image
@@ -70,12 +77,10 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 512Mi
-        pod: &honcho-pod
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            runAsNonRoot: true
-
+            securityContext: &podSec
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: [ALL] }
       deriver:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -89,22 +94,18 @@ spec:
             env: *honcho-env
             envFrom: *honcho-envfrom
             resources: *honcho-resources
-        pod: *honcho-pod
-
+            securityContext: *podSec
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
     service:
       api:
         controller: api
         ports:
           http:
             port: *port
-
-    route:
-      app:
-        hostnames: ["honcho.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-        rules:
-          - backendRefs:
-              - identifier: api
-                port: *port
