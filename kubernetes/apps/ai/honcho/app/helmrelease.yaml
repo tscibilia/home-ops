@@ -109,3 +109,10 @@ spec:
         ports:
           http:
             port: *port
+    persistence:
+      initdb:
+        type: configMap
+        name: honcho-initdb
+        globalMounts:
+          - path: /initdb
+            readOnly: true

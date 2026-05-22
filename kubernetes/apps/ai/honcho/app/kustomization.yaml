@@ -5,3 +5,7 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+configMapGenerator:
+  - name: honcho-initdb
+    files:
+      - ./resources/honcho.sql
