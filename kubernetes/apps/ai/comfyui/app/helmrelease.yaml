@@ -31,6 +31,8 @@ spec:
               SERVICEPORTAL_URL: "{{ .Release.Name }}.${SECRET_DOMAIN}"
               WEB_ENABLE_AUTH: "false"
               WORKSPACE: "/workspace"
+              PYTHONPATH: "/workspace/.python-deps"
+              PIP_TARGET: "/workspace/.python-deps"
             resources:
               requests:
                 cpu: 1

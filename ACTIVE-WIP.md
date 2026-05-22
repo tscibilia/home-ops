@@ -6,7 +6,6 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - See PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
 - [ ] add kopia to volsync - Started **2026-05-18**
-- [ ] move github to forgejo - Unsure, postponed
 - [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
 - [ ] use yamlfmt and lefthook
 
@@ -21,10 +20,11 @@
 
 ## ⛔ Blocked
 `- Task name - blocking factor (waiting for X)`
-- [ ] ⛔ **ComfyUI:** need larger local volume to store nodes and modules - **Pending drive relocation**
+- ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ ComfyUI got 1TB HDD to store nodes and modules - **2026-05-21** (See commit [719f15e](https://github.com/tscibilia/home-ops/commit/719f15e))
 - ✅ unifi-network-application restic -> B2 - **2026-05-21** (see commit [00fd5b5](https://github.com/tscibilia/home-ops/commit/00fd5b5))
 - ✅ add nut ups monitoring - **2026-05-20** (see PR [#2427](https://github.com/tscibilia/home-ops/pull/2427))
 - ✅ add metrics to docker - **2026-05-20** (see PR [#2416](https://github.com/tscibilia/home-ops/pull/2416) and 7 subsequent commits)
