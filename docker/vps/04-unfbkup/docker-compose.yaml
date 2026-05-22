@@ -2,7 +2,7 @@ name: unfbkup
 
 services:
   ofelia:
-    image: docker.io/mcuadros/ofelia:v0.3.9@sha256:aa1b935ed0d7d01805bb9ca95e7b44499208ad8d95016d6afa8fdf967ea65c74
+    image: docker.io/mcuadros/ofelia:v3.0.8@sha256:2e0c1a420bbc09868fcfaf6c3596e4b275ced912cc45f8cbe1b9c09abaea8a7f
     container_name: ofelia
     restart: unless-stopped
     command: daemon --docker
