@@ -5,7 +5,6 @@
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 - [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
-- [ ] add kopia to volsync - Started **2026-05-18**
 - [ ] use yamlfmt and lefthook - Not started
 
 ## ⚠️ Known Issues
@@ -23,6 +22,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ add kopia to volsync - **2026-05-22** (see PR [4658473](https://github.com/tscibilia/home-ops/commit/4658473) and 4 subsequent commits)
 - ✅ LiteLLM installed to manage llm api keys - **2026-05-22** (see PR [#2451](https://github.com/tscibilia/home-ops/pull/2451) and 2 subsequent commits)
 - ✅ ComfyUI got 1TB HDD to store nodes and modules - **2026-05-21** (See commit [719f15e](https://github.com/tscibilia/home-ops/commit/719f15e))
 - ✅ unifi-network-application restic -> B2 - **2026-05-21** (see commit [00fd5b5](https://github.com/tscibilia/home-ops/commit/00fd5b5))
