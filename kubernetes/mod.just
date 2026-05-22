@@ -119,7 +119,7 @@ volsync state:
 volsync-snapshot ns='' app='':
     just check-tools kubectl
     _snapshot() {
-        kubectl -n "$1" patch replicationsources "$2" --type merge -p '{"spec":{"trigger":{"manual":"$(date +%s)"}}}'
+        kubectl -n "$1" patch replicationsources "$2" --type merge -p "{\"spec\":{\"trigger\":{\"manual\":\"$(date +%s)\"}}}"
     }
     if [ -n "{{ ns }}" ] && [ -n "{{ app }}" ]; then
         _snapshot "{{ ns }}" "{{ app }}"
