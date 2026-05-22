@@ -2,7 +2,6 @@ name: unfbkup
 
 services:
   ofelia:
-    # renovate: datasource=docker depName=docker.io/mcuadros/ofelia
     image: docker.io/mcuadros/ofelia:v0.3.9@sha256:aa1b935ed0d7d01805bb9ca95e7b44499208ad8d95016d6afa8fdf967ea65c74
     container_name: ofelia
     restart: unless-stopped
@@ -13,7 +12,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   unifi-backup:
-    # renovate: datasource=docker depName=docker.io/restic/restic
     image: docker.io/restic/restic:0.17.3@sha256:80361423ec2beca5646ff0a94aed3f28ac9ad7a6742fb24f66e617359b9754ce
     container_name: unifi-backup
     restart: unless-stopped
