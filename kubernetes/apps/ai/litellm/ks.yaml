@@ -5,19 +5,35 @@ kind: Kustomization
 metadata:
   name: &app litellm
 spec:
+  components:
+    - ../../../../components/cnpg
   dependsOn:
     - name: dragonfly-cluster
       namespace: database
     - name: secret-stores
       namespace: external-secrets
+    - name: cnpg-cluster
+      namespace: database
   interval: 1h
   path: ./kubernetes/apps/ai/litellm/app
   postBuild:
     substitute:
       APP: *app
+      CNPG_NAME: &postgresAppName pgsql-cluster
+      PG_VER: "17"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
+  healthChecks:
+    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
+      kind: &postgresKind Cluster
+      name: *postgresAppName
+      namespace: database
+  healthCheckExprs:
+    - apiVersion: *postgresVersion
+      kind: *postgresKind
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   prune: true
   sourceRef:
     kind: GitRepository

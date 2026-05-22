@@ -13,6 +13,7 @@ model_list:
 
 general_settings:
   health_check_endpoint: /v1/health
+  database_url: os.environ/DATABASE_URL
 
 router_settings:
   routing_strategy: simple-shuffle
@@ -35,5 +36,6 @@ litellm_settings:
 
 environment:
   - LLAMA_API_KEY
+  - DATABASE_URL
   - REDIS_HOST
   - REDIS_PORT
