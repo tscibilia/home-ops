@@ -17,15 +17,36 @@ spec:
       containers:
         - name: list
           image: ghcr.io/home-operations/kopia:0.23.0@sha256:76865b421548b1d7bb26a8268f0f0bc828be4eec3f8d8b9c8ece991c99878f94
-          args: ["snapshot", "list", "--all"]
-          envFrom:
-            - secretRef:
-                name: ${APP}-volsync-secret
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              kopia repository connect filesystem --path=/mnt/repository
+              kopia snapshot list --all
+          env:
+            - name: KOPIA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ${APP}-volsync-secret
+                  key: KOPIA_PASSWORD
+            - name: KOPIA_CONFIG_PATH
+              value: /tmp/repository.config
+            - name: KOPIA_LOG_DIR
+              value: /tmp/logs
+            - name: KOPIA_CACHE_DIRECTORY
+              value: /tmp/cache
+            - name: USER
+              value: kopia
+            - name: HOME
+              value: /tmp
           volumeMounts:
             - name: repository
               mountPath: /mnt/repository
+            - name: tmpfs
+              mountPath: /tmp
       volumes:
         - name: repository
           nfs:
             server: clonenas.internal
             path: /mnt/vault/backups/kubernetes/kopia
+        - name: tmpfs
+          emptyDir: {}
