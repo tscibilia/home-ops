@@ -28,7 +28,7 @@ Include via `components: [../../../../components/<name>]` in `ks.yaml`.
 
 | Namespace                                  | Apps | Purpose                                    |
 | ------------------------------------------ | ---- | ------------------------------------------ |
-| [ai](ai.md)                                | 5    | LLMs, image gen, MCP tools                 |
+| [ai](ai.md)                                | 6    | LLMs, image gen, MCP tools                 |
 | [default](default.md)                      | 17   | SSO, dashboard, photos, recipes, passwords |
 | [media](media.md)                          | 19   | Plex, *arr stack, downloads                |
 | [database](database.md)                    | 3    | CNPG clusters, Dragonfly, pgAdmin          |
