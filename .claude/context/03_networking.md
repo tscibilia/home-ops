@@ -16,14 +16,6 @@
 
 Domain variable: `${SECRET_DOMAIN}` (from `cluster-secrets` Secret).
 
-## Known External Routes
-
-| Hostname | Path | Backend | File |
-|----------|------|---------|------|
-| `prometheus-rw.${SECRET_DOMAIN}` | `/api/v1/write` | `kube-prometheus-stack-prometheus:9090` | `observability/kube-prometheus-stack/app/httproute.yaml` |
-
-Unauthenticated (web-config secret exists but not mounted). Gatus disabled — POST-only path returns 404 on GET.
-
 ## HTTPRoute Pattern
 
 Routes are **inline in the HelmRelease** `values.route` block — no separate HTTPRoute manifest. Exception: routes needing path-level auth (e.g., `prometheus-remote-write`) use a standalone `httproute-*.yaml` file.
