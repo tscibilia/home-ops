@@ -4,10 +4,9 @@
 
 ## In Progress
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
-- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - See PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
+- [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
 - [ ] add kopia to volsync - Started **2026-05-18**
-- [ ] use [litellm](https://github.com/BerriAI/litellm) to manage llm api keys
-- [ ] use yamlfmt and lefthook
+- [ ] use yamlfmt and lefthook - Not started
 
 ## ⚠️ Known Issues
 - [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
@@ -24,6 +23,7 @@
 
 ## ✅ Resolved
 `Descending order, newest on top`
+- ✅ LiteLLM installed to manage llm api keys - **2026-05-22** (see PR [#2451](https://github.com/tscibilia/home-ops/pull/2451) and 2 subsequent commits)
 - ✅ ComfyUI got 1TB HDD to store nodes and modules - **2026-05-21** (See commit [719f15e](https://github.com/tscibilia/home-ops/commit/719f15e))
 - ✅ unifi-network-application restic -> B2 - **2026-05-21** (see commit [00fd5b5](https://github.com/tscibilia/home-ops/commit/00fd5b5))
 - ✅ add nut ups monitoring - **2026-05-20** (see PR [#2427](https://github.com/tscibilia/home-ops/pull/2427))
