@@ -135,4 +135,4 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## volsync-system
 - kopia *(VolSync backup repository web UI)*
-- volsync *(PVC backup/restore)*
+- volsync *(PVC backup/restore — volsync-perfectra1n)*
