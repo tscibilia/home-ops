@@ -57,8 +57,6 @@ services:
       - /opt/crowdsec/data:/var/lib/crowdsec/data
       - /opt/pangolin/config/traefik/logs:/var/log/traefik:ro
     configs:
-      - source: crowdsec_config
-        target: /etc/crowdsec/config.yaml
       - source: crowdsec_acquis
         target: /etc/crowdsec/acquis.yaml
       - source: crowdsec_allowlist
@@ -171,8 +169,6 @@ configs:
         disable_user_create_org: false
         allow_raw_resources: true
         enable_integration_api: true
-  crowdsec_config:
-    file: ./config/crowdsec/config.yaml
   crowdsec_acquis:
     file: ./config/crowdsec/acquis.yaml
   crowdsec_allowlist:
