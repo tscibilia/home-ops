@@ -18,6 +18,10 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-pangolin/crowdsec-traefik-api-key
+  HOME_IP_CIDR:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-pangolin/home-ip-cidr
   MAXMIND_ACCOUNT_ID:
     store_ref: akeyless
     remote_ref:

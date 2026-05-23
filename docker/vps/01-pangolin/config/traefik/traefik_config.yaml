@@ -25,10 +25,11 @@ log:
   level: INFO
 
 accessLog:
+  bufferingSize: 100
   fields:
     defaultMode: keep
     headers:
-      defaultMode: keep
+      defaultMode: drop
   filePath: /var/log/traefik/access.log
   format: json
 

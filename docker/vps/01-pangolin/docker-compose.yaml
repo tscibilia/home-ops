@@ -57,6 +57,8 @@ services:
       - /opt/crowdsec/data:/var/lib/crowdsec/data
       - /opt/pangolin/config/traefik/logs:/var/log/traefik:ro
     configs:
+      - source: crowdsec_config
+        target: /etc/crowdsec/config.yaml
       - source: crowdsec_acquis
         target: /etc/crowdsec/acquis.yaml
       - source: crowdsec_allowlist
@@ -169,10 +171,18 @@ configs:
         disable_user_create_org: false
         allow_raw_resources: true
         enable_integration_api: true
+  crowdsec_config:
+    file: ./config/crowdsec/config.yaml
   crowdsec_acquis:
     file: ./config/crowdsec/acquis.yaml
   crowdsec_allowlist:
-    file: ./config/crowdsec/my_allowlist.yaml
+    content: |
+      name: custom/home-allowlist
+      description: "Allow home ISP"
+      whitelist:
+        reason: "Home ISP"
+        expression:
+          - IpInRange(evt.Meta.SourceIP, "${HOME_IP_CIDR}")
   crowdsec_ban_ai_crawlers:
     file: ./config/crowdsec/ban_ai_crawlers.yaml
   crowdsec_ban_asn:

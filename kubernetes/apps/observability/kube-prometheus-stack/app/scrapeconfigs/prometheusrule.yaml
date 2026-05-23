@@ -21,7 +21,7 @@ spec:
             description: "node-exporter on {{ $labels.instance }} is unreachable. The host may be offline."
         - alert: RemoteContainerLogErrors
           expr: rate(log_metric_counter_container_log_errors_total[5m]) > 0
-          for: 1m
+          for: 5m
           labels:
             severity: warning
           annotations:
