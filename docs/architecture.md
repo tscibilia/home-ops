@@ -2,16 +2,18 @@
 
 ## Hardware
 
-Three Lenovo ThinkCentre M70q Tiny (Gen 3) running Talos Linux.
+Three Lenovo ThinkCentre M70q Tiny (Gen 3) control-plane nodes + one dedicated GPU worker running Talos Linux.
 
-| Node  | Mgmt IP        | Ceph IP        |
-| ----- | -------------- | -------------- |
-| k8s-1 | 192.168.5.211  | 192.168.43.11  |
-| k8s-2 | 192.168.5.212  | 192.168.43.12  |
-| k8s-3 | 192.168.5.213  | 192.168.43.13  |
+| Node   | Role          | Mgmt hostname   | Ceph hostname   |
+| ------ | ------------- | --------------- | --------------- |
+| k8s-1  | control-plane | k8s-1.internal  | ceph-1.internal |
+| k8s-2  | control-plane | k8s-2.internal  | ceph-2.internal |
+| k8s-3  | control-plane | k8s-3.internal  | ceph-3.internal |
+| ai3090 | worker        | ai3090.internal | —               |
 
 - **API endpoint**: `192.168.5.250:6443` (BGP-announced LoadBalancer)
-- **GPU**: Intel i915 iGPU on all nodes — Plex and Jellyfin use it for hardware transcoding
+- **GPU (k8s-1/2/3)**: Intel i915 iGPU — Plex and Jellyfin hardware transcoding
+- **GPU (ai3090)**: NVIDIA GPU (tainted `nvidia.com/gpu:NoSchedule`) — llama-cpp, comfyui
 - **OS configs**: Minijinja templates in `kubernetes/talos/`, never edit rendered output directly
 
 ## Networking
@@ -27,7 +29,7 @@ Three Lenovo ThinkCentre M70q Tiny (Gen 3) running Talos Linux.
 
 UniFi controller manages the `.internal` domain for non-cluster hosts:
 
-- truenas.internal, unraid.internal, ai3090.internal — static entries in UniFi
+- truenas.internal, clonenas.internal — static entries in UniFi
 - The `unifi-dns` pod syncs cluster HTTPRoutes into UniFi so LAN clients resolve cluster services without touching Cloudflare
 
 ### Cluster
