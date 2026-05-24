@@ -3,10 +3,8 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app volsync
+  name: volsync
 spec:
-  components:
-    - ../../../../components/zeroscaler
   dependsOn:
     - name: openebs
       namespace: openebs-system
@@ -14,13 +12,6 @@ spec:
       namespace: kube-system
   interval: 1h
   path: ./kubernetes/apps/volsync-system/volsync/app
-  postBuild:
-    substitute:
-      APP: *app
-      ZEROSCALER_JOB_NAME: nfs_bkup_probe
-    substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
   prune: true
   sourceRef:
     kind: GitRepository
@@ -28,3 +19,21 @@ spec:
     namespace: flux-system
   targetNamespace: volsync-system
   wait: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: volsync-maintenance
+spec:
+  dependsOn:
+    - name: volsync
+  interval: 1h
+  path: ./kubernetes/apps/volsync-system/volsync/maintenance
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: volsync-system
+  wait: false
