@@ -116,9 +116,9 @@ This Git repository contains the following directories.
 
 ```sh
 📁 docker
-├── 📁 unraid                    # docker deployments on unraid
+├── 📁 clonenas                  # docker deployments on clonenas
 ├── 📁 truenas                   # docker deployments on truenas
-└── 📁 ai3090                    # docker deployments on RTX3090
+└── 📁 vps                       # docker deployments on remote vps
 📁 kubernetes
 ├── 📁 apps                      # applications organized by namespace
 ├── 📁 bootstrap                 # exactly what it sounds like
