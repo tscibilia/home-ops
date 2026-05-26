@@ -36,7 +36,7 @@ spec:
           coturn:
             image:
               repository: coturn/coturn
-              tag: 4.11.0@sha256:867607152c6ed9504a0b59a2546a9bd2872dcf74313b3bc6cf9b69cc81be6fb3
+              tag: 4.12.0@sha256:161cedd63c5414c2136f306098e02e9aede74606cedad8b9b8581aae1da4e732
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
