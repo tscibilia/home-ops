@@ -11,6 +11,10 @@ spec:
       recordType: A
       targets:
         - ${VPS_IP}
+    - dnsName: external.${CEAPP_DOMAIN}
+      recordType: A
+      targets:
+        - ${VPS_IP}
     - dnsName: ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
       targets:

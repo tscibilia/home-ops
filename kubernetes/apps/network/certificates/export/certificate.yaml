@@ -11,3 +11,16 @@ spec:
     kind: ClusterIssuer
   commonName: "${SECRET_DOMAIN}"
   dnsNames: ["${SECRET_DOMAIN}", "*.${SECRET_DOMAIN}"]
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cert-manager.io/certificate_v1.json
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "${CEAPP_DOMAIN/./-}-production"
+spec:
+  secretName: "${CEAPP_DOMAIN/./-}-production-tls"
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: "${CEAPP_DOMAIN}"
+  dnsNames: ["${CEAPP_DOMAIN}", "*.${CEAPP_DOMAIN}"]

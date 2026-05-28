@@ -16,7 +16,7 @@ spec:
               name: cert-manager-secret
               key: CLOUDFLARE_DNS_TOKEN
         selector:
-          dnsZones: ["${SECRET_DOMAIN}"]
+          dnsZones: ["${SECRET_DOMAIN}", "${CEAPP_DOMAIN}"]
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cert-manager.io/clusterissuer_v1.json
 apiVersion: cert-manager.io/v1
