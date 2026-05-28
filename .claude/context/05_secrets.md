@@ -16,6 +16,7 @@ Available to all apps via `substituteFrom`. Key vars:
 | Var | Source aKeyless path |
 |-----|---------------------|
 | `SECRET_DOMAIN` | `/kubernetes/cluster-secrets` |
+| `CEAPP_DOMAIN` | `/kubernetes/cluster-secrets` |
 | `TIMEZONE` | `/kubernetes/cluster-secrets` |
 | `TAILSCALE_MAGICDNS` | `/network/tailscale/operator` |
 | `AWS_VOLSYNC_BUCKET` | `/cloud-providers/b2-creds` |
