@@ -34,6 +34,10 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/secret-domain
+  CEAPP_DOMAIN:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/secret-ceapp-domain
   PROMETHEUS_USERNAME:
     store_ref: akeyless
     remote_ref:

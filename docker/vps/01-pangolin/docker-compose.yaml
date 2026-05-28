@@ -147,6 +147,9 @@ configs:
         domain1:
           base_domain: "${DOMAIN}"
           cert_resolver: "letsencrypt"
+        domain2:
+          base_domain: "${CEAPP_DOMAIN}"
+          cert_resolver: "letsencrypt"
       server:
         cors:
           origins:
