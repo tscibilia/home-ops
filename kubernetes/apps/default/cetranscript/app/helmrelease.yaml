@@ -29,7 +29,9 @@ spec:
               repository: ghcr.io/tscibilia/ce-transcript-api
               tag: "0.1.1"
             env:
-              PORT: &port 3001
+              BETTER_AUTH_URL: "https://${CEAPP_DOMAIN}"
+              WEB_URL: "https://${CEAPP_DOMAIN}"
+              PORT: &apiPort 3001
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-api-secret"
@@ -46,7 +48,7 @@ spec:
                 spec: &probeSpec
                   httpGet:
                     path: ${GATUS_PATH}
-                    port: *port
+                    port: *apiPort
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -83,12 +85,12 @@ spec:
         controller: api
         ports:
           http:
-            port: *port
+            port: *apiPort
       web:
         controller: web
         ports:
           http:
-            port: 80
+            port: &webPort 80
     route:
       web:
         annotations:
@@ -97,6 +99,10 @@ spec:
         parentRefs:
           - name: envoy-external
             namespace: network
+        rules:
+          - backendRefs:
+              - identifier: web
+                port: *webPort
       api:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.${CEAPP_DOMAIN}
@@ -104,3 +110,7 @@ spec:
         parentRefs:
           - name: envoy-external
             namespace: network
+        rules:
+          - backendRefs:
+              - identifier: api
+                port: *apiPort
