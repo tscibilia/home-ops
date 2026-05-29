@@ -27,9 +27,9 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/ce-transcript-api
-              tag: "0.1.1"
+              tag: &appVer "0.1.2"
             env:
-              BETTER_AUTH_URL: "https://${CEAPP_DOMAIN}"
+              BETTER_AUTH_URL: "https://api.${CEAPP_DOMAIN}"
               WEB_URL: "https://${CEAPP_DOMAIN}"
               PORT: &apiPort 3001
             envFrom:
@@ -68,7 +68,9 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/ce-transcript-web
-              tag: "0.1.1"
+              tag: *appVer
+            env:
+              VITE_API_BASE_URL: "https://api.${CEAPP_DOMAIN}"
             resources:
               requests:
                 cpu: 10m
@@ -106,6 +108,8 @@ spec:
       api:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.${CEAPP_DOMAIN}
+          gatus.home-operations.com/endpoint: |-
+            url: https://api.${CEAPP_DOMAIN}/${GATUS_PATH}
         hostnames: ["api.${CEAPP_DOMAIN}"]
         parentRefs:
           - name: envoy-external
