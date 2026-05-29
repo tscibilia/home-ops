@@ -32,6 +32,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 ## default
 - actual *(budgeting)*
 - authentik *(SSO/IdP)*
+- ceapp *(http echo — temporary CEAPP_DOMAIN apex test)*
 - filebrowser
 - homebox *(inventory)*
 - homepage *(dashboard)*
