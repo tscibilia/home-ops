@@ -1,0 +1,106 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app cetranscript
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      api:
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.4.0@sha256:5086f94abc783f1147d7c2a32c01db00ab594820026e4f6a82ac2af3dbde7fc7
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tscibilia/ce-transcript-api
+              tag: "0.1.1"
+            env:
+              PORT: &port 3001
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-api-secret"
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 128Mi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+      web:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tscibilia/ce-transcript-web
+              tag: "0.1.1"
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+    defaultPodOptions:
+      imagePullSecrets:
+        - name: cetranscript-ghcr-pull
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      api:
+        controller: api
+        ports:
+          http:
+            port: *port
+      web:
+        controller: web
+        ports:
+          http:
+            port: 80
+    route:
+      web:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external.${CEAPP_DOMAIN}
+        hostnames: ["${CEAPP_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+      api:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external.${CEAPP_DOMAIN}
+        hostnames: ["api.${CEAPP_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network

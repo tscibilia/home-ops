@@ -52,6 +52,7 @@ spec:
 | `/database/cnpg-users` | CNPG user passwords (all apps share one secret, fields per-app) |
 | `/default/authentik` | `AUTHENTIK_SSO_SUBDOMAIN` — used in ExternalSecret templates to build SSO endpoint URLs (e.g. `https://{{ .AUTHENTIK_SSO_SUBDOMAIN }}.${SECRET_DOMAIN}/application/o/...`). Add `dataFrom: /default/authentik` to any app ExternalSecret that needs SSO endpoints. |
 | `/cloud-providers/b2-creds` | Backblaze B2 (VolSync bucket) |
+| `/kubernetes/github` | GHCR pull credentials: `GHCR_USER`, `GHCR_TOKEN` — used by `ceapp-ghcr-pull` ExternalSecret (type: `kubernetes.io/dockerconfigjson`) |
 | `/network/tailscale/operator` | Tailscale operator credentials |
 | `/observability/gatus` | Alertmanager: healthchecks.io URL, Pushover tokens |
 | `/observability/remote` | Prometheus remote_write basic auth: `password_sha1_b64` (SHA1 base64 for Envoy SecurityPolicy — compute: `echo -n "PASS" \| openssl dgst -sha1 -binary \| base64`), `REMOTE_WRITE_URL` |
