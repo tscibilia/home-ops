@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/ce-transcript-api
-              tag: &appVer "0.1.1"
+              tag: &appVer "0.1.4"
             env:
               BETTER_AUTH_URL: "https://${CEAPP_DOMAIN}"
               WEB_URL: "https://${CEAPP_DOMAIN}"
@@ -71,6 +71,7 @@ spec:
               tag: *appVer
             env:
               VITE_API_BASE_URL: "https://${CEAPP_DOMAIN}"
+              NGINX_API_UPSTREAM: "{{ .Release.Name }}-api:3001"
             resources:
               requests:
                 cpu: 10m
