@@ -98,7 +98,7 @@ spec:
       web:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.${CEAPP_DOMAIN}
-        hostnames: ["${CEAPP_DOMAIN}"]
+        hostnames: ["${CEAPP_DOMAIN:=ce.app}"]
         parentRefs:
           - name: envoy-external
             namespace: network
@@ -110,7 +110,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.${CEAPP_DOMAIN}
           gatus.home-operations.com/endpoint: |-
-            url: https://api.${CEAPP_DOMAIN}/${GATUS_PATH}
+            url: https://api.${CEAPP_DOMAIN}${GATUS_PATH}
         hostnames: ["api.${CEAPP_DOMAIN}"]
         parentRefs:
           - name: envoy-external
