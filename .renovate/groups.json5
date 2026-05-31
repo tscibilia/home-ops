@@ -32,6 +32,14 @@
       minimumGroupSize: 2,
     },
     {
+      description: "CE-Transcript Group",
+      groupName: "ce-transcript",
+      matchDatasources: ["docker", "aqua"],
+      matchPackageNames: ["/ce-transcript/"],
+      group: {commitMessageTopic: "{{{groupName}}} group"},
+      minimumGroupSize: 2,
+    },
+    {
       description: "Cloudflared Group",
       groupName: "cloudflared",
       matchDatasources: ["docker", "aqua"],
