@@ -25,7 +25,7 @@ spec:
               SEARXNG_BASE_URL: &url https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               SEARXNG_URL: *url
               SEARXNG_PORT: &port 8080
-              SEARXNG_REDIS_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/3
+              SEARXNG_VALKEY_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/3
               UWSGI_THREADS:
                 valueFrom:
                   resourceFieldRef:
