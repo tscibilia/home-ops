@@ -30,6 +30,8 @@ spec:
               RAG_WEB_SEARCH_ENGINE: "searxng"
               SEARXNG_QUERY_URL: "http://searxng.default.svc.cluster.local:8080/search?q=<query>"
               USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+              AIOHTTP_CLIENT_ALLOW_REDIRECTS: "true" # Fix 3xx redirect errors since v0.9.5
+              TOOL_SERVER_CONNECTIONS: '[{"type":"mcp","url":"http://vmcp-mcp-gateway-int.ai.svc.cluster.local:4483/mcp","spec_type":"url","spec":"","path":"openapi.json","auth_type":"none","key":"","config":{"enable":true},"info":{"id":"mcp-gateway","name":"MCP Gateway","description":""}}]'
               USE_CUDA: false
               USE_OLLAMA: false
               ENABLE_SIGNUP: false

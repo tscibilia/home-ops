@@ -8,7 +8,10 @@ server:
   method: GET # https://github.com/searxng/searxng/pull/3619
 
 outgoing:
-  request_timeout: 3.0
+  request_timeout: 10.0
+  max_redirects: 5
+  pool_connections: 20
+  pool_maxsize: 10
 
 general:
   instance_name: SearXNG
@@ -18,16 +21,22 @@ general:
   enable_metrics: false
 
 search:
-  safe_search: 0
   autocomplete: duckduckgo
-  autocomplete_min: 2
   favicon_resolver: duckduckgo
+  autocomplete_min: 2
   languages:
     - en
     - en-US
   formats:
     - html
     - json
+  max_ban_time_on_fail: 5
+  ban_time_on_fail: 5
+  suspended_times:
+    SearxEngineAccessDeniedException: 180
+    SearxEngineTooManyRequestsException: 180
+    SearxEngineCaptchaException: 0
+  safe_search: 0
 
 ui:
   static_use_hash: true
@@ -66,64 +75,14 @@ hostnames:
     - (.*\.)?superuser.com$
 
 engines:
-  - name: qwant
-    disabled: true
   - name: duckduckgo
     disabled: true
-  - name: brave
-    disabled: false
+    weight: 3
   - name: google
     disabled: false
-  - name: bing
+    weight: 2
+  - name: wikipedia
     disabled: false
-  - name: startpage
-    disabled: false
-  - name: apple app store
-    disabled: false
-  - name: ddg definitions
-    disabled: false
-  - name: tineye
-    disabled: false
-  - name: apple maps
-    disabled: false
-  - name: duckduckgo images
-    disabled: false
-  - name: fdroid
-    disabled: true
-  - name: free software directory
-    disabled: false
-  - name: bitbucket
-    disabled: false
-  - name: gitlab
-    disabled: false
-  - name: codeberg
-    disabled: false
-  - name: reddit
-    disabled: false
-  - name: google play apps
-    disabled: false
-  - name: lobste.rs
-    disabled: true
-  - name: npm
-    disabled: true
-  - name: nyaa
-    disabled: true
-    categories: videos
-  - name: searchcode code
-    disabled: true
-  - name: mojeek
-    disabled: true
-  - name: lib.rs
-    disabled: true
-  - name: sourcehut
-    disabled: true
-  - name: karmasearch videos
-    disabled: true
-  - name: ahmia
-    disabled: true
-  - name: torch
-    disabled: true
-  - name: searchcode code
-    disabled: true
-  - name: radio browser
-    disabled: true
+    weight: 1
+  - name: brave
+    disabled: true  # getting 429s, must be disabled

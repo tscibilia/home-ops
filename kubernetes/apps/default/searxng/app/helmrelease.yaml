@@ -22,7 +22,7 @@ spec:
               tag: 2026.5.31-7159b8aed@sha256:35b089054ac9b4257976107e71673d9e30ac17c9b50bbf8b4783f2f6d1d1981f
             # command: ["/usr/local/searxng/venv/bin/uwsgi", "--master", "/usr/local/searxng/.template/uwsgi.ini"]
             env:
-              SEARXNG_BASE_URL: &url https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
+              SEARXNG_BASE_URL: &url "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               SEARXNG_URL: *url
               SEARXNG_PORT: &port 8080
               SEARXNG_VALKEY_URL: redis://dragonfly-cluster.database.svc.cluster.local:6379/3
@@ -110,6 +110,9 @@ spec:
             readOnly: true
           - path: /etc/searxng/limiter.toml
             subPath: limiter.toml
+            readOnly: true
+          - path: /etc/searxng/favicons.toml
+            subPath: favicons.toml
             readOnly: true
       tmp:
         enabled: true
