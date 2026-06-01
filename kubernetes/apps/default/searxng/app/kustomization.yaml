@@ -11,5 +11,6 @@ configMapGenerator:
     files:
       - ./resources/settings.yml
       - ./resources/limiter.toml
+      - ./resources/favicons.toml
 generatorOptions:
   disableNameSuffixHash: true

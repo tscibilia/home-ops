@@ -1,34 +1,22 @@
-[real_ip]
-
-# Number of values to trust for X-Forwarded-For.
-
-x_for = 1
-
-# The prefix defines the number of leading bits in an address that are compared
-# to determine whether or not an address is part of a (client) network.
-
+[botdetection]
 ipv4_prefix = 32
 ipv6_prefix = 48
-
-# Envoy Gateway and pod traffic sources — trust X-Forwarded-For from these
 trusted_proxies = [
   '127.0.0.0/8',
   '::1',
   '10.0.0.0/8',
-  '172.16.0.0/12',
   '192.168.0.0/16',
 ]
 
 [botdetection.ip_limit]
-filter_link_local = true    # To get unlimited access in a local network
-link_token = false          # MUST be false for headless API clients like open-webui
+filter_link_local = true
+link_token = false        # MUST be false for headless API clients like open-webui
 
 [botdetection.ip_lists]
 block_ip = []
-
 pass_ip = [
-  '10.0.0.0/8',        # pod CIDR + cluster traffic
-  '192.168.0.0/16',    # LAN clients
+  '10.0.0.0/8',           # pod CIDR + cluster traffic
+  '192.168.0.0/16',       # LAN clients
 ]
 
-pass_searxng_org = false  # fine to keep false on a private instance
+pass_searxng_org = false
