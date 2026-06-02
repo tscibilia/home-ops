@@ -45,20 +45,6 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secrets"
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                    - python3
-                    - -c
-                    - |
-                      path = '/app/backend/open_webui/retrieval/web/utils.py'
-                      with open(path) as f:
-                          content = f.read()
-                      old = "            'allow_redirects': AIOHTTP_CLIENT_ALLOW_REDIRECTS,\n"
-                      if old in content:
-                          with open(path, 'w') as f:
-                              f.write(content.replace(old, ''))
             probes:
               liveness: &probes
                 enabled: true
