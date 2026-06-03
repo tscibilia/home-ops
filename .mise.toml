@@ -15,7 +15,7 @@ _.file = [
 
 [tools]
 "python" = "3.14.5"
-"uv" = "0.11.18"
+"uv" = "0.11.19"
 "just" = "1.51.0"
 "gum" = "0.17.0"
 "pipx:ansible-core" = "latest"
