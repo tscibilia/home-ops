@@ -147,7 +147,7 @@
         - name: doco-cd | Copy docker-compose app file
           ansible.builtin.copy:
             src: ../../docker/vps/.doco-cd/docker-compose.app.yaml
-            dest: "{{ dococd_config_dir }}/docker-compose.yaml"
+            dest: "{{ dococd_config_dir }}/docker-compose.app.yaml"
             owner: ubuntu
             group: ubuntu
             mode: "0644"
@@ -214,7 +214,7 @@
           community.docker.docker_compose_v2:
             project_src: "{{ dococd_config_dir }}"
             files:
-              - docker-compose.yaml
+              - docker-compose.app.yaml
             build: always
             pull: always
             state: present

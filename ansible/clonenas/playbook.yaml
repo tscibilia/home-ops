@@ -41,7 +41,7 @@
     - name: doco-cd | Copy docker-compose app file
       ansible.builtin.copy:
         src: ../../docker/clonenas/.doco-cd/docker-compose.app.yaml
-        dest: "{{ dococd_config_dir }}/docker-compose.yaml"
+        dest: "{{ dococd_config_dir }}/docker-compose.app.yaml"
         owner: sysadmin
         unsafe_writes: true
 
@@ -172,14 +172,14 @@
 
     - name: doco-cd | Stop existing containers
       ansible.builtin.shell: >-
-        docker compose -f {{ dococd_config_dir }}/docker-compose.yaml down
+        docker compose -f {{ dococd_config_dir }}/docker-compose.app.yaml down
       args:
         removes: true
       when: not ansible_check_mode
 
     - name: doco-cd | Run docker-compose
       ansible.builtin.shell: >-
-        docker compose -f {{ dococd_config_dir }}/docker-compose.yaml
+        docker compose -f {{ dococd_config_dir }}/docker-compose.app.yaml
         up -d --build --pull always
       when: not ansible_check_mode
 
