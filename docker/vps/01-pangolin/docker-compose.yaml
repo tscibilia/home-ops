@@ -67,7 +67,7 @@ services:
         target: /etc/crowdsec/scenarios/ban-asn.yaml
 
   gerbil:
-    image: ghcr.io/fosrl/gerbil:1.4.0@sha256:887355e66deac61df9583d9df23e630897f785a8e20bc66081c66e40687cc713
+    image: ghcr.io/fosrl/gerbil:1.4.1@sha256:1d462197478cef9eb7c6e7f8b9aa1b6bef82073ec5e4e81f1ad87069f330731b
     container_name: gerbil
     restart: unless-stopped
     depends_on:
