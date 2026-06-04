@@ -41,7 +41,7 @@ spec:
                   name=$(basename "$d")
                   if [ ! -d "/models/$name" ]; then
                     echo ">> restoring $name from NAS cache"
-                    cp -a "$d" "/models/$name"
+                    cp -r --no-preserve=ownership "$d" "/models/$name"
                   fi
                 done
                 download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_NL"
@@ -51,7 +51,7 @@ spec:
                   name=$(basename "$d")
                   if [ ! -d "/llama-models/$name" ]; then
                     echo ">> caching $name to NAS"
-                    cp -a "$d" "/llama-models/$name"
+                    cp -r --no-preserve=ownership "$d" "/llama-models/$name"
                   fi
                 done
         containers:
