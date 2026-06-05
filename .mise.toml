@@ -32,4 +32,4 @@ _.file = [
 "aqua:kubernetes/kubernetes/kubectl" = "1.36.1"
 "aqua:mikefarah/yq" = "4.53.2"
 "aqua:siderolabs/talos" = "1.13.3"
-"aqua:yannh/kubeconform" = "0.7.0" # Kubernetes manifest validation
+"aqua:yannh/kubeconform" = "0.8.0" # Kubernetes manifest validation
