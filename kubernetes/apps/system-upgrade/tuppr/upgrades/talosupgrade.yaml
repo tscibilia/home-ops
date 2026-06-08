@@ -10,6 +10,8 @@ spec:
     version: v1.13.2
   policy:
     rebootMode: powercycle
+  drain:
+    enabled: true
   healthChecks:
     - apiVersion: volsync.backube/v1alpha1
       kind: ReplicationSource
