@@ -2,7 +2,7 @@
 name: pangolin
 services:
   pangolin:
-    image: ghcr.io/fosrl/pangolin:1.18.4@sha256:4b99f893935f1068c8625156cf52b6b3ea3e61cc3e54001f5aa64c5cd91f95e2
+    image: ghcr.io/fosrl/pangolin:1.19.0@sha256:2be3ebdb9e0794323485511967d60b4deaa83e7541f44b266508703a8c3f1b08
     container_name: pangolin
     restart: unless-stopped
     environment:
