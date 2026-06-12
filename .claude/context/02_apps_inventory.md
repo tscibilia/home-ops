@@ -130,6 +130,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## rook-ceph
 - rook-ceph *(Ceph cluster + operator)*
+- ceph-csi-drivers *(Ceph-CSI Driver/OperatorConfig CRs + driver SAs/RBAC; required since rook v1.20)*
 
 ## system-upgrade
 - tuppr *(Talos upgrade controller)*
