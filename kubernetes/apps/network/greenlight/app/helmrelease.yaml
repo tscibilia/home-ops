@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/greenlight
-              tag: 1.3.4@sha256:54fe9c38e4acbf0027a35cfb8310951048a0c72b82c3a521f4b26372f940061d
+              tag: 1.3.5@sha256:95ff79c59aca857f809771f13f1b8d50175d739bf660bb3d80c885944b24c7af
             env:
               UNIFI_HOST: "https://192.168.1.1"
               PORT: &port 80
