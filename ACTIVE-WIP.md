@@ -15,6 +15,7 @@
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
+- [ ] ⚠️ **llama-cpp:** intermittent `MUL_MAT failed`/CUDA invalid argument on model reload, [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
 
 ## ⛔ Blocked
 `- Task name - blocking factor (waiting for X)`

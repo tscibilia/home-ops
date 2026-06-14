@@ -78,7 +78,7 @@ spec:
                 cpu: 100m
                 memory: 512Mi
               limits:
-                memory: 14Gi
+                memory: 20Gi
                 nvidia.com/gpu: "1"
             probes:
               liveness: &probes
