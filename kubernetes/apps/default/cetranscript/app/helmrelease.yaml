@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/ce-transcript-api
-              tag: &appVer "0.1.45"
+              tag: &appVer "0.2.0"
             env:
               BETTER_AUTH_URL: "https://${CEAPP_DOMAIN}"
               WEB_URL: "https://${CEAPP_DOMAIN}"
