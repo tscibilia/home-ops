@@ -12,9 +12,20 @@ spec:
   values:
     controllers:
       api:
-        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
+        strategy: RollingUpdate
+        horizontalPodAutoscaler:
+          enabled: true
+          minReplicas: 1
+          maxReplicas: 3
+          metrics:
+            - type: Resource
+              resource:
+                name: memory
+                target:
+                  type: Utilization
+                  averageUtilization: 80
         initContainers:
           01-init-db:
             image:
@@ -40,6 +51,7 @@ spec:
                 cpu: 10m
                 memory: 128Mi
               limits:
+                cpu: 500m
                 memory: 256Mi
             probes:
               liveness: &probes
@@ -62,6 +74,16 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
+        pod:
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        app.kubernetes.io/controller: api
+                    topologyKey: kubernetes.io/hostname
       web:
         strategy: RollingUpdate
         containers:
@@ -119,3 +141,11 @@ spec:
           - backendRefs:
               - identifier: api
                 port: *apiPort
+    persistence:
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /var/cache/nginx/proxy_temp
+            subPath: proxy_temp
+          - path: /tmp
+            subPath: tmp
