@@ -145,7 +145,10 @@ spec:
       tmpfs:
         type: emptyDir
         globalMounts:
-          - path: /var/cache/nginx/proxy_temp
-            subPath: proxy_temp
           - path: /tmp
             subPath: tmp
+        advancedMounts:
+          web:
+            app:
+              - path: /var/cache/nginx/proxy_temp
+                subPath: proxy_temp
