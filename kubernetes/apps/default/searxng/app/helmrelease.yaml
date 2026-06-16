@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/searxng/searxng
-              tag: 2026.6.8-72a827ae9@sha256:c97f1f399a8ad7c0fb329075e0295b9641eb3f141a65f5cbb19039a4f6bad647
+              tag: 2026.6.16-4fb49b449@sha256:0d1f559d04b7b77409f8b926f7027b17366d82093cf6426a2be33731efa75c83
             # command: ["/usr/local/searxng/venv/bin/uwsgi", "--master", "/usr/local/searxng/.template/uwsgi.ini"]
             env:
               SEARXNG_BASE_URL: &url "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
