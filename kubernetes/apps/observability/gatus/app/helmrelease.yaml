@@ -27,11 +27,6 @@ spec:
       env:
         GATUS_SUBDOMAIN: ${GATUS_SUBDOMAIN}
         SECRET_DOMAIN: ${SECRET_DOMAIN}
-        DB_URI:
-          valueFrom:
-            secretKeyRef:
-              name: "{{ .Release.Name }}-pguser-secret"
-              key: uri
       envFrom:
         - secretRef:
             name: "{{ .Release.Name }}-secret"
