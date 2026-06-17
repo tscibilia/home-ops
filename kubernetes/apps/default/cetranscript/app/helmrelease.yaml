@@ -34,11 +34,17 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-initdb-secret"
+            securityContext: &initSec
+              runAsNonRoot: false
+              runAsUser: 0
+              runAsGroup: 0
+              readOnlyRootFilesystem: false
+              allowPrivilegeEscalation: true
         containers:
           app:
             image:
               repository: ghcr.io/tscibilia/ce-transcript-api
-              tag: &appVer "0.2.14"
+              tag: &appVer "0.2.15"
             env:
               BETTER_AUTH_URL: "https://${CEAPP_DOMAIN}"
               WEB_URL: "https://${CEAPP_DOMAIN}"
@@ -46,7 +52,7 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-api-secret"
-            resources:
+            resources: &res
               requests:
                 cpu: 10m
                 memory: 128Mi
@@ -74,6 +80,11 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
+            securityContext: &sec
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
         pod:
           affinity:
             podAntiAffinity:
@@ -95,15 +106,18 @@ spec:
               VITE_API_BASE_URL: "https://${CEAPP_DOMAIN}"
               NGINX_API_UPSTREAM: "{{ .Release.Name }}-api:3001"
             resources:
-              requests:
-                cpu: 10m
-                memory: 128Mi
-              limits:
-                memory: 256Mi
+              <<: *res
+            securityContext:
+              <<: *sec
+              readOnlyRootFilesystem: false
     defaultPodOptions:
       imagePullSecrets:
         - name: cetranscript-ghcr-pull
       securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        fsGroupChangePolicy: OnRootMismatch
         seccompProfile: { type: RuntimeDefault }
     service:
       api:
@@ -115,7 +129,7 @@ spec:
         controller: web
         ports:
           http:
-            port: &webPort 80
+            port: &webPort 8080
     route:
       web:
         annotations:
@@ -150,5 +164,7 @@ spec:
         advancedMounts:
           web:
             app:
-              - path: /var/cache/nginx/proxy_temp
-                subPath: proxy_temp
+              - path: /var/cache/nginx
+                subPath: nginx
+              - path: /var/run
+                subPath: run
