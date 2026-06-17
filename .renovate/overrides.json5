@@ -34,6 +34,12 @@
       schedule: ["before 3am on Monday"],
     },
     {
+      description: "Regex versioning for llama.cpp server-cuda-bNNNNN tags",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/ggml-org/llama.cpp"],
+      versioning: "regex:^(?<compatibility>server-cuda)-b(?<major>\\d+)$",
+    },
+    {
       description: "Wait for aqua GitHub releases to fully publish before alerting",
       matchDatasources: ["github-releases"],
       matchManagers: ["mise"],
