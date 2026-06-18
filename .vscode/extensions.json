@@ -1,11 +1,12 @@
 {
   "recommendations": [
     "anthropic.claude-code",
-    "samuelcolvin.jinjahtml",
     "bluebrown.yamlfmt",
     "blueglassblock.better-json5",
     "irongeek.vscode-env",
+    "nefrob.vscode-just-syntax",
+    "oxc.oxc-vscode",
     "redhat.vscode-yaml",
-    "skellock.just"
+    "samuelcolvin.jinjahtml"
   ]
 }
