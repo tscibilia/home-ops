@@ -24,7 +24,7 @@ spec:
               - "/manager"
             args:
               - --health-probe-bind-address=:8081
-              - --metrics-bind-address=:80
+              - --metrics-bind-address=:8080
             probes:
               liveness: &probes
                 enabled: true
