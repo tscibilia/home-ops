@@ -14,13 +14,13 @@ default:
 [doc('Apply local Flux Kustomization')]
 [script]
 apply-ks ns ks:
-    just check-tools flux-local kubectl
+    just check-tools flate kubectl
     just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl apply --server-side --field-manager=kustomize-controller -f /dev/stdin
 
 [doc('Delete local Flux Kustomization')]
 [script]
 delete-ks ns ks:
-    just check-tools flux-local kubectl
+    just check-tools flate kubectl
     just kube render-local-ks "{{ ns }}" "{{ ks }}" | kubectl delete -f /dev/stdin
 
 [doc('Browse a PVC')]
@@ -210,5 +210,5 @@ restart-network:
 [private]
 [script]
 render-local-ks ns ks:
-    flux-local build ks --namespace "{{ ns }}" --path "{{ kubernetes_dir }}/flux/cluster" "{{ ks }}"
+    flate build ks -n "{{ ns }}" -o yaml "{{ ks }}"
 

@@ -1,5 +1,6 @@
 [env]
 _.python.venv = { path = "{{config_root}}/.venv", create = true }
+FLATE_PATH = "{{config_root}}/kubernetes/flux/cluster"
 KUBECONFIG = "{{config_root}}/kubeconfig"
 MINIJINJA_CONFIG_FILE = "{{config_root}}/.minijinja.toml"
 TALOSCONFIG = "{{config_root}}/talosconfig"
@@ -19,7 +20,7 @@ _.file = [
 "just" = "1.53.0"
 "gum" = "0.17.0"
 "pipx:ansible-core" = "latest"
-"pipx:flux-local" = "8.3.0"
+"github:home-operations/flate" = "0.4.8"
 "aqua:mitsuhiko/minijinja" = "2.21.0"
 "aqua:cilium/cilium-cli" = "0.19.4"
 "aqua:cli/cli" = "2.95.0" # GitHub CLI
@@ -33,3 +34,4 @@ _.file = [
 "aqua:mikefarah/yq" = "4.53.3"
 "aqua:siderolabs/talos" = "1.13.4"
 "aqua:yannh/kubeconform" = "0.8.0" # Kubernetes manifest validation
+"github:home-operations/yamlls" = "0.1.8"
