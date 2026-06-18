@@ -109,7 +109,7 @@ spec:
               resources: ["events"]
               verbs: ["create", "patch"]
             - apiGroups: [""]
-              resources: ["pods", "services"]
+              resources: ["configmaps", "pods", "services"]
               verbs:
                 ["create", "delete", "get", "list", "patch", "update", "watch"]
             - apiGroups: ["apps"]
@@ -155,18 +155,4 @@ spec:
                 namespace: database
               spec:
                 fallbackScrapeProtocol: PrometheusText1.0.0
-          # To resolve the targetDown prom alert when the dragonfly-operator chart
-          # default ia set `--metrics-bind-address=127.0.0.1:8080`
-          - target:
-              group: apps
-              version: v1
-              kind: Deployment
-              name: dragonfly-operator
-              namespace: database
-            patch: |-
-              - op: replace
-                path: /spec/template/spec/containers/0/args
-                value:
-                  - --health-probe-bind-address=:8081
-                  - --metrics-bind-address=0.0.0.0:8080
-                  - --leader-elect
+
