@@ -25,6 +25,7 @@ spec:
             args:
               - --health-probe-bind-address=:8081
               - --metrics-bind-address=:8080
+              - --leader-elect
             probes:
               liveness: &probes
                 enabled: true
@@ -80,13 +81,63 @@ spec:
               app.kubernetes.io/name: *app
     service:
       app:
+        controller: *app
         ports:
           http:
             port: *port
           metrics:
             port: 8080
+    serviceAccount:
+      *app : {}
+    rbac:
+      bindings:
+        *app :
+          roleRef:
+            kind: ClusterRole
+            name: *app
+          subjects:
+            - identifier: *app
+          type: ClusterRoleBinding
+      roles:
+        *app :
+          rules:
+            - apiGroups: ["coordination.k8s.io"]
+              resources: ["leases"]
+              verbs:
+                ["get", "list", "watch", "create", "update", "patch", "delete"]
+            - apiGroups: [""]
+              resources: ["events"]
+              verbs: ["create", "patch"]
+            - apiGroups: [""]
+              resources: ["pods", "services"]
+              verbs:
+                ["create", "delete", "get", "list", "patch", "update", "watch"]
+            - apiGroups: ["apps"]
+              resources: ["statefulsets"]
+              verbs:
+                ["create", "delete", "get", "list", "patch", "update", "watch"]
+            - apiGroups: ["policy"]
+              resources: ["poddisruptionbudgets"]
+              verbs:
+                ["create", "delete", "get", "list", "patch", "update", "watch"]
+            - apiGroups: ["dragonflydb.io"]
+              resources: ["dragonflies"]
+              verbs:
+                ["create", "delete", "get", "list", "patch", "update", "watch"]
+            - apiGroups: ["dragonflydb.io"]
+              resources: ["dragonflies/finalizers"]
+              verbs: ["update"]
+            - apiGroups: ["dragonflydb.io"]
+              resources: ["dragonflies/status"]
+              verbs: ["get", "patch", "update"]
+            - apiGroups: ["networking.k8s.io"]
+              resources: ["networkpolicies"]
+              verbs:
+                ["create", "delete", "get", "list", "patch", "update", "watch"]
+          type: ClusterRole
     serviceMonitor:
       app:
+        serviceName: *app
         endpoints:
           - port: metrics
             scheme: http
@@ -114,7 +165,7 @@ spec:
               namespace: database
             patch: |-
               - op: replace
-                path: /spec/template/spec/containers/1/args
+                path: /spec/template/spec/containers/0/args
                 value:
                   - --health-probe-bind-address=:8081
                   - --metrics-bind-address=0.0.0.0:8080
