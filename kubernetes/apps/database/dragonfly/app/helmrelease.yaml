@@ -43,6 +43,7 @@ spec:
                   <<: *probeSpec
                   httpGet:
                     path: /readyz
+                    port: *port
                   periodSeconds: 10
               startup:
                 enabled: true
