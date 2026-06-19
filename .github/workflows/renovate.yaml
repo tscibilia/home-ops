@@ -44,27 +44,31 @@ jobs:
     permissions:
       packages: read
     steps:
-      - name: Load Secrets
-        id: load-secrets
-        uses: akeyless-community/akeyless-github-action@7cb3f935c655c794feb9d0488f05acdca85d68e2 # v1.1.6
-        with:
-          access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-          access-key: ${{ secrets.AKEYLESS_ACCESS_KEY }}
-          access-type: access_key
-          static-secrets: |
-            - name: "/kubernetes/actions-runner"
-              output-name: "runner-app-id"
-              key: "ACTIONS_RUNNER_APP_ID"
-            - name: "/kubernetes/actions-runner"
-              output-name: "runner-private-key"
-              key: "ACTIONS_RUNNER_PRIVATE_KEY"
+      # Reovate rejects the digest update branch, throwing `state: "yellow" ... 422 → abort` and not completing the run.
+      # - name: Load Secrets
+      #   id: load-secrets
+      #   uses: akeyless-community/akeyless-github-action@7cb3f935c655c794feb9d0488f05acdca85d68e2 # v1.1.6
+      #   with:
+      #     access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
+      #     access-key: ${{ secrets.AKEYLESS_ACCESS_KEY }}
+      #     access-type: access_key
+      #     static-secrets: |
+      #       - name: "/kubernetes/actions-runner"
+      #         output-name: "runner-app-id"
+      #         key: "ACTIONS_RUNNER_APP_ID"
+      #       - name: "/kubernetes/actions-runner"
+      #         output-name: "runner-private-key"
+      #         key: "ACTIONS_RUNNER_PRIVATE_KEY"
 
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          client-id: ${{ steps.load-secrets.outputs.runner-app-id }}
-          private-key: ${{ steps.load-secrets.outputs.runner-private-key }}
+          # Settings for aKeyless - Load Secrets step
+          # client-id: ${{ steps.load-secrets.outputs.runner-app-id }}
+          # private-key: ${{ steps.load-secrets.outputs.runner-private-key }}
+          client-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
           permission-checks: write
           permission-contents: write
           permission-issues: write
