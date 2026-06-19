@@ -19,6 +19,7 @@
     ":timezone(America/New_York)",
   ],
   assignees: ["tscibilia"],
+  minimumReleaseAgeBehaviour: "ignore",
   dependencyDashboard: true,
   dependencyDashboardTitle: "Renovate Dashboard 🤖",
   dependencyDashboardApproval: false,
