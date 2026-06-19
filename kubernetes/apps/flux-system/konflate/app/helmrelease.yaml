@@ -12,6 +12,7 @@ spec:
   values:
     config:
       repo: "github://tscibilia/home-ops"
+      clusterPath: ./kubernetes/flux/cluster
       statusChecks: true
       prComments: true
       publicUrl: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
