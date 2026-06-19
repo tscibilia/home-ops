@@ -77,4 +77,4 @@ spec:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
   folder: "Networking"
-  url: https://grafana.com/api/dashboards/24458/revisions/1/download
+  url: https://grafana.com/api/dashboards/24458/revisions/3/download
