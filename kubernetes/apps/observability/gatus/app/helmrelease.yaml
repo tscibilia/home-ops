@@ -54,6 +54,8 @@ spec:
           path: config.yaml
     persistence:
       enabled: false
+    strategy:
+      type: Recreate
     resources:
       requests:
         cpu: 100m
