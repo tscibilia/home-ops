@@ -7,6 +7,7 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 
 - [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
+- [ ] switch grafana dashboards from `gnetId` to `URL`
 
 ## ⚠️ Known Issues
 

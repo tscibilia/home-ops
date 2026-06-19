@@ -8,12 +8,6 @@
       sourceUrl: "https://github.com/actualbudget/actual",
     },
     {
-      description: "Changelog URL for Cloudflared",
-      matchPackageNames: ["/cloudflared/"],
-      changelogUrl: "https://github.com/cloudflare/cloudflared/blob/master/RELEASE_NOTES",
-      sourceUrl: "https://github.com/cloudflare/cloudflared",
-    },
-    {
       description: "Changelog URL for Code Server",
       matchPackageNames: ["/code-server/"],
       changelogUrl: "https://github.com/coder/code-server/releases",

@@ -2,12 +2,6 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   packageRules: [
     {
-      description: "Override Helmfile Dependency Name",
-      matchDatasources: ["docker"],
-      matchManagers: ["helmfile"],
-      overrideDepName: "{{packageName}}",
-    },
-    {
       description: "Override Talos Installer Package Name",
       matchDatasources: ["docker"],
       matchPackageNames: ["/factory\\.talos\\.dev/"],
@@ -45,12 +39,6 @@
       matchManagers: ["mise"],
       matchDepPatterns: ["^aqua:"],
       minimumReleaseAge: "3 days",
-    },
-    {
-      description: "Normalize packageName for mise github-releases tools",
-      matchFileNames: [".mise.toml", "mise.toml"],
-      matchDatasources: ["github-releases", "github-tags"],
-      overridePackageName: "{{#if (lookup (split packageName '/') 1)}}{{packageName}}{{else if (lookup (split packageName ':') 1)}}{{ lookup (split packageName ':') 1 }}/{{ lookup (split packageName ':') 1 }}{{else}}{{packageName}}/{{packageName}}{{/if}}",
     },
   ],
 }

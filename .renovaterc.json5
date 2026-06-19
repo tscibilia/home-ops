@@ -1,49 +1,12 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
-    "config:recommended",
-    "docker:enableMajor",
-    "helpers:pinGitHubActionDigests",
+    "github>home-operations/renovate-presets#2.0.0",
     "github>tscibilia/home-ops//.renovate/autoMerge.json5",
     "github>tscibilia/home-ops//.renovate/changeLogs.json5",
-    "github>tscibilia/home-ops//.renovate/customManagers.json5",
-    "github>tscibilia/home-ops//.renovate/grafanaDashboards.json5",
     "github>tscibilia/home-ops//.renovate/groups.json5",
     "github>tscibilia/home-ops//.renovate/labels.json5",
     "github>tscibilia/home-ops//.renovate/overrides.json5",
-    "github>tscibilia/home-ops//.renovate/semanticCommits.json5",
-    ":automergeBranch",
-    ":dependencyDashboard",
-    ":disableRateLimiting",
-    ":semanticCommits",
     ":timezone(America/New_York)",
   ],
-  assignees: ["tscibilia"],
-  minimumReleaseAgeBehaviour: "ignore",
-  dependencyDashboard: true,
-  dependencyDashboardTitle: "Renovate Dashboard 🤖",
-  dependencyDashboardApproval: false,
-  platformAutomerge: true,
-  prConcurrentLimit: 0,
-  prHourlyLimit: 10,
-  suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
-  ignorePaths: ["**/resources/**"],
-  flux: {
-    managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
-  },
-  "helm-values": {
-    managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
-  },
-  helmfile: {
-    managerFilePatterns: [
-      "/(^|/)helmfile\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/",
-      "/(^|/)helmfile\\.d/.+\\.ya?ml(?:\\.gotmpl)?(?:\\.j2)?$/",
-    ],
-  },
-  kubernetes: {
-    managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
-  },
-  kustomize: {
-    managerFilePatterns: ["/(^|/)kustomization\\.ya?ml(?:\\.j2)?$/"],
-  },
 }
