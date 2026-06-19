@@ -25,6 +25,7 @@
   platformAutomerge: true,
   prConcurrentLimit: 0,
   prHourlyLimit: 10,
+  branchStatus: [],
   suppressNotifications: ["prEditedNotification", "prIgnoreNotification"],
   ignorePaths: ["**/resources/**"],
   flux: {
