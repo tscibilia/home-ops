@@ -3,11 +3,13 @@
 > This document is intended to supplement and connect with GitHub issues and meant to provide AI agents with context regarding planned revisions and active development on the project to alleviate chat context memory issues. This document should follow the following format and should like to the GitHub issue where applicable:
 
 ## In Progress
+
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
+
 - [ ] switch to [home-ops k8s schemas](https://github.com/home-operations/k8s-schemas) - Started **2026-05-18** - PR [#2395](https://github.com/tscibilia/home-ops/pull/2395)
-- [ ] use yamlfmt and lefthook - Not started
 
 ## ⚠️ Known Issues
+
 - [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
 - [ ] ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
 - [ ] ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely
@@ -18,12 +20,18 @@
 - [ ] ⚠️ **llama-cpp:** intermittent `MUL_MAT failed`/CUDA invalid argument on model reload, [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
 
 ## ⛔ Blocked
+
 `- Task name - blocking factor (waiting for X)`
+
 - ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
 
 ## ✅ Resolved
+
 `Descending order, newest on top`
-- ✅ add kopia to volsync - **2026-05-22** (see PR [4658473](https://github.com/tscibilia/home-ops/commit/4658473) and 4 subsequent commits)
+
+- ✅ use oxfmt and lefthook - **2026-06-18** (see commit [f10ad6b](https://github.com/tscibilia/home-ops/commit/f10ad6b) and 4 subsequent commits)
+- ✅ switch flux-local to konflate - **2026-06-18** (see PR [#2689](https://github.com/tscibilia/home-ops/pull/2689))
+- ✅ add kopia to volsync - **2026-05-22** (see commit [4658473](https://github.com/tscibilia/home-ops/commit/4658473) and 4 subsequent commits)
 - ✅ LiteLLM installed to manage llm api keys - **2026-05-22** (see PR [#2451](https://github.com/tscibilia/home-ops/pull/2451) and 2 subsequent commits)
 - ✅ ComfyUI got 1TB HDD to store nodes and modules - **2026-05-21** (See commit [719f15e](https://github.com/tscibilia/home-ops/commit/719f15e))
 - ✅ unifi-network-application restic -> B2 - **2026-05-21** (see commit [00fd5b5](https://github.com/tscibilia/home-ops/commit/00fd5b5))
@@ -74,6 +82,7 @@
 - ✅ HTTPRoute instead of Ingress - **2025-11-13** (See PR [#1097](https://github.com/tscibilia/home-ops/pull/1097) & issue [#523](https://github.com/tscibilia/home-ops/issues/523))
 
 ## ❌ Unresolved/Closed
+
 - ❌ Qwen3 thinking enable/disable - **2026-04-03 Not Planned, changed model** [See upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/20182)
 - ❌ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
 - ❌ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
