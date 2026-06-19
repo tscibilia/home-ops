@@ -37,7 +37,7 @@
       description: "Regex versioning for llama.cpp server-cuda-bNNNNN tags",
       matchDatasources: ["docker"],
       matchPackageNames: ["ghcr.io/ggml-org/llama.cpp"],
-      versioning: "regex:^(?<compatibility>server-cuda)-b(?<major>\\d+)$",
+      versioning: "regex:^server-(?<compatibility>[a-z]+)-b(?<patch>\\d+)$",
     },
     {
       description: "Wait for aqua GitHub releases to fully publish before alerting",
@@ -45,6 +45,12 @@
       matchManagers: ["mise"],
       matchDepPatterns: ["^aqua:"],
       minimumReleaseAge: "3 days",
+    },
+    {
+      description: "Normalize packageName for mise github-releases tools",
+      matchFileNames: [".mise.toml", "mise.toml"],
+      matchDatasources: ["github-releases", "github-tags"],
+      overridePackageName: "{{#if (lookup (split packageName '/') 1)}}{{packageName}}{{else if (lookup (split packageName ':') 1)}}{{ lookup (split packageName ':') 1 }}/{{ lookup (split packageName ':') 1 }}{{else}}{{packageName}}/{{packageName}}{{/if}}",
     },
   ],
 }

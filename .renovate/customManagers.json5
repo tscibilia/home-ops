@@ -3,45 +3,30 @@
   customManagers: [
     {
       customType: "regex",
-      description: "Process GitHub raw content URLs",
-      managerFilePatterns: [
-        "/\\.yaml(?:\\.j2)?$/",
-      ],
-      matchStrings: [
-        // # renovate: datasource=github-releases depName=foo/bar
-        // - https://raw.githubusercontent.com/foo/bar/refs/tags/v1.0.0/path/to/file.yaml
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+/(?<currentValue>[v|\\d][^/]+)/",
-      ],
-      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
-    },
-    {
-      customType: "regex",
       description: "Process annotated dependencies",
-      managerFilePatterns: [
-        "/\\.env(?:\\.j2)?$/",
-        "/\\.sh(?:\\.j2)?$/",
-        "/\\.yaml(?:\\.j2)?$/",
-      ],
+      managerFilePatterns: ["/\\.env(?:\\.j2)?$/", "/\\.sh(?:\\.j2)?$/", "/\\.yaml(?:\\.j2)?$/"],
       matchStrings: [
         // # renovate: datasource=github-releases depName=foo/bar
         // foobar_version: v1.0.0
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: "v1.0.0"
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: &version v1.0.0
+        // # renovate: datasource=github-releases depName=foo/bar
+        // foobar_version: &version "v1.0.0"
         // # renovate: datasource=docker depName=ghcr.io/foo/bar
         // FOOBAR_VERSION=v1.0.0
-        // registry/path:v1.0.0
-        // Version must start with v or digit (not / from https://)
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s?|=)(&\\S+\\s)?(?<currentValue>[v\\d][^\\s]*)",
+        // # renovate: datasource=docker depName=ghcr.io/foo/bar
+        // FOOBAR_VERSION="v1.0.0"
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+(:\\s|=)(&\\S+\\s)?[\"']?(?<currentValue>[^\"'\\s]+)[\"']?",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
     {
       customType: "regex",
       description: "Process OCI dependencies",
-      managerFilePatterns: [
-        "/\\.yaml(?:\\.j2)?$/",
-      ],
-      matchStrings: [
-        "oci://(?<depName>[^:]+):(?<currentValue>\\S+)",
-      ],
+      managerFilePatterns: ["/\\.yaml(?:\\.j2)?$/"],
+      matchStrings: ["oci://(?<depName>[^:]+):(?<currentValue>\\S+)"],
       datasourceTemplate: "docker",
     },
   ],

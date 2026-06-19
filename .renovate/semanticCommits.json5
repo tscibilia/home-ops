@@ -43,5 +43,17 @@
       semanticCommitScope: "github-release",
       commitMessageTopic: "release {{depName}}",
     },
+    {
+      matchManagers: ["renovate-config"],
+      semanticCommitType: "chore",
+      semanticCommitScope: "renovate-config",
+      commitMessageTopic: "config {{depName}}",
+    },
+    {
+      matchManagers: ["mise"],
+      semanticCommitType: "chore",
+      semanticCommitScope: "mise",
+      commitMessageTopic: "tool {{depName}}",
+    },
   ],
 }

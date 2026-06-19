@@ -4,30 +4,40 @@
     "grafana-dashboards": {
       defaultRegistryUrlTemplate: "https://grafana.com/api/dashboards/{{packageName}}",
       format: "json",
-      transformTemplates: ['{"releases":[{"version": $string(revision)}], "sourceDirectory": name}'],
+      transformTemplates: [
+        '{"releases":[{"version": $string(revision)}], "sourceDirectory": name}',
+      ],
     },
   },
   customManagers: [
     {
-      description: "Process Grafana dashboards",
+      description: "Process Grafana dashboards with `gnetId`",
       customType: "regex",
-      managerFilePatterns: ["/(^|/)kubernetes/.+\\.ya?ml$/"],
+      managerFilePatterns: ["/(^|/)kubernetes/.+\\.yaml(?:\\.j2)?$/"],
       matchStrings: [
-        'depName="(?<depName>.*)"\\n(?<indentation>\\s+)gnetId: (?<packageName>\\d+)\\n.+revision: (?<currentValue>\\d+)'
+        'depName="(?<depName>.*)"\\n(?<indentation>\\s+)gnetId: (?<packageName>\\d+)\\n.+revision: (?<currentValue>\\d+)',
       ],
-      autoReplaceStringTemplate: 'depName="{{{depName}}}"\n{{{indentation}}}gnetId: {{{packageName}}}\n{{{indentation}}}revision: {{{newValue}}}',
       datasourceTemplate: "custom.grafana-dashboards",
       versioningTemplate: "regex:^(?<major>\\d+)$",
+      autoReplaceStringTemplate: 'depName="{{{depName}}}"\n{{{indentation}}}gnetId: {{{packageName}}}\n{{{indentation}}}revision: {{{newValue}}}',
+    },
+    {
+      description: "Process Grafana dashboards",
+      customType: "regex",
+      managerFilePatterns: ["/grafanadashboard\\.yaml(?:\\.j2)?$/"],
+      matchStrings: [
+        "dashboards\\/(?<depName>\\d+)\\/revisions\\/(?<currentValue>\\d+)\\/download",
+      ],
+      datasourceTemplate: "custom.grafana-dashboards",
+      versioningTemplate: "regex:^(?<major>\\d+)$",
+      autoReplaceStringTemplate: "dashboards/{{depName}}/revisions/{{newValue}}/download",
     },
   ],
   packageRules: [
     {
       addLabels: ["renovate/grafana-dashboard"],
-      automerge: true,
-      automergeType: "branch",
       commitMessageExtra: "({{currentVersion}} ➔ {{newVersion}})",
-      commitMessageTopic: "dashboard {{depName}}",
-      ignoreTests: true,
+      commitMessageTopic: "dashboard {{sourceDirectory}}",
       matchDatasources: ["custom.grafana-dashboards"],
       matchUpdateTypes: ["major"],
       semanticCommitScope: "grafana-dashboards",
