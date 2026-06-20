@@ -2,6 +2,7 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   dependencyDashboardAutoclose: false,
   dependencyDashboardFooter: "This dashboard is automatically maintained by Renovate.",
+  vulnerabilityAlerts: false,
   packageRules: [
     {
       description: "Override Talos Installer Package Name",
