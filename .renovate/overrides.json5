@@ -43,5 +43,11 @@
       matchDepPatterns: ["^aqua:"],
       minimumReleaseAge: "3 days",
     },
+    {
+      description: "Constrain ofelia to 0.x (v3.0.8 is a stale erroneous tag from 2023)",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["docker.io/mcuadros/ofelia"],
+      allowedVersions: "/^0\\./",
+    },
   ],
 }
