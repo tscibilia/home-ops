@@ -74,6 +74,7 @@ jobs:
           permission-issues: write
           permission-pull-requests: write
           permission-statuses: write
+          permission-vulnerability-alerts: read
           permission-workflows: write
 
       - name: Checkout
