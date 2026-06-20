@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: ghcr.io/kite-org/kite
-              tag: v0.12.3@sha256:3d872c5fad90f7d64f066f1ad499e7c6bbd32b4b354bc05556542af42190a354
+              tag: v0.13.0@sha256:6634e661cf0ee084d860dd453a2a21799f6d80a24e62c9bcfa2edef49dd3b9f1
             env:
               HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               ENABLE_ANALYTICS: true
