@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/service_v1.json
 apiVersion: v1
 kind: Service
 metadata:

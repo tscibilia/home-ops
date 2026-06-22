@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/statefulset.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/apps/statefulset_v1.json
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -23,7 +23,7 @@ spec:
             - name: TS_KUBE_SECRET
               valueFrom:
                 fieldRef:
-                  fieldPath: metadata.name  # → ts-exit-node-0
+                  fieldPath: metadata.name # → ts-exit-node-0
             - name: TS_HOSTNAME
               value: k8s-egress
             - name: TS_ROUTES
@@ -37,7 +37,7 @@ spec:
           securityContext:
             privileged: true
 ---
-# yaml-language-server: $schema=https://github.com/yannh/kubernetes-json-schema/raw/refs/heads/master/master/service-v1.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/service_v1.json
 apiVersion: v1
 kind: Service
 metadata:

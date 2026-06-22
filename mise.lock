@@ -491,43 +491,43 @@ url = "https://github.com/home-operations/flate/releases/download/v0.4.9/flate_0
 url_api = "https://api.github.com/repos/home-operations/flate/releases/assets/452517137"
 
 [[tools."github:home-operations/yamlls"]]
-version = "0.1.9"
+version = "0.1.10"
 backend = "github:home-operations/yamlls"
 
 [tools."github:home-operations/yamlls"."platforms.linux-arm64"]
-checksum = "sha256:cf4cdef3c55d8086a0678a0089ea53c00aeed303415f91fa2595565832619cde"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445941"
+checksum = "sha256:f67c9a2b51cc6872fa307809f6ee83293594a11cb048e5e9da4aab07130ed444"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891485"
 
 [tools."github:home-operations/yamlls"."platforms.linux-arm64-musl"]
-checksum = "sha256:cf4cdef3c55d8086a0678a0089ea53c00aeed303415f91fa2595565832619cde"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445941"
+checksum = "sha256:f67c9a2b51cc6872fa307809f6ee83293594a11cb048e5e9da4aab07130ed444"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891485"
 
 [tools."github:home-operations/yamlls"."platforms.linux-x64"]
-checksum = "sha256:a0f4f270cfaff00e78793a505ed56f9bb026b7495950e482eca8245cb6f4b6e3"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445934"
+checksum = "sha256:9078ea741ed739862e60f7cb3c1bcc8d2d6355434961e2a785979df4818dd467"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891484"
 
 [tools."github:home-operations/yamlls"."platforms.linux-x64-musl"]
-checksum = "sha256:a0f4f270cfaff00e78793a505ed56f9bb026b7495950e482eca8245cb6f4b6e3"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445934"
+checksum = "sha256:9078ea741ed739862e60f7cb3c1bcc8d2d6355434961e2a785979df4818dd467"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891484"
 
 [tools."github:home-operations/yamlls"."platforms.macos-arm64"]
-checksum = "sha256:37465c354132435334ce5360e2a66c5e5607c0ca946a4426f9d54bc1f1116665"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445942"
+checksum = "sha256:2c22be8185088bcb5c54f46e837aa6ef5491d9c956e9a240ad124a6deaa6b738"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891482"
 
 [tools."github:home-operations/yamlls"."platforms.macos-x64"]
-checksum = "sha256:ffea23e13b7f5428659f58e5d9d676acec43546e39504f05e5991067b3e6b066"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_darwin_amd64.tar.gz"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445970"
+checksum = "sha256:499d4fc14c7831c20972a2b70584fb8040a65eb37ac6bf4879f1dad5dcf00f47"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891495"
 
 [tools."github:home-operations/yamlls"."platforms.windows-x64"]
-checksum = "sha256:3ed0aba15a4f665df1d211f288ccdec22c2f35ad5407df236d4670639d0c4488"
-url = "https://github.com/home-operations/yayamlls/releases/download/0.1.9/yayamlls_0.1.9_windows_amd64.zip"
-url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/452445935"
+checksum = "sha256:aa97d3e95b21323e98c2c308c6fce9f9c4027a7ec0dbb20a17a44ecb92235a21"
+url = "https://github.com/home-operations/yayamlls/releases/download/0.1.10/yayamlls_0.1.10_windows_amd64.zip"
+url_api = "https://api.github.com/repos/home-operations/yayamlls/releases/assets/453891483"
 
 [[tools.gum]]
 version = "0.17.0"
@@ -719,36 +719,36 @@ url = "https://github.com/astral-sh/uv/releases/download/0.11.23/uv-x86_64-pc-wi
 provenance = "github-attestations"
 
 [[tools.zizmor]]
-version = "1.25.2"
+version = "1.26.1"
 backend = "aqua:zizmorcore/zizmor"
 
 [tools.zizmor."platforms.linux-arm64"]
-checksum = "sha256:4b4b9491112c2a09b318101c0d3349b73af1c4f532e097dd6d0164f2abda760d"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-aarch64-unknown-linux-gnu.tar.gz"
+checksum = "sha256:711f5af366b299128f9a04b1470e37d990b41fbd21f14a1a4148d25004a83762"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.26.1/zizmor-aarch64-unknown-linux-gnu.tar.gz"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-arm64-musl"]
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-x64"]
-checksum = "sha256:aa1facd105f0d83fe5c55b1adcd9d7417de5d83aa27471f91dc0b66cf3803577"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-x86_64-unknown-linux-gnu.tar.gz"
+checksum = "sha256:8556289a64e7aaf2400cd516f61a471aa91c5902cc56ad96a82fd12f90c2ef73"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.26.1/zizmor-x86_64-unknown-linux-gnu.tar.gz"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.linux-x64-musl"]
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.macos-arm64"]
-checksum = "sha256:624ef0e09521aecd862126be0f6d7754669af2646750d68ac48a114be33c3146"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-aarch64-apple-darwin.tar.gz"
+checksum = "sha256:68ab2b37836bbd44f6cfffcc102b9ffffbc20c5d67d84293dafb63bd2775a1da"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.26.1/zizmor-aarch64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.macos-x64"]
-checksum = "sha256:353271b9ec301dd4ba158af481323c831c6e9b494d5ac3f5aa58cf4b207699cc"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-x86_64-apple-darwin.tar.gz"
+checksum = "sha256:2967414a561f8c1264121e8f723c3b5abcf3d1bf7ce5063114df99985dd75801"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.26.1/zizmor-x86_64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools.zizmor."platforms.windows-x64"]
-checksum = "sha256:65d46a8144f701200621b580f632076d80d082d60856de9f88793a95fb5882d7"
-url = "https://github.com/zizmorcore/zizmor/releases/download/v1.25.2/zizmor-x86_64-pc-windows-msvc.zip"
+checksum = "sha256:c6cea156935e3b9d36faeca4fd8f622d23f7a7578da26adb34e6456abd9beb9a"
+url = "https://github.com/zizmorcore/zizmor/releases/download/v1.26.1/zizmor-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
