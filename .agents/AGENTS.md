@@ -59,7 +59,7 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 - `sync <hr|ks|es|gitrepo|ocirepo> [<ns> <app>]` — force sync resource (or all)
 - `reconcile-ks/reconcile-hr [<ns> <app>]` — reconcile from source (or all)
 - `restart-ks/restart-hr` — suspend/resume failed resources
-- `node-shell <node>`, `volsync-snapshot [<ns> <app>]`
+- `node-shell <node>`, `snapshot [<ns> <app>]`
 - `apply-ks <ns> <ks>`, `delete-ks <ns> <ks>` — render via `flate` and apply/delete (⚠️ touches live cluster)
 
 **Local validation (no cluster required):**
@@ -153,7 +153,7 @@ Before requesting a commit, ensure:
 - **Talos**: No SSH. Use `talosctl`. Edit templates in `kubernetes/talos/`, then `just talos apply-node <node>`.
 - **Cilium**: eBPF replacement for kube-proxy. Use `cilium` CLI for network debugging.
 - **CNPG**: Use `-rw` endpoint for app connections. Check health: `kubectl get cluster -n database`.
-- **VolSync**: Restore via `just kube volsync-restore <ns> <name> <previous>`.
+- **VolSync**: Restore via `just kube restore <ns> <name> <previous>`.
 
 ## Active Work
 

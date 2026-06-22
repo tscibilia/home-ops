@@ -44,11 +44,11 @@ VOLSYNC_CAPACITY: 5Gi  # PVC size
 ### Restore
 
 ```bash
-just kube volsync-restore <namespace> <app>           # latest snapshot
-just kube volsync-restore <namespace> <app> <N>       # Nth-from-latest (1=one prior, 2=two prior, ...)
+just kube restore <namespace> <app>           # latest snapshot
+just kube restore <namespace> <app> <N>       # Nth-from-latest (1=one prior, 2=two prior, ...)
 ```
 
-`<N>` is a sequence number. The recipe lists snapshots in JSON, picks the Nth newest by `endTime`, and uses `restoreAsOf`. Run `just kube volsync-list <namespace> <app>` to preview available snapshots.
+`<N>` uses the Kopia `previous` field to count backward from latest. Check available snapshots via the VolSync WebUI.
 
 ## CNPG (PostgreSQL)
 

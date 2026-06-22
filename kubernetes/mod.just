@@ -31,10 +31,10 @@ browse-pvc ns claim:
 
 [doc('Open a shell on a node')]
 [script]
-node-shell node:
+debug-node node:
     just check-tools kubectl
-    kubectl debug node/{{ node }} -n default -it --image="mirror.gcr.io/alpine:latest" --profile sysadmin
-    kubectl delete pod -n default -l app.kubernetes.io/managed-by=kubectl-debug
+    trap 'kubectl delete pod -n default -l app.kubernetes.io/managed-by=kubectl-debug --field-selector spec.nodeName={{ node }} --ignore-not-found --wait=false' EXIT
+    kubectl debug node/{{ node }} -n default -it --image=mirror.gcr.io/alpine:latest --profile=sysadmin
 
 [doc('Prune pods in Failed, Pending, or Succeeded state')]
 [script]
@@ -116,7 +116,7 @@ volsync state:
 
 [doc('Snapshot a VolSync PVC')]
 [script]
-volsync-snapshot ns='' app='':
+snapshot ns='' app='':
     just check-tools kubectl
     _snapshot() {
         kubectl -n "$1" patch replicationsources "$2" --type merge -p "{\"spec\":{\"trigger\":{\"manual\":\"$(date +%s)\"}}}"
@@ -129,56 +129,29 @@ volsync-snapshot ns='' app='':
         done
     fi
 
-[doc('Unlock all VolSync restic source repos')]
-[script]
-volsync-unlock:
-    just check-tools kubectl
-    kubectl get replicationsources --all-namespaces --no-headers -o jsonpath='{range .items[*]}{.metadata.namespace},{.metadata.name}{"\n"}{end}' | while IFS=',' read -r ns name; do \
-        kubectl -n "$ns" patch --field-manager=flux-client-side-apply replicationsources "$name" --type merge -p "{\"spec\":{\"restic\":{\"unlock\":\"$(date +%s)\"}}}"; \
-    done
-
-[doc('List VolSync snapshots for an application')]
-[script]
-volsync-list ns app:
-    just check-tools kubectl envsubst
-    echo "Listing snapshots for {{ app }} in {{ ns }} namespace..."
-    export NS="{{ ns }}" APP="{{ app }}" && \
-        envsubst < {{ kubernetes_dir }}/components/volsync/resources/list.yaml.j2 | kubectl apply -f -
-    kubectl -n {{ ns }} wait job/{{ app }}-list-snapshots --for=condition=complete --timeout=5m
-    kubectl -n {{ ns }} logs job/{{ app }}-list-snapshots
-    kubectl -n {{ ns }} delete job {{ app }}-list-snapshots
-
 [doc('Restore VolSync backup for an application (previous=0 is latest, previous=N is Nth-from-latest)')]
 [script]
-volsync-restore ns app previous='0':
+restore ns app previous='0':
     just check-tools kubectl flux envsubst jq
     flux -n {{ ns }} suspend kustomization {{ app }}
     flux -n {{ ns }} suspend helmrelease {{ app }}
     kubectl -n {{ ns }} get deploy,sts -l app.kubernetes.io/name={{ app }} -o name \
         | xargs -r -I{} kubectl -n {{ ns }} scale {} --replicas=0
     kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
-    eval $(kubectl -n {{ ns }} get replicationsources/{{ app }} -o json | jq -r '"export CLAIM=\(.spec.sourcePVC) STORAGE_CLASS=\(.spec.kopia.storageClassName) ACCESS_MODES=\(.spec.kopia.accessModes[0]) PUID=\(.spec.kopia.moverSecurityContext.runAsUser) PGID=\(.spec.kopia.moverSecurityContext.runAsGroup)"')
-    if [ "{{ previous }}" = "0" ]; then
-        export NS="{{ ns }}" APP="{{ app }}"
-        envsubst < {{ kubernetes_dir }}/components/volsync/resources/replicationdestination.yaml.j2 | kubectl apply -f -
-    else
-        export NS="{{ ns }}" APP="{{ app }}"
-        envsubst < {{ kubernetes_dir }}/components/volsync/resources/list-json.yaml.j2 | kubectl apply -f -
-        kubectl -n {{ ns }} wait job/{{ app }}-list-snapshots --for=condition=complete --timeout=5m
-        RESTORE_AS_OF=$(kubectl -n {{ ns }} logs job/{{ app }}-list-snapshots | jq -r --argjson p {{ previous }} 'sort_by(.endTime) | reverse | .[$p].endTime')
-        kubectl -n {{ ns }} delete job {{ app }}-list-snapshots
-        export NS="{{ ns }}" APP="{{ app }}" RESTORE_AS_OF="$RESTORE_AS_OF"
-        envsubst < {{ kubernetes_dir }}/components/volsync/resources/replicationdestination-previous.yaml.j2 | kubectl apply -f -
-    fi
-    echo "Waiting for restore..."
+    kubectl -n {{ ns }} get replicationdestination {{ app }}-dst -o json \
+        | jq 'del(.status)
+            | .metadata = {name: "{{ app }}-manual", namespace: .metadata.namespace}
+            | .spec.kopia.copyMethod = "Direct"
+            | .spec.kopia.destinationPVC = "{{ app }}"
+            | .spec.kopia.previous = {{ previous }}' \
+        | kubectl apply --server-side -f -
     kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=create --timeout=120s
     kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=condition=complete --timeout=120m
     kubectl -n {{ ns }} delete replicationdestination {{ app }}-manual
     flux -n {{ ns }} resume kustomization {{ app }}
     flux -n {{ ns }} resume helmrelease {{ app }}
     flux -n {{ ns }} reconcile helmrelease {{ app }} --force
-    kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ app }}" --timeout=5m || true
-    echo "Restore complete!"
+    kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
 
 [doc('Restart network stack in dependency order')]
 [script]
@@ -211,4 +184,3 @@ restart-network:
 [script]
 render-local-ks ns ks:
     flate build ks -n "{{ ns }}" -o yaml "{{ ks }}"
-

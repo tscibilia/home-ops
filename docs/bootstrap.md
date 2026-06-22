@@ -28,18 +28,18 @@ flowchart TD
 
 <small>¹ Cilium → CoreDNS → cert-manager → external-secrets</small>
 
-| Stage | Command | Notes |
-| ----- | ------- | ----- |
-| 1. Install Talos | `just bootstrap talos` | |
-| 2. Bootstrap K8s | `just bootstrap kube` | |
-| 3. Fetch kubeconfig | `just bootstrap kubeconfig` | |
-| 4. Wait for nodes | `just bootstrap wait` | |
-| 5. Apply namespaces | `just bootstrap namespaces` | |
-| 6. Apply resources | `just bootstrap resources` | |
-| 7. Apply CRDs | `just bootstrap crds` | |
-| 8. Apply core apps | `just bootstrap apps` | Cilium → CoreDNS → cert-manager → external-secrets |
-| 9. Flux takes over | — | Reconciles everything else from Git |
-| 10. Restore databases | `just bootstrap cnpg` | Recovers CNPG clusters from B2 backups |
+| Stage                 | Command                     | Notes                                              |
+| --------------------- | --------------------------- | -------------------------------------------------- |
+| 1. Install Talos      | `just bootstrap talos`      |                                                    |
+| 2. Bootstrap K8s      | `just bootstrap kube`       |                                                    |
+| 3. Fetch kubeconfig   | `just bootstrap kubeconfig` |                                                    |
+| 4. Wait for nodes     | `just bootstrap wait`       |                                                    |
+| 5. Apply namespaces   | `just bootstrap namespaces` |                                                    |
+| 6. Apply resources    | `just bootstrap resources`  |                                                    |
+| 7. Apply CRDs         | `just bootstrap crds`       |                                                    |
+| 8. Apply core apps    | `just bootstrap apps`       | Cilium → CoreDNS → cert-manager → external-secrets |
+| 9. Flux takes over    | —                           | Reconciles everything else from Git                |
+| 10. Restore databases | `just bootstrap cnpg`       | Recovers CNPG clusters from B2 backups             |
 
 ## Post-Bootstrap Checks
 
@@ -66,20 +66,18 @@ kubectl get cluster -n database
 For apps with PVC data (config, state — not databases):
 
 ```bash
-just kube volsync-restore <ns> <name> <previous>
+just kube restore <ns> <name> <previous>
 ```
 
 This handles the full flow: suspend the app → delete the existing PVC → VolSync Volume Populator creates a new PVC from the backup → resume the app.
 
-Check available snapshots first: `just kube volsync-list <ns> <name>`
-
 ## Important Notes
 
 !!! warning "Upgrade order matters"
-    Always upgrade Talos first (`just talos upgrade-node <node>`), then Kubernetes (`just talos upgrade-k8s <version>`). Never the other way around.
+Always upgrade Talos first (`just talos upgrade-node <node>`), then Kubernetes (`just talos upgrade-k8s <version>`). Never the other way around.
 
 !!! danger "Don't manually recreate CNPG clusters"
-    CNPG recovery uses Barman-cloud backups from B2. Use `just bootstrap cnpg` — it handles the restore process.
+CNPG recovery uses Barman-cloud backups from B2. Use `just bootstrap cnpg` — it handles the restore process.
 
 - **Talos configs are templates** — edit `kubernetes/talos/`, never the rendered output
 - **Flux is the source of truth** — once it's running, everything else deploys from Git automatically

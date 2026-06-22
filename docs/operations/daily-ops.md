@@ -11,14 +11,13 @@ Renovate opens PRs for dependency updates (container images, Helm charts, tools)
 
 ## Common Workflows
 
-| Task                          | Command                                     |
-| ----------------------------- | ------------------------------------------- |
-| Force sync a stuck resource   | `just kube sync ks <ns> <app>`              |
-| Reconcile from source         | `just kube reconcile-ks <ns> <name>`        |
-| Restart all failed resources  | `just kube restart-ks` / `just kube restart-hr` |
-| Browse a PVC                  | `just kube browse-pvc <ns> <claim>`         |
-| Snapshot a PVC                | `just kube volsync-snapshot <ns> <app>`     |
-| List VolSync snapshots        | `just kube volsync-list <ns> <app>`         |
+| Task                         | Command                                         |
+| ---------------------------- | ----------------------------------------------- |
+| Force sync a stuck resource  | `just kube sync ks <ns> <app>`                  |
+| Reconcile from source        | `just kube reconcile-ks <ns> <name>`            |
+| Restart all failed resources | `just kube restart-ks` / `just kube restart-hr` |
+| Browse a PVC                 | `just kube browse-pvc <ns> <claim>`             |
+| Snapshot a PVC               | `just kube snapshot <ns> <app>`                 |
 
 Full command reference: [Task Runner](task-runner.md)
 
