@@ -6,7 +6,7 @@ This file provides guidance to AI agents when working in this repository.
 
 Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-metal nodes with Rook Ceph.
 **Stack:** Talos Linux → Kubernetes → Flux CD → Helm/Kustomize
-**Local rendering:** `flate` (konflate) — replaces `flux-local` for dry-run validation.
+**Server-side rendering:** `flate` (konflate) — replaces `flux-local` for dry-run validation.
 **Layout:** `/kubernetes/` (apps, talos, bootstrap), `/docker/` (server configs), `docs/` (MKDocs).
 
 ## Karpathy Skills
@@ -49,6 +49,10 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 - For multi-step tasks, state a brief plan:
     1. [Step] → verify: [check]
     2. [Step] → verify: [check]
+
+## Pocock Skills (Human in the Loop Communication)
+
+- When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
 
 ## Task Runner & Workflow
 
