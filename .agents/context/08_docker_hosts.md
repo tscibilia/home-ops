@@ -14,6 +14,7 @@ Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each
 ## Hosts
 
 ### truenas
+
 Path: `docker/truenas/`
 | # | Service | Compose file |
 |---|---------|-------------|
@@ -24,6 +25,7 @@ Path: `docker/truenas/`
 NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
 
 ### clonenas
+
 Path: `docker/clonenas/`
 | # | Service | Compose file |
 |---|---------|-------------|
@@ -34,6 +36,7 @@ Path: `docker/clonenas/`
 clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
 
 ### unraid
+
 Path: `docker/unraid/`
 | # | Service | Compose file |
 |---|---------|-------------|
@@ -43,6 +46,7 @@ Path: `docker/unraid/`
 Unraid role: secondary/backup NFS, GPU workloads (ai3090 node). **Archived** — replaced by clonenas.
 
 ### vps
+
 Path: `docker/vps/`
 | # | Service | Compose file |
 |---|---------|-------------|
@@ -65,10 +69,10 @@ VPS uses an aKeyless proxy sidecar (`proxy.py`) + doco-cd webhook secret provide
 
 ```yaml
 external_secrets:
-  MY_VAR:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-<project>/<secret-name>
+    MY_VAR:
+        store_ref: akeyless
+        remote_ref:
+            key: docker/vps-<project>/<secret-name>
 ```
 
 **Important**: aKeyless secrets on VPS Docker hosts must be individual **text** secrets (one value per secret). JSON-format secrets are not used here.

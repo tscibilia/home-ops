@@ -3,23 +3,27 @@
 This directory contains a Kustomize overlay for bootstrapping CNPG PostgreSQL clusters with recovery from Barman backups.
 
 **Clusters managed:**
+
 - `pgsql-cluster` - Main PostgreSQL cluster
-- `immich17` - Immich-specific cluster with vectorchord extension
+- `pgvector-cluster` - Secondary cluster with vectorchord extension
 
 ## When to Use
 
 **Use this when:**
+
 - Rebuilding the cluster and you want to restore from backups
 - Recovering from a disaster scenario
 - Migrating to new hardware/cluster
 
 **Don't use this when:**
+
 - Creating a fresh database cluster (use normal Flux deployment)
 - Cluster already exists and is healthy
 
 ## How It Works
 
 This overlay:
+
 1. References the base cluster config from `kubernetes/apps/database/cnpg/pgsql-cluster/app`
 2. Adds the `bootstrap.recovery` section to restore from Barman backups
 3. Restores from the **latest available backup** by default
@@ -29,20 +33,17 @@ This overlay:
 ### Fresh Bootstrap (No Restore)
 
 ```bash
-# Normal bootstrap - creates empty databases
-just bootstrap default
+# Restore CNPG clusters from last backup
+just bootstrap cnpg
 ```
 
 ### Bootstrap with Restore
 
 ```bash
-# 1. Run normal bootstrap (installs CNPG operator)
-just bootstrap default
+# 1. Run normal bootstrap with restore from last backup
+just bootstrap
 
-# 2. Restore CNPG clusters from backup
-just bootstrap cnpg
-
-# 3. Verify clusters are healthy
+# 2. Verify clusters are healthy
 kubectl get cluster -n database
 ```
 
@@ -51,17 +52,19 @@ kubectl get cluster -n database
 If you need to restore to a specific backup (not latest):
 
 1. Edit `kustomization.yaml` and add `recoveryTarget`:
-   ```yaml
-   - op: add
-     path: /spec/bootstrap/recovery/recoveryTarget
-     value:
-       backupID: 20251208T035402
-   ```
+
+    ```yaml
+    - op: add
+      path: /spec/bootstrap/recovery/recoveryTarget
+      value:
+          backupID: 20251208T035402
+    ```
 
 2. Run the restore:
-   ```bash
-   just bootstrap cnpg
-   ```
+
+    ```bash
+    just bootstrap cnpg
+    ```
 
 3. Remove the `recoveryTarget` section after restore completes
 
@@ -89,6 +92,7 @@ kubernetes/apps/database/cnpg/
 ## Troubleshooting
 
 **Cluster stuck in "Bootstrapping" state:**
+
 ```bash
 # Check CNPG operator logs
 kubectl logs -n cnpg-system -l app.kubernetes.io/name=cloudnative-pg -f
@@ -98,6 +102,7 @@ kubectl describe cluster -n database pgsql-cluster
 ```
 
 **Backup not found:**
+
 - Verify backup exists in S3/Minio bucket
 - Check barman plugin configuration in cluster.yaml
 - Ensure bucket credentials are correct

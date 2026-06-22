@@ -117,7 +117,7 @@ cnpg:
         sleep 5; \
     done
     # Delete clusters that were created with initdb (Flux race) so recovery can proceed
-    for cluster in pgsql-cluster immich17; do \
+    for cluster in pgsql-cluster pgvector-cluster; do \
         if kubectl get cluster -n database "$cluster" &>/dev/null; then \
             bootstrap=$(kubectl get cluster -n database "$cluster" -o jsonpath='{.spec.bootstrap}' 2>/dev/null); \
             if echo "$bootstrap" | grep -q '"initdb"'; then \
@@ -126,7 +126,7 @@ cnpg:
             fi; \
         fi; \
     done
-    # Apply clusters with recovery - if backups don't exist, cluster creation will fail and continue normally via Flux
+    # Apply clusters with recovery - if backups do not exist, cluster creation will fail and continue normally via Flux
     if ! kustomize build "{{ bootstrap_dir }}/cnpg" | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f - 2>&1; then \
         just log info "CNPG cluster creation failed (likely no backups exist). Clusters will be created by Flux." "stage" "$0"; \
     fi

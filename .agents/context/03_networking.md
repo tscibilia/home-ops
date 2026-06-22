@@ -9,9 +9,9 @@
 
 ## Gateways
 
-| Gateway | Namespace | Use case |
-|---------|-----------|----------|
-| `envoy-internal` | `network` | LAN-only apps |
+| Gateway          | Namespace | Use case             |
+| ---------------- | --------- | -------------------- |
+| `envoy-internal` | `network` | LAN-only apps        |
 | `envoy-external` | `network` | Internet-facing apps |
 
 Domain variable: `${SECRET_DOMAIN}` (from `cluster-secrets` Secret).
@@ -41,9 +41,9 @@ Add the appropriate component to the **app's `kustomization.yaml`**, not `ks.yam
 ```yaml
 # kubernetes/apps/{ns}/{app}/app/kustomization.yaml
 components:
-  - ../../../../components/ext-auth-internal   # internal gateway
-  # or
-  - ../../../../components/ext-auth-external   # external gateway
+    - ../../../../components/ext-auth-internal # internal gateway
+    # or
+    - ../../../../components/ext-auth-external # external gateway
 ```
 
 The component targets the HTTPRoute named `${APP}`. See `06_components.md` for override options.
@@ -55,6 +55,7 @@ The component targets the HTTPRoute named `${APP}`. See `06_components.md` for o
 The `gatus-sidecar` runs with `--auto-httproute --enable-httproute --enable-service`. **No annotation or action is needed** — it auto-discovers every HTTPRoute automatically.
 
 **Exception — apps using ext-auth (Authentik forward auth):** the auth redirect means the route will never return 200. You must:
+
 1. Disable route monitoring: `gatus.home-operations.com/enabled: "false"` on the route
 2. Enable service monitoring: `gatus.home-operations.com/enabled: "true"` on the service
 

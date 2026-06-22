@@ -48,22 +48,24 @@ docs/
 2. **Read the existing page** to match the exact table format
 3. **Add a table row** with: App name | Storage class (or —) | Notes (non-obvious config only)
 4. **Add a Config Notes section** only if the app has non-obvious setup:
-   - VPN/Multus networking
-   - Specific CNPG cluster or Dragonfly DB number
-   - GPU access
-   - External access specifics
-   - Unusual dependencies or component usage
+    - VPN/Multus networking
+    - Specific CNPG cluster or Dragonfly DB number
+    - GPU access
+    - External access specifics
+    - Unusual dependencies or component usage
 5. **Update the app count** in `docs/apps/index.md` namespace table
 6. **Update `mkdocs.yml`** if adding a new namespace page (unlikely)
 
 ### What to check in the manifest
 
 Look at the app's `ks.yaml` for:
+
 - `dependsOn` — notable dependencies
-- `components` — which reusable components (volsync, cnpg, ext-auth-*, zeroscaler)
+- `components` — which reusable components (volsync, cnpg, ext-auth-\*, zeroscaler)
 - `postBuild.substitute` — any special substitutions
 
 Look at `app/helmrelease.yaml` or `app/kustomization.yaml` for:
+
 - Storage class overrides
 - GPU resource requests
 - Multus annotations (net1, 192.168.99.x)
@@ -75,10 +77,10 @@ Look at `app/helmrelease.yaml` or `app/kustomization.yaml` for:
 
 Namespace: `namespace-name`
 
-| App    | Storage  | Notes                                |
-| ------ | -------- | ------------------------------------ |
-| app-a  | ceph-ssd | Brief non-obvious config             |
-| app-b  | —        |                                      |
+| App   | Storage  | Notes                    |
+| ----- | -------- | ------------------------ |
+| app-a | ceph-ssd | Brief non-obvious config |
+| app-b | —        |                          |
 
 ## Config Notes
 
@@ -93,12 +95,12 @@ When asked to update docs for a PR or timeframe:
 
 1. **Check what changed**: `git log --oneline --since="<date>"` or `gh pr view <number>`
 2. **Map changes to doc files**:
-   - New/removed app → `apps/{namespace}.md` + `apps/index.md` count
-   - Networking change → `architecture.md` networking section
-   - Storage change → `architecture.md` storage section
-   - New docker service → `docker/index.md`
-   - New just command → `operations/task-runner.md`
-   - Infrastructure change → `architecture.md` relevant section
+    - New/removed app → `apps/{namespace}.md` + `apps/index.md` count
+    - Networking change → `architecture.md` networking section
+    - Storage change → `architecture.md` storage section
+    - New docker service → `docker/index.md`
+    - New just command → `operations/task-runner.md`
+    - Infrastructure change → `architecture.md` relevant section
 3. **Read the affected doc file first** — match existing style exactly
 4. **Make surgical edits** — don't rewrite sections that haven't changed
 5. **Verify cross-links** still work if you renamed or moved anything

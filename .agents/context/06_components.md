@@ -50,10 +50,11 @@ Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a C
 ## ext-auth-internal — SSO for internal apps
 
 Add to the **app's `kustomization.yaml`** (not `ks.yaml`):
+
 ```yaml
 # kubernetes/apps/{ns}/{app}/ks.yaml
 components:
-  - ../../../../components/ext-auth-internal
+    - ../../../../components/ext-auth-internal
 ```
 
 Creates a `SecurityPolicy` targeting the HTTPRoute named `${APP}`. Override with `EXT_AUTH_TARGET: custom-name` in `postBuild.substitute` if route name differs.
@@ -61,9 +62,10 @@ Creates a `SecurityPolicy` targeting the HTTPRoute named `${APP}`. Override with
 ## ext-auth-external — SSO for external apps
 
 Same as above but for `envoy-external` gateway:
+
 ```yaml
 components:
-  - ../../../../components/ext-auth-external
+    - ../../../../components/ext-auth-external
 ```
 
 ## zeroscaler — scale-to-zero via native HPA + prometheus-adapter
@@ -80,6 +82,7 @@ postBuild:
 ```
 
 For clonenas-backed apps (volsync, rclone), override the probe job:
+
 ```yaml
 postBuild:
   substitute:
@@ -100,9 +103,10 @@ No `dependsOn` on observability — the HPA uses the external metrics API served
 **Behavior:** `stabilizationWindowSeconds: 0` on both scaleDown/scaleUp; `periodSeconds: 15`. Workload reacts within ~15 s of probe state change.
 
 **Prerequisites:**
+
 - `prometheus-adapter` deployed in `observability` (kustomization auto-applies on cluster bootstrap)
 - A Prometheus `Probe` CR with `spec.jobName` matching `${ZEROSCALER_JOB_NAME}`. Current Probes (in `apps/observability/exporters/blackbox-exporter/app/probes.yaml`):
-  - `nfs` → `jobName: nfs_probe` → `truenas.internal:2049`
-  - `nfs-bkup` → `jobName: nfs_bkup_probe` → `clonenas.internal:2049`
+    - `nfs` → `jobName: nfs_probe` → `truenas.internal:2049`
+    - `nfs-bkup` → `jobName: nfs_bkup_probe` → `clonenas.internal:2049`
 
 For a custom HPA targeting a different deployment in the same app (e.g., immich's `immich-server`), don't use the component — add an explicit `horizontalpodautoscaler.yaml` in `app/` with the same `probe_success` + `job: nfs_probe` selector pattern.
