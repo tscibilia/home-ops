@@ -5,9 +5,9 @@ metadata:
   name: akeyless-secret
   namespace: external-secrets
 stringData:
-  accessId: ak://akeyless/AK_ACCESS_ID
-  accessType: ak://akeyless/AK_ACCESS_TYPE
-  accessTypeParam: ak://akeyless/AK_ACCESS_TYPE_PARAM
+  accessId: ak://kubernetes/akeyless/AK_ACCESS_ID
+  accessType: ak://kubernetes/akeyless/AK_ACCESS_TYPE
+  accessTypeParam: ak://kubernetes/akeyless/AK_ACCESS_TYPE_PARAM
 ---
 apiVersion: v1
 kind: Secret
@@ -15,8 +15,8 @@ metadata:
   name: cloudflared-secret
   namespace: network
 stringData:
-  CLOUDFLARE_TUNNEL_ID: ak://external-dns/CLOUDFLARE_TUNNEL_ID
-  TUNNEL_TOKEN: ak://external-dns/CLOUDFLARED_TUNNEL_TOKEN
+  CLOUDFLARE_TUNNEL_ID: ak://network/external-dns/CLOUDFLARE_TUNNEL_ID
+  TUNNEL_TOKEN: ak://network/external-dns/CLOUDFLARED_TUNNEL_TOKEN
 ---
 apiVersion: v1
 kind: Secret
@@ -24,8 +24,8 @@ metadata:
   name: cluster-secrets
   namespace: flux-system
 stringData:
-  SECRET_DOMAIN: ak://cluster-secrets/SECRET_DOMAIN
-  TIMEZONE: ak://cluster-secrets/TIMEZONE
+  SECRET_DOMAIN: ak://kubernetes/cluster-secrets/SECRET_DOMAIN
+  TIMEZONE: ak://kubernetes/cluster-secrets/TIMEZONE
 ---
 apiVersion: v1
 kind: Secret
@@ -33,5 +33,5 @@ metadata:
   name: cluster-secrets
   namespace: external-secrets
 stringData:
-  SECRET_DOMAIN: ak://cluster-secrets/SECRET_DOMAIN
-  TIMEZONE: ak://cluster-secrets/TIMEZONE
+  SECRET_DOMAIN: ak://kubernetes/cluster-secrets/SECRET_DOMAIN
+  TIMEZONE: ak://kubernetes/cluster-secrets/TIMEZONE
