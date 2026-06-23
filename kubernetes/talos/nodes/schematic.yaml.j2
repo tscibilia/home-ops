@@ -13,9 +13,18 @@ customization:
     - mitigations=off # Less security, faster puter
     - security=none # Less security, faster puter
     - talos.auditd.disabled=1 # Less security, faster puter
+    {% if ENV.WORKER %}
+    - nvidia_drm.modeset=1 # NVIDIA DRM kernel mode setting
+    {% endif %}
   systemExtensions:
     officialExtensions:
-      - siderolabs/i915 # Intel GPU
       - siderolabs/intel-ucode # Intel CPU Microcode
       - siderolabs/mei # Intel Management Engine
       - siderolabs/nfsrahead # NFS Performance
+      {% if ENV.CONTROLPLANE %}
+      - siderolabs/i915 # Intel GPU
+      {% endif %}
+      {% if ENV.WORKER %}
+      - siderolabs/nonfree-kmod-nvidia # NVIDIA proprietary kernel module
+      - siderolabs/nvidia-container-toolkit # NVIDIA container runtime hook
+      {% endif %}

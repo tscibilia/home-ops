@@ -41,7 +41,7 @@ just bootstrap cnpg
 
 ```bash
 # 1. Run normal bootstrap with restore from last backup
-just bootstrap
+just bootstrap cluster
 
 # 2. Verify clusters are healthy
 kubectl get cluster -n database

@@ -21,7 +21,6 @@ spec:
             groups: ["flux-admin"]
       httpRoute:
         enabled: true
-        # TODO: had to substitute with actual hostnames on bootstrap
         hostnames: ["flux.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

@@ -1,1 +1,6 @@
-{{ (fromYaml (readFile (printf "../../../apps/%s/%s/app/helmrelease.yaml" .Release.Namespace .Release.Name))).spec.values | toYaml }}
+{{- $values := (fromYaml (readFile (printf "../../../apps/%s/%s/app/helmrelease.yaml" .Release.Namespace .Release.Name))).spec.values | toYaml -}}
+{{- if env "SECRET_DOMAIN" -}}
+{{ $values | replace "${SECRET_DOMAIN}" (env "SECRET_DOMAIN") }}
+{{- else -}}
+{{ $values }}
+{{- end -}}

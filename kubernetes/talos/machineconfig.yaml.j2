@@ -5,7 +5,7 @@ persist: true
 machine:
   ca:
     crt: ak://talos-m70q/MACHINE_CA_CRT
-    {% if ENV.IS_CONTROLLER %}
+    {% if ENV.CONTROLPLANE %}
     key: ak://talos-m70q/MACHINE_CA_KEY
     {% endif %}
   features:
@@ -19,7 +19,7 @@ machine:
     kubePrism:
       enabled: true
       port: 7445
-    {% if ENV.IS_CONTROLLER %}
+    {% if ENV.CONTROLPLANE %}
     kubernetesTalosAPIAccess:
       allowedKubernetesNamespaces:
         - actions-runner-system
@@ -49,7 +49,7 @@ machine:
         noatime=True
   install:
     disk: /dev/nvme0n1
-    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC_ID | safe }}:v1.13.4
+    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC | safe }}:v1.13.4
     wipe: false
   kernel:
     modules:
@@ -100,7 +100,7 @@ machine:
 cluster:
   ca:
     crt: ak://talos-m70q/CLUSTER_CA_CRT
-    {% if ENV.IS_CONTROLLER %}
+    {% if ENV.CONTROLPLANE %}
     key: ak://talos-m70q/CLUSTER_CA_KEY
     {% endif %}
   clusterName: main
@@ -124,7 +124,7 @@ cluster:
       - 10.43.0.0/16
   secret: ak://talos-m70q/CLUSTER_SECRET
   token: ak://talos-m70q/CLUSTER_TOKEN
-  {% if ENV.IS_CONTROLLER %}
+  {% if ENV.CONTROLPLANE %}
   aggregatorCA:
     crt: ak://talos-m70q/CLUSTER_AGGREGATORCA_CRT
     key: ak://talos-m70q/CLUSTER_AGGREGATORCA_KEY
@@ -223,12 +223,14 @@ name: bond0.99
 vlanID: 99
 parent: bond0
 mtu: 1500
+{% if ENV.CONTROLPLANE %}
 ---
 apiVersion: v1alpha1
 kind: LinkAliasConfig
 name: ceph0
 selector:
   match: link.driver == "r8169"
+{% endif %}
 ---
 apiVersion: v1alpha1
 kind: VolumeConfig
