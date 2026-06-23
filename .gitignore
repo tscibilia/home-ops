@@ -13,22 +13,25 @@
 # Kubernetes
 kubeconfig
 talosconfig
-# Misc.
+# AI Agents
 /CLAUDE.md
 /AGENTS.md
-/data/
-graphify-out/
-node-compile-cache/
-.archived/
-.pytest_cache/
 .agents/*
 !.agents/AGENTS.md
 !.agents/settings.json
 !.agents/context/
 !.agents/plugins/
 !.agents/skills/
+# Private
 .git/
 .private/
+mise.lock
+# Misc.
+/data/
+graphify-out/
+node-compile-cache/
+.archived/
+.pytest_cache/
 .task/
 .venv/
 .DS_Store

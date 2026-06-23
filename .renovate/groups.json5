@@ -92,10 +92,18 @@
       minimumGroupSize: 5,
     },
     {
+      description: "Nvidia Group",
+      groupName: "nvidia",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/nvidia/", "nvidia-device-plugin"],
+      group: { commitMessageTopic: "{{{groupName}}} group" },
+      minimumGroupSize: 2,
+    },
+    {
       description: "Obico Group",
       groupName: "Obico",
-      matchPackageNames: ["/obico/"],
       matchDatasources: ["docker"],
+      matchPackageNames: ["/obico/"],
       group: { commitMessageTopic: "{{{groupName}}} group" },
       separateMinorPatch: true,
       sourceUrl: "https://github.com/gabe565/docker-obico",
@@ -134,11 +142,8 @@
     {
       description: "Talos Group",
       groupName: "talos",
-      matchDatasources: ["docker", "aqua"],
-      matchPackageNames: ["/installer/", "/talos/"],
-      group: {
-        commitMessageTopic: "{{{groupName}}} group",
-      },
+      matchPackageNames: ["siderolabs/talos"],
+      group: { commitMessageTopic: "{{{groupName}}} group" },
       minimumGroupSize: 2,
     },
     {
