@@ -23,7 +23,7 @@ services:
       start_period: 30s
 
   unifi-network-application:
-    image: ghcr.io/linuxserver/unifi-network-application:10.4.57@sha256:98b519abdd4a9fae5122bcd6daa48018b38d6e66eeb64c48eed7789652703424
+    image: ghcr.io/linuxserver/unifi-network-application:10.4.57@sha256:5754d5fa5c47943fb01153a02a55f2d49a5013d017a22ba3810e16fef417138d
     container_name: unifi-network-application
     restart: unless-stopped
     depends_on:
