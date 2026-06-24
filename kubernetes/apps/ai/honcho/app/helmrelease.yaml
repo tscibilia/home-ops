@@ -31,7 +31,7 @@ spec:
           02-migrate:
             image:
               repository: ghcr.io/plastic-labs/honcho
-              tag: v3.0.10@sha256:6942f481cbcfb57ba0fffbd39399fa8ab6eb755a2d5113ee1258cd487a9d7271
+              tag: v3.0.11@sha256:383edb2bd63af7c78cdc875a058d98ab5757cef4bc3f7a8b102148e2db89b3c6
             command:
               - /app/.venv/bin/alembic
               - upgrade
@@ -44,7 +44,7 @@ spec:
           app:
             image: &honcho-image
               repository: ghcr.io/plastic-labs/honcho
-              tag: v3.0.10@sha256:6942f481cbcfb57ba0fffbd39399fa8ab6eb755a2d5113ee1258cd487a9d7271
+              tag: v3.0.11@sha256:383edb2bd63af7c78cdc875a058d98ab5757cef4bc3f7a8b102148e2db89b3c6
             env: &honcho-env
               CACHE_URL: "redis://dragonfly-cluster.database.svc.cluster.local:6379/6"
               CACHE_ENABLED: "true"
