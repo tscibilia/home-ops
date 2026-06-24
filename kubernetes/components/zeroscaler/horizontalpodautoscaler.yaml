@@ -27,9 +27,9 @@ spec:
       policies:
         - type: Pods
           value: 1
-          periodSeconds: 15
+          periodSeconds: 60 # Wait 60s to scale down 1 pod (vs instant)
       selectPolicy: Max
-      stabilizationWindowSeconds: 0
+      stabilizationWindowSeconds: 120 # Wait 2 minutes before scaling down to avoid flapping
     scaleUp:
       policies:
         - type: Pods
