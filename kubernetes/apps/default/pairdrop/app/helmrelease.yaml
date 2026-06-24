@@ -58,7 +58,7 @@ spec:
               - --log-file=stdout
               - --listening-ip=0.0.0.0
               - --listening-port=3478
-              - --external-ip=192.168.5.234
+              - --external-ip=192.168.42.102
               - --min-port=10000
               - --max-port=20000
               - --fingerprint
@@ -98,7 +98,7 @@ spec:
         controller: *app
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: 192.168.5.234
+          lbipam.cilium.io/ips: 192.168.42.102
         ports:
           turn-tcp:
             port: 3478

@@ -31,7 +31,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 10m
@@ -54,7 +54,7 @@ spec:
       app:
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: 192.168.5.232
+          lbipam.cilium.io/ips: 192.168.42.100
           external-dns.alpha.kubernetes.io/hostname: "${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
         externalTrafficPolicy: Local
         ports:

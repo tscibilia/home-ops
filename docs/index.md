@@ -6,65 +6,65 @@ GitOps-managed Kubernetes cluster on three Lenovo M70q nodes, plus Docker servic
 
 <div class="grid cards" markdown>
 
--   :material-wrench:{ .lg .middle } **Something broke**
+- :material-wrench:{ .lg .middle } **Something broke**
 
-    ---
+    ***
 
     Symptom → check → fix tables by area
 
     [:octicons-arrow-right-24: Troubleshooting](operations/troubleshooting.md)
 
--   :material-update:{ .lg .middle } **Daily upkeep**
+- :material-update:{ .lg .middle } **Daily upkeep**
 
-    ---
+    ***
 
     Merging Renovate PRs, health checks, common workflows
 
     [:octicons-arrow-right-24: Daily Ops](operations/daily-ops.md)
 
--   :material-apps:{ .lg .middle } **Add or modify an app**
+- :material-apps:{ .lg .middle } **Add or modify an app**
 
-    ---
+    ***
 
     App catalog by namespace with config notes
 
     [:octicons-arrow-right-24: App Catalog](apps/)
 
--   :material-sitemap:{ .lg .middle } **Understand the cluster**
+- :material-sitemap:{ .lg .middle } **Understand the cluster**
 
-    ---
+    ***
 
     Hardware, networking, storage, databases, GitOps
 
     [:octicons-arrow-right-24: Architecture](architecture.md)
 
--   :material-restart:{ .lg .middle } **Rebuild from scratch**
+- :material-restart:{ .lg .middle } **Rebuild from scratch**
 
-    ---
+    ***
 
     Full disaster recovery and bootstrap process
 
     [:octicons-arrow-right-24: Bootstrap](bootstrap.md)
 
--   :material-console:{ .lg .middle } **Find a `just` command**
+- :material-console:{ .lg .middle } **Find a `just` command**
 
-    ---
+    ***
 
     All task runner commands for kube, talos, bootstrap
 
     [:octicons-arrow-right-24: Task Runner](operations/task-runner.md)
 
--   :material-docker:{ .lg .middle } **Docker services**
+- :material-docker:{ .lg .middle } **Docker services**
 
-    ---
+    ***
 
     TrueNAS, UnRaid, AI3090 — doco-cd managed
 
     [:octicons-arrow-right-24: Docker Services](docker/)
 
--   :material-heart-pulse:{ .lg .middle } **I'm family and need help**
+- :material-heart-pulse:{ .lg .middle } **I'm family and need help**
 
-    ---
+    ***
 
     Plain-language guide for non-technical users
 
@@ -74,10 +74,10 @@ GitOps-managed Kubernetes cluster on three Lenovo M70q nodes, plus Docker servic
 
 ## Quick Reference
 
-| Item            | Value                                     |
-| --------------- | ----------------------------------------- |
-| **API endpoint** | 192.168.5.250 (BGP LB)                   |
-| **Nodes**       | k8s-1 (.211), k8s-2 (.212), k8s-3 (.213) |
-| **Domain**      | *.t0m.co (external), LAN via UniFi DNS    |
-| **Source of truth** | This repo — Flux reconciles on push   |
-| **Secrets**     | aKeyless → ExternalSecrets                |
+| Item                | Value                                     |
+| ------------------- | ----------------------------------------- |
+| **API endpoint**    | k8s.internal:6443 (BGP LB, 192.168.42.50) |
+| **Nodes**           | k8s-1 (.211), k8s-2 (.212), k8s-3 (.213)  |
+| **Domain**          | \*.t0m.co (external), LAN via UniFi DNS   |
+| **Source of truth** | This repo — Flux reconciles on push       |
+| **Secrets**         | aKeyless → ExternalSecrets                |

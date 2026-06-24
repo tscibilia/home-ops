@@ -9,25 +9,26 @@ Gateway API implementation using Envoy Gateway for application routing and ingre
 ## Architecture
 
 ```
-External: Internet → Cloudflare → Cloudflared → envoy-external (192.168.5.241) → Apps
-Internal: LAN → k8s-gateway → envoy-internal (192.168.5.231) → Apps
+External: Internet → Cloudflare → Cloudflared → envoy-external (192.168.42.41) → Apps
+Internal: LAN → k8s-gateway → envoy-internal (192.168.42.31) → Apps
 ```
 
 ### Components
 
-| Component | Purpose | IP |
-|-----------|---------|-----|
-| **envoy-external** | External Gateway (HTTPS) | 192.168.5.241 |
-| **envoy-internal** | Internal Gateway (HTTPS) | 192.168.5.231 |
-| **external-dns** | DNS automation (watches HTTPRoute) | - |
-| **unifi-dns** | Internal DNS automation (watches HTTPRoute) | - |
-| **cloudflared** | Cloudflare tunnel | - |
+| Component          | Purpose                                     | IP            |
+| ------------------ | ------------------------------------------- | ------------- |
+| **envoy-external** | External Gateway (HTTPS)                    | 192.168.42.41 |
+| **envoy-internal** | Internal Gateway (HTTPS)                    | 192.168.42.31 |
+| **external-dns**   | DNS automation (watches HTTPRoute)          | -             |
+| **unifi-dns**      | Internal DNS automation (watches HTTPRoute) | -             |
+| **cloudflared**    | Cloudflare tunnel                           | -             |
 
 ## HTTPRoute Pattern
 
 All apps use inline `route:` blocks in HelmRelease:
 
 **Internal Apps:**
+
 ```yaml
 route:
   app:
@@ -42,6 +43,7 @@ route:
 ```
 
 **External Apps:**
+
 ```yaml
 route:
   app:
@@ -60,24 +62,27 @@ route:
 For apps requiring authentication, use the appropriate `ext-auth` component:
 
 **For internal apps (envoy-internal):**
+
 ```yaml
 # In app's kustomization.yaml
 components:
-  - ../../../../components/ext-auth-internal
+    - ../../../../components/ext-auth-internal
 ```
 
 **For external apps (envoy-external):**
+
 ```yaml
 # In app's kustomization.yaml
 components:
-  - ../../../../components/ext-auth-external
+    - ../../../../components/ext-auth-external
 ```
 
 **In app's ks.yaml:**
+
 ```yaml
 postBuild:
-  substitute:
-    APP: app-name  # Must match HelmRelease/HTTPRoute name
+    substitute:
+        APP: app-name # Must match HelmRelease/HTTPRoute name
 ```
 
 See `kubernetes/components/ext-auth-internal/` and `kubernetes/components/ext-auth-external/` for SecurityPolicy configuration.
@@ -106,18 +111,21 @@ kubectl logs -n network -l gateway.envoyproxy.io/owning-gateway-name=envoy-exter
 ## Troubleshooting
 
 **Gateway not ready:**
+
 ```bash
 kubectl describe gateway envoy-external -n network
 kubectl get svc -n network | grep envoy
 ```
 
 **HTTPRoute not binding:**
+
 ```bash
 kubectl describe httproute <name> -n <namespace>
 # Check: parentRefs.name, parentRefs.namespace, sectionName
 ```
 
 **Authentik auth not working:**
+
 ```bash
 kubectl get securitypolicy -A
 kubectl get referencegrant -n default

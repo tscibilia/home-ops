@@ -50,7 +50,7 @@ spec:
             securityContext: &secCont
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -68,7 +68,7 @@ spec:
         controller: *app
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: 192.168.5.237
+          lbipam.cilium.io/ips: 192.168.42.105
         externalTrafficPolicy: Cluster
         ports:
           bittorrent-tcp:

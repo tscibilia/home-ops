@@ -11,7 +11,7 @@ Three Lenovo ThinkCentre M70q Tiny (Gen 3) control-plane nodes + one dedicated G
 | k8s-3  | control-plane | k8s-3.internal  | ceph-3.internal |
 | ai3090 | worker        | ai3090.internal | —               |
 
-- **API endpoint**: `192.168.5.250:6443` (BGP-announced LoadBalancer)
+- **API endpoint**: `k8s.internal:6443` (BGP-announced LoadBalancer, `192.168.42.50`)
 - **GPU (k8s-1/2/3)**: Intel i915 iGPU — Plex and Jellyfin hardware transcoding
 - **GPU (ai3090)**: NVIDIA GPU (tainted `nvidia.com/gpu:NoSchedule`) — llama-cpp, comfyui
 - **OS configs**: Minijinja templates in `kubernetes/talos/`, never edit rendered output directly
@@ -35,10 +35,10 @@ UniFi controller manages the `.internal` domain for non-cluster hosts:
 ### Cluster
 
 !!! warning "No kube-proxy"
-    Cilium is the eBPF replacement. Standard kube-proxy debug tools don't apply. Use `cilium` CLI or Hubble for network debugging.
+Cilium is the eBPF replacement. Standard kube-proxy debug tools don't apply. Use `cilium` CLI or Hubble for network debugging.
 
 - **CNI**: Cilium — eBPF-based, completely replaces kube-proxy
-- **Load balancing**: Cilium BGP control plane — eBGP peers with UDM-Pro (ASN 64513/64514), ECMP across all 3 control-plane nodes. IP pool `192.168.5.0/24`, advertised as `/32` host routes.
+- **Load balancing**: Cilium BGP control plane — eBGP peers with UDM-Pro (ASN 64513/64514), ECMP across all 3 control-plane nodes. IP pool `192.168.42.0/24`, advertised as `/32` host routes.
 - **Routing**: HTTPRoute resources, not legacy Ingress objects
 - **Auth**: Authentik SSO via Envoy SecurityPolicy forward-auth
 
@@ -65,11 +65,11 @@ flowchart LR
     CF --> VPS["Pangolin VPS\n+ Newt tunnel"] --> EE[envoy-external]
 ```
 
-| Layer        | Service      | Scope                                      |
-| ------------ | ------------ | ------------------------------------------ |
-| In-cluster   | CoreDNS      | Pod-to-pod, service discovery (10.43.0.10) |
-| LAN          | unifi-dns    | Syncs HTTPRoutes → UniFi controller        |
-| External     | external-dns | Syncs envoy-external routes → Cloudflare (proxied) |
+| Layer      | Service      | Scope                                              |
+| ---------- | ------------ | -------------------------------------------------- |
+| In-cluster | CoreDNS      | Pod-to-pod, service discovery (10.43.0.10)         |
+| LAN        | unifi-dns    | Syncs HTTPRoutes → UniFi controller                |
+| External   | external-dns | Syncs envoy-external routes → Cloudflare (proxied) |
 
 ### Certificates
 
@@ -77,11 +77,11 @@ cert-manager handles TLS via Let's Encrypt with DNS-01 challenges through Cloudf
 
 ## Storage
 
-| Class             | Backend                  | Use                                        |
-| ----------------- | ------------------------ | ------------------------------------------ |
-| ceph-ssd (default)| Rook-Ceph, Samsung SSDs  | All persistent workloads                   |
-| openebs-hostpath  | Local node storage       | CNPG clusters, victoria-logs, actions-runner |
-| nfs-media         | TrueNAS NFS              | Media libraries                            |
+| Class              | Backend                 | Use                                          |
+| ------------------ | ----------------------- | -------------------------------------------- |
+| ceph-ssd (default) | Rook-Ceph, Samsung SSDs | All persistent workloads                     |
+| openebs-hostpath   | Local node storage      | CNPG clusters, victoria-logs, actions-runner |
+| nfs-media          | TrueNAS NFS             | Media libraries                              |
 
 !!! info "S3-compatible object storage via RustFS (ceph-ssd backed). No ceph-rbd, no CephFS."
 
@@ -95,12 +95,12 @@ cert-manager handles TLS via Let's Encrypt with DNS-01 challenges through Cloudf
 ### PostgreSQL (CNPG)
 
 !!! warning "Two clusters — don't mix them up"
-    They use different images. `pgsql-cluster` is standard PostgreSQL 17. `immich17` has the vectorchord extension for vector search.
+They use different images. `pgsql-cluster` is standard PostgreSQL 17. `immich17` has the vectorchord extension for vector search.
 
-| Cluster       | Image                              | Use                                |
-| ------------- | ---------------------------------- | ---------------------------------- |
-| pgsql-cluster | cloudnative-pg/postgresql:17       | General apps (Authentik, Gatus, Homebox, Mealie, etc.) |
-| immich17      | tensorchord/cloudnative-vectorchord:17 | Immich (vector search)         |
+| Cluster       | Image                                  | Use                                                    |
+| ------------- | -------------------------------------- | ------------------------------------------------------ |
+| pgsql-cluster | cloudnative-pg/postgresql:17           | General apps (Authentik, Gatus, Homebox, Mealie, etc.) |
+| immich17      | tensorchord/cloudnative-vectorchord:17 | Immich (vector search)                                 |
 
 Read-write endpoint: `<cluster>-rw.database.svc.cluster.local`
 
@@ -110,14 +110,14 @@ Apps declare `dependsOn: [{name: cnpg-cluster, namespace: database}]` in their `
 
 Dragonfly (Redis-compatible) at `dragonfly-cluster.database.svc.cluster.local:6379`:
 
-| DB | Consumer   |
-| -- | ---------- |
-| 0  | Default    |
-| 1  | SSO (old)  |
-| 2  | Immich     |
-| 3  | Searxng    |
-| 4  | MCP Server |
-| 5  | Tracearr   |
+| DB  | Consumer   |
+| --- | ---------- |
+| 0   | Default    |
+| 1   | SSO (old)  |
+| 2   | Immich     |
+| 3   | Searxng    |
+| 4   | MCP Server |
+| 5   | Tracearr   |
 
 ## Secrets
 
@@ -131,4 +131,4 @@ Flux CD watches this repo and reconciles on every push.
 - **Components**: Reusable patterns in `kubernetes/components/` — volsync, cnpg, ext-auth-internal, ext-auth-external, zeroscaler
 
 !!! danger "kubectl edits are ephemeral"
-    Flux resets them on the next reconciliation. Always edit in Git, push, and reconcile.
+Flux resets them on the next reconciliation. Always edit in Git, push, and reconcile.

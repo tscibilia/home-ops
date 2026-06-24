@@ -105,7 +105,7 @@ cluster:
     {% endif %}
   clusterName: main
   controlPlane:
-    endpoint: https://192.168.5.250:6443
+    endpoint: https://k8s.internal:6443
   discovery:
     enabled: true
     registries:
@@ -137,7 +137,6 @@ cluster:
         - level: Metadata
     certSANs:
       - k8s.internal
-      - 192.168.5.250
     disablePodSecurityPolicy: true
     extraArgs:
       enable-aggregator-routing: "true"
