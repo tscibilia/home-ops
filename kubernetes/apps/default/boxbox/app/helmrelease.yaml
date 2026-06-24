@@ -3,20 +3,12 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app filebrowser
+  name: &app boxbox
 spec:
   chartRef:
     kind: OCIRepository
     name: *app
   interval: 1h
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
   values:
     controllers:
       *app :
@@ -25,20 +17,20 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/gtsteffaniak/filebrowser
-              tag: 1.4.0-stable@sha256:2cd949cd06c058576773c5b8400c854478a64c4f364b1e2bea275819847f099b
+              repository: ghcr.io/jr4dh3y/boxbox
+              tag: 0.2.1@sha256:cdcb9a61919cf64ca17812e16d792bf413657c71baa497e5fd2e9db93f22e7d5
             env:
-              FILEBROWSER_CONFIG: /config/config.yaml
+              BOXBOX_ALLOWED_ORIGINS: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
             envFrom:
               - secretRef:
-                  name: filebrowser-secret
+                  name: boxbox-secret
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /
+                    path: /health
                     port: &port 80
                   initialDelaySeconds: 0
                   periodSeconds: 10
@@ -48,13 +40,13 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 512Mi
+                memory: 128Mi
               limits:
-                memory: 2Gi
+                memory: 512Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: [ALL] }
+              capabilities: { drop: [ALL], add: ["DAC_READ_SEARCH CHOWN FOWNER"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -80,56 +72,7 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-    configMaps:
-      config:
-        data:
-          config.yaml: |
-            server:
-              database: /data/filebrowser.db
-              cacheDir: /tmp/.cache
-              numImageProcessors: 2
-              sources:
-                - path: /mnt
-                  name: "Data Directory"
-                  config:
-                    defaultEnabled: true
-                    indexingIntervalMinutes: 5
-                - path: /mnt/work
-                  name: "Work Directory"
-                  config:
-                    denyByDefault: true
-                - path: /mnt/home
-                  name: "Home Directory"
-                  config:
-                    createUserDir: true
-                    defaultUserScope: "/"
-                    private: true
-              indexSqlConfig:
-                walMode: true
-            auth:
-              adminUsername: sysadmin
-              tokenExpirationHours: 24
-              methods:
-                password:
-                  enabled: true
-                # oidc:                          # Phase 2: uncomment and remove password block
-                #   enabled: true
-                #   clientId: filebrowser
-                #   issuerUrl: https://auth.${SECRET_DOMAIN}/application/o/filebrowser/
-                #   scopes: email openid profile groups
-                #   userIdentifier: preferred_username
-                #   createUser: true
-            userDefaults:
-              fileLoading:
-                maxConcurrentUpload: 5
-                uploadChunkSizeMb: 10
     persistence:
-      config:
-        type: configMap
-        identifier: config
-        globalMounts:
-          - path: /config/config.yaml
-            subPath: config.yaml
       data:
         existingClaim: *app
         globalMounts:

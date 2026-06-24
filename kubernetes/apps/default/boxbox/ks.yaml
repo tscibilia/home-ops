@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app filebrowser
+  name: &app boxbox
 spec:
   components:
     - ../../../../components/volsync
@@ -15,12 +15,12 @@ spec:
     - name: volsync
       namespace: volsync-system
   interval: 1h
-  path: ./kubernetes/apps/default/filebrowser/app
+  path: ./kubernetes/apps/default/boxbox/app
   postBuild:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: drive
-      VOLSYNC_CAPACITY: 10Gi
+      VOLSYNC_CAPACITY: 2Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
