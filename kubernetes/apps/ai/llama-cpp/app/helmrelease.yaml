@@ -36,12 +36,13 @@ spec:
                 uv venv --clear /tmp/.venv
                 uv pip install --no-cache --python /tmp/.venv/bin/python huggingface_hub
                 export PATH="/tmp/.venv/bin:$PATH"
-                for d in /llama-models/models--*/; do
-                  [ -d "$d" ] || continue
-                  name=$(basename "$d")
-                  if [ ! -d "/models/$name" ]; then
+                for ref in \
+                  "unsloth/gemma-4-26B-A4B-it-GGUF" \
+                  "unsloth/Qwen3.6-27B-MTP-GGUF"; do
+                  name="models--${ref//\//--}"
+                  if [ ! -d "/models/$name" ] && [ -d "/llama-models/$name" ]; then
                     echo ">> restoring $name from NAS cache"
-                    cp -r "$d" "/models/$name"
+                    cp -r "/llama-models/$name" "/models/$name"
                   fi
                 done
                 download-model "unsloth/gemma-4-26B-A4B-it-GGUF:UD-IQ4_NL"
@@ -49,16 +50,33 @@ spec:
                 for d in /models/models--*/; do
                   [ -d "$d" ] || continue
                   name=$(basename "$d")
-                  if [ ! -d "/llama-models/$name" ]; then
+                  case "$name" in
+                    models--unsloth--gemma-4-26B-A4B-it-GGUF|models--unsloth--Qwen3.6-27B-MTP-GGUF) ;;
+                    *) echo ">> removing orphan: $name"; rm -rf "$d" ;;
+                  esac
+                done
+                for ref in \
+                  "unsloth/gemma-4-26B-A4B-it-GGUF" \
+                  "unsloth/Qwen3.6-27B-MTP-GGUF"; do
+                  name="models--${ref//\//--}"
+                  if [ -d "/models/$name" ] && [ ! -d "/llama-models/$name" ]; then
                     echo ">> caching $name to NAS"
-                    cp -r "$d" "/llama-models/$name"
+                    cp -r "/models/$name" "/llama-models/$name"
                   fi
+                done
+                for d in /llama-models/models--*/; do
+                  [ -d "$d" ] || continue
+                  name=$(basename "$d")
+                  case "$name" in
+                    models--unsloth--gemma-4-26B-A4B-it-GGUF|models--unsloth--Qwen3.6-27B-MTP-GGUF) ;;
+                    *) echo ">> removing orphan from NAS: $name"; rm -rf "$d" ;;
+                  esac
                 done
         containers:
           app:
             image:
               repository: ghcr.io/ggml-org/llama.cpp
-              tag:  server-cuda-b9765@sha256:44cd08334f85c1fcb363e3798302f2986cdb78cdfc8c1cf56bdad44041595a32
+              tag: server-cuda-b9765@sha256:44cd08334f85c1fcb363e3798302f2986cdb78cdfc8c1cf56bdad44041595a32
             args:
               - --models-preset
               - &presetFile /config/presets.ini
