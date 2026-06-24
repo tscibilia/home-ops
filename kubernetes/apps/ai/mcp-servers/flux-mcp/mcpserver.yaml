@@ -8,7 +8,7 @@ spec:
   image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.52.0
   transport: stdio
   groupRef:
-    name: mcp-ext
+    name: mcp-int
   args:
     - serve
     - --read-only
