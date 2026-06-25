@@ -43,7 +43,7 @@ libraries:
       mass_critic_rating_update: mdb_metacritic
     sonarr:
       root_folder_path: /media/anime
-      quality_profile: Remux-1080p - Anime
+      quality_profile: "[Anime] Remux-1080p"
       series_type: anime
 
   Movies:
@@ -155,16 +155,16 @@ libraries:
       mass_user_rating_update: mdb
 
 playlist_files:
-- default: playlist
-  template_variables:
-    use_arrow: true
-    use_mcu: true
-    use_dcau: false
-    use_pokemon: false
-    use_startrek: false
-    use_starwars: true
-    use_clonewars: false
-    use_xmen: false
+  - default: playlist
+    template_variables:
+      use_arrow: true
+      use_mcu: true
+      use_dcau: false
+      use_pokemon: false
+      use_startrek: false
+      use_starwars: true
+      use_clonewars: false
+      use_xmen: false
 
 settings:
   run_order:
@@ -258,7 +258,7 @@ sonarr:
   add_existing: false
   root_folder_path: /media/tv
   monitor: all
-  quality_profile: WEB-1080p
+  quality_profile: WEB-1080p (Alternative)
   language_profile: English
   series_type: standard
   season_folder: true
