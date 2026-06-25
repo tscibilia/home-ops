@@ -27,7 +27,7 @@ spec:
             - name: TS_HOSTNAME
               value: k8s-egress
             - name: TS_ROUTES
-              value: 192.168.5.0/24
+              value: 192.168.5.0/24,192.168.42.0/24
             - name: TS_EXTRA_ARGS
               value: --advertise-exit-node
             - name: TS_USERSPACE

@@ -14,7 +14,7 @@
 - [ ] ⚠️ **Boostrap** doesn't pick up ai3090 worker node automatically, and flux doesn't substitute domain secret on bootstrap
 - [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
 - [ ] ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
-- [ ] ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely
+- [ ] ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely (fix in 1.30.x **pending**)
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
