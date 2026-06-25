@@ -75,7 +75,7 @@ jobs:
       - name: Pull Image
         env:
           IMAGE: ${{ matrix.image }}
-        run: talosctl --nodes "$NODE" image pull "$IMAGE"
+        run: talosctl --nodes "$NODE" --timeout 120s image pull "$IMAGE"
 
   success:
     if: ${{ !cancelled() }}
