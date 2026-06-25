@@ -11,26 +11,28 @@
 
 ## ⚠️ Known Issues
 
+`- [ ] ⚠️ **App name** - issue (with ref) - **comment**`
+
 - [ ] ⚠️ **Boostrap** doesn't pick up ai3090 worker node automatically, and flux doesn't substitute domain secret on bootstrap
-- [ ] ⚠️ **Claude** doesn't read & makes dumb mistakes (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
-- [ ] ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) integrate with tracearr
-- [ ] ⚠️ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely (fix in 1.30.x **pending**)
+- [ ] ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) **integrate with tracearr**
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
-- [ ] ⚠️ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
-- [ ] ⚠️ **llama-cpp:** intermittent `MUL_MAT failed`/CUDA invalid argument on model reload, [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
 
 ## ⛔ Blocked
 
-`- Task name - blocking factor (waiting for X)`
+`- ⛔ **App name** - blocking factor (waiting for X) - **note**`
 
+- ⛔ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely - **upstream confirmed fix in 1.30.x**
+- ⛔ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
 - ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
 
 ## ✅ Resolved
 
 `Descending order, newest on top`
 
+- ✅ llama-cpp intermittent `MUL_MAT failed` - **2026-06-25** [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
+- ✅ Claude makes dumb mistakes - **2026-06-25** (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
 - ✅ use oxfmt and lefthook - **2026-06-18** (see commit [f10ad6b](https://github.com/tscibilia/home-ops/commit/f10ad6b) and 4 subsequent commits)
 - ✅ switch flux-local to konflate - **2026-06-18** (see PR [#2689](https://github.com/tscibilia/home-ops/pull/2689))
 - ✅ add kopia to volsync - **2026-05-22** (see commit [4658473](https://github.com/tscibilia/home-ops/commit/4658473) and 4 subsequent commits)
