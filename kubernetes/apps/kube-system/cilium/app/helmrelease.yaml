@@ -52,7 +52,7 @@ spec:
       enabled: false
     loadBalancer:
       algorithm: maglev
-      mode: "dsr"
+      mode: dsr
       serviceTopology: true
     localRedirectPolicies:
       enabled: true
