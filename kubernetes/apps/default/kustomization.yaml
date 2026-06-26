@@ -9,7 +9,7 @@ resources:
   - ./namespace.yaml
   - ./actual/ks.yaml
   - ./authentik/ks.yaml
-  # - ./cetranscript/ks.yaml
+  - ./cetranscript/ks.yaml
   - ./boxbox/ks.yaml
   - ./homebox/ks.yaml
   - ./homepage/ks.yaml
