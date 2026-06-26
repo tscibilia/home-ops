@@ -26,6 +26,11 @@ spec:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:v1.98.4@sha256:25cde9ad76020b0e29229136d0c38b5962e9a0e1774ffac9b0df68e4a37d6cf0
           env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: ts-ai3090-node-0
+                  key: authkey
             - name: TS_KUBE_SECRET
               valueFrom:
                 fieldRef:
@@ -34,15 +39,16 @@ spec:
               value: ai3090
             - name: TS_USERSPACE
               value: "true"
-            - name: TS_DEBUG_FIREWALL_MODE
-              value: nftables
             - name: TS_SERVE_CONFIG
               value: /serve/serve.json
           volumeMounts:
             - name: serve-config
               mountPath: /serve
           securityContext:
-            privileged: true
+            allowPrivilegeEscalation: false
+            runAsUser: 0
+            capabilities: { drop: ["ALL"], add: ["NET_ADMIN", "NET_RAW"] }
+            seccompProfile: { type: Unconfined }
       volumes:
         - name: serve-config
           configMap:

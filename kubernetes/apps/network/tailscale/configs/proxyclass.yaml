@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/tailscale.com/proxyclass_v1alpha1.json
+apiVersion: tailscale.com/v1alpha1
+kind: ProxyClass
+metadata:
+  name: kernel-org-tun
+spec:
+  statefulSet:
+    pod:
+      tailscaleContainer:
+        env:
+          - name: TS_DEBUG_MTU
+            value: "1280"
+        resources:
+          limits:
+            kernel.org/tun: 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsUser: 0
+          capabilities: { drop: ["ALL"], add: ["NET_ADMIN", "NET_RAW"] }
+          seccompProfile: { type: Unconfined }
+      tailscaleInitContainer:
+        securityContext:
+          privileged: true
