@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/tailscale.com/connector_v1alpha1.json
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: connector
+spec:
+  replicas: 1
+  exitNode: true
+  # appConnector object cannot be used as an exit node nor a subnetRouter, think SaaS application.
+  # Its use case is to connect a single app to the public internet, not to route traffic.
+  # Its uses the hostnamePrefix object to create statefulSet pods with unique hostnames.
+  hostname: k8s-connector
+  # proxyClass object defines the proxyClass name to link with this connector.
+  proxyClass: kernel-org-tun
+  tags:
+    - "tag:k8s"
+  # subnetRouter defines the connector as a subnet router, allowing traffic for advertiseRoutes.
+  subnetRouter:
+    advertiseRoutes:
+      - "192.168.5.0/24" # gateway
+      - "192.168.42.0/24" # load-balancers
+      - "10.43.0.0/16" # services
