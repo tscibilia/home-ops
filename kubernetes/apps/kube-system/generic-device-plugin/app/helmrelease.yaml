@@ -45,9 +45,9 @@ spec:
                     paths:
                       - path: /dev/net/tun
     persistence:
-      config:
+      config-file:
         type: configMap
-        name: generic-device-plugin-configmap
+        identifier: config
         globalMounts:
           - path: /config/config.yaml
             subPath: config.yaml
