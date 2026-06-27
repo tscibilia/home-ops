@@ -1,8 +1,16 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+configMapGenerator:
+  - name: hermes-configmap-tpl
+    files:
+      - ./resources/config.yaml
+configurations:
+  - ./resources/kustomizeconfig.yaml
+generatorOptions:
+  disableNameSuffixHash: true

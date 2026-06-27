@@ -14,6 +14,19 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init:
+            image:
+              repository: docker.io/library/alpine
+              tag: "3.24"
+            command:
+              - sh
+              - -c
+              - |
+                set -euo pipefail
+                mkdir -p /opt/data
+                cp /run/config/config.yaml /opt/data/config.yaml
+                chown 10000:10000 /opt/data/config.yaml
         containers:
           app:
             image:
@@ -94,6 +107,15 @@ spec:
         existingClaim: *app
         globalMounts:
           - path: /opt/data
+      config:
+        type: secret
+        name: "{{ .Release.Name }}-configmap-secret"
+        defaultMode: 0o755
+        advancedMounts:
+          hermes:
+            init:
+              - path: /run/config/config.yaml
+                subPath: config.yaml
       nfs:
         type: nfs
         server: truenas.internal
@@ -105,5 +127,5 @@ spec:
         globalMounts:
           - path: /tmp
             subPath: tmp
-          - path: /run
-            subPath: run
+          - path: /cache
+            subPath: cache
