@@ -44,6 +44,7 @@ spec:
               HERMES_DASHBOARD_PORT: &dashPort 9119
               HERMES_DASHBOARD_INSECURE: true
               GATEWAY_ALLOW_ALL_USERS: true
+              PATH: /opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               SEARXNG_URL: http://searxng.default.svc.cluster.local:8080
               TERM: xterm-256color
             envFrom:
