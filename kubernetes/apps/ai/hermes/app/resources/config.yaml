@@ -7,34 +7,6 @@ providers:
   kubernetes:
     base_url: http://litellm.ai.svc.cluster.local:4000/v1
     api_key: "{{ .LITELLM_HOMELAB_KEY }}"
-toolsets:
-  - hermes-cli
-terminal:
-  backend: local
-  cwd: /opt/data/workspace
-  timeout: 180
-  persistent_shell: true
-memory:
-  auto_migrate: true
-  auto_summarize:
-    threshold: 50
-compression:
-  enabled: true
-  threshold: 0.5
-  target_ratio: 0.2
-  protect_last_n: 20
-group_sessions_per_user: false
-streaming:
-  enabled: false
-security:
-  redact_secrets: true
-  tirith_enabled: true
-  tirith_fail_open: true
-privacy:
-  redact_pii: true
-platform_toolsets:
-  cli:
-    - hermes-cli
 agent:
   max_turns: 90
   gateway_timeout: 1800
@@ -42,8 +14,42 @@ agent:
   api_max_retries: 2
   reasoning_effort: medium
   tool_use_enforcement: auto
+compression:
+  enabled: true
+  threshold: 0.5
+  target_ratio: 0.2
+  protect_last_n: 20
+gateway:
+  platforms:
+    photon:
+      enabled: true
+      require_mention: true
+group_sessions_per_user: false
+memory:
+  auto_migrate: true
+  auto_summarize:
+    threshold: 50
+  # provider: honcho
 mcp_servers:
   homelab:
     url: http://vmcp-mcp-gateway-int.ai.svc.cluster.local:4483/mcp
+platform_toolsets:
+  cli:
+    - hermes-cli
+privacy:
+  redact_pii: true
+security:
+  redact_secrets: true
+  tirith_enabled: true
+  tirith_fail_open: true
+streaming:
+  enabled: false
+terminal:
+  backend: local
+  cwd: /opt/data/workspace
+  timeout: 180
+  persistent_shell: true
+toolsets:
+  - hermes-cli
 web:
   search_backend: searxng
