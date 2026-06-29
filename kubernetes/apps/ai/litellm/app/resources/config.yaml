@@ -11,7 +11,7 @@ model_list:
       api_key: os.environ/LLAMA_API_KEY
       drop_params: true
 
-  - model_name: nvidia-deepseek
+  - model_name: nvidia-deepseek-v4-pro
     model_info:
       mode: chat
       max_input_tokens: 1000000

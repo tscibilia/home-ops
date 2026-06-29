@@ -15,7 +15,22 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         initContainers:
-          init:
+          01-agent-source:
+            image: &img
+              repository: nousresearch/hermes-agent
+              tag: v2026.6.19@sha256:9f367c7756ef087661a361536a89f438d57a122b958dc23d82d456b1433e6e9e
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -e
+                cp -r /opt/hermes/. /agent-src/
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              runAsGroup: &uid 10000
+              runAsUser: *uid
+          02-init-config:
             image:
               repository: docker.io/library/alpine
               tag: "3.24"
@@ -27,11 +42,53 @@ spec:
                 mkdir -p /opt/data
                 cp /run/config/config.yaml /opt/data/config.yaml
                 chown 10000:10000 /opt/data/config.yaml
+                cp /run/config/env /opt/data/.env
+                chmod 600 /opt/data/.env
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              runAsGroup: &uid 10000
+              runAsUser: *uid
+          03-install-tools:
+            image: *img
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -e
+                mkdir -p /opt/data/.local/bin /opt/data/.local/go
+
+                rm -f /opt/data/.local/bin/hermes /opt/data/.local/bin/docker
+
+                if [ ! -f /opt/data/.local/bin/gh ]; then
+                  cd /tmp
+                  curl -fsSL https://github.com/cli/cli/releases/download/v2.61.0/gh_2.61.0_linux_amd64.tar.gz -o gh.tar.gz
+                  tar xzf gh.tar.gz
+                  cp gh_2.61.0_linux_amd64/bin/gh /opt/data/.local/bin/
+                  rm -rf gh.tar.gz gh_2.61.0_linux_amd64
+                fi
+
+                if [ ! -f /opt/data/.local/go/bin/go ]; then
+                  cd /tmp
+                  curl -fsSL https://go.dev/dl/go1.23.5.linux-amd64.tar.gz -o go.tar.gz
+                  tar xzf go.tar.gz
+                  mv go /opt/data/.local/
+                  rm -rf go.tar.gz
+                fi
+
+                if [ ! -f /opt/data/.local/homebrew/bin/brew ]; then
+                  export HOMEBREW_PREFIX=/opt/data/.local/homebrew
+                  mkdir -p $HOMEBREW_PREFIX
+                  git clone --depth 1 https://github.com/Homebrew/brew $HOMEBREW_PREFIX
+                fi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+              runAsGroup: &uid 10000
+              runAsUser: *uid
         containers:
           app:
-            image:
-              repository: docker.io/nousresearch/hermes-agent
-              tag: v2026.6.19@sha256:9f367c7756ef087661a361536a89f438d57a122b958dc23d82d456b1433e6e9e
+            image: *img
             args: ["gateway", "run"]
             env:
               API_SERVER_ENABLED: true
@@ -43,8 +100,15 @@ spec:
               HERMES_DASHBOARD_HOST: 0.0.0.0
               HERMES_DASHBOARD_PORT: &dashPort 9119
               HERMES_DASHBOARD_INSECURE: true
+              HOMEBREW_CELLAR: /opt/data/.local/homebrew/Cellar
+              HOMEBREW_PREFIX: /opt/data/.local/homebrew
+              HOMEBREW_REPOSITORY: /opt/data/.local/homebrew
               GATEWAY_ALLOW_ALL_USERS: true
+              GOPATH: /opt/data/go
               PATH: /opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+              PIP_BREAK_SYSTEM_PACKAGES: "1"
+              MEMINI_URL: http://memini.ai.svc.cluster.local:8080
+              MEMINI_NAMESPACE: ai
               SEARXNG_URL: http://searxng.default.svc.cluster.local:8080
               TERM: xterm-256color
             envFrom:
@@ -82,7 +146,7 @@ spec:
               readOnlyRootFilesystem: false
     defaultPodOptions:
       securityContext:
-        fsGroup: 10000
+        fsGroup: *uid
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
@@ -106,23 +170,37 @@ spec:
     persistence:
       data:
         existingClaim: *app
-        globalMounts:
-          - path: /opt/data
-      config:
-        type: secret
-        name: "{{ .Release.Name }}-configmap-secret"
-        defaultMode: 0o755
         advancedMounts:
-          hermes:
-            init:
-              - path: /run/config/config.yaml
-                subPath: config.yaml
+          *app :
+            02-init-config:
+              - path: /opt/data
+            03-install-tools:
+              - path: /opt/data
+            app:
+              - path: /opt/data
+      config:
+        type: configMap
+        name: "{{ .Release.Name }}-configmap"
+        defaultMode: 0o755
+        globalMounts:
+          - path: /run/config/config.yaml
+            subPath: config.yaml
       nfs:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/shares/hermes
         globalMounts:
           - path: /nfs-data
+      agent-source:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            01-agent-source:
+              - path: /agent-src
+            03-install-tools:
+              - path: /opt/hermes
+            app:
+              - path: /opt/hermes
       tmpfs:
         type: emptyDir
         globalMounts:
