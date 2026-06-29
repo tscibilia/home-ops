@@ -48,7 +48,7 @@ spec:
                 valueFrom:
                   secretKeyRef:
                     name: "{{ .Release.Name }}-pguser-secret"
-                    key: url
+                    key: uri
               MEMINI_API_KEY:
                 valueFrom:
                   secretKeyRef:
