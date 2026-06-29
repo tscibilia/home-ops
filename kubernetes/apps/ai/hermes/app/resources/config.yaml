@@ -1,55 +1,66 @@
-model:
-  default: qwen-local
-  provider: custom:kubernetes
-  base_url: http://litellm.ai.svc.cluster.local:4000/v1
-  api_key: "{{ .LITELLM_HOMELAB_KEY }}"
-providers:
-  kubernetes:
-    base_url: http://litellm.ai.svc.cluster.local:4000/v1
-    api_key: "{{ .LITELLM_HOMELAB_KEY }}"
-agent:
-  max_turns: 90
-  gateway_timeout: 1800
-  restart_drain_timeout: 60
-  api_max_retries: 2
-  reasoning_effort: medium
-  tool_use_enforcement: auto
-compression:
-  enabled: true
-  threshold: 0.5
-  target_ratio: 0.2
-  protect_last_n: 20
-gateway:
-  platforms:
-    photon:
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-configmap
+data:
+  config.yaml: |-
+    model:
+      default: nvidia-deepseek-v4-pro
+      provider: litellm
+      base_url: http://litellm.ai.svc.cluster.local:4000/v1
+      api_key: $${LITELLM_API_KEY}
+    fallback_providers:
+      - provider: litellm
+        model: qwen-local
+    providers:
+      litellm:
+        base_url: http://litellm.ai.svc.cluster.local:4000/v1
+        api_key: $${LITELLM_API_KEY}
+    agent:
+      max_turns: 90
+      gateway_timeout: 1800
+      restart_drain_timeout: 60
+      api_max_retries: 2
+      reasoning_effort: medium
+      tool_use_enforcement: auto
+    compression:
       enabled: true
-      require_mention: true
-group_sessions_per_user: false
-memory:
-  auto_migrate: true
-  auto_summarize:
-    threshold: 50
-  # provider: honcho
-mcp_servers:
-  homelab:
-    url: http://vmcp-mcp-gateway-int.ai.svc.cluster.local:4483/mcp
-platform_toolsets:
-  cli:
-    - hermes-cli
-privacy:
-  redact_pii: true
-security:
-  redact_secrets: true
-  tirith_enabled: true
-  tirith_fail_open: true
-streaming:
-  enabled: false
-terminal:
-  backend: local
-  cwd: /opt/data/workspace
-  timeout: 180
-  persistent_shell: true
-toolsets:
-  - hermes-cli
-web:
-  search_backend: searxng
+      threshold: 0.5
+      target_ratio: 0.2
+      protect_last_n: 20
+    gateway:
+      platforms:
+        photon:
+          enabled: true
+          require_mention: true
+    group_sessions_per_user: false
+    memory:
+      auto_migrate: true
+      auto_summarize:
+        threshold: 50
+      provider: memini
+    mcp_servers:
+      homelab:
+        url: http://vmcp-mcp-gateway-int.ai.svc.cluster.local:4483/mcp
+    platform_toolsets:
+      cli:
+        - hermes-cli
+      photon:
+        - hermes-cli
+    privacy:
+      redact_pii: true
+    security:
+      redact_secrets: true
+      tirith_enabled: true
+      tirith_fail_open: true
+    streaming:
+      enabled: false
+    terminal:
+      backend: local
+      cwd: /opt/data/workspace
+      timeout: 180
+      persistent_shell: true
+    toolsets:
+      - hermes-cli
+    web:
+      search_backend: searxng
