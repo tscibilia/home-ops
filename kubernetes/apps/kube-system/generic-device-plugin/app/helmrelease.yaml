@@ -23,6 +23,15 @@ spec:
               tag: latest@sha256:dc192e164c69b03f156765793a1be62ca437709ae477b27ca7d8f3dcf5021576
             args:
               - --config=/config/config.yaml
+              # Advertise the DRI render node as a shareable resource
+              # (devic.es/dri-render). count:10 hands the same /dev/dri/renderD128
+              - --device
+              - |
+                name: dri-render
+                groups:
+                  - count: 10
+                    paths:
+                      - path: /dev/dri/renderD128
             ports:
               - containerPort: 8080
                 name: http

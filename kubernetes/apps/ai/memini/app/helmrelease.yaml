@@ -33,7 +33,6 @@ spec:
               MEMINI_BACKEND: postgres
               MEMINI_LOG_FORMAT: json
               MEMINI_DEFAULT_NAMESPACE: "ai"
-              MEMINI_WRITE_DEDUP_MIN_SCORE: "0.95"
               MEMINI_DEMOTE_AFTER: 1440h
               MEMINI_TOMBSTONE_TTL: 720h
               MEMINI_EMBED_BASE_URL: http://qwen3-embedding-0-6b.ai.svc.cluster.local:8080/v1
@@ -44,6 +43,8 @@ spec:
               MEMINI_RERANK: http://qwen3-reranker-0-6b.ai.svc.cluster.local:8080/v1
               MEMINI_RERANK_MODEL: qwen3-reranker-0.6b
               MEMINI_RERANK_MAX_DOC_CHARS: "4000"
+              MEMINI_MERGE_HINT_MIN_SCORE: "0.90"
+              MEMINI_WRITE_DEDUP_MIN_SCORE: "0.80"
               MEMINI_POSTGRES_DSN:
                 valueFrom:
                   secretKeyRef:
