@@ -18,13 +18,16 @@ model_list:
       max_output_tokens: 16384
       supports_function_calling: true
       supports_prompt_caching: true
+      temperature: 1
+      top_p: 0.95
     litellm_params:
-      model: openai/deepseek-ai/deepseek-v4-pro
+      model: nvidia_nim/deepseek-ai/deepseek-v4-pro
       api_base: https://integrate.api.nvidia.com/v1
       api_key: os.environ/NVIDIA_API_KEY
       drop_params: true
 
 general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
   health_check_endpoint: /v1/health
   database_url: os.environ/DATABASE_URL
 
@@ -49,6 +52,7 @@ litellm_settings:
   set_verbose: false
 
 environment:
+  - LITELLM_MASTER_KEY
   - LLAMA_API_KEY
   - NVIDIA_API_KEY
   - DATABASE_URL
