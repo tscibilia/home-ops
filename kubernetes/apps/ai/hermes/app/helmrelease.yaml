@@ -24,12 +24,12 @@ spec:
               - -c
               - |
                 set -e
-                cp -r --no-preserve=ownership /opt/hermes/. /agent-src/
+                cp -r /opt/hermes/. /agent-src/
+                chown -R 10000:10000 /agent-src/
             securityContext:
-              allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
-              runAsGroup: &uid 10000
-              runAsUser: *uid
+              allowPrivilegeEscalation: true
+              runAsGroup: 0
+              runAsUser: 0
           02-init-config:
             image:
               repository: docker.io/library/alpine
