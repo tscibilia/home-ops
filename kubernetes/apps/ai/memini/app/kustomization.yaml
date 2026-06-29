@@ -6,3 +6,9 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: memini-initdb
+    files:
+      - ./resources/memini.sql

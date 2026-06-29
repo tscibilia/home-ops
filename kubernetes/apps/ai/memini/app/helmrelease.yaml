@@ -74,6 +74,12 @@ spec:
     persistence:
       data:
         enabled: false
+      initdb:
+        type: configMap
+        name: memini-initdb
+        globalMounts:
+          - path: /initdb
+            readOnly: true
     serviceMonitor:
       main:
         enabled: true
