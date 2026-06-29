@@ -24,7 +24,7 @@ spec:
             args:
               - --config=/config/config.yaml
               # Advertise the DRI render node as a shareable resource
-              # (devic.es/dri-render). count:10 hands the same /dev/dri/renderD128
+              # (kernel.org/dri-render). count:10 hands the same /dev/dri/renderD128
               - --device
               - |
                 name: dri-render

@@ -13,7 +13,7 @@ spec:
       enabled: true
       layers: 99
       # Shareable /dev/dri render node advertised by generic-device-plugin.
-      resourceName: devic.es/dri-render
+      resourceName: kernel.org/dri-render
       vendor: intel
   quantization: Q8_0
   source: https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/main/Qwen3-Embedding-0.6B-Q8_0.gguf
