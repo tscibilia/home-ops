@@ -24,7 +24,7 @@ spec:
               - -c
               - |
                 set -e
-                cp -r --no-preserve=ownership /opt/hermes/. /agent-src/
+                cp -r --no-preserve=all /opt/hermes/. /agent-src/
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
