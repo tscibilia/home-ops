@@ -26,6 +26,7 @@ spec:
                 set -e
                 cp -r /opt/hermes/. /agent-src/
                 chown -R 10000:10000 /agent-src/
+                chmod -R u+rwX /agent-src/plugins/
             securityContext:
               allowPrivilegeEscalation: true
               runAsGroup: 0
@@ -78,6 +79,10 @@ spec:
                   export HOMEBREW_PREFIX=/opt/data/.local/homebrew
                   mkdir -p $HOMEBREW_PREFIX
                   git clone --depth 1 https://github.com/Homebrew/brew $HOMEBREW_PREFIX
+                fi
+
+                if [ -f /opt/hermes/plugins/platforms/photon/sidecar/package.json ]; then
+                  cd /opt/hermes/plugins/platforms/photon/sidecar && npm ci 2>/dev/null || npm install
                 fi
             securityContext:
               allowPrivilegeEscalation: false
