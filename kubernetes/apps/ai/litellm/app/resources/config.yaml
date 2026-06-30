@@ -1,60 +1,89 @@
-model_list:
-  - model_name: qwen-local
-    model_info:
-      max_input_tokens: 262144
-      max_output_tokens: 32768
-      supports_function_calling: true
-      supports_vision: true
-    litellm_params:
-      model: openai/unsloth/Qwen3.6-27B
-      api_base: http://llama-cpp.ai.svc.cluster.local:10000/v1
-      api_key: os.environ/LLAMA_API_KEY
-      drop_params: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-configmap
+data:
+  config.yaml: |
+    model_list:
+      - model_name: qwen-local
+        model_info:
+          input_cost_per_token: 0.0000001250
+          cache_creation_input_token_cost: 0.0000001250
+          cache_read_input_token_cost: 0.0000000125
+          output_cost_per_token: 0.0000004999
+          max_input_tokens: 262144
+          max_output_tokens: 32768
+          supports_function_calling: true
+          supports_vision: true
+        litellm_params:
+          model: openai/unsloth/Qwen3.6-27B
+          api_base: http://llama-cpp.ai.svc.cluster.local:10000/v1
+          api_key: os.environ/LLAMA_API_KEY
+          max_parallel_requests: 1
+          drop_params: true
 
-  - model_name: nvidia-deepseek-v4-pro
-    model_info:
-      mode: chat
-      max_input_tokens: 1000000
-      max_output_tokens: 16384
-      supports_function_calling: true
-      supports_prompt_caching: true
-      temperature: 1
-      top_p: 0.95
-    litellm_params:
-      model: nvidia_nim/deepseek-ai/deepseek-v4-pro
-      api_base: https://integrate.api.nvidia.com/v1
-      api_key: os.environ/NVIDIA_API_KEY
-      drop_params: true
+      - model_name: glm-5.2
+        model_info:
+          mode: chat
+          max_input_tokens: 1048560
+          max_output_tokens: 16384
+          supports_function_calling: true
+          supports_prompt_caching: true
+        litellm_params:
+          model: openrouter/z-ai/glm-5.2
+          api_key: os.environ/OPENROUTER_API_KEY
+          extra_body: # https://github.com/BerriAI/litellm/issues/26395
+            provider:
+              order: ["deepinfra"]
+              allow_fallbacks: false
+          order: 1
 
-general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
-  health_check_endpoint: /v1/health
-  database_url: os.environ/DATABASE_URL
+      - model_name: nvidia-deepseek-v4-pro
+        model_info:
+          mode: chat
+          max_input_tokens: 1000000
+          max_output_tokens: 16384
+          supports_function_calling: true
+          supports_prompt_caching: true
+          temperature: 1
+          top_p: 0.95
+        litellm_params:
+          model: nvidia_nim/deepseek-ai/deepseek-v4-pro
+          api_base: https://integrate.api.nvidia.com/v1
+          api_key: os.environ/NVIDIA_API_KEY
+          drop_params: true
 
-router_settings:
-  routing_strategy: simple-shuffle
-  redis_host: os.environ/REDIS_HOST
-  redis_port: os.environ/REDIS_PORT
+    general_settings:
+      master_key: os.environ/LITELLM_MASTER_KEY
+      health_check_endpoint: /v1/health
+      database_url: os.environ/DATABASE_URL
 
-litellm_settings:
-  success_callback: ["prometheus"]
-  failure_callback: ["prometheus"]
-  prometheus_adapter: true
-  cache: true
-  cache_params:
-    type: redis
-    host: os.environ/REDIS_HOST
-    port: os.environ/REDIS_PORT
-  drop_params: false
-  request_timeout: 600
-  num_retries: 2
-  retry_after: 5
-  set_verbose: false
+    router_settings:
+      routing_strategy: simple-shuffle
+      redis_host: os.environ/REDIS_HOST
+      redis_port: os.environ/REDIS_PORT
 
-environment:
-  - LITELLM_MASTER_KEY
-  - LLAMA_API_KEY
-  - NVIDIA_API_KEY
-  - DATABASE_URL
-  - REDIS_HOST
-  - REDIS_PORT
+    litellm_settings:
+      success_callback: ["prometheus"]
+      failure_callback: ["prometheus"]
+      prometheus_adapter: true
+      cache: true
+      cache_params:
+        type: redis
+        host: os.environ/REDIS_HOST
+        port: os.environ/REDIS_PORT
+      drop_params: false
+      request_timeout: 600
+      num_retries: 2
+      retry_after: 5
+      set_verbose: false
+
+    environment:
+      - LITELLM_MASTER_KEY
+      - LLAMA_API_KEY
+      - NVIDIA_API_KEY
+      - OPENROUTER_API_KEY
+      - DATABASE_URL
+      - REDIS_HOST
+      - REDIS_PORT
