@@ -5,13 +5,13 @@ metadata:
 data:
   config.yaml: |-
     model:
-      default: nvidia-deepseek-v4-pro
+      default: qwen-local
       provider: litellm
       base_url: http://litellm.ai.svc.cluster.local:4000/v1
       api_key: $${LITELLM_API_KEY}
     fallback_providers:
       - provider: litellm
-        model: qwen-local
+        model: nvidia-deepseek-v4-pro
     providers:
       litellm:
         base_url: http://litellm.ai.svc.cluster.local:4000/v1
