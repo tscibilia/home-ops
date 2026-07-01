@@ -33,26 +33,57 @@ data:
         litellm_params:
           model: openrouter/z-ai/glm-5.2
           api_key: os.environ/OPENROUTER_API_KEY
+          api_base: https://openrouter.ai/api/v1
           extra_body: # https://github.com/BerriAI/litellm/issues/26395
             provider:
               order: ["deepinfra"]
               allow_fallbacks: false
           order: 1
 
-      - model_name: nvidia-deepseek-v4-pro
+      - model_name: big-pickle-free
         model_info:
           mode: chat
-          max_input_tokens: 1000000
-          max_output_tokens: 16384
+          input_cost_per_token: 0.0000001250
+          cache_creation_input_token_cost: 0.0000001250
+          cache_read_input_token_cost: 0.0000000125
+          output_cost_per_token: 0.0000004999
+          max_input_tokens: 200000
+          max_output_tokens: 32000
+          supports_function_calling: true
+        litellm_params:
+          model: openai/big-pickle
+          api_key: os.environ/OPENCODE_API_KEY
+          api_base: https://opencode.ai/zen/v1
+          order: 2
+
+      - model_name: deepseek-v4-flash
+        model_info:
+          mode: chat
+          max_input_tokens: 1048560
+          max_output_tokens: 384000
           supports_function_calling: true
           supports_prompt_caching: true
-          temperature: 1
-          top_p: 0.95
         litellm_params:
-          model: nvidia_nim/deepseek-ai/deepseek-v4-pro
-          api_base: https://integrate.api.nvidia.com/v1
-          api_key: os.environ/NVIDIA_API_KEY
-          drop_params: true
+          model: openai/deepseek-v4-flash
+          api_key: os.environ/OPENCODE_API_KEY
+          api_base: https://opencode.ai/zen/v1
+          order: 3
+
+      # Unreliable stability
+      # - model_name: nvidia-deepseek-v4-pro
+      #   model_info:
+      #     mode: chat
+      #     max_input_tokens: 1000000
+      #     max_output_tokens: 16384
+      #     supports_function_calling: true
+      #     supports_prompt_caching: true
+      #     temperature: 1
+      #     top_p: 0.95
+      #   litellm_params:
+      #     model: nvidia_nim/deepseek-ai/deepseek-v4-pro
+      #     api_base: https://integrate.api.nvidia.com/v1
+      #     api_key: os.environ/NVIDIA_API_KEY
+      #     drop_params: true
 
     general_settings:
       master_key: os.environ/LITELLM_MASTER_KEY
@@ -83,6 +114,7 @@ data:
       - LITELLM_MASTER_KEY
       - LLAMA_API_KEY
       - NVIDIA_API_KEY
+      - OPENCODE_API_KEY
       - OPENROUTER_API_KEY
       - DATABASE_URL
       - REDIS_HOST
