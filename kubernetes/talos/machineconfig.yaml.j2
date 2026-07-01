@@ -21,12 +21,8 @@ machine:
       port: 7445
     {% if ENV.CONTROLPLANE %}
     kubernetesTalosAPIAccess:
-      allowedKubernetesNamespaces:
-        - actions-runner-system
-        - kube-system
-        - system-upgrade
-      allowedRoles:
-        - os:admin
+      allowedKubernetesNamespaces: ["actions-runner-system", "ai", "kube-system", "system-upgrade"]
+      allowedRoles: ["os:admin", "os:reader"]
       enabled: true
     {% endif %}
     rbac: true
