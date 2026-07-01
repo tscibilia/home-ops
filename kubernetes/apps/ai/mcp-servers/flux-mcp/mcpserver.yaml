@@ -6,10 +6,31 @@ metadata:
   name: flux
 spec:
   image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.52.0
-  transport: stdio
+  transport: streamable-http
+  proxyMode: streamable-http
+  proxyPort: 8080
+  mcpPort: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  serviceAccount: flux-mcp-sa
+  podTemplateSpec:
+    spec:
+      containers:
+        - name: mcp
+          args:
+            - serve
+            - --transport=http
+            - --port=8000
+          env:
+            # In-cluster mode: no KUBECONFIG; uses the pod service account.
+            - name: RUNTIME_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
   groupRef:
     name: mcp-int
-  args:
-    - serve
-    - --read-only
-  serviceAccount: flux-mcp-sa
