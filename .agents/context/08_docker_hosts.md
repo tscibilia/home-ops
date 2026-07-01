@@ -35,16 +35,6 @@ Path: `docker/clonenas/`
 
 clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
 
-### unraid
-
-Path: `docker/unraid/`
-| # | Service | Compose file |
-|---|---------|-------------|
-| 01 | scrutiny (collector) | `01-scrutiny/docker-compose.yaml` |
-| 02 | matchbox | `02-matchbox/docker-compose.yaml` |
-
-Unraid role: secondary/backup NFS, GPU workloads (ai3090 node). **Archived** — replaced by clonenas.
-
 ### vps
 
 Path: `docker/vps/`

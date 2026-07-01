@@ -24,7 +24,7 @@
 Every app has a `ks.yaml` at `kubernetes/apps/{namespace}/{app}/ks.yaml`. Annotated example:
 
 ```yaml
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -52,7 +52,7 @@ spec:
         name: flux-system
         namespace: flux-system
     targetNamespace: default
-    wait: true # false for apps with multiple sub-Kustomizations
+    wait: false # true only for apps with multiple sub-Kustomizations
 ```
 
 ## Common dependsOn Chains

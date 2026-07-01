@@ -2,9 +2,11 @@
 
 ## ⚠️ Gotchas & Interactions
 
-- **Namespace = directory name:** Verify the the `targetNamespace` in the app's `ks.yaml` before referencing it in manifests.
+- **Namespace = directory name:** Verify the `targetNamespace` in the app's `ks.yaml` before referencing it in manifests.
 - **kustomization.yaml must include the new app:** When adding a new app, its `ks.yaml` path must be added to `kubernetes/apps/{namespace}/kustomization.yaml` or Flux will never reconcile it.
-- **Component flags listed here:** Each app's entry notes which components it uses (volsync, cnpg, zeroscaler). Check before assuming.
+- **Component flags listed here:** Each app's entry notes which components it uses (volsync, cnpg, zeroscaler, ext-auth). Check before assuming.
+- **Components go in ks.yaml:** All component references (volsync, cnpg, ext-auth, zeroscaler) live in `spec.components` of the Flux Kustomization (`ks.yaml`), NOT in the app's `kustomization.yaml`.
+- **ext-auth apps skip Gatus route monitoring:** Apps using ext-auth have Authentik forward auth which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
 
 Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for quick lookup.
 
@@ -15,11 +17,13 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 ## ai
 
 - comfyui
-- honcho _(AI memory/context management)_
-- litellm _(LLM API proxy)_
+- hermes _(AI agent gateway — Nous Research)_
+- litellm _(LLM API proxy)_ [cnpg]
 - llama-cpp
+- llmkube _(LLM inference orchestrator)_
 - mcp-servers
-- open-webui
+- memini _(AI memory/context — pgvector + semantic search)_ [cnpg]
+- open-webui [volsync]
 - toolhive
 
 ## cert-manager
@@ -30,29 +34,28 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 - cnpg _(CloudNativePG operator + clusters)_
 - dragonfly _(Redis-compatible cache)_
-- pgadmin
-- pgvector-cluster _(shared Immich + pgvector apps)_
+- pgadmin [volsync, cnpg]
 
 ## default
 
-- actual _(budgeting)_
-- authentik _(SSO/IdP)_
-- ceapp _(CE Transcript — imagePullSecret)_
-- filebrowser
-- homebox _(inventory)_
+- actual _(budgeting)_ [volsync]
+- authentik _(SSO/IdP)_ [cnpg]
+- boxbox _(NFS file share/drive UI)_ [volsync]
+- cetranscript _(CE Transcript — custom app)_ [cnpg]
+- homebox _(inventory)_ [volsync, cnpg]
 - homepage _(dashboard)_
-- immich _(photos)_
-- komga _(comics/manga)_
-- mealie _(recipes)_
+- immich _(photos)_ [volsync, cnpg]
+- komga _(comics/manga)_ [volsync, zeroscaler]
+- mealie _(recipes)_ [volsync, cnpg]
 - pairdrop
-- radicale _(CalDAV/CardDAV)_
-- rclone
-- rustfs _(S3-compatible object store)_
+- radicale _(CalDAV/CardDAV)_ [volsync]
+- rclone [zeroscaler]
+- rustfs _(S3-compatible object store)_ [volsync]
 - searxng
 - smtp-relay
-- spoolman _(filament tracker)_
-- thelounge _(IRC)_
-- vaultwarden _(Bitwarden)_
+- spoolman _(filament tracker)_ [volsync, ext-auth-internal]
+- thelounge _(IRC)_ [volsync]
+- vaultwarden _(Bitwarden)_ [volsync]
 
 ## external-secrets
 
@@ -67,12 +70,12 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## home-automation
 
-- esphome
-- home-assistant
-- matter-server
+- esphome [volsync]
+- home-assistant [volsync]
+- matter-server [volsync]
 - mosquitto _(MQTT broker)_
-- otbr _(OpenThread Border Router)_
-- zwave
+- otbr _(OpenThread Border Router)_ [volsync]
+- zwave [volsync]
 
 ## kube-system
 
@@ -80,6 +83,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - coredns
 - csi-driver-nfs
 - descheduler
+- generic-device-plugin _(TUN/DRI device exposure DaemonSet)_
 - intel-gpu-resource-driver
 - k8tz _(timezone injection admission controller)_
 - metrics-server
@@ -90,24 +94,24 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## media
 
-- agregarr _(home media aggregator dashboard)_
-- autobrr _(torrent automation)_
-- bazarr _(subtitles)_
+- agregarr _(home media aggregator dashboard)_ [volsync]
+- autobrr _(torrent automation)_ [volsync, zeroscaler]
+- bazarr _(subtitles)_ [volsync, ext-auth-internal, zeroscaler]
 - flaresolverr
-- hometube _(yt-dlp UI)_
+- hometube _(yt-dlp UI)_ [volsync, ext-auth-external, zeroscaler]
 - imagemaid _(Plex image cleanup)_
-- jellyfin
-- kometa _(Plex metadata)_
-- maintainerr
-- plex
-- prowlarr _(indexer manager)_
-- qbittorrent
-- qui _(Plex request UI)_
-- radarr
-- recyclarr
-- seerr _(Overseerr fork)_
-- sonarr
-- tracearr _(Plex/Jellyfin tracker)_
+- jellyfin [volsync, zeroscaler]
+- kometa _(Plex metadata)_ [volsync]
+- maintainerr [volsync]
+- plex [volsync, zeroscaler]
+- prowlarr _(indexer manager)_ [volsync, ext-auth-internal]
+- qbittorrent [volsync, zeroscaler]
+- qui _(Plex request UI)_ [volsync, zeroscaler]
+- radarr [volsync, ext-auth-internal, zeroscaler]
+- recyclarr [volsync]
+- seerr _(Overseerr fork)_ [volsync]
+- sonarr [volsync, ext-auth-internal, zeroscaler]
+- tracearr _(Plex/Jellyfin tracker)_ [cnpg]
 
 ## network
 
@@ -115,7 +119,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - echo
 - envoy-gateway
 - external-dns
-- greenlight _(custom UniFi network status app)_
+- greenlight _(custom UniFi network status app)_ [ext-auth-internal]
 - multus
 - pangolin-operator _(VPS tunnel ingress via Newt/WireGuard)_
 - tailscale
@@ -123,20 +127,27 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## observability
 
-- exporters _(blackbox, nut, plex, prowlarr, qbittorrent, radarr, seerr, sonarr)_
+- exporters/blackbox-exporter
+- exporters/nut-exporter
+- exporters/plex-exporter
+- exporters/prowlarr-exporter
+- exporters/qbittorrent-exporter
+- exporters/radarr-exporter
+- exporters/seerr-exporter
+- exporters/sonarr-exporter
 - fluent-bit
-- gatus _(health monitoring)_
-- grafana
-- guacamole _(remote desktop)_
+- gatus _(health monitoring)_ [cnpg]
+- grafana [cnpg]
+- guacamole _(remote desktop)_ [cnpg]
 - karma _(alertmanager UI)_
-- kite
+- kite [cnpg]
 - kromgo
 - kube-prometheus-stack
-- prometheus-adapter _(external-metrics API for HPA, replaces keda)_
-- scrutiny _(SMART disk monitoring)_
+- prometheus-adapter _(external-metrics API for HPA)_
+- scrutiny _(SMART disk monitoring)_ [volsync]
 - silence-operator
 - unpoller _(UniFi metrics)_
-- victoria-logs
+- victoria-logs [ext-auth-internal]
 
 ## openebs-system
 

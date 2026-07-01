@@ -8,9 +8,11 @@
 ## All Nodes (base config)
 
 - Region: `topology.kubernetes.io/region: main`
+- Zone: `topology.kubernetes.io/zone: m` (control plane) / `w` (worker ai3090)
 - Primary network: `bond0` (192.168.5.0/24)
 - Pod subnet: 10.42.0.0/16 | Service subnet: 10.43.0.0/16
 - K8s API endpoint: k8s.internal:6443 (BGP-announced LoadBalancer, 192.168.42.50)
+- `node.kubernetes.io/gpu: "true"` label set on ALL nodes in base config (does NOT mean the node has a GPU — only ai3090 actually has one)
 
 ---
 

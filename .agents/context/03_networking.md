@@ -36,19 +36,18 @@ route:
 
 ## SSO / Authentication (Authentik)
 
-Add the appropriate component to the **app's `kustomization.yaml`**, not `ks.yaml`:
+Add the appropriate component to the **Flux Kustomization (`ks.yaml`)**, not the app's `kustomization.yaml`:
 
 ```yaml
-# kubernetes/apps/{ns}/{app}/app/kustomization.yaml
-components:
-    - ../../../../components/ext-auth-internal # internal gateway
-    # or
-    - ../../../../components/ext-auth-external # external gateway
+# kubernetes/apps/{ns}/{app}/ks.yaml
+spec:
+    components:
+        - ../../../../components/ext-auth-internal # internal gateway
+        # or
+        - ../../../../components/ext-auth-external # external gateway
 ```
 
 The component targets the HTTPRoute named `${APP}`. See `06_components.md` for override options.
-
-**No additional ks.yaml changes needed** — `APP` must match the HTTPRoute name.
 
 ## Gatus Health Monitoring
 

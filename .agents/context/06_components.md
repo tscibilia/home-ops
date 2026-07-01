@@ -6,7 +6,7 @@
 - **cnpg creates a CronJob:** The `cnpg` component creates a Secret AND an init CronJob in the app's namespace. Verify the namespace before applying.
 - **Update 02_apps_inventory.md:** When adding or removing a component from an app, update the app's entry in `02_apps_inventory.md`.
 
-Components live in `kubernetes/components/`. Add them to `ks.yaml` (not app `kustomization.yaml`).
+Components live in `kubernetes/components/`. Add them to `spec.components` in the Flux Kustomization (`ks.yaml`). All components — including ext-auth — go in ks.yaml, never in the app's `kustomization.yaml`.
 
 ## volsync — PVC backup to NFS (clonenas)
 
@@ -49,12 +49,13 @@ Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a C
 
 ## ext-auth-internal — SSO for internal apps
 
-Add to the **app's `kustomization.yaml`** (not `ks.yaml`):
+Add to the **Flux Kustomization (`ks.yaml`)** `spec.components` (not the app's `kustomization.yaml`):
 
 ```yaml
 # kubernetes/apps/{ns}/{app}/ks.yaml
-components:
-    - ../../../../components/ext-auth-internal
+spec:
+    components:
+        - ../../../../components/ext-auth-internal
 ```
 
 Creates a `SecurityPolicy` targeting the HTTPRoute named `${APP}`. Override with `EXT_AUTH_TARGET: custom-name` in `postBuild.substitute` if route name differs.
@@ -64,8 +65,9 @@ Creates a `SecurityPolicy` targeting the HTTPRoute named `${APP}`. Override with
 Same as above but for `envoy-external` gateway:
 
 ```yaml
-components:
-    - ../../../../components/ext-auth-external
+spec:
+    components:
+        - ../../../../components/ext-auth-external
 ```
 
 ## zeroscaler — scale-to-zero via native HPA + prometheus-adapter
