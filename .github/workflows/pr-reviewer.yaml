@@ -42,7 +42,7 @@ jobs:
         uses: misospace/pr-reviewer-action@b36ea146c6563a3f49a5b9a232d411f6cf970474 # v2.0.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          allow_approve: "true"
+          allow_approve: "false"
           allowed_source_hosts: github.com,api.github.com,gitlab.com,registry.terraform.io,artifacthub.io
           ai_base_url: ${{ secrets.LITELLM_BASE_URL }}
           ai_api_format: openai
