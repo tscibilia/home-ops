@@ -38,7 +38,7 @@ spec:
                 for ref in \
                   "unsloth/gemma-4-26B-A4B-it-GGUF" \
                   "unsloth/Qwen3.6-27B-MTP-GGUF"; do
-                  name="models--${ref//\//--}"
+                  name="models--$${ref//\//--}"
                   if [ ! -d "/models/$name" ] && [ -d "/llama-models/$name" ]; then
                     echo ">> restoring $name from NAS cache"
                     cp -r "/llama-models/$name" "/models/$name"
@@ -57,7 +57,7 @@ spec:
                 for ref in \
                   "unsloth/gemma-4-26B-A4B-it-GGUF" \
                   "unsloth/Qwen3.6-27B-MTP-GGUF"; do
-                  name="models--${ref//\//--}"
+                  name="models--$${ref//\//--}"
                   if [ -d "/models/$name" ] && [ ! -d "/llama-models/$name" ]; then
                     echo ">> caching $name to NAS"
                     cp -r "/models/$name" "/llama-models/$name"

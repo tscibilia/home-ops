@@ -100,7 +100,7 @@ spec:
               HERMES_HOME: /opt/data
               HOME: /opt/data
               HERMES_DASHBOARD: true
-              HERMES_DASHBOARD_HOST: 0.0.0.0
+              HERMES_DASHBOARD_HOST: 127.0.0.1
               HERMES_DASHBOARD_PORT: &dashPort 9119
               HERMES_DASHBOARD_INSECURE: true
               HOMEBREW_CELLAR: /opt/data/.local/homebrew/Cellar
