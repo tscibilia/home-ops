@@ -6,7 +6,7 @@ metadata:
   name: litellm
 spec:
   # renovate: datasource=docker depName=ghcr.io/berriai/litellm
-  image: ghcr.io/berriai/litellm:v1.90.2@sha256:f3eaaefcd45a75f9a148dcf196439334ee15808d33bb3b9630a55239c92f5234
+  image: ghcr.io/berriai/litellm-non_root:1.90.2@sha256:f3eaaefcd45a75f9a148dcf196439334ee15808d33bb3b9630a55239c92f5234
   replicas: 1
   generalSettings:
     health_check_endpoint: /v1/health
