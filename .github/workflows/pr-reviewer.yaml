@@ -24,7 +24,7 @@ concurrency:
 jobs:
   review:
     name: AI PR Review
-    if: ${{ github.event.pull_request.user.login == 'app/kube-skywalker' && !github.event.pull_request.draft }}
+    if: ${{ github.event.pull_request.user.login == 'kube-skywalker[bot]' && !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
