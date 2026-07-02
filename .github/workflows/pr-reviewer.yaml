@@ -80,7 +80,7 @@ jobs:
           tool_enable_for_forks: "false"
           tool_mcp_servers: "tools=${{ secrets.LITELLM_MCP_URL }},konflate=${{ secrets.KONFLATE_MCP_URL }}"
           tool_mcp_token: ${{ secrets.LITELLM_API_KEY }}
-          tool_mcp_name_prefixes: "searxng,victoria_logs,github,sidero,context7,talos_mcp"
+          tool_mcp_name_prefixes: "searxng_mcp,victoria_logs_mcp,sidero_mcp,context7_mcp,talos_mcp"
           publish_review_comment: "true"
           publish_mode: review_verdict
           validate_required_checks: "auto"

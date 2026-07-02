@@ -41,11 +41,11 @@ spec:
     args: ["-t", "streamable-http", "--address", "0.0.0.0:8000", "--allowed-hosts", "*"]
     env:
       - name: GRAFANA_URL
-        value: http://grafana.observability.svc.cluster.local:3000
+        value: http://grafana-service.observability.svc.cluster.local:3000
       - name: GRAFANA_SERVICE_ACCOUNT_TOKEN
         valueFrom:
           secretKeyRef:
-            name: grafana-mcp
+            name: grafana-mcp-secret
             key: token
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
@@ -130,6 +130,8 @@ spec:
         value: http
       - name: TALOS_MCP_HTTP_ADDR
         value: ":8080"
+      - name: TALOSCONFIG
+        value: /var/run/secrets/talos.dev/config
     volumes:
       - name: talosconfig
         secret:
@@ -139,3 +141,102 @@ spec:
       - name: talosconfig
         mountPath: /var/run/secrets/talos.dev
         readOnly: true
+---
+# TODO: Re-enable when MCPWorkloadSpec supports serviceAccountName (operator needs the field)
+# https://redirect.github.com/home-operations/litellm-operator/issues/25
+# ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+# apiVersion: litellm.home-operations.com/v1alpha1
+# kind: LiteLLMMCPServer
+# metadata:
+#   name: kubectl-mcp
+# spec:
+#   alias: kubectl_mcp
+#   params:
+#     allow_all_keys: true
+#   workload:
+#     image: docker.io/rohitghumare64/kubectl-mcp-server:1.24.0@sha256:17134e36a3e1d3a5e457c12d61e8c7f7c52a7927c6ae4250131dfd95a74a2331
+#     port: 8000
+#     env:
+#       - name: MCP_K8S_PROVIDER
+#         value: in-cluster
+#       - name: PYTHONUNBUFFERED
+#         value: "1"
+#     args:
+#       - --transport
+#       - streamable-http
+#       - --host
+#       - 0.0.0.0
+#       - --port
+#       - "8000"
+#       - --read-only
+#     resources:
+#       requests:
+#         cpu: 100m
+#         memory: 128Mi
+#       limits:
+#         cpu: 500m
+#         memory: 512Mi
+#     serviceAccountName: kubectl-sa
+# ---
+# TODO: Re-enable when MCPWorkloadSpec supports serviceAccountName (operator needs the field)
+# https://redirect.github.com/home-operations/litellm-operator/issues/25
+# ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+# apiVersion: litellm.home-operations.com/v1alpha1
+# kind: LiteLLMMCPServer
+# metadata:
+#   name: flux-mcp
+# spec:
+#   alias: flux_mcp
+#   params:
+#     allow_all_keys: true
+#   workload:
+#     image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.52.0
+#     port: 8000
+#     env:
+#       - name: RUNTIME_NAMESPACE
+#         valueFrom:
+#           fieldRef:
+#             fieldPath: metadata.namespace
+#     args:
+#       - serve
+#       - --transport=http
+#       - --port=8000
+#     resources:
+#       requests:
+#         cpu: 100m
+#         memory: 128Mi
+#       limits:
+#         cpu: 500m
+#         memory: 512Mi
+#     serviceAccountName: flux-mcp-sa
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: hass-mcp
+spec:
+  alias: hass_mcp
+  params:
+    allow_all_keys: true
+  workload:
+    # renovate: datasource=docker depName=ghcr.io/homeassistant-ai/ha-mcp
+    image: ghcr.io/homeassistant-ai/ha-mcp:7.9.0
+    port: 8000
+    command: ["ha-mcp-web"]
+    env:
+      - name: HOMEASSISTANT_URL
+        value: http://home-assistant.home-automation.svc.cluster.local:8123
+      - name: HOMEASSISTANT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: hass-mcp-secret
+            key: HOMEASSISTANT_TOKEN
+    volumes:
+      - name: tmp
+        emptyDir: {}
+    volumeMounts:
+      - name: tmp
+        mountPath: /tmp
