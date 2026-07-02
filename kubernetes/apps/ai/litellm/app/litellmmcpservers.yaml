@@ -3,9 +3,11 @@
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: searxng
+  name: searxng-mcp
 spec:
-  alias: searxng
+  alias: searxng_mcp
+  params:
+    allow_all_keys: true
   workload:
     # renovate: datasource=docker depName=docker.io/isokoliuk/mcp-searxng
     image: docker.io/isokoliuk/mcp-searxng:1.8.0@sha256:e19e276f50123dfaae990bb31a8ae62930ee466b716d70ddc16b9842b0327979
@@ -28,9 +30,11 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: grafana
+  name: grafana-mcp
 spec:
-  alias: grafana
+  alias: grafana_mcp
+  params:
+    allow_all_keys: true
   workload:
     image: mcp/grafana:latest
     port: 8000
@@ -48,9 +52,11 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: victoria-logs
+  name: victoria-logs-mcp
 spec:
-  alias: victoria_logs
+  alias: victoria_logs_mcp
+  params:
+    allow_all_keys: true
   workload:
     image: ghcr.io/victoriametrics/mcp-victorialogs:latest
     port: 8081
@@ -70,19 +76,21 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: sidero
+  name: sidero-mcp
 spec:
-  alias: sidero
+  alias: sidero_mcp
   url: https://docs.siderolabs.com/mcp
   transport: http
+  params:
+    allow_all_keys: true
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: deepwiki
+  name: deepwiki-mcp
 spec:
-  alias: deepwiki
+  alias: deepwiki_mcp
   url: https://mcp.deepwiki.com/mcp
   transport: http
   params:
@@ -92,11 +100,13 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: context7
+  name: context7-mcp
 spec:
-  alias: context7
+  alias: context7_mcp
   url: https://mcp.context7.com/mcp
   transport: http
+  params:
+    allow_all_keys: true
   authType: bearer_token
   authTokenRef:
     name: context7-mcp-secret
@@ -109,6 +119,8 @@ metadata:
   name: talos-mcp
 spec:
   alias: talos_mcp
+  params:
+    allow_all_keys: true
   workload:
     # renovate: datasource=docker depName=registry.erwanleboucher.dev/eleboucher/talos-mcp
     image: registry.erwanleboucher.dev/eleboucher/talos-mcp:0.0.2
