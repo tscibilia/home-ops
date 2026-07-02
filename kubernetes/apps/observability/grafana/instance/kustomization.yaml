@@ -11,5 +11,6 @@ resources:
   - ./grafanadatasource.yaml
   - ./grafanafolder.yaml
   - ./httproute.yaml
+  - ./pushsecret.yaml
   - ./serviceaccount.yaml
   - ./servicemonitor.yaml

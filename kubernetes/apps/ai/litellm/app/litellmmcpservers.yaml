@@ -23,34 +23,26 @@ spec:
         memory: 128Mi
       limits:
         memory: 256Mi
-# ---
-# # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
-# apiVersion: litellm.home-operations.com/v1alpha1
-# kind: LiteLLMMCPServer
-# metadata:
-#   name: grafana
-# spec:
-#   alias: grafana
-#   workload:
-#     image: mcp/grafana:latest
-#     port: 8000
-#     args:
-#       [
-#         "-t",
-#         "streamable-http",
-#         "--address",
-#         "0.0.0.0:8000",
-#         "--allowed-hosts",
-#         "grafana.observability.svc.cluster.local:3000",
-#       ]
-#     env:
-#       - name: GRAFANA_URL
-#         value: http://grafana.observability.svc.cluster.local:3000
-#       - name: GRAFANA_SERVICE_ACCOUNT_TOKEN
-#         valueFrom:
-#           secretKeyRef:
-#             name: grafana-mcp
-#             key: token
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: grafana
+spec:
+  alias: grafana
+  workload:
+    image: mcp/grafana:latest
+    port: 8000
+    args: ["-t", "streamable-http", "--address", "0.0.0.0:8000", "--allowed-hosts", "*"]
+    env:
+      - name: GRAFANA_URL
+        value: http://grafana.observability.svc.cluster.local:3000
+      - name: GRAFANA_SERVICE_ACCOUNT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: grafana-mcp
+            key: token
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -73,20 +65,6 @@ spec:
         value: info
       - name: VL_INSTANCE_ENTRYPOINT
         value: http://victoria-logs-server.observability.svc.cluster.local:9428
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
-apiVersion: litellm.home-operations.com/v1alpha1
-kind: LiteLLMMCPServer
-metadata:
-  name: github
-spec:
-  alias: github
-  url: https://api.githubcopilot.com/mcp
-  transport: http
-  authType: bearer_token
-  authTokenRef:
-    name: github-mcp
-    key: token
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
