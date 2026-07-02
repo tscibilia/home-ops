@@ -136,7 +136,7 @@ spec:
       - name: talosconfig
         secret:
           secretName: talos-mcp-talosconfig
-          defaultMode: 0400
+          defaultMode: 0444
     volumeMounts:
       - name: talosconfig
         mountPath: /var/run/secrets/talos.dev
