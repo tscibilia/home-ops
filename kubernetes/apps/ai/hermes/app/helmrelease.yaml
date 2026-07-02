@@ -147,7 +147,10 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
+        serviceAccount:
+          identifier: *app
     defaultPodOptions:
+      automountServiceAccountToken: true
       securityContext:
         fsGroup: *uid
         fsGroupChangePolicy: OnRootMismatch
@@ -347,22 +350,20 @@ spec:
           roleRef:
             identifier: hermes-read-all
           subjects:
-            - identifier: hermes
-              serviceAccount: hermes
+            - identifier: *app
+              serviceAccount: *app
         hermes-pod-delete:
           type: ClusterRoleBinding
           roleRef:
             identifier: hermes-pod-delete
           subjects:
-            - identifier: hermes
-              serviceAccount: hermes
+            - identifier: *app
+              serviceAccount: *app
         hermes-exec-deploy:
           type: RoleBinding
           roleRef:
             identifier: hermes-exec-deploy
           subjects:
-            - identifier: hermes
-              serviceAccount: hermes
-              namespace: ai
-    serviceAccount:
-      hermes: {}
+            - identifier: *app
+              serviceAccount: *app
+              namespace: "{{ .Release.Namespace }}"
