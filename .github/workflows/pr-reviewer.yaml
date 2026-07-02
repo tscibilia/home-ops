@@ -42,18 +42,18 @@ jobs:
         uses: misospace/pr-reviewer-action@b36ea146c6563a3f49a5b9a232d411f6cf970474 # v2.0.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          allow_approve: "false"
+          allow_approve: "true"
           allowed_source_hosts: github.com,api.github.com,gitlab.com,registry.terraform.io,artifacthub.io
           ai_base_url: ${{ secrets.LITELLM_BASE_URL }}
           ai_api_format: openai
           ai_model: big-pickle-free
           ai_api_key: ${{ secrets.LITELLM_API_KEY }}
-          ai_max_tokens: "16000"
+          ai_max_tokens: "1048576"
           ai_temperature: "0.1"
-          ai_primary_retries: "2"
+          ai_primary_retries: "3"
           ai_primary_retry_delay_sec: "5"
-          ai_connect_timeout_sec: "10"
-          ai_request_timeout_sec: "300"
+          ai_connect_timeout_sec: "15"
+          ai_request_timeout_sec: "600"
           ai_stream: "true"
           ai_fallback_base_url: ${{ secrets.LITELLM_BASE_URL }}
           ai_fallback_api_format: openai
@@ -64,18 +64,17 @@ jobs:
           review_scope: auto
           rereview_label: ai-review
           skip_if_diff_unchanged: "true"
-          standards_file: .agents/AGENTS.md
           system_prompt_file: .github/pr-review-system-prompt.md
           system_prompt_mode: append
           tool_mode: native_loop
-          tool_max_requests: "4"
-          tool_max_rounds: "2"
-          tool_loop_wall_clock_sec: "180"
-          tool_request_timeout_sec: "15"
-          tool_max_response_bytes: "12000"
-          tool_planning_timeout_sec: "60"
-          tool_planning_max_context_bytes: "30000"
-          tool_planning_max_tokens: "8000"
+          tool_max_requests: "10"
+          tool_max_rounds: "5"
+          tool_loop_wall_clock_sec: "600"
+          tool_request_timeout_sec: "60"
+          tool_max_response_bytes: "32000"
+          tool_planning_timeout_sec: "120"
+          tool_planning_max_context_bytes: "100000"
+          tool_planning_max_tokens: "32000"
           tool_allowed_gh_api_repos: "tscibilia/home-ops"
           tool_enable_for_forks: "false"
           tool_mcp_servers: "tools=${{ secrets.LITELLM_MCP_URL }},konflate=${{ secrets.KONFLATE_MCP_URL }}"
