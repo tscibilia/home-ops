@@ -216,9 +216,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: hass-mcp
+  name: ha-mcp
 spec:
-  alias: hass_mcp
+  alias: ha_mcp
   params:
     allow_all_keys: true
   workload:
@@ -232,7 +232,7 @@ spec:
       - name: HOMEASSISTANT_TOKEN
         valueFrom:
           secretKeyRef:
-            name: hass-mcp-secret
+            name: ha-mcp-secret
             key: HOMEASSISTANT_TOKEN
     volumes:
       - name: tmp
