@@ -10,12 +10,6 @@ spec:
   replicas: 1
   generalSettings:
     health_check_endpoint: /v1/health
-  routerSettings:
-    routing_strategy: simple-shuffle
-    redis_host: os.environ/REDIS_HOST
-    redis_port: os.environ/REDIS_PORT
-    num_retries: 2
-    timeout: 600
   litellmSettings:
     success_callback: ["prometheus"]
     failure_callback: ["prometheus"]
@@ -28,11 +22,20 @@ spec:
     drop_params: false
     request_timeout: 600
     set_verbose: false
+    require_auth_for_metrics_endpoint: false
+  routerSettings:
+    routing_strategy: simple-shuffle
+    redis_host: os.environ/REDIS_HOST
+    redis_port: os.environ/REDIS_PORT
+    num_retries: 2
+    timeout: 600
   env:
     - name: LITELLM_LOG
       value: INFO
     - name: LITELLM_MODE
       value: PRODUCTION
+    - name: PROXY_BASE_URL
+      value: "https://${APP}.${SECRET_DOMAIN}"
     - name: REDIS_HOST
       value: dragonfly-cluster.database.svc.cluster.local
     - name: REDIS_PORT
