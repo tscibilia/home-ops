@@ -37,8 +37,8 @@ spec:
     allow_all_keys: true
   workload:
     image: mcp/grafana:latest
-    port: 8000
-    args: ["-t", "streamable-http", "--address", "0.0.0.0:8000", "--allowed-hosts", "*"]
+    port: 8080
+    args: ["-t", "streamable-http", "--address", "0.0.0.0:8080", "--allowed-hosts", "*"]
     env:
       - name: GRAFANA_URL
         value: http://grafana-service.observability.svc.cluster.local:3000
@@ -59,12 +59,12 @@ spec:
     allow_all_keys: true
   workload:
     image: ghcr.io/victoriametrics/mcp-victorialogs:latest
-    port: 8081
+    port: 8080
     env:
       - name: MCP_SERVER_MODE
         value: http
       - name: MCP_LISTEN_ADDR
-        value: :8081
+        value: :8080
       - name: MCP_LOG_FORMAT
         value: json
       - name: MCP_LOG_LEVEL
@@ -156,7 +156,7 @@ spec:
 #     allow_all_keys: true
 #   workload:
 #     image: docker.io/rohitghumare64/kubectl-mcp-server:1.24.0@sha256:17134e36a3e1d3a5e457c12d61e8c7f7c52a7927c6ae4250131dfd95a74a2331
-#     port: 8000
+#     port: 8080
 #     env:
 #       - name: MCP_K8S_PROVIDER
 #         value: in-cluster
@@ -168,7 +168,7 @@ spec:
 #       - --host
 #       - 0.0.0.0
 #       - --port
-#       - "8000"
+#       - "8080"
 #       - --read-only
 #     resources:
 #       requests:
@@ -193,7 +193,7 @@ spec:
 #     allow_all_keys: true
 #   workload:
 #     image: ghcr.io/controlplaneio-fluxcd/flux-operator-mcp:v0.52.0
-#     port: 8000
+#     port: 8080
 #     env:
 #       - name: RUNTIME_NAMESPACE
 #         valueFrom:
@@ -202,7 +202,7 @@ spec:
 #     args:
 #       - serve
 #       - --transport=http
-#       - --port=8000
+#       - --port=8080
 #     resources:
 #       requests:
 #         cpu: 100m
@@ -224,8 +224,8 @@ spec:
   workload:
     # renovate: datasource=docker depName=ghcr.io/homeassistant-ai/ha-mcp
     image: ghcr.io/homeassistant-ai/ha-mcp:7.9.0
-    port: 8000
-    command: ["ha-mcp-web", "--port", "8000"]
+    port: 8080
+    command: ["ha-mcp-web"]
     env:
       - name: HOMEASSISTANT_URL
         value: http://home-assistant.home-automation.svc.cluster.local:8123
@@ -234,6 +234,8 @@ spec:
           secretKeyRef:
             name: ha-mcp-secret
             key: HOMEASSISTANT_TOKEN
+      - name: MCP_PORT
+        value: "8080"
     volumes:
       - name: tmp
         emptyDir: {}
