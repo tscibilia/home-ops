@@ -1,0 +1,101 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: qwen-local
+spec:
+  modelName: qwen-local
+  params:
+    model: openai/unsloth/Qwen3.6-27B
+    apiBase: http://llama-cpp.ai.svc.cluster.local:10000/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: LLAMA_API_KEY
+    additional:
+      maxParallelRequests: 1
+    dropParams: true
+  info:
+    mode: chat
+    maxTokens: 32768
+    maxInputTokens: 262144
+    maxOutputTokens: 32768
+    supportsFunctionCalling: true
+    supportsVision: true
+    extra:
+      inputCostPerToken: 0.0000001250
+      cacheCreationInputTokenCost: 0.0000001250
+      cacheReadInputTokenCost: 0.0000000125
+      outputCostPerToken: 0.0000004999
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: glm-5-2
+spec:
+  modelName: glm-5.2
+  params:
+    model: openrouter/z-ai/glm-5.2
+    apiBase: https://openrouter.ai/api/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENROUTER_API_KEY
+    additional:
+      extraBody:
+        provider:
+          order: ["deepinfra"]
+          allowFallbacks: false
+  info:
+    mode: chat
+    maxTokens: 16384
+    maxInputTokens: 1048560
+    maxOutputTokens: 16384
+    supportsFunctionCalling: true
+    supportsPromptCaching: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: big-pickle-free
+spec:
+  modelName: big-pickle-free
+  params:
+    model: openai/big-pickle
+    apiBase: https://opencode.ai/zen/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENCODE_API_KEY
+  info:
+    mode: chat
+    maxTokens: 32000
+    maxInputTokens: 200000
+    maxOutputTokens: 32000
+    supportsFunctionCalling: true
+    extra:
+      inputCostPerToken: 0.0000001250
+      cacheCreationInputTokenCost: 0.0000001250
+      cacheReadInputTokenCost: 0.0000000125
+      outputCostPerToken: 0.0000004999
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: deepseek-v4-flash
+spec:
+  modelName: deepseek-v4-flash
+  params:
+    model: openai/deepseek-v4-flash
+    apiBase: https://opencode.ai/zen/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENCODE_API_KEY
+  info:
+    mode: chat
+    maxTokens: 384000
+    maxInputTokens: 1048560
+    maxOutputTokens: 384000
+    supportsFunctionCalling: true
+    supportsPromptCaching: true

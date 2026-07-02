@@ -14,6 +14,11 @@ spec:
       namespace: external-secrets
     - name: cnpg-cluster
       namespace: database
+    - name: litellm-operator
+      namespace: ai
+  # TODO: add gitops db init — operator has no initContainer support;
+  # need to create CNPG superuser init job or use postgres-operator's
+  # custom query to bootstrap the litellm database/user on first deploy.
   interval: 1h
   path: ./kubernetes/apps/ai/litellm/app
   postBuild:
