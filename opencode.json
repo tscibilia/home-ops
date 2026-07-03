@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "memini": {
+      "type": "remote",
+      "url": "https://memini.t0m.co/mcp",
+      "headers": {
+        "X-Memini-Namespace": "home-ops",
+        "Authorization": "Bearer {env:MEMINI_API_KEY}"
+      },
+      "enabled": true
+    }
+  }
+}
