@@ -18,7 +18,7 @@ spec:
           01-agent-source:
             image: &img
               repository: docker.io/nousresearch/hermes-agent
-              tag: v2026.6.19@sha256:9f367c7756ef087661a361536a89f438d57a122b958dc23d82d456b1433e6e9e
+              tag: v2026.7.1@sha256:b6c019227889e6675424a2b6223b2cafdd36bf7d1048d1ddd8e043b880d6cc0f
             command:
               - /bin/sh
               - -c
@@ -99,9 +99,6 @@ spec:
               API_SERVER_PORT: &apiPort 8642
               HERMES_HOME: /opt/data
               HOME: /opt/data
-              HERMES_DASHBOARD: true
-              HERMES_DASHBOARD_INSECURE: true
-              HERMES_DASHBOARD_PORT: &dashPort 9119
               HOMEBREW_CELLAR: /opt/data/.local/homebrew/Cellar
               HOMEBREW_PREFIX: /opt/data/.local/homebrew
               HOMEBREW_REPOSITORY: /opt/data/.local/homebrew
@@ -146,6 +143,24 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
+          dashboard:
+            image: *img
+            args: ["dashboard", "--host", "0.0.0.0"]
+            env:
+              GATEWAY_HEALTH_URL: http://localhost:8642
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-dashboard"
+            ports:
+              - containerPort: &dashPort 9119
+                name: http
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 50m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
         serviceAccount:
           identifier: *app
     defaultPodOptions:
@@ -155,6 +170,11 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
+        controller: *app
+        ports:
+          http:
+            port: *apiPort
+      dashboard:
         controller: *app
         ports:
           http:
@@ -170,8 +190,8 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - identifier: app
-                port: *dashPort
+              - identifier: dashboard
+                port: http
     persistence:
       data:
         existingClaim: *app
@@ -182,6 +202,8 @@ spec:
             03-install-tools:
               - path: /opt/data
             app:
+              - path: /opt/data
+            dashboard:
               - path: /opt/data
       config:
         type: configMap
@@ -205,6 +227,8 @@ spec:
             03-install-tools:
               - path: /opt/hermes
             app:
+              - path: /opt/hermes
+            dashboard:
               - path: /opt/hermes
       tmpfs:
         type: emptyDir
