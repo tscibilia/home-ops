@@ -100,7 +100,7 @@ spec:
               HERMES_HOME: /opt/data
               HOME: /opt/data
               HERMES_DASHBOARD: true
-              HERMES_DASHBOARD_HOST: 127.0.0.1
+              HERMES_DASHBOARD_INSECURE: true
               HERMES_DASHBOARD_PORT: &dashPort 9119
               HOMEBREW_CELLAR: /opt/data/.local/homebrew/Cellar
               HOMEBREW_PREFIX: /opt/data/.local/homebrew
@@ -110,7 +110,7 @@ spec:
               PATH: /opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               PIP_BREAK_SYSTEM_PACKAGES: "1"
               MEMINI_URL: http://memini.ai.svc.cluster.local:8080
-              MEMINI_NAMESPACE: ai
+              MEMINI_NAMESPACE: hermes
               SEARXNG_URL: http://searxng.default.svc.cluster.local:8080
               TERM: xterm-256color
             envFrom:
