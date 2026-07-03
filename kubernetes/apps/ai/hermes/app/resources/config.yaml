@@ -32,6 +32,11 @@ data:
       threshold: 0.5
       target_ratio: 0.2
       protect_last_n: 20
+    command_allowlist:
+      - execute_code
+      - "curl *$${SECRET_DOMAIN}*"
+      - "curl *.ai.svc.cluster.local*"
+      - "wget *$${SECRET_DOMAIN}*"
     gateway:
       platforms:
         photon:
