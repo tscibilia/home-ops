@@ -13,7 +13,7 @@ spec:
     keepHourly: 12
   sources:
     - pvc:
-        name: ${APP}-kopiur
+        name: ${APP}
   verification:
     deep:
       schedule:
