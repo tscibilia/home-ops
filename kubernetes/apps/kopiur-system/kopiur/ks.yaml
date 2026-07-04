@@ -30,6 +30,11 @@ spec:
     - name: kopiur
   interval: 1h
   path: ./kubernetes/apps/kopiur-system/kopiur/repository
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+        optional: false
   prune: true
   sourceRef:
     kind: GitRepository
