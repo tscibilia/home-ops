@@ -20,7 +20,6 @@ talosconfig
 !.agents/context/
 !.agents/plugins/
 !.agents/skills/
-.opencode/
 # Private
 .git/
 .private/
