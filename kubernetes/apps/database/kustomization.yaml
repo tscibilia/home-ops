@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: database
 components:
   - ../../components/common
+  - ../../components/kopiur/secret
 resources:
   - ./namespace.yaml
   - ./cnpg/ks.yaml

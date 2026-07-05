@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: ai
 components:
   - ../../components/common
+  - ../../components/kopiur/secret
 resources:
   - ./namespace.yaml
   # - ./comfyui/ks.yaml

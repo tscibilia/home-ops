@@ -26,9 +26,10 @@ spec:
       GATUS_PATH: /identity
       VOLSYNC_PUID: "1000"
       VOLSYNC_CAPACITY: 170Gi
-      KOPIUR_CAPACITY: 170Gi
       VOLSYNC_CACHE_CAPACITY: 40Gi
       VOLSYNC_SCHEDULE: "0 1 * * *"
+      KOPIUR_CAPACITY: 170Gi
+      KOPIUR_CRON: "0 */12 * * *"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
