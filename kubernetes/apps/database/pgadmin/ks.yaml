@@ -24,6 +24,8 @@ spec:
       GATUS_PATH: /misc/ping
       VOLSYNC_CAPACITY: 1Gi
       KOPIUR_CAPACITY: 1Gi
+      KOPIUR_PUID: "5050"
+      KOPIUR_PGID: "5050"
       CNPG_NAME: &postgresAppName pgsql-cluster
     substituteFrom:
       - kind: Secret

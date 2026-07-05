@@ -25,6 +25,8 @@ spec:
       GATUS_SUBDOMAIN: matter
       VOLSYNC_CAPACITY: 2Gi
       KOPIUR_CAPACITY: 2Gi
+      KOPIUR_PUID: "0"
+      KOPIUR_PGID: "0"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

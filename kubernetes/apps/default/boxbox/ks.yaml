@@ -21,6 +21,8 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: drive
       KOPIUR_CAPACITY: 2Gi
+      KOPIUR_PUID: "0"
+      KOPIUR_PGID: "0"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
