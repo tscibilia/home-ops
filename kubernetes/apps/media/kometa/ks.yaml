@@ -7,6 +7,7 @@ metadata:
 spec:
   components:
     - ../../../../components/volsync
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -15,12 +16,15 @@ spec:
     - name: plex
     - name: volsync
       namespace: volsync-system
+    - name: kopiur
+      namespace: kopiur-system
   interval: 1h
   path: ./kubernetes/apps/media/kometa/app
   postBuild:
     substitute:
       APP: *app
       VOLSYNC_CAPACITY: 15Gi
+      KOPIUR_CAPACITY: 15Gi
       VOLSYNC_CACHE_CAPACITY: 5Gi
     substituteFrom:
       - kind: Secret

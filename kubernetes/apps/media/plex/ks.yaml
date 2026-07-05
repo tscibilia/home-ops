@@ -8,6 +8,7 @@ spec:
   components:
     - ../../../../components/zeroscaler
     - ../../../../components/volsync
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -15,6 +16,8 @@ spec:
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
+    - name: kopiur
+      namespace: kopiur-system
   interval: 1h
   path: ./kubernetes/apps/media/plex/app
   postBuild:
@@ -23,6 +26,7 @@ spec:
       GATUS_PATH: /identity
       VOLSYNC_PUID: "1000"
       VOLSYNC_CAPACITY: 170Gi
+      KOPIUR_CAPACITY: 170Gi
       VOLSYNC_CACHE_CAPACITY: 40Gi
       VOLSYNC_SCHEDULE: "0 1 * * *"
     substituteFrom:

@@ -8,6 +8,7 @@ spec:
   components:
     - ../../../../components/zeroscaler
     - ../../../../components/volsync
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -15,6 +16,8 @@ spec:
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
+    - name: kopiur
+      namespace: kopiur-system
   interval: 1h
   path: ./kubernetes/apps/default/komga/app
   postBuild:
@@ -22,6 +25,7 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: rdr
       VOLSYNC_CAPACITY: 3Gi
+      KOPIUR_CAPACITY: 3Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

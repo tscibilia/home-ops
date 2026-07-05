@@ -8,11 +8,14 @@ spec:
   components:
     - ../../../../components/ext-auth-internal
     - ../../../../components/volsync
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
     - name: volsync
       namespace: volsync-system
+    - name: kopiur
+      namespace: kopiur-system
     - name: rook-ceph-cluster
       namespace: rook-ceph
   interval: 1h
@@ -22,6 +25,7 @@ spec:
       APP: *app
       GATUS_PATH: /ping
       VOLSYNC_CAPACITY: 1Gi
+      KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

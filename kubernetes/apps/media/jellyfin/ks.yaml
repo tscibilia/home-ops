@@ -8,11 +8,14 @@ spec:
   components:
     - ../../../../components/zeroscaler
     - ../../../../components/volsync
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: rook-ceph-cluster
       namespace: rook-ceph
     - name: volsync
       namespace: volsync-system
+    - name: kopiur
+      namespace: kopiur-system
   interval: 1h
   path: ./kubernetes/apps/media/jellyfin/app
   postBuild:
@@ -21,6 +24,7 @@ spec:
       GATUS_PATH: /health
       GATUS_SUBDOMAIN: plx
       VOLSYNC_CAPACITY: 5Gi
+      KOPIUR_CAPACITY: 5Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
