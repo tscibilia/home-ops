@@ -6,16 +6,11 @@ metadata:
   name: &app kometa
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
     - name: plex
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -23,9 +18,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 15Gi
       KOPIUR_CAPACITY: 15Gi
-      VOLSYNC_CACHE_CAPACITY: 5Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

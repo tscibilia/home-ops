@@ -10,8 +10,6 @@ spec:
       namespace: database
     - name: secret-stores
       namespace: external-secrets
-    - name: volsync
-      namespace: volsync-system
   interval: 1h
   path: ./kubernetes/apps/default/searxng/app
   postBuild:

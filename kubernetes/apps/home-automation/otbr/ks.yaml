@@ -6,15 +6,10 @@ metadata:
   name: &app otbr
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: multus-networks
       namespace: network
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -22,7 +17,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 2Gi
       KOPIUR_CAPACITY: 2Gi
       KOPIUR_PUID: "0"
       KOPIUR_PGID: "0"

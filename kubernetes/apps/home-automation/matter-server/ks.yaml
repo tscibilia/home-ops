@@ -6,15 +6,10 @@ metadata:
   name: &app matter-server
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: multus-networks
       namespace: network
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -23,7 +18,6 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: matter
-      VOLSYNC_CAPACITY: 2Gi
       KOPIUR_CAPACITY: 2Gi
       KOPIUR_PUID: "0"
       KOPIUR_PGID: "0"

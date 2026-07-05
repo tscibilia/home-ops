@@ -6,15 +6,10 @@ metadata:
   name: &app rustfs
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -25,7 +20,6 @@ spec:
       GATUS_PATH: /health
       GATUS_SUBDOMAIN: rustfs
       S3_SUBDOMAIN: s3
-      VOLSYNC_CAPACITY: 10Gi
       KOPIUR_CAPACITY: 10Gi
     substituteFrom:
       - kind: Secret

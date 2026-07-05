@@ -6,15 +6,10 @@ metadata:
   name: &app scrutiny
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -23,7 +18,6 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: scrutiny
-      VOLSYNC_CAPACITY: 1Gi
       KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - name: cluster-secrets
@@ -43,14 +37,9 @@ metadata:
   name: &app scrutiny-influxdb
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: scrutiny
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -58,7 +47,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      VOLSYNC_CAPACITY: 10Gi
       KOPIUR_CAPACITY: 10Gi
     substituteFrom:
       - name: cluster-secrets

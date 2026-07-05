@@ -6,13 +6,8 @@ metadata:
   name: &app agregarr
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -21,7 +16,6 @@ spec:
     substitute:
       APP: *app
       GATUS_PATH: /api/v1/status
-      VOLSYNC_CAPACITY: 1Gi
       KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - kind: Secret

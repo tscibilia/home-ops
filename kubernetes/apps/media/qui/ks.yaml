@@ -7,13 +7,10 @@ metadata:
 spec:
   components:
     - ../../../../components/zeroscaler
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
     - name: qbittorrent
     - name: kopiur
       namespace: kopiur-system
@@ -23,7 +20,6 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: qb
-      VOLSYNC_CAPACITY: 2Gi
       KOPIUR_CAPACITY: 2Gi
     substituteFrom:
       - kind: Secret

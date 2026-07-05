@@ -10,8 +10,6 @@ spec:
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
     - name: kopiur
       namespace: kopiur-system
   interval: 1h

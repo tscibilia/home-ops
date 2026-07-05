@@ -6,15 +6,10 @@ metadata:
   name: &app actual
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -24,7 +19,6 @@ spec:
       APP: *app
       GATUS_PATH: /
       GATUS_SUBDOMAIN: budget
-      VOLSYNC_CAPACITY: 3Gi
       KOPIUR_CAPACITY: 3Gi
     substituteFrom:
       - kind: Secret

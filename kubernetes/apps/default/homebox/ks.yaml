@@ -7,17 +7,12 @@ metadata:
 spec:
   components:
     - ../../../../components/kopiur/backup
-    - ../../../../components/volsync
     - ../../../../components/cnpg
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
     - name: cnpg-cluster
       namespace: database
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h

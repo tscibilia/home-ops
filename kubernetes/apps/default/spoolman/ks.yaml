@@ -7,17 +7,12 @@ metadata:
 spec:
   components:
     - ../../../../components/ext-auth-internal
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
   interval: 1h
   path: ./kubernetes/apps/default/spoolman/app
   postBuild:

@@ -6,11 +6,8 @@ metadata:
   name: &app zwave
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -19,7 +16,6 @@ spec:
     substitute:
       APP: *app
       GATUS_PATH: /health
-      VOLSYNC_CAPACITY: 1Gi
       KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - kind: Secret

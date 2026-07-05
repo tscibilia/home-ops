@@ -6,7 +6,6 @@ metadata:
   name: &app mealie
 spec:
   components:
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
     - ../../../../components/cnpg
   dependsOn:
@@ -14,10 +13,6 @@ spec:
       namespace: external-secrets
     - name: cnpg-cluster
       namespace: database
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h

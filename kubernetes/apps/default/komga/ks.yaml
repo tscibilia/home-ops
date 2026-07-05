@@ -7,15 +7,10 @@ metadata:
 spec:
   components:
     - ../../../../components/zeroscaler
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -24,7 +19,6 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: rdr
-      VOLSYNC_CAPACITY: 3Gi
       KOPIUR_CAPACITY: 3Gi
     substituteFrom:
       - kind: Secret

@@ -8,15 +8,10 @@ spec:
   components:
     - ../../../../components/ext-auth-external
     - ../../../../components/zeroscaler
-    - ../../../../components/volsync
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
-    - name: volsync
-      namespace: volsync-system
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
@@ -26,7 +21,6 @@ spec:
       APP: *app
       GATUS_PATH: /_stcore/health
       GATUS_SUBDOMAIN: ytdl
-      VOLSYNC_CAPACITY: 1Gi
       KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - kind: Secret
