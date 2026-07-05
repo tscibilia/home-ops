@@ -14,13 +14,13 @@ spec:
   sources:
     - pvc:
         name: ${APP}
-  # verification:
-  #   deep:
-  #     schedule:
-  #       cron: H 5 1 * *
-  #   quick:
-  #     schedule:
-  #       cron: H 3 * * *
+  verification:
+    # deep:
+    #   schedule:
+    #     cron: H 5 1 * *
+    quick:
+      schedule:
+        cron: H 3 * * *
   mover:
     securityContext:
       runAsUser: ${KOPIUR_PUID:=1000}
