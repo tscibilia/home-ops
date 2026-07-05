@@ -6,6 +6,7 @@ metadata:
   name: &app homebox
 spec:
   components:
+    - ../../../../components/kopiur/backup
     - ../../../../components/volsync
     - ../../../../components/cnpg
   dependsOn:
