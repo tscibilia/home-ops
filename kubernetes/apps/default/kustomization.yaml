@@ -19,7 +19,7 @@ resources:
   - ./mealie/ks.yaml
   - ./pairdrop/ks.yaml
   - ./radicale/ks.yaml
-  - ./rclone/ks.yaml
+  # - ./rclone/ks.yaml
   - ./rustfs/ks.yaml
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml

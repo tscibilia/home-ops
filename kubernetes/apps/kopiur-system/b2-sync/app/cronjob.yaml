@@ -27,25 +27,21 @@ spec:
                 - |
                   set -e -o pipefail
 
-                  export KOPIA_CACHE_DIR="${KOPIA_CACHE_DIR:-/tmp/cache}"
-                  export KOPIA_LOG_DIR="${KOPIA_CACHE_DIR}/logs"
-                  export KOPIA_CHECK_FOR_UPDATES=false
-
                   echo "Connecting to Kopia repository..."
                   kopia repository connect filesystem \
-                    --password "${KOPIA_PASSWORD}" \
+                    --password "$(printenv KOPIA_PASSWORD)" \
                     --path /repository
 
                   echo "Syncing to B2..."
                   kopia repository sync-to rclone \
-                    --remote-path "b2-kopia:${KOPIA_BUCKET}" \
+                    --remote-path "b2-kopia:$(printenv KOPIA_BUCKET)" \
                     --parallel=4 \
                     --delete
 
                   echo "Disconnecting from Kopia repository..."
                   kopia repository disconnect
 
-                  echo "✅ Sync to Backblaze B2 completed successfully"
+                  echo "Sync to Backblaze B2 completed successfully"
               env:
                 - name: KOPIA_CHECK_FOR_UPDATES
                   value: "false"
