@@ -25,12 +25,12 @@ Organized by area. Each entry: what you see, what to check, how to fix it.
 
 ## Storage
 
-| Symptom                | Check                                                  | Fix                                                   |
-| ---------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
-| Ceph cluster degraded  | `kubectl get cephcluster -n rook-ceph`                 | Check OSD pods, node status, disk health via Scrutiny |
-| PVC stuck Pending      | `kubectl describe pvc -n <ns> <name>`                  | Verify storage class exists, Ceph has capacity        |
-| NFS mount errors       | Check pod events: `kubectl describe pod -n <ns> <pod>` | Verify TrueNAS is reachable, NFS share exists         |
-| VolSync restore needed | `just kube restore <ns> <name> <previous>`             |
+| Symptom               | Check                                                  | Fix                                                   |
+| --------------------- | ------------------------------------------------------ | ----------------------------------------------------- |
+| Ceph cluster degraded | `kubectl get cephcluster -n rook-ceph`                 | Check OSD pods, node status, disk health via Scrutiny |
+| PVC stuck Pending     | `kubectl describe pvc -n <ns> <name>`                  | Verify storage class exists, Ceph has capacity        |
+| NFS mount errors      | Check pod events: `kubectl describe pod -n <ns> <pod>` | Verify TrueNAS is reachable, NFS share exists         |
+| Kopiur restore needed | `just kube restore <ns> <name> <previous>`             |
 
 ## CNPG
 

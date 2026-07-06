@@ -61,7 +61,7 @@ kubectl get newtsite -n network
 kubectl get cluster -n database
 ```
 
-## Restoring VolSync Backups
+## Restoring Kopiur Backups
 
 For apps with PVC data (config, state — not databases):
 
@@ -69,7 +69,7 @@ For apps with PVC data (config, state — not databases):
 just kube restore <ns> <name> <previous>
 ```
 
-This handles the full flow: suspend the app → delete the existing PVC → VolSync Volume Populator creates a new PVC from the backup → resume the app.
+This handles the full flow: suspend the app → delete the existing PVC → Kopiur Volume Populator creates a new PVC from the backup → resume the app.
 
 ## Important Notes
 

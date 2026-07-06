@@ -8,26 +8,28 @@
 
 Components live in `kubernetes/components/`. Add them to `spec.components` in the Flux Kustomization (`ks.yaml`). All components — including ext-auth — go in ks.yaml, never in the app's `kustomization.yaml`.
 
-## volsync — PVC backup to NFS (clonenas)
+## kopiur — PVC backup to NFS (clonenas) via Kopia
+
+Replaces VolSync. Uses `kopiur.home-operations.com` CRDs (SnapshotPolicy, SnapshotSchedule, Restore) with a `ClusterRepository` pointing to NFS on `clonenas.internal`.
 
 ```yaml
 # ks.yaml
 components:
-  - ../../../../components/volsync
+  - ../../../../components/kopiur/backup
 postBuild:
   substitute:
     APP: *app
-    VOLSYNC_CAPACITY: 5Gi   # required; see 04_storage.md for optional vars
+    KOPIUR_CAPACITY: 5Gi   # optional; see 04_storage.md for full var table
 dependsOn:
-  - name: rook-ceph-cluster
-    namespace: rook-ceph
-  - name: volsync
-    namespace: volsync-system
+  - name: secret-stores
+    namespace: external-secrets
+  - name: kopiur
+    namespace: kopiur-system
 ```
 
-NFS injection is explicit via `moverVolumes` in the component spec — no MutatingAdmissionPolicy needed.
+A separate `kopiur/secret` component distributes the `kopiur-nas-secret` (Kopia repo password from aKeyless `/kubernetes/kopiur`) per namespace — not added per-app; the cluster-level setup handles it.
 
-See `04_storage.md` for all VolSync vars and restore command.
+See `04_storage.md` for all Kopiur vars and restore command.
 
 ## cnpg — PostgreSQL user secret + init cronjob
 
@@ -83,7 +85,7 @@ postBuild:
     APP: *app
 ```
 
-For clonenas-backed apps (volsync, rclone), override the probe job:
+For clonenas-backed apps (kopiur, rclone), override the probe job:
 
 ```yaml
 postBuild:

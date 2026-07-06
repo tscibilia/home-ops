@@ -30,8 +30,8 @@ kind: Kustomization
 metadata:
     name: &app myapp # YAML anchor — reused below as *app
 spec:
-    components: # optional — add volsync, cnpg, ext-auth, zeroscaler
-        - ../../../../components/volsync
+    components: # optional — add kopiur, cnpg, ext-auth, zeroscaler
+        - ../../../../components/kopiur/backup
     dependsOn: # always declare; see common chains below
         - name: secret-stores
           namespace: external-secrets
@@ -42,7 +42,7 @@ spec:
             APP: *app # always set APP — components depend on it
             GATUS_SUBDOMAIN: sub # sets monitoring URL subdomain
             GATUS_PATH: /health # optional, default is /
-            VOLSYNC_CAPACITY: 5Gi # required when using volsync component
+            KOPIUR_CAPACITY: 5Gi # optional; defaults in 04_storage.md
         substituteFrom:
             - kind: Secret
               name: cluster-secrets # always include for SECRET_DOMAIN, TIMEZONE etc
@@ -57,14 +57,14 @@ spec:
 
 ## Common dependsOn Chains
 
-| Condition                           | Add to dependsOn                                                             |
-| ----------------------------------- | ---------------------------------------------------------------------------- |
-| Always (has ExternalSecret)         | `secret-stores` / `external-secrets`                                         |
-| Using volsync component             | `rook-ceph-cluster` / `rook-ceph` + `volsync` / `volsync-system`             |
-| Using cnpg component                | `cnpg-cluster` / `database`                                                  |
-| Using ceph-ssd storage (no volsync) | `rook-ceph-cluster` / `rook-ceph`                                            |
-| Using zeroscaler                    | (no extra dependsOn — HPA gracefully degrades if prometheus-adapter is down) |
-| Depends on another app (same ns)    | just `name:` without `namespace:`                                            |
+| Condition                          | Add to dependsOn                                                             |
+| ---------------------------------- | ---------------------------------------------------------------------------- |
+| Always (has ExternalSecret)        | `secret-stores` / `external-secrets`                                         |
+| Using kopiur component             | `secret-stores` / `external-secrets` + `kopiur` / `kopiur-system`            |
+| Using cnpg component               | `cnpg-cluster` / `database`                                                  |
+| Using ceph-ssd storage (no kopiur) | `rook-ceph-cluster` / `rook-ceph`                                            |
+| Using zeroscaler                   | (no extra dependsOn — HPA gracefully degrades if prometheus-adapter is down) |
+| Depends on another app (same ns)   | just `name:` without `namespace:`                                            |
 
 ## Namespace kustomization.yaml
 

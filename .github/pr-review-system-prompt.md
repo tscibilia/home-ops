@@ -79,7 +79,7 @@ A breaking change that affects a feature we don't use is not actionable.
 
 - Does the HelmRelease values.yaml use the changed setting?
 - Would a breaking change affect the Helm chart's controller, initContainer, or persistence patterns?
-- Would a container image upgrade affect CNPG, VolSync, or other component compatibility?
+- Would a container image upgrade affect CNPG, Kopiur, or other component compatibility?
 - Are there resource quota or limit changes that would affect the cluster?
 - Does the upgrade touch Cilium, Talos, or Rook Ceph integration surfaces?
 

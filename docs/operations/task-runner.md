@@ -20,9 +20,9 @@ just <module> <command> [args]
 | `browse-pvc`      | `<ns> <claim>`            | Mount PVC to a debug pod                           |
 | `node-shell`      | `<node>`                  | Interactive shell on a node                        |
 | `prune-pods`      | —                         | Clean up Failed, Pending, Succeeded pods           |
-| `volsync`         | `<suspend\|resume>`       | Suspend or resume VolSync                          |
-| `snapshot`        | `[<ns> <app>]`            | Snapshot VolSync PVC(s) — targeted or all          |
-| `restore`         | `<ns> <app> [<prev>]`     | Restore VolSync backup for an app                  |
+| `volsync`         | `<suspend\|resume>`       | Suspend or resume Kopiur                           |
+| `snapshot`        | `[<ns> <app>]`            | Snapshot Kopiur PVC(s) — targeted or all           |
+| `restore`         | `<ns> <app> [<prev>]`     | Restore Kopiur backup for an app                   |
 | `restart-network` | —                         | Restart network stack in dependency order          |
 
 ## Talos

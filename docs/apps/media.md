@@ -2,40 +2,40 @@
 
 Namespace: `media`
 
-| App          | Storage   | Notes                                              |
-| ------------ | --------- | -------------------------------------------------- |
-| agregarr     | ceph-ssd  | Home media aggregator dashboard, ext-auth-internal, volsync |
-| autobrr      | ceph-ssd  | Depends on qbittorrent, zeroscaler, volsync   |
-| bazarr       | ceph-ssd  | Subtitle management, ext-auth-internal, zeroscaler, volsync |
-| flaresolverr | —         | Captcha solver, depends on prowlarr                |
-| imagemaid    | —         | Image cleanup, depends on plex                     |
-| jellyfin     | ceph-ssd  | Media server, ceph storage (not NFS)               |
-| kometa       | ceph-ssd  | Plex metadata manager, depends on plex, volsync    |
-| maintainerr  | ceph-ssd  | Plex library cleanup, volsync backup               |
-| plex         | nfs-media | External access, GPU transcoding, zeroscaler, volsync |
-| prowlarr     | ceph-ssd  | Indexer manager, ext-auth-internal, volsync        |
-| qbittorrent  | nfs-media | Multus VPN (192.168.99.x, VLAN 99)                 |
-| qui          | ceph-ssd  | qBittorrent UI, depends on qbittorrent, zeroscaler, volsync |
-| radarr       | ceph-ssd  | Movie management, ext-auth-internal, zeroscaler, volsync |
-| recyclarr    | —         | Quality profile sync, depends on radarr + sonarr   |
-| seerr        | ceph-ssd  | Media requests, external access, volsync           |
-| sonarr       | ceph-ssd  | TV management, ext-auth-internal, zeroscaler, volsync |
-| tracearr     | openebs   | Plex and Jellyfin analytics                        |
-| hometube      | ceph-ssd  | YouTube downloader, ext-auth-external, zeroscaler, volsync |
+| App          | Storage   | Notes                                                      |
+| ------------ | --------- | ---------------------------------------------------------- |
+| agregarr     | ceph-ssd  | Home media aggregator dashboard, ext-auth-internal, kopiur |
+| autobrr      | ceph-ssd  | Depends on qbittorrent, zeroscaler, kopiur                 |
+| bazarr       | ceph-ssd  | Subtitle management, ext-auth-internal, zeroscaler, kopiur |
+| flaresolverr | —         | Captcha solver, depends on prowlarr                        |
+| imagemaid    | —         | Image cleanup, depends on plex                             |
+| jellyfin     | ceph-ssd  | Media server, ceph storage (not NFS)                       |
+| kometa       | ceph-ssd  | Plex metadata manager, depends on plex, kopiur             |
+| maintainerr  | ceph-ssd  | Plex library cleanup, kopiur backup                        |
+| plex         | nfs-media | External access, GPU transcoding, zeroscaler, kopiur       |
+| prowlarr     | ceph-ssd  | Indexer manager, ext-auth-internal, kopiur                 |
+| qbittorrent  | nfs-media | Multus VPN (192.168.99.x, VLAN 99)                         |
+| qui          | ceph-ssd  | qBittorrent UI, depends on qbittorrent, zeroscaler, kopiur |
+| radarr       | ceph-ssd  | Movie management, ext-auth-internal, zeroscaler, kopiur    |
+| recyclarr    | —         | Quality profile sync, depends on radarr + sonarr           |
+| seerr        | ceph-ssd  | Media requests, external access, kopiur                    |
+| sonarr       | ceph-ssd  | TV management, ext-auth-internal, zeroscaler, kopiur       |
+| tracearr     | openebs   | Plex and Jellyfin analytics                                |
+| hometube     | ceph-ssd  | YouTube downloader, ext-auth-external, zeroscaler, kopiur  |
 
 ## Config Notes
 
 ??? note "qBittorrent"
-    VPN-routed via Multus secondary interface (net1) on VLAN 99 (192.168.99.0/24). All torrent traffic goes through the VPN tunnel — cluster and LAN traffic stay on the primary interface. See [Architecture — Networking](../architecture.md#physical) for the VLAN setup.
+VPN-routed via Multus secondary interface (net1) on VLAN 99 (192.168.99.0/24). All torrent traffic goes through the VPN tunnel — cluster and LAN traffic stay on the primary interface. See [Architecture — Networking](../architecture.md#physical) for the VLAN setup.
 
 ??? note "Plex"
-    External access via envoy-external for remote streaming. Uses Intel i915 GPU for hardware transcoding (shared with Jellyfin and Immich). Media stored on nfs-media (TrueNAS).
+External access via envoy-external for remote streaming. Uses Intel i915 GPU for hardware transcoding (shared with Jellyfin and Immich). Media stored on nfs-media (TrueNAS).
 
 ??? note "Jellyfin"
-    Uses ceph-ssd for config storage, not nfs-media. Media access is separate from Plex's NFS mount.
+Uses ceph-ssd for config storage, not nfs-media. Media access is separate from Plex's NFS mount.
 
 ??? note "hometube"
-    Uses `ext-auth-external` (not internal) — accessible from outside the LAN with Authentik SSO.
+Uses `ext-auth-external` (not internal) — accessible from outside the LAN with Authentik SSO.
 
 ??? note "recyclarr"
-    Syncs quality profiles and custom formats to both Radarr and Sonarr. No persistent storage — config is generated from the repo on each run.
+Syncs quality profiles and custom formats to both Radarr and Sonarr. No persistent storage — config is generated from the repo on each run.

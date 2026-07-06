@@ -91,7 +91,7 @@ kubernetes                    # K8s cluster
 ├── apps                      # Applications organized by namespace
 │   ├── default               # General purpose self-hosted applications
 │   ├── ...
-│   └── volsync-system        # VolSync for PVC backup and restore
+│   └── kopiur-system        # Kopiur for PVC backup and restore
 ├── bootstrap                 # Directory to bootstrap Talos nodes
 │   ├── cnpg                  # CNPG patches applied during cluster bootstrap
 │   ├── helmfile.d            # Helmreleases required for cluster bootstrap
@@ -114,7 +114,7 @@ _(For detailed references, prioritize reading the relevant sub-directory's `READ
 - `app/` (kustomization, helmrelease, ocirepository, externalsecret)
 - `ks.yaml` (Flux Kustomization entry point: defines `dependsOn`, `substitutions`, `components`)
 
-**Components (`/kubernetes/components/`):** `common/`, `cnpg/`, `ext-auth-internal/`, `ext-auth-external/`, `volsync/`, `zeroscaler/`.
+**Components (`/kubernetes/components/`):** `common/`, `cnpg/`, `ext-auth-internal/`, `ext-auth-external/`, `kopiur/`, `zeroscaler/`.
 
 **Conventions:**
 
@@ -137,9 +137,9 @@ Targeted reference docs in `.agents/context/`. **Read the relevant file(s) befor
 | `01_nodes.md`            | Scheduling a pod, adding node selectors/tolerations, GPU workloads, storage class choice by node |
 | `02_apps_inventory.md`   | Checking if an app exists, finding its namespace, understanding what's deployed                  |
 | `03_networking.md`       | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS                      |
-| `04_storage.md`          | Adding a PVC, wiring VolSync backup, connecting to CNPG, choosing a storage class                |
+| `04_storage.md`          | Adding a PVC, wiring Kopiur backup, connecting to CNPG, choosing a storage class                 |
 | `05_secrets.md`          | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars      |
-| `06_components.md`       | Adding volsync/cnpg/ext-auth/zeroscaler to an app — exact ks.yaml stanzas                        |
+| `06_components.md`       | Adding kopiur/cnpg/ext-auth/zeroscaler to an app — exact ks.yaml stanzas                         |
 | `07_flux_conventions.md` | Writing or reviewing a ks.yaml, dependsOn chains, YAML anchor pattern, configMapGenerator        |
 | `08_docker_hosts.md`     | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps                            |
 
@@ -157,7 +157,7 @@ Before requesting a commit, ensure:
 - **Talos**: No SSH. Use `talosctl`. Edit templates in `kubernetes/talos/`, then `just talos apply-node <node>`.
 - **Cilium**: eBPF replacement for kube-proxy. Use `cilium` CLI for network debugging.
 - **CNPG**: Use `-rw` endpoint for app connections. Check health: `kubectl get cluster -n database`.
-- **VolSync**: Restore via `just kube restore <ns> <name> <previous>`.
+- **Kopiur**: Restore by editing the `Restore` CR's `spec.offset` in the app namespace (0 = latest snapshot).
 
 ## Active Work
 

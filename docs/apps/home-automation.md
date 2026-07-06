@@ -2,20 +2,20 @@
 
 Namespace: `home-automation`
 
-| App             | Storage  | Notes                                        |
-| --------------- | -------- | -------------------------------------------- |
-| home-assistant  | ceph-ssd | Multus networking, external access, volsync  |
-| esphome         | ceph-ssd | Multus networking (mDNS device discovery), volsync |
-| mosquitto       | ceph-ssd | MQTT broker                                  |
-| zwave           | ceph-ssd | USB device passthrough, volsync              |
-| matter-server   | —        |                                              |
-| otbr            | ceph-ssd | OpenThread Border Router, Multus iot (net1), IPv6 forwarding, volsync |
+| App            | Storage  | Notes                                                                |
+| -------------- | -------- | -------------------------------------------------------------------- |
+| home-assistant | ceph-ssd | Multus networking, external access, kopiur                           |
+| esphome        | ceph-ssd | Multus networking (mDNS device discovery), kopiur                    |
+| mosquitto      | ceph-ssd | MQTT broker                                                          |
+| zwave          | ceph-ssd | USB device passthrough, kopiur                                       |
+| matter-server  | —        |                                                                      |
+| otbr           | ceph-ssd | OpenThread Border Router, Multus iot (net1), IPv6 forwarding, kopiur |
 
 ## Config Notes
 
 ### Home Assistant
 
-External access via envoy-external. Uses Multus for a secondary network interface — this gives it direct LAN presence for device discovery (mDNS, SSDP) that wouldn't work through the Cilium CNI alone. VolSync backs up the config PVC.
+External access via envoy-external. Uses Multus for a secondary network interface — this gives it direct LAN presence for device discovery (mDNS, SSDP) that wouldn't work through the Cilium CNI alone. Kopiur backs up the config PVC.
 
 ### ESPHome
 

@@ -4,8 +4,8 @@
 
 - **Namespace = directory name:** Verify the `targetNamespace` in the app's `ks.yaml` before referencing it in manifests.
 - **kustomization.yaml must include the new app:** When adding a new app, its `ks.yaml` path must be added to `kubernetes/apps/{namespace}/kustomization.yaml` or Flux will never reconcile it.
-- **Component flags listed here:** Each app's entry notes which components it uses (volsync, cnpg, zeroscaler, ext-auth). Check before assuming.
-- **Components go in ks.yaml:** All component references (volsync, cnpg, ext-auth, zeroscaler) live in `spec.components` of the Flux Kustomization (`ks.yaml`), NOT in the app's `kustomization.yaml`.
+- **Component flags listed here:** Each app's entry notes which components it uses (kopiur, cnpg, zeroscaler, ext-auth). Check before assuming.
+- **Components go in ks.yaml:** All component references (kopiur, cnpg, ext-auth, zeroscaler) live in `spec.components` of the Flux Kustomization (`ks.yaml`), NOT in the app's `kustomization.yaml`.
 - **ext-auth apps skip Gatus route monitoring:** Apps using ext-auth have Authentik forward auth which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
 
 Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for quick lookup.
@@ -23,7 +23,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - llmkube _(LLM inference orchestrator)_
 - mcp-servers
 - memini _(AI memory/context — pgvector + semantic search)_ [cnpg]
-- open-webui [volsync]
+- open-webui [kopiur]
 - toolhive
 
 ## cert-manager
@@ -34,28 +34,28 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 - cnpg _(CloudNativePG operator + clusters)_
 - dragonfly _(Redis-compatible cache)_
-- pgadmin [volsync, cnpg]
+- pgadmin [kopiur, cnpg]
 
 ## default
 
-- actual _(budgeting)_ [volsync]
+- actual _(budgeting)_ [kopiur]
 - authentik _(SSO/IdP)_ [cnpg]
-- boxbox _(NFS file share/drive UI)_ [volsync]
+- boxbox _(NFS file share/drive UI)_ [kopiur]
 - cetranscript _(CE Transcript — custom app)_ [cnpg]
-- homebox _(inventory)_ [volsync, cnpg]
+- homebox _(inventory)_ [kopiur, cnpg]
 - homepage _(dashboard)_
-- immich _(photos)_ [volsync, cnpg]
-- komga _(comics/manga)_ [volsync, zeroscaler]
-- mealie _(recipes)_ [volsync, cnpg]
+- immich _(photos)_ [kopiur, cnpg]
+- komga _(comics/manga)_ [kopiur, zeroscaler]
+- mealie _(recipes)_ [kopiur, cnpg]
 - pairdrop
-- radicale _(CalDAV/CardDAV)_ [volsync]
+- radicale _(CalDAV/CardDAV)_ [kopiur]
 - rclone [zeroscaler]
-- rustfs _(S3-compatible object store)_ [volsync]
+- rustfs _(S3-compatible object store)_ [kopiur]
 - searxng
 - smtp-relay
-- spoolman _(filament tracker)_ [volsync, ext-auth-internal]
-- thelounge _(IRC)_ [volsync]
-- vaultwarden _(Bitwarden)_ [volsync]
+- spoolman _(filament tracker)_ [kopiur, ext-auth-internal]
+- thelounge _(IRC)_ [kopiur]
+- vaultwarden _(Bitwarden)_ [kopiur]
 
 ## external-secrets
 
@@ -70,12 +70,12 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## home-automation
 
-- esphome [volsync]
-- home-assistant [volsync]
-- matter-server [volsync]
+- esphome [kopiur]
+- home-assistant [kopiur]
+- matter-server [kopiur]
 - mosquitto _(MQTT broker)_
-- otbr _(OpenThread Border Router)_ [volsync]
-- zwave [volsync]
+- otbr _(OpenThread Border Router)_ [kopiur]
+- zwave [kopiur]
 
 ## kube-system
 
@@ -94,23 +94,23 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## media
 
-- agregarr _(home media aggregator dashboard)_ [volsync]
-- autobrr _(torrent automation)_ [volsync, zeroscaler]
-- bazarr _(subtitles)_ [volsync, ext-auth-internal, zeroscaler]
+- agregarr _(home media aggregator dashboard)_ [kopiur]
+- autobrr _(torrent automation)_ [kopiur, zeroscaler]
+- bazarr _(subtitles)_ [kopiur, ext-auth-internal, zeroscaler]
 - flaresolverr
-- hometube _(yt-dlp UI)_ [volsync, ext-auth-external, zeroscaler]
+- hometube _(yt-dlp UI)_ [kopiur, ext-auth-external, zeroscaler]
 - imagemaid _(Plex image cleanup)_
-- jellyfin [volsync, zeroscaler]
-- kometa _(Plex metadata)_ [volsync]
-- maintainerr [volsync]
-- plex [volsync, zeroscaler]
-- prowlarr _(indexer manager)_ [volsync, ext-auth-internal]
-- qbittorrent [volsync, zeroscaler]
-- qui _(Plex request UI)_ [volsync, zeroscaler]
-- radarr [volsync, ext-auth-internal, zeroscaler]
-- recyclarr [volsync]
-- seerr _(Overseerr fork)_ [volsync]
-- sonarr [volsync, ext-auth-internal, zeroscaler]
+- jellyfin [kopiur, zeroscaler]
+- kometa _(Plex metadata)_ [kopiur]
+- maintainerr [kopiur]
+- plex [kopiur, zeroscaler]
+- prowlarr _(indexer manager)_ [kopiur, ext-auth-internal]
+- qbittorrent [kopiur, zeroscaler]
+- qui _(Plex request UI)_ [kopiur, zeroscaler]
+- radarr [kopiur, ext-auth-internal, zeroscaler]
+- recyclarr [kopiur]
+- seerr _(Overseerr fork)_ [kopiur]
+- sonarr [kopiur, ext-auth-internal, zeroscaler]
 - tracearr _(Plex/Jellyfin tracker)_ [cnpg]
 
 ## network
@@ -144,7 +144,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - kromgo
 - kube-prometheus-stack
 - prometheus-adapter _(external-metrics API for HPA)_
-- scrutiny _(SMART disk monitoring)_ [volsync]
+- scrutiny _(SMART disk monitoring)_ [kopiur]
 - silence-operator
 - unpoller _(UniFi metrics)_
 - victoria-logs [ext-auth-internal]
@@ -162,7 +162,6 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 - tuppr _(Talos upgrade controller)_
 
-## volsync-system
+## kopiur-system
 
-- kopia _(VolSync backup repository web UI)_
-- volsync _(PVC backup/restore — volsync-perfectra1n)_
+- kopiur _(PVC backup/restore operator + ClusterRepository)_

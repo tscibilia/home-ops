@@ -1,6 +1,6 @@
 ---
 name: add-app
-description: Scaffold a new Kubernetes app in the home-ops monorepo. Prompts for app name, namespace, helm chart type, and optional features (volsync, cnpg, auth, zeroscaler, gatus, ESO, configMapGenerator, ingress). Generates all manifests following repo conventions.
+description: Scaffold a new Kubernetes app in the home-ops monorepo. Prompts for app name, namespace, helm chart type, and optional features (kopiur, cnpg, auth, zeroscaler, gatus, ESO, configMapGenerator, ingress). Generates all manifests following repo conventions.
 ---
 
 # Add App Skill
@@ -32,7 +32,7 @@ Use `AskUserQuestion` to collect the following. Ask up to 4 questions per call, 
 **Batch 3 — Features (multi-select, always ask):**
 
 5. **Which optional features does this app need?** (multiSelect: true)
-    - `VolSync backups` — PVC backup/restore via restic (needs VOLSYNC_CAPACITY)
+    - `Kopiur backups` — PVC backup/restore via kopiur (needs KOPIUR_CAPACITY)
     - `CNPG PostgreSQL` — shared PostgreSQL database via cnpg component
     - `Zeroscaler (truenas)` — native HPA scale to zero when `truenas.internal:2049` is down (default `ZEROSCALER_JOB_NAME=nfs_probe`)
     - `Zeroscaler (clonenas backup)` — native HPA scale to zero when `clonenas.internal:2049` is down (sets `ZEROSCALER_JOB_NAME=nfs_bkup_probe`)
@@ -107,7 +107,7 @@ metadata:
 spec:
     components:
         - ../../../../components/cnpg # if cnpg selected
-        - ../../../../components/volsync # if volsync selected
+        - ../../../../components/kopiur/backup # if kopiur selected
         - ../../../../components/ext-auth-internal # if forward-auth internal
         - ../../../../components/ext-auth-external # if forward-auth external
         - ../../../../components/zeroscaler # if zeroscaler selected (any variant)
@@ -116,10 +116,10 @@ spec:
           namespace: external-secrets
         - name: cnpg-cluster # if cnpg (CNPG_NAME=pgsql-cluster)
           namespace: database
-        - name: rook-ceph-cluster # if volsync
-          namespace: rook-ceph
-        - name: volsync # if volsync
-          namespace: volsync-system
+        - name: secret-stores # if kopiur
+          namespace: external-secrets
+        - name: kopiur # if kopiur
+          namespace: kopiur-system
     interval: 1h
     path: ./kubernetes/apps/{NAMESPACE}/{APP_NAME}/app
     postBuild:
@@ -127,7 +127,7 @@ spec:
             APP: *app
             GATUS_SUBDOMAIN: { SUBDOMAIN } # omit if subdomain == app name
             CNPG_NAME: &postgresAppName pgsql-cluster # if cnpg
-            VOLSYNC_CAPACITY: { CAPACITY } # if volsync
+            KOPIUR_CAPACITY: { CAPACITY } # if kopiur
             ZEROSCALER_JOB_NAME: nfs_bkup_probe # ONLY if Zeroscaler (clonenas backup) variant; omit for truenas default
         substituteFrom:
             - kind: Secret
@@ -336,7 +336,7 @@ spec:
                           - identifier: app
                             port: *port
         persistence:
-            config: # only if volsync selected
+            config: # only if kopiur selected
                 existingClaim: *app
                 globalMounts:
                     - path: /data # TODO: verify app data directory path
@@ -471,5 +471,5 @@ After generating all manifests:
 - **No Renovate annotations**: Do not add `# renovate:` comments to image tags — Renovate config handles discovery automatically.
 - **YAML anchors**: Always use `name: &app {name}` and reference as `*app` throughout.
 - **Security context**: Default to restrictive (`readOnlyRootFilesystem: true`, drop ALL capabilities). Do not add comments about relaxing these — that is follow-up troubleshooting if needed.
-- **Storage**: Default PVC storage class is `ceph-ssd` (handled by volsync component defaults). Only override for `openebs-hostpath` or `nfs-media` if needed.
+- **Storage**: Default PVC storage class is `ceph-ssd` (handled by kopiur component defaults). Only override for `openebs-hostpath` or `nfs-media` if needed.
 - **No extra blank lines**: Keep YAML output compact — no unnecessary blank lines between sections.

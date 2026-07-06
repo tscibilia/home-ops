@@ -2,15 +2,15 @@
 
 Namespace: `ai`
 
-| App          | Storage  | Notes                                              |
-| ------------ | -------- | -------------------------------------------------- |
-| comfyui      | ceph-ssd | Image generation, external access                  |
-| honcho       | —        | AI memory service, pgvector-cluster + Dragonfly DB 6 |
-| litellm      | —        | LLM API proxy, internal only, Redis cache via Dragonfly |
-| llama-cpp    | ceph-ssd | NVIDIA GPU (ai3090), CUDA inference server         |
-| mcp-servers  | —        | MCPServer CRDs managed by toolhive operator        |
-| open-webui   | ceph-ssd | LLM chat UI, external access, volsync backup       |
-| toolhive     | —        | MCP operator, depends on Dragonfly                 |
+| App         | Storage  | Notes                                                   |
+| ----------- | -------- | ------------------------------------------------------- |
+| comfyui     | ceph-ssd | Image generation, external access                       |
+| honcho      | —        | AI memory service, pgvector-cluster + Dragonfly DB 6    |
+| litellm     | —        | LLM API proxy, internal only, Redis cache via Dragonfly |
+| llama-cpp   | ceph-ssd | NVIDIA GPU (ai3090), CUDA inference server              |
+| mcp-servers | —        | MCPServer CRDs managed by toolhive operator             |
+| open-webui  | ceph-ssd | LLM chat UI, external access, kopiur backup             |
+| toolhive    | —        | MCP operator, depends on Dragonfly                      |
 
 ## Config Notes
 

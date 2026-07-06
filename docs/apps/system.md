@@ -4,57 +4,57 @@ Infrastructure namespaces that keep the cluster running. You rarely interact wit
 
 ## kube-system
 
-| App                      | Notes                                           |
-| ------------------------ | ----------------------------------------------- |
-| cilium                   | eBPF CNI + load balancer, replaces kube-proxy   |
-| coredns                  | In-cluster DNS (10.43.0.10)                     |
-| csi-driver-nfs           | NFS CSI driver for nfs-media storage class      |
-| descheduler              | Rebalances pods across nodes                    |
-| intel-gpu-resource-driver| Exposes Intel iGPU to pods (Plex, Jellyfin, Immich) |
-| k8tz                     | Timezone injection into pods via mutating webhook   |
-| metrics-server           | Cluster resource metrics for HPA/kubectl top    |
-| nvidia-device-plugin     | Exposes NVIDIA GPU to pods (ai3090)             |
-| reloader                 | Restarts pods when their ConfigMaps or Secrets change |
-| snapshot-controller      | Volume snapshot CRDs for VolSync                |
-| spegel                   | P2P container image distribution between nodes  |
+| App                       | Notes                                                 |
+| ------------------------- | ----------------------------------------------------- |
+| cilium                    | eBPF CNI + load balancer, replaces kube-proxy         |
+| coredns                   | In-cluster DNS (10.43.0.10)                           |
+| csi-driver-nfs            | NFS CSI driver for nfs-media storage class            |
+| descheduler               | Rebalances pods across nodes                          |
+| intel-gpu-resource-driver | Exposes Intel iGPU to pods (Plex, Jellyfin, Immich)   |
+| k8tz                      | Timezone injection into pods via mutating webhook     |
+| metrics-server            | Cluster resource metrics for HPA/kubectl top          |
+| nvidia-device-plugin      | Exposes NVIDIA GPU to pods (ai3090)                   |
+| reloader                  | Restarts pods when their ConfigMaps or Secrets change |
+| snapshot-controller       | Volume snapshot CRDs for Kopiur                       |
+| spegel                    | P2P container image distribution between nodes        |
 
 ## cert-manager
 
-| App          | Notes                                       |
-| ------------ | ------------------------------------------- |
+| App          | Notes                                                    |
+| ------------ | -------------------------------------------------------- |
 | cert-manager | TLS cert automation, Let's Encrypt DNS-01 via Cloudflare |
 
 ## external-secrets
 
-| App              | Notes                                    |
-| ---------------- | ---------------------------------------- |
-| external-secrets | Operator — syncs aKeyless → K8s Secrets  |
+| App              | Notes                                                       |
+| ---------------- | ----------------------------------------------------------- |
+| external-secrets | Operator — syncs aKeyless → K8s Secrets                     |
 | secret-stores    | ClusterSecretStore definitions, depends on external-secrets |
 
 ## flux-system
 
-| App           | Notes                                     |
-| ------------- | ----------------------------------------- |
-| flux-operator | Flux OCI-based operator                   |
+| App           | Notes                                                |
+| ------------- | ---------------------------------------------------- |
+| flux-operator | Flux OCI-based operator                              |
 | flux-instance | The actual Flux deployment, depends on flux-operator |
 
 ## rook-ceph
 
-| App       | Notes                                        |
-| --------- | -------------------------------------------- |
-| rook-ceph | Distributed block storage, ceph-ssd class    |
+| App       | Notes                                     |
+| --------- | ----------------------------------------- |
+| rook-ceph | Distributed block storage, ceph-ssd class |
 
 ## openebs-system
 
-| App     | Notes                                          |
-| ------- | ---------------------------------------------- |
+| App     | Notes                                              |
+| ------- | -------------------------------------------------- |
 | openebs | Local hostpath provisioner, openebs-hostpath class |
 
 ## volsync-system
 
-| App     | Notes                                                        |
-| ------- | ------------------------------------------------------------ |
-| volsync | PVC backup/restore orchestrator. Depends on openebs, snapshot-controller. Uses zeroscaler with `nfs_bkup_probe` (clonenas). |
+| App     | Notes                                                                                                                     |
+| ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| volsync | PVC backup/restore via Kopiur. Depends on openebs, snapshot-controller. Uses zeroscaler with `nfs_bkup_probe` (clonenas). |
 
 ## system-upgrade
 
@@ -64,6 +64,6 @@ Infrastructure namespaces that keep the cluster running. You rarely interact wit
 
 ## actions-runner-system
 
-| App                        | Notes                              |
-| -------------------------- | ---------------------------------- |
-| actions-runner-controller  | GitHub Actions self-hosted runners, openebs-hostpath storage |
+| App                       | Notes                                                        |
+| ------------------------- | ------------------------------------------------------------ |
+| actions-runner-controller | GitHub Actions self-hosted runners, openebs-hostpath storage |

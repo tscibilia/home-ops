@@ -3,7 +3,6 @@
 ## ⚠️ Gotchas & Interactions
 
 - **CNPG endpoint suffix:** The app database connection endpoint is always `{app}-cnpg-rw`. Never use `-ro` (read replica) or the bare cluster resource name for app connections.
-- **VolSync NFS securityContext:** ALL VolSync NFS job templates require an explicit `securityContext`, including `list.yaml.j2`. Omitting it causes silent permission failures — the job runs but cannot access the NFS share.
 - **openebs-hostpath is node-local:** Data is tied to the node. A pod rescheduling to a different node loses access to its PVC.
 
 ## Storage Classes
@@ -15,40 +14,32 @@
 | `local-hdd`        | Static PV, ai3090 HDD (`/var/mnt/local-hdd`) | ai3090-only bulk storage — comfyui workspace; no dynamic provisioning |
 | `nfs-media`        | External NFS (TrueNAS)                       | Media library (Plex, \*arr stack)                                     |
 
-## VolSync (PVC Backup/Restore)
+## Kopiur (PVC Backup/Restore via Kopia)
 
-VolSync backs up PVCs via Kopia to an NFS share on `clonenas.internal` (`/mnt/vault/backups/kubernetes/kopia`). NFS is injected via `moverVolumes` in the component spec. rclone syncs the NFS repo to B2 separately. Add component `../../../../components/volsync` in `ks.yaml`.
+Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.internal:/mnt/vault/backups/kubernetes/kopia`). Uses `kopiur.home-operations.com/v1alpha1` CRDs (SnapshotPolicy, SnapshotSchedule, Restore). rclone syncs the NFS repo to B2 separately. Add component `../../../../components/kopiur/backup` in `ks.yaml`.
 
 ### Required ks.yaml postBuild vars
 
 ```yaml
-APP: *app              # always required
-VOLSYNC_CAPACITY: 5Gi  # PVC size
+APP: *app               # always required
+KOPIUR_CAPACITY: 5Gi    # PVC size (default 5Gi)
 ```
 
 ### Optional ks.yaml postBuild vars (with defaults)
 
-| Var                           | Default              | Notes                               |
-| ----------------------------- | -------------------- | ----------------------------------- |
-| `VOLSYNC_CLAIM`               | `${APP}`             | PVC name if different from app name |
-| `VOLSYNC_SCHEDULE`            | `0 */6 * * *`        | Backup cron schedule                |
-| `VOLSYNC_STORAGECLASS`        | `ceph-ssd`           | PVC storage class                   |
-| `VOLSYNC_SNAPSHOTCLASS`       | `csi-ceph-blockpool` | Volume snapshot class               |
-| `VOLSYNC_ACCESSMODES`         | `ReadWriteOnce`      |                                     |
-| `VOLSYNC_CACHE_CAPACITY`      | `5Gi`                | Kopia cache PVC size                |
-| `VOLSYNC_CACHE_SNAPSHOTCLASS` | `openebs-hostpath`   | Cache storage class                 |
-| `VOLSYNC_PUID`                | `1000`               | mover runAsUser                     |
-| `VOLSYNC_PGID`                | `1000`               | mover runAsGroup/fsGroup            |
-| `VOLSYNC_COPYMETHOD`          | `Snapshot`           | Use `Clone` for CephFS              |
+| Var                    | Default              | Notes                  |
+| ---------------------- | -------------------- | ---------------------- |
+| `KOPIUR_ACCESSMODES`   | `ReadWriteOnce`      | PVC access mode        |
+| `KOPIUR_CAPACITY`      | `5Gi`                | PVC size               |
+| `KOPIUR_STORAGECLASS`  | `ceph-ssd`           | PVC storage class      |
+| `KOPIUR_SNAPSHOTCLASS` | `csi-ceph-blockpool` | VolumeSnapshotClass    |
+| `KOPIUR_CRON`          | `0 */4 * * *`        | Snapshot schedule cron |
+| `KOPIUR_PUID`          | `1000`               | mover runAsUser        |
+| `KOPIUR_PGID`          | `1000`               | mover runAsGroup       |
 
 ### Restore
 
-```bash
-just kube restore <namespace> <app>           # latest snapshot
-just kube restore <namespace> <app> <N>       # Nth-from-latest (1=one prior, 2=two prior, ...)
-```
-
-`<N>` uses the Kopia `previous` field to count backward from latest. Check available snapshots via the VolSync WebUI.
+Manually trigger a restore by editing the `Restore` CR (named `${APP}` in the app namespace) and setting its `spec.offset` to the desired number of snapshots back (0 = latest). The PVC will be re-populated via the CSI populator, then delete and recreate the pod to mount it.
 
 ## CNPG (PostgreSQL)
 

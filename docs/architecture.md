@@ -87,7 +87,7 @@ cert-manager handles TLS via Let's Encrypt with DNS-01 challenges through Cloudf
 
 ### Backups
 
-- **VolSync**: Restic-based PVC snapshots → NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/volsync`); rclone syncs to Backblaze B2
+- **Kopiur**: Kopia-based PVC snapshots → NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/kopia`); rclone syncs to Backblaze B2
 - **CNPG**: pgdumps (daily) → NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/postgres`); Barman-cloud WAL archiving → Backblaze B2
 
 ## Databases
@@ -128,7 +128,7 @@ All secrets live in aKeyless and sync into the cluster via ExternalSecret CRDs. 
 Flux CD watches this repo and reconciles on every push.
 
 - **Entry point**: `ks.yaml` per app — defines `dependsOn`, `postBuild` substitutions, and `components`
-- **Components**: Reusable patterns in `kubernetes/components/` — volsync, cnpg, ext-auth-internal, ext-auth-external, zeroscaler
+- **Components**: Reusable patterns in `kubernetes/components/` — kopiur, cnpg, ext-auth-internal, ext-auth-external, zeroscaler
 
 !!! danger "kubectl edits are ephemeral"
 Flux resets them on the next reconciliation. Always edit in Git, push, and reconcile.

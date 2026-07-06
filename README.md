@@ -19,7 +19,6 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 
 </div>
 
-
 <div align="center">
 
 [![Home-Internet](https://img.shields.io/endpoint?url=https%3A%2F%2Fhealthchecks.io%2Fb%2F3%2F725515d4-5fdc-41ab-9e25-6c2b90732fb2.shields&style=for-the-badge&logo=ubiquiti&logoColor=white&label=Home%20Internet)](https://status.t0m.co)&nbsp;&nbsp;
@@ -41,7 +40,7 @@ _... managed by Flux, Renovate and GitHub Actions_ :robot:
 
 </div>
 
-👋 Welcome to my Home Operations repository. This is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Infrastructure as Code (IaC) and GitOps practices using tools like [Ansible](https://www.ansible.com/),  [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate) and [GitHub Actions](https://github.com/features/actions).
+👋 Welcome to my Home Operations repository. This is a mono repository for my home infrastructure and Kubernetes cluster. I try to adhere to Infrastructure as Code (IaC) and GitOps practices using tools like [Ansible](https://www.ansible.com/), [Kubernetes](https://kubernetes.io/), [Flux](https://github.com/fluxcd/flux2), [Renovate](https://github.com/renovatebot/renovate) and [GitHub Actions](https://github.com/features/actions).
 
 ---
 
@@ -60,10 +59,11 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 - [actions-runner-controller](https://github.com/actions/actions-runner-controller): Self-hosted Github runners using [Renovate](https://github.com/renovatebot/renovate).
 - [cert-manager](https://github.com/cert-manager/cert-manager): Automates SSL/TLS certificate management.
 - [cilium](https://github.com/cilium/cilium): eBPF-based Kubernetes CNI.
+- [envoy-gateway](https://github.com/envoyproxy/gateway): Envoy Proxy to manage service-to-service communication and proxying.
 - [external-dns](https://github.com/kubernetes-sigs/external-dns): Automatically syncs DNS records to my DNS provider.
 - [external-secrets](https://github.com/external-secrets/external-secrets): Managed Kubernetes secrets using [aKeyless](https://docs.akeyless.io/docs/kubernetes-plugins).
 - [generic-device-plugin](https://github.com/squat/generic-device-plugin): Allocates linux devices to pods (squat.ai/tun).
-- [envoy-gateway](https://github.com/envoyproxy/gateway): Envoy Proxy to manage service-to-service communication and proxying.
+- [kopiur](https://github.com/home-operations/kopiur): Backup and recovery of persistent volume claims.
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
 - [pangolin](https://github.com/fosrl/pangolin): Enables Pangolin's Zero Trust Access via VPS.
@@ -71,7 +71,6 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
 - [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
 - [unifi-dns](https://github.com/kashalls/external-dns-unifi-webhook): External-DNS Webhook to manage UniFi DNS Records.
-- [volsync](https://github.com/backube/volsync): Backup and recovery of persistent volume claims.
 
 ### Observability
 
@@ -144,23 +143,22 @@ This Git repository contains the following directories.
 
 ## <img src="https://cdn.jsdelivr.net/gh/selfhst/icons@main/svg/buildbot.svg" alt="⚙" width="20" height="20"> Hardware
 
-
 ### Main Kubernetes Cluster
 
-| Name   | Device     | CPU       | OS Disk    | Local Disk | Rook Disk  | RAM  | OS    | Purpose           |
-|--------|------------|-----------|------------|------------|------------|------|-------|-------------------|
-| k8s-1  | M70q-Gen3  | i7-12700T | 500GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
-| k8s-2  | M70q-Gen3  | i7-12700T | 512GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
-| k8s-3  | M70q-Gen3  | i7-12700T | 512GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
-| ai3090 | Precision Tower 3620 | i7-7700K | 256GB NVMe | - | -          | 16GB | Talos | k8s worker (LLM)  |
+| Name   | Device               | CPU       | OS Disk    | Local Disk | Rook Disk  | RAM  | OS    | Purpose           |
+| ------ | -------------------- | --------- | ---------- | ---------- | ---------- | ---- | ----- | ----------------- |
+| k8s-1  | M70q-Gen3            | i7-12700T | 500GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
+| k8s-2  | M70q-Gen3            | i7-12700T | 512GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
+| k8s-3  | M70q-Gen3            | i7-12700T | 512GB NVMe | -          | 1.92TB SSD | 64GB | Talos | k8s control-plane |
+| ai3090 | Precision Tower 3620 | i7-7700K  | 256GB NVMe | -          | -          | 16GB | Talos | k8s worker (LLM)  |
 
 ### Supporting Hardware
 
-| Name     | Device               | CPU         | OS Disk    | Data Disk            | RAM   | OS      | Purpose   |
-|----------|----------------------|-------------|------------|----------------------|-------|---------|-----------|
-| TrueNAS  | X10SDV-8C + KTN-STL3 | Xeon D-1541 | 512GB NVMe | 2x18TB 2x14TB 2x10TB | 64GB  | Truenas | NAS/NFS   |
-| CloneNAS | Dell R510            | Xeon E5640  | 900GB SAS  | Mixture of 12x6TB+   | 64GB  | Truenas | Backup    |
-| VPS      | RackNerd KVM VPS     | 2-Cores     | 45GB SSD   | -                    | 2.5GB | Ubuntu  | Tunnel    |
+| Name     | Device               | CPU         | OS Disk    | Data Disk            | RAM   | OS      | Purpose |
+| -------- | -------------------- | ----------- | ---------- | -------------------- | ----- | ------- | ------- |
+| TrueNAS  | X10SDV-8C + KTN-STL3 | Xeon D-1541 | 512GB NVMe | 2x18TB 2x14TB 2x10TB | 64GB  | Truenas | NAS/NFS |
+| CloneNAS | Dell R510            | Xeon E5640  | 900GB SAS  | Mixture of 12x6TB+   | 64GB  | Truenas | Backup  |
+| VPS      | RackNerd KVM VPS     | 2-Cores     | 45GB SSD   | -                    | 2.5GB | Ubuntu  | Tunnel  |
 
 ---
 
@@ -176,7 +174,7 @@ There is a template over at [onedr0p/cluster-template](https://github.com/onedr0
 
 See [LICENSE](https://github.com/tscibilia/home-ops/blob/main/LICENSE)
 
-___
+---
 
 <div align="center">
 

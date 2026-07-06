@@ -11,7 +11,7 @@
   "editor.stickyScroll.enabled": false,
   "explorer.autoReveal": true,
   "files.associations": {
-      "**/*.json5": "json5"
+    "**/*.json5": "json5"
   },
   "files.trimTrailingWhitespace": true,
   "material-icon-theme.files.associations": {
@@ -44,7 +44,7 @@
     "openebs-system": "base",
     "rook-ceph": "dump",
     "system-upgrade": "update",
-    "volsync-system": "aws"
+    "kopiur-system": "aws"
   },
   "terminal.integrated.fontSize": 14,
   "vs-kubernetes": {
@@ -53,7 +53,7 @@
   },
   "yaml.schemaStore.enable": true,
   "yaml.schemas": {
-      "kubernetes": "./kubernetes/**/*.yaml"
+    "kubernetes": "./kubernetes/**/*.yaml"
   },
   "[just]": {
     "editor.defaultFormatter": "nefrob.vscode-just-syntax"

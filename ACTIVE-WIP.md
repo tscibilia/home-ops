@@ -31,6 +31,7 @@
 
 `Descending order, newest on top`
 
+- ✅ switch to kopiur - **2026-07-05** (see PR [#2863](https://github.com/tscibilia/home-ops/pull/2863) and a bazillion subsequent commits)
 - ✅ llama-cpp intermittent `MUL_MAT failed` - **2026-06-25** [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
 - ✅ Claude makes dumb mistakes - **2026-06-25** (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
 - ✅ use oxfmt and lefthook - **2026-06-18** (see commit [f10ad6b](https://github.com/tscibilia/home-ops/commit/f10ad6b) and 4 subsequent commits)
