@@ -6,7 +6,7 @@ metadata:
   name: &app prowlarr
 spec:
   components:
-    - ../../../../components/ext-auth-internal
+    - ../../../../components/auth/internal
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores

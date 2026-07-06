@@ -6,7 +6,7 @@ metadata:
   name: &app radarr
 spec:
   components:
-    - ../../../../components/ext-auth-internal
+    - ../../../../components/auth/internal
     - ../../../../components/zeroscaler
     - ../../../../components/kopiur/backup
   dependsOn:

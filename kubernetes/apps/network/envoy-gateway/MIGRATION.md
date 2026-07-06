@@ -274,11 +274,11 @@ Reusable `ext-auth-internal` and `ext-auth-external` components provide forward 
 ### Component Structure
 
 ```
-kubernetes/components/ext-auth-internal/
+kubernetes/components/auth/internal/
 ├── kustomization.yaml
 └── securitypolicy.yaml
 
-kubernetes/components/ext-auth-external/
+kubernetes/components/auth/external/
 ├── kustomization.yaml
 └── securitypolicy.yaml
 ```
@@ -374,7 +374,7 @@ spec:
 ```yaml
 # App's kustomization.yaml
 components:
-    - ../../../../components/ext-auth-internal
+    - ../../../../components/auth/internal
 
 # App's ks.yaml
 postBuild:
@@ -387,7 +387,7 @@ postBuild:
 ```yaml
 # App's kustomization.yaml
 components:
-    - ../../../../components/ext-auth-external
+    - ../../../../components/auth/external
 
 # App's ks.yaml
 postBuild:

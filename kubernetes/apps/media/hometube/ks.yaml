@@ -6,7 +6,7 @@ metadata:
   name: &app hometube
 spec:
   components:
-    - ../../../../components/ext-auth-external
+    - ../../../../components/auth/external
     - ../../../../components/zeroscaler
     - ../../../../components/kopiur/backup
   dependsOn:

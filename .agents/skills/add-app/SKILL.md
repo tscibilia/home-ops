@@ -108,8 +108,8 @@ spec:
     components:
         - ../../../../components/cnpg # if cnpg selected
         - ../../../../components/kopiur/backup # if kopiur selected
-        - ../../../../components/ext-auth-internal # if forward-auth internal
-        - ../../../../components/ext-auth-external # if forward-auth external
+        - ../../../../components/auth/internal # if forward-auth internal
+        - ../../../../components/auth/external # if forward-auth external
         - ../../../../components/zeroscaler # if zeroscaler selected (any variant)
     dependsOn:
         - name: secret-stores

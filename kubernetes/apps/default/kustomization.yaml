@@ -4,7 +4,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: default
 components:
-  - ../../components/common
+  - ../../components/alerts
+  - ../../components/secrets
   - ../../components/kopiur/secret
 resources:
   - ./namespace.yaml
@@ -19,7 +20,6 @@ resources:
   - ./mealie/ks.yaml
   - ./pairdrop/ks.yaml
   - ./radicale/ks.yaml
-  # - ./rclone/ks.yaml
   - ./rustfs/ks.yaml
   - ./searxng/ks.yaml
   - ./spoolman/ks.yaml
