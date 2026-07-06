@@ -38,7 +38,7 @@ spec:
 
                   echo "Syncing to B2..."
                   kopia repository sync-to rclone \
-                    --remote-path "b2-volsync:${B2_BUCKET}" \
+                    --remote-path "b2-kopia:${KOPIA_BUCKET}" \
                     --parallel=4 \
                     --delete
 
@@ -55,11 +55,11 @@ spec:
                   value: /tmp
                 - name: RCLONE_CONFIG
                   value: /config/rclone/rclone.conf
-                - name: B2_BUCKET
+                - name: KOPIA_BUCKET
                   valueFrom:
                     secretKeyRef:
                       name: cluster-secrets
-                      key: AWS_VOLSYNC_BUCKET
+                      key: KOPIA_BUCKET
               envFrom:
                 - secretRef:
                     name: kopiur-nas-secret
