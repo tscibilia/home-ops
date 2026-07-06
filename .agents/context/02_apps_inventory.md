@@ -165,3 +165,4 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 ## kopiur-system
 
 - kopiur _(PVC backup/restore operator + ClusterRepository)_
+- b2-sync _(kopia sync-to rclone CronJob to B2)_

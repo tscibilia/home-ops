@@ -1,0 +1,94 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/batch/cronjob_v1.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: &app kopiur-b2-sync
+spec:
+  schedule: "0 3 * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 21600 # 6 hours
+      backoffLimit: 3
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            # perfectra1n/volsync bundles kopia + rclone; used here purely as a toolbox.
+            - name: kopiur-sync
+              image: ghcr.io/perfectra1n/volsync:v0.17.11
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e -o pipefail
+
+                  export KOPIA_CACHE_DIR="${KOPIA_CACHE_DIR:-/tmp/cache}"
+                  export KOPIA_LOG_DIR="${KOPIA_CACHE_DIR}/logs"
+                  export KOPIA_CHECK_FOR_UPDATES=false
+
+                  echo "Connecting to Kopia repository..."
+                  kopia repository connect filesystem \
+                    --password "${KOPIA_PASSWORD}" \
+                    --path /repository
+
+                  echo "Syncing to B2..."
+                  kopia repository sync-to rclone \
+                    --remote-path "b2-kopia:${KOPIA_BUCKET}" \
+                    --parallel=4 \
+                    --delete
+
+                  echo "Disconnecting from Kopia repository..."
+                  kopia repository disconnect
+
+                  echo "✅ Sync to Backblaze B2 completed successfully"
+              env:
+                - name: KOPIA_CHECK_FOR_UPDATES
+                  value: "false"
+                - name: KOPIA_CACHE_DIR
+                  value: /tmp/cache
+                - name: HOME
+                  value: /tmp
+                - name: RCLONE_CONFIG
+                  value: /config/rclone/rclone.conf
+                - name: KOPIA_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: cluster-secrets
+                      key: KOPIA_BUCKET
+              envFrom:
+                - secretRef:
+                    name: kopiur-nas-secret
+              volumeMounts:
+                - name: repository
+                  mountPath: /repository
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+                - name: rclone-config
+                  mountPath: /config/rclone
+                  readOnly: true
+              securityContext:
+                allowPrivilegeEscalation: true
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                privileged: false
+                capabilities: { drop: ["ALL"] }
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            fsGroup: 1000
+          volumes:
+            - name: repository
+              nfs:
+                server: clonenas.internal
+                path: /mnt/vault/backups/kubernetes/kopiur
+            - name: tmp
+              emptyDir: {}
+            - name: rclone-config
+              secret:
+                secretName: b2-rclone-config
