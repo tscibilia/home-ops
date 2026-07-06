@@ -15,9 +15,9 @@ spec:
     - pvc:
         name: ${APP}
   verification:
-    deep:
-      schedule:
-        cron: ${KOPIUR_DEEP:=H 5 1 * *} # 5 AM on the first day of every month
+    # deep:
+    #   schedule:
+    #     cron: ${KOPIUR_DEEP:=H 5 1 * *} # 5 AM on the first day of every month
     quick:
       schedule:
         cron: H 3 * * * # 3 AM every day
