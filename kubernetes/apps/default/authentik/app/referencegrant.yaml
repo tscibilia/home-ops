@@ -21,15 +21,14 @@ spec:
       namespace: network
     - <<: *policy
       namespace: observability
-    - <<: *policy
-      namespace: volsync-system
+
   to:
-    - group: ''
+    - group: ""
       kind: Service
       name: ak-outpost-authentik-embedded-outpost
-    - group: ''
+    - group: ""
       kind: Service
       name: authentik-outpost-internal
-    - group: ''
+    - group: ""
       kind: Service
       name: authentik-outpost-external

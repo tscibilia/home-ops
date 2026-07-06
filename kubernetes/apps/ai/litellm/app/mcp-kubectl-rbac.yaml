@@ -119,7 +119,7 @@ rules:
       - toolhive.stacklok.dev
       - tuppr.home-operations.com
       - upgrade.cattle.io
-      - volsync.backube
+      - kopiur.home-operations.com
     resources:
       - "*"
     verbs:

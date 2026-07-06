@@ -5,6 +5,9 @@ metadata:
   name: _
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled
-    volsync.backube/privileged-movers: "true"
+    # Kopiur mints a kopiur-mover SA in the workload namespace; without this annotation,
+    # any SnapshotPolicy/Restore requesting runAsUser: 0, privileged: true, added caps, etc.
+    # is refused (PrivilegedMoverNotPermitted).
+    kopiur.home-operations.com/privileged-movers: "true"
   labels:
     resource.kubernetes.io/admin-access: "true"

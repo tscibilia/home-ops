@@ -104,53 +104,35 @@ restart-ks:
         flux resume kustomization "$name" -n "$namespace" & \
     done
 
-# [arg('state', pattern='suspend|resume')]
-# [doc('Suspend or resume VolSync')]
-# [script]
-# volsync state:
-#     just check-tools flux kubectl
-#     flux -n volsync-system {{ state }} kustomization volsync
-#     flux -n volsync-system {{ state }} helmrelease volsync
-#     kubectl -n volsync-system scale deployment volsync --replicas {{ if state != "suspend" { "1" } else { "0" } }}
+[doc('Trigger a manual Kopiur snapshot')]
+[script]
+snapshot ns app:
+    just check-tools kubectl
+    kubectl -n {{ ns }} create snapshot.kopiur.home-operations.com {{ app }}-manual-$(date +%s) \
+        --labels="kopiur.home-operations.com/config={{ app }},kopiur.home-operations.com/origin=manual" \
+        --save-config \
+        --field-manager=kubectl \
+        -o yaml --dry-run=client \
+    | kubectl apply --server-side -f -
 
-# [doc('Snapshot a VolSync PVC')]
-# [script]
-# snapshot ns='' app='':
-#     just check-tools kubectl
-#     _snapshot() {
-#         kubectl -n "$1" patch replicationsources "$2" --type merge -p "{\"spec\":{\"trigger\":{\"manual\":\"$(date +%s)\"}}}"
-#     }
-#     if [ -n "{{ ns }}" ] && [ -n "{{ app }}" ]; then
-#         _snapshot "{{ ns }}" "{{ app }}"
-#     else
-#         kubectl get replicationsources --no-headers -A | while read -r ns app _; do
-#             _snapshot "$ns" "$app"
-#         done
-#     fi
-
-# [doc('Restore VolSync backup for an application (previous=0 is latest, previous=N is Nth-from-latest)')]
-# [script]
-# restore ns app previous='0':
-#     just check-tools kubectl flux envsubst jq
-#     flux -n {{ ns }} suspend kustomization {{ app }}
-#     flux -n {{ ns }} suspend helmrelease {{ app }}
-#     kubectl -n {{ ns }} get deploy,sts -l app.kubernetes.io/name={{ app }} -o name \
-#         | xargs -r -I{} kubectl -n {{ ns }} scale {} --replicas=0
-#     kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
-#     kubectl -n {{ ns }} get replicationdestination {{ app }}-dst -o json \
-#         | jq 'del(.status)
-#             | .metadata = {name: "{{ app }}-manual", namespace: .metadata.namespace}
-#             | .spec.kopia.copyMethod = "Direct"
-#             | .spec.kopia.destinationPVC = "{{ app }}"
-#             | .spec.kopia.previous = {{ previous }}' \
-#         | kubectl apply --server-side -f -
-#     kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=create --timeout=120s
-#     kubectl -n {{ ns }} wait job/volsync-dst-{{ app }}-manual --for=condition=complete --timeout=120m
-#     kubectl -n {{ ns }} delete replicationdestination {{ app }}-manual
-#     flux -n {{ ns }} resume kustomization {{ app }}
-#     flux -n {{ ns }} resume helmrelease {{ app }}
-#     flux -n {{ ns }} reconcile helmrelease {{ app }} --force
-#     kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
+[doc('Restore a Kopiur snapshot for an app (populator-based, in-place)')]
+[script]
+restore ns app offset='0':
+    just check-tools kubectl
+    flux -n {{ ns }} suspend kustomization {{ app }}
+    flux -n {{ ns }} suspend helmrelease {{ app }}
+    kubectl -n {{ ns }} get deploy,sts -l app.kubernetes.io/name={{ app }} -o name \
+        | xargs -r -I{} kubectl -n {{ ns }} scale {} --replicas=0
+    kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
+    sed -e "s/\${APP}/{{ app }}/g" -e "s/offset: 0/offset: {{ offset }}/" \
+        {{ justfile_dir() }}/components/kopiur/backup/restore.yaml \
+        | kubectl apply --server-side -f -
+    kubectl -n {{ ns }} wait restore.kopiur.home-operations.com/{{ app }} --for=condition=Ready --timeout=120m
+    kubectl -n {{ ns }} delete restore.kopiur.home-operations.com/{{ app }}
+    flux -n {{ ns }} resume kustomization {{ app }}
+    flux -n {{ ns }} resume helmrelease {{ app }}
+    flux -n {{ ns }} reconcile helmrelease {{ app }} --force
+    kubectl -n {{ ns }} wait pod --for=condition=ready --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
 
 [doc('Restart network stack in dependency order')]
 [script]
