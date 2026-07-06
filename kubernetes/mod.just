@@ -107,28 +107,19 @@ restart-ks:
 [doc('Trigger a manual Kopiur snapshot')]
 [script]
 snapshot ns app:
-    just check-tools kubectl
-    kubectl -n {{ ns }} create snapshot.kopiur.home-operations.com {{ app }}-manual-$(date +%s) \
-        --labels="kopiur.home-operations.com/config={{ app }},kopiur.home-operations.com/origin=manual" \
-        --save-config \
-        --field-manager=kubectl \
-        -o yaml --dry-run=client \
-    | kubectl apply --server-side -f -
+    just check-tools kubectl kopiur
+    kubectl kopiur snapshot now --policy {{ app }} -n {{ ns }} --wait --logs
 
-[doc('Restore a Kopiur snapshot for an app (populator-based, in-place)')]
+[doc('Restore a Kopiur snapshot for an app (in-place, direct-to-PVC, optional offset)')]
 [script]
 restore ns app offset='0':
-    just check-tools kubectl
+    just check-tools kubectl kopiur
     flux -n {{ ns }} suspend kustomization {{ app }}
     flux -n {{ ns }} suspend helmrelease {{ app }}
     kubectl -n {{ ns }} get deploy,sts -l app.kubernetes.io/name={{ app }} -o name \
         | xargs -r -I{} kubectl -n {{ ns }} scale {} --replicas=0
     kubectl -n {{ ns }} wait pod --for=delete --selector="app.kubernetes.io/name={{ app }}" --timeout=5m
-    sed -e "s/\${APP}/{{ app }}/g" -e "s/offset: 0/offset: {{ offset }}/" \
-        {{ justfile_dir() }}/components/kopiur/backup/restore.yaml \
-        | kubectl apply --server-side -f -
-    kubectl -n {{ ns }} wait restore.kopiur.home-operations.com/{{ app }} --for=condition=Ready --timeout=120m
-    kubectl -n {{ ns }} delete restore.kopiur.home-operations.com/{{ app }}
+    kubectl kopiur restore --from-policy {{ app }} --to-pvc {{ app }} -n {{ ns }} --wait --logs --offset {{ offset }}
     flux -n {{ ns }} resume kustomization {{ app }}
     flux -n {{ ns }} resume helmrelease {{ app }}
     flux -n {{ ns }} reconcile helmrelease {{ app }} --force

@@ -39,3 +39,18 @@ spec:
     ttlSecondsAfterFinished: 300
   scheduleDefaults:
     timezone: ${TIMEZONE:-UTC}
+  # Minimum required config, no route available yet (2026-07-06)
+  # server:
+  #   namespace: kopiur-system
+  #   auth:
+  #     insecure:
+  #       acknowledgeInsecure: true
+  #   podSecurityContext:
+  #     fsGroup: 1000
+  #     fsGroupChangePolicy: OnRootMismatch
+  #   readOnly: true
+  #   securityContext:
+  #     runAsUser: 1000
+  #     runAsGroup: 1000
+  #   service:
+  #     type: ClusterIP
