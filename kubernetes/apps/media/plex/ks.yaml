@@ -21,6 +21,7 @@ spec:
       GATUS_PATH: /identity
       KOPIUR_CAPACITY: 170Gi
       KOPIUR_CRON: "0 */12 * * *"
+      KOPIUR_DEEP: "0 5 31 2 *"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

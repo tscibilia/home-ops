@@ -15,12 +15,12 @@ spec:
     - pvc:
         name: ${APP}
   verification:
-    # deep:
-    #   schedule:
-    #     cron: H 5 1 * *
+    deep:
+      schedule:
+        cron: ${KOPIUR_DEEP:=H 5 1 * *} # 5 AM on the first day of every month
     quick:
       schedule:
-        cron: H 3 * * *
+        cron: H 3 * * * # 3 AM every day
   mover:
     securityContext:
       runAsUser: ${KOPIUR_PUID:=1000}
