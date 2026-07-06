@@ -49,7 +49,7 @@ dependsOn:
 
 Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a CronJob for DB init.
 
-## ext-auth-internal — SSO for internal apps
+## auth/internal — SSO for internal apps
 
 Add to the **Flux Kustomization (`ks.yaml`)** `spec.components` (not the app's `kustomization.yaml`):
 
@@ -57,19 +57,19 @@ Add to the **Flux Kustomization (`ks.yaml`)** `spec.components` (not the app's `
 # kubernetes/apps/{ns}/{app}/ks.yaml
 spec:
     components:
-        - ../../../../components/ext-auth-internal
+        - ../../../../components/auth/internal
 ```
 
 Creates a `SecurityPolicy` targeting the HTTPRoute named `${APP}`. Override with `EXT_AUTH_TARGET: custom-name` in `postBuild.substitute` if route name differs.
 
-## ext-auth-external — SSO for external apps
+## auth/external — SSO for external apps
 
 Same as above but for `envoy-external` gateway:
 
 ```yaml
 spec:
     components:
-        - ../../../../components/ext-auth-external
+        - ../../../../components/auth/external
 ```
 
 ## zeroscaler — scale-to-zero via native HPA + prometheus-adapter

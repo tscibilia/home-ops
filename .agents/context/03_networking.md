@@ -42,9 +42,9 @@ Add the appropriate component to the **Flux Kustomization (`ks.yaml`)**, not the
 # kubernetes/apps/{ns}/{app}/ks.yaml
 spec:
     components:
-        - ../../../../components/ext-auth-internal # internal gateway
+        - ../../../../components/auth/internal # internal gateway
         # or
-        - ../../../../components/ext-auth-external # external gateway
+        - ../../../../components/auth/external # external gateway
 ```
 
 The component targets the HTTPRoute named `${APP}`. See `06_components.md` for override options.
