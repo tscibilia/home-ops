@@ -13,7 +13,6 @@
 
 `- [ ] ⚠️ **App name** - issue (with ref) - **comment**`
 
-- [ ] ⚠️ **Boostrap** doesn't pick up ai3090 worker node automatically, and flux doesn't substitute domain secret on bootstrap
 - [ ] ⚠️ **Agregarr** follow upstream (issue [#323](https://redirect.github.com/agregarr/agregarr/issues/323)) **integrate with tracearr**
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
@@ -33,6 +32,7 @@
 
 - ✅ switch to kopiur - **2026-07-05** (see PR [#2863](https://github.com/tscibilia/home-ops/pull/2863) and a bazillion subsequent commits)
 - ✅ llama-cpp intermittent `MUL_MAT failed` - **2026-06-25** [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
+- ✅ boostrap didn't pick up ai3090 - **2026-06-22** (see commit [4a0af6c2](https://github.com/tscibilia/home-ops/commit/4a0af6c2) and [3266aaca](https://github.com/tscibilia/home-ops/commit/3266aaca))
 - ✅ Claude makes dumb mistakes - **2026-06-25** (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
 - ✅ use oxfmt and lefthook - **2026-06-18** (see commit [f10ad6b](https://github.com/tscibilia/home-ops/commit/f10ad6b) and 4 subsequent commits)
 - ✅ switch flux-local to konflate - **2026-06-18** (see PR [#2689](https://github.com/tscibilia/home-ops/pull/2689))

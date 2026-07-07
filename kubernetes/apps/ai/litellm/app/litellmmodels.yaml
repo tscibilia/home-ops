@@ -83,11 +83,11 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: deepseek-v4-flash
+  name: deepseek-v4-flash-free
 spec:
-  modelName: deepseek-v4-flash
+  modelName: deepseek-v4-flash-free
   params:
-    model: openai/deepseek-v4-flash
+    model: openai/deepseek-v4-flash-free
     apiBase: https://opencode.ai/zen/v1
     apiKeyRef:
       name: litellm-secret
