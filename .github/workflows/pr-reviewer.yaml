@@ -43,10 +43,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allow_approve: "true"
-          allowed_source_hosts: github.com,api.github.com,gitlab.com,registry.terraform.io,artifacthub.io
-          ai_base_url: ${{ secrets.LITELLM_BASE_URL }}
+          allowed_source_hosts: github.com,api.github.com,gitlab.com,registry.terraform.io,artifacthub.io,codeberg.org,actualbudget.org
+          ai_base_url: http://litellm.ai.svc.cluster.local:4000/v1
           ai_api_format: openai
-          ai_model: big-pickle-free
+          ai_model: deepseek-v4-flash-free
           ai_api_key: ${{ secrets.LITELLM_API_KEY }}
           ai_max_tokens: "1048576"
           ai_temperature: "0.1"
@@ -55,16 +55,18 @@ jobs:
           ai_connect_timeout_sec: "15"
           ai_request_timeout_sec: "600"
           ai_stream: "true"
-          ai_fallback_base_url: ${{ secrets.LITELLM_BASE_URL }}
+          ai_fallback_base_url: http://litellm.ai.svc.cluster.local:4000/v1
           ai_fallback_api_format: openai
           ai_fallback_model: qwen-local
           ai_fallback_api_key: ${{ secrets.LITELLM_API_KEY }}
+          evidence_providers_file: .github/konflate-evidence.json
+          inline_findings: "true"
           on_model_failure: notice
           required_check_validation_mode: warn
           review_scope: auto
           rereview_label: ai-review
           skip_if_diff_unchanged: "true"
-          system_prompt_file: .github/pr-review-system-prompt.md
+          system_prompt_file: .agents/pr-review-instructions.md
           system_prompt_mode: append
           tool_mode: native_loop
           tool_max_requests: "10"
@@ -77,7 +79,7 @@ jobs:
           tool_planning_max_tokens: "32000"
           tool_allowed_gh_api_repos: "tscibilia/home-ops"
           tool_enable_for_forks: "false"
-          tool_mcp_servers: "tools=${{ secrets.LITELLM_MCP_URL }},konflate=${{ secrets.KONFLATE_MCP_URL }}"
+          tool_mcp_servers: "tools=http://litellm.ai.svc.cluster.local:4000/mcp/,konflate=http://konflate.flux-system.svc.cluster.local:8080/mcp"
           tool_mcp_token: ${{ secrets.LITELLM_API_KEY }}
           tool_mcp_name_prefixes: "searxng_mcp,victoria_logs_mcp,sidero_mcp,context7_mcp,talos_mcp"
           publish_review_comment: "true"

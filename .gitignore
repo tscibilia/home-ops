@@ -15,7 +15,7 @@ kubeconfig
 talosconfig
 # AI Agents
 .agents/*
-!.agents/AGENTS.md
+!.agents/*.md
 !.agents/settings.json
 !.agents/context/
 !.agents/plugins/
