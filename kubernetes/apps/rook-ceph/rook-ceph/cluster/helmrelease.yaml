@@ -21,8 +21,8 @@ spec:
                 path: /spec/groups/7/rules/0/expr
                 value: "(max by (cluster, pool_id) (predict_linear(ceph_pool_percent_used[2d], 3600 * 24 * 5)) * on(cluster, pool_id) group_right(name, application) max by (cluster, pool_id, name, application) (ceph_pool_metadata)) >= 95"
   dependsOn:
-  - name: snapshot-controller
-    namespace: kube-system
+    - name: snapshot-controller
+      namespace: kube-system
   values:
     operatorNamespace: rook-ceph
     cephClusterSpec:
@@ -66,6 +66,13 @@ spec:
         connections:
           requireMsgr2: true
       resources:
+        mon:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
         osd:
           limits:
             memory: 8Gi
