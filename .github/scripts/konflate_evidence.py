@@ -11,7 +11,7 @@ so it can never block a review.
 """
 import json, os, sys, urllib.error, urllib.request
 
-URL = os.environ.get("KONFLATE_MCP_URL", "http://konflate.flux-system.svc.cluster.local:8080/mcp")
+URL = os.environ["KONFLATE_MCP_URL"]
 PR = os.environ.get("PR_NUMBER", "").strip()
 SID = None
 
@@ -77,7 +77,7 @@ def main():
         _emit([])
 
     findings = []
-    src = f"http://konflate.flux-system.svc.cluster.local:8080/mcp/#/pr/{PR}"
+    src = f"{URL}/#/pr/{PR}"
 
     # konflate returns a plain sentinel when there's no usable diff yet —
     # PR not tracked ("No pull request #N is tracked.") or render still pending
