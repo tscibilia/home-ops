@@ -26,8 +26,6 @@ spec:
   values:
     operatorNamespace: rook-ceph
     cephClusterSpec:
-      cephVersion:
-        image: quay.io/ceph/ceph:v20.2.2
       cephConfig:
         global:
           bdev_enable_discard: "true" # quote
