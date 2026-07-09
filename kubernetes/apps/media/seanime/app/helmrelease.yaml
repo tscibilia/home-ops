@@ -18,7 +18,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/ju1js/seanime
+              repository: ghcr.io/ju1-js/seanime
               tag: v3.9.1-hwaccel@sha256:bbb73ec0f612b2273c70e0af179280715d130f0868c33a1dfb4d80f77053cdf8
             env:
               SEANIME_SERVER_HOST: 0.0.0.0
