@@ -24,7 +24,7 @@ resources:
   - ./qui/ks.yaml
   - ./radarr/ks.yaml
   - ./recyclarr/ks.yaml
-  - ./seanime/ks.yaml
+  # - ./seanime/ks.yaml
   - ./seerr/ks.yaml
   - ./sonarr/ks.yaml
   - ./tracearr/ks.yaml
