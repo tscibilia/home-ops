@@ -24,8 +24,8 @@ spec:
               - /bin/sh
               - -c
               - |
-                mkdir -p /home/seanime/.config
-                ln -sfn /seanime /home/seanime/.config/Seanime
+                rm -rf /home/seanime/.config/Seanime
+                ln -s /seanime /home/seanime/.config/Seanime
                 if [ ! -f /seanime/config.toml ]; then
                   cat > /seanime/config.toml << 'TOML'
                 version = '3.9.1'
