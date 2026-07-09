@@ -58,7 +58,7 @@ spec:
             securityContext: &secCont
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: ['ALL'] }
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       terminationGracePeriodSeconds: 300
       annotations:
@@ -105,6 +105,7 @@ spec:
               "music": {"save_path": "/media/downloads/completed/music"},
               "manual": {"save_path": "/media/downloads/completed/manual"},
               "race": {"save_path": "/media/downloads/completed/race"},
+              "seanime": {"save_path": "/media/downloads/completed/seanime"},
               "tv": {"save_path": "/media/downloads/completed/tv"}
             }
     persistence:
