@@ -15,27 +15,57 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          init-config:
-            image:
-              repository: ghcr.io/home-operations/busybox
-              tag: 1.38.0@sha256:7e2c04dd50ede647bf4a7a4c8dbd629dd4971cd139b9b88fb22bfc3c7a6c13df
-            securityContext:
-              runAsUser: 1000
-              runAsGroup: 1000
-              runAsNonRoot: true
-            command:
-              - sh
-              - -c
-              - |
-                set -euo pipefail
-                mkdir -p /home/seanime/.config/Seanime
-                cp /run/config/config.toml /home/seanime/.config/Seanime/config.toml
         containers:
           app:
             image:
               repository: ghcr.io/ju1-js/seanime
               tag: v3.9.1-hwaccel@sha256:bbb73ec0f612b2273c70e0af179280715d130f0868c33a1dfb4d80f77053cdf8
+            command:
+              - /bin/sh
+              - -c
+              - |
+                cat > /home/seanime/.config/Seanime/config.toml << 'TOML'
+                version = '3.9.1'
+
+                [cache]
+                dir = '/cache'
+                transcodedir = '/cache/transcode'
+
+                [database]
+                name = 'seanime'
+
+                [extensions]
+                dir = '$SEANIME_DATA_DIR/extensions'
+
+                [logs]
+                dir = '$SEANIME_DATA_DIR/logs'
+
+                [anime]
+                downloaddir = '/media/anime'
+
+                [manga]
+                downloaddir = '/media/manga'
+                localdir = '$SEANIME_DATA_DIR/manga-local'
+
+                [offline]
+                assetdir = '$SEANIME_DATA_DIR/offline/assets'
+                dir = '$SEANIME_DATA_DIR/offline'
+
+                [server]
+                host = '0.0.0.0'
+                offline = false
+                port = 80
+                usebinarypath = true
+                secureMode = 'lax'
+                accessAllowlist = ['https://*.${SECRET_DOMAIN}']
+
+                [torrent]
+                dir = '/media/downloads/completed/seanime'
+
+                [web]
+                assetdir = '$SEANIME_DATA_DIR/assets'
+                TOML
+                exec /app/seanime
             env:
               SEANIME_SERVER_HOST: 0.0.0.0
               SEANIME_SERVER_PORT: &port 80
@@ -107,67 +137,13 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
-    configMaps:
-      config:
-        data:
-          config.toml: |-
-            version = '3.9.1'
-
-            [cache]
-            dir = '/cache'
-            transcodedir = '/cache/transcode'
-
-            [database]
-            name = 'seanime'
-
-            [extensions]
-            dir = '$SEANIME_DATA_DIR/extensions'
-
-            [logs]
-            dir = '$SEANIME_DATA_DIR/logs'
-
-            [anime]
-            downloaddir = '/media/anime'
-
-            [manga]
-            downloaddir = '/media/manga'
-            localdir = '$SEANIME_DATA_DIR/manga-local'
-
-            [offline]
-            assetdir = '$SEANIME_DATA_DIR/offline/assets'
-            dir = '$SEANIME_DATA_DIR/offline'
-
-            [server]
-            host = '0.0.0.0'
-            offline = false
-            port = 80
-            usebinarypath = true
-            secureMode = 'lax'
-            accessAllowlist = ['https://*.${SECRET_DOMAIN}']
-
-            [torrent]
-            dir = '/media/downloads/completed/seanime'
-
-            [web]
-            assetdir = '$SEANIME_DATA_DIR/assets'
     persistence:
       config:
         existingClaim: *app
         advancedMounts:
           *app :
-            init-config:
-              - path: /home/seanime/.config
             app:
               - path: /home/seanime/.config
-      configmap:
-        type: configMap
-        identifier: config
-        defaultMode: 0644
-        advancedMounts:
-          *app :
-            init-config:
-              - path: /run/config
-                readOnly: true
       media:
         type: nfs
         server: truenas.internal
