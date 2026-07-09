@@ -24,8 +24,10 @@ spec:
               - /bin/sh
               - -c
               - |
-                if [ ! -f /home/seanime/.config/Seanime/config.toml ]; then
-                  cat > /home/seanime/.config/Seanime/config.toml << 'TOML'
+                mkdir -p /home/seanime/.config
+                ln -sfn /seanime /home/seanime/.config/Seanime
+                if [ ! -f /seanime/config.toml ]; then
+                  cat > /seanime/config.toml << 'TOML'
                 version = '3.9.1'
 
                 [cache]
@@ -36,21 +38,21 @@ spec:
                 name = 'seanime'
 
                 [extensions]
-                dir = '/home/seanime/.config/Seanime/extensions'
+                dir = '/seanime/extensions'
 
                 [logs]
-                dir = '/home/seanime/.config/Seanime/logs'
+                dir = '/seanime/logs'
 
                 [anime]
                 downloaddir = '/media/anime'
 
                 [manga]
                 downloaddir = '/media/manga'
-                localdir = '/home/seanime/.config/Seanime/manga-local'
+                localdir = '/seanime/manga-local'
 
                 [offline]
-                assetdir = '/home/seanime/.config/Seanime/offline/assets'
-                dir = '/home/seanime/.config/Seanime/offline'
+                assetdir = '/seanime/offline/assets'
+                dir = '/seanime/offline'
 
                 [server]
                 host = '0.0.0.0'
@@ -64,12 +66,12 @@ spec:
                 dir = '/media/downloads/completed/seanime'
 
                 [web]
-                assetdir = '/home/seanime/.config/Seanime/assets'
+                assetdir = '/seanime/assets'
                 TOML
                 fi
                 exec /app/seanime
             env:
-              SEANIME_DATA_DIR: /home/seanime/.config/Seanime
+              SEANIME_DATA_DIR: /seanime
               SEANIME_SERVER_HOST: 0.0.0.0
               SEANIME_SERVER_PORT: &port 80
             probes:
@@ -146,7 +148,7 @@ spec:
         advancedMounts:
           *app :
             app:
-              - path: /home/seanime/.config
+              - path: /seanime
       media:
         type: nfs
         server: truenas.internal
