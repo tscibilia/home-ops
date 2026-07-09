@@ -15,6 +15,22 @@ spec:
       *app :
         annotations:
           reloader.stakater.com/auto: "true"
+        initContainers:
+          init-config:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: 1.38.0@sha256:7e2c04dd50ede647bf4a7a4c8dbd629dd4971cd139b9b88fb22bfc3c7a6c13df
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+            command:
+              - sh
+              - -c
+              - |
+                set -euo pipefail
+                mkdir -p /home/seanime/.config/Seanime
+                cp /run/config/config.toml /home/seanime/.config/Seanime/config.toml
         containers:
           app:
             image:
@@ -91,16 +107,77 @@ spec:
           - backendRefs:
               - identifier: app
                 port: *port
+    configMaps:
+      config:
+        data:
+          config.toml: |-
+            version = '3.9.1'
+
+            [cache]
+            dir = '/cache'
+            transcodedir = '/cache/transcode'
+
+            [database]
+            name = 'seanime'
+
+            [extensions]
+            dir = '$SEANIME_DATA_DIR/extensions'
+
+            [logs]
+            dir = '$SEANIME_DATA_DIR/logs'
+
+            [anime]
+            downloaddir = '/media/anime'
+
+            [manga]
+            downloaddir = '/media/manga'
+            localdir = '$SEANIME_DATA_DIR/manga-local'
+
+            [offline]
+            assetdir = '$SEANIME_DATA_DIR/offline/assets'
+            dir = '$SEANIME_DATA_DIR/offline'
+
+            [server]
+            host = '0.0.0.0'
+            offline = false
+            port = 80
+            usebinarypath = true
+            secureMode = 'lax'
+
+            [torrent]
+            dir = '/media/downloads/completed/seanime'
+
+            [web]
+            assetdir = '$SEANIME_DATA_DIR/assets'
     persistence:
       config:
         existingClaim: *app
-        globalMounts:
-          - path: /config
+        advancedMounts:
+          *app :
+            init-config:
+              - path: /home/seanime/.config
+            app:
+              - path: /home/seanime/.config
+      configmap:
+        type: configMap
+        identifier: config
+        defaultMode: 0644
+        advancedMounts:
+          *app :
+            init-config:
+              - path: /run/config/config.toml
+                subPath: config.toml
+                readOnly: true
       media:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/media/downloads
+        path: /mnt/nas/data/media
         globalMounts:
-          - path: /media/downloads
-      tmp:
+          - path: /media
+      tmpfs:
         type: emptyDir
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /cache
+            subPath: cache
