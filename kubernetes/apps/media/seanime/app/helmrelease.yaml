@@ -143,6 +143,7 @@ spec:
             port = 80
             usebinarypath = true
             secureMode = 'lax'
+            accessAllowlist = ['https://*.${SECRET_DOMAIN}']
 
             [torrent]
             dir = '/media/downloads/completed/seanime'
@@ -165,8 +166,7 @@ spec:
         advancedMounts:
           *app :
             init-config:
-              - path: /run/config/config.toml
-                subPath: config.toml
+              - path: /run/config
                 readOnly: true
       media:
         type: nfs
