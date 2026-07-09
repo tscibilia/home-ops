@@ -24,7 +24,8 @@ spec:
               - /bin/sh
               - -c
               - |
-                cat > /home/seanime/.config/Seanime/config.toml << 'TOML'
+                if [ ! -f /home/seanime/.config/Seanime/config.toml ]; then
+                  cat > /home/seanime/.config/Seanime/config.toml << 'TOML'
                 version = '3.9.1'
 
                 [cache]
@@ -35,21 +36,21 @@ spec:
                 name = 'seanime'
 
                 [extensions]
-                dir = '$SEANIME_DATA_DIR/extensions'
+                dir = '/home/seanime/.config/Seanime/extensions'
 
                 [logs]
-                dir = '$SEANIME_DATA_DIR/logs'
+                dir = '/home/seanime/.config/Seanime/logs'
 
                 [anime]
                 downloaddir = '/media/anime'
 
                 [manga]
                 downloaddir = '/media/manga'
-                localdir = '$SEANIME_DATA_DIR/manga-local'
+                localdir = '/home/seanime/.config/Seanime/manga-local'
 
                 [offline]
-                assetdir = '$SEANIME_DATA_DIR/offline/assets'
-                dir = '$SEANIME_DATA_DIR/offline'
+                assetdir = '/home/seanime/.config/Seanime/offline/assets'
+                dir = '/home/seanime/.config/Seanime/offline'
 
                 [server]
                 host = '0.0.0.0'
@@ -63,10 +64,12 @@ spec:
                 dir = '/media/downloads/completed/seanime'
 
                 [web]
-                assetdir = '$SEANIME_DATA_DIR/assets'
+                assetdir = '/home/seanime/.config/Seanime/assets'
                 TOML
+                fi
                 exec /app/seanime
             env:
+              SEANIME_DATA_DIR: /home/seanime/.config/Seanime
               SEANIME_SERVER_HOST: 0.0.0.0
               SEANIME_SERVER_PORT: &port 80
             probes:
