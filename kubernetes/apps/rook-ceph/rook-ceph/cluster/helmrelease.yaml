@@ -50,8 +50,6 @@ spec:
             interval: 45s
       mgr:
         modules:
-          - name: insights
-            enabled: true
           - name: pg_autoscaler
             enabled: true
           - name: rook
@@ -66,13 +64,6 @@ spec:
         connections:
           requireMsgr2: true
       resources:
-        mon:
-          requests:
-            cpu: 250m
-            memory: 512Mi
-          limits:
-            cpu: 500m
-            memory: 1Gi
         osd:
           limits:
             memory: 8Gi
