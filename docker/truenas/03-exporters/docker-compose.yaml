@@ -12,6 +12,7 @@ services:
       - --path.procfs=/host/proc
       - --path.sysfs=/host/sys
       - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
+      - --no-collector.edac
     volumes:
       - /:/host/root:ro
       - /proc:/host/proc:ro
