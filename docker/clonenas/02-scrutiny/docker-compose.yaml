@@ -8,15 +8,15 @@ services:
     networks:
       - doco-cd
     cap_add:
-      - SYS_RAWIO    # required for smartctl SMART queries
-      - SYS_ADMIN    # required for NVMe (/dev/nvme0)
+      - SYS_RAWIO # required for smartctl SMART queries
+      - SYS_ADMIN # required for NVMe (/dev/nvme0)
     volumes:
-      - /dev:/dev    # bind-mount avoids runc cgroup "p" type error on TrueNAS kernel
+      - /dev:/dev # bind-mount avoids runc cgroup "p" type error on TrueNAS kernel
       - /run/udev:/run/udev:ro
     device_cgroup_rules:
-      - 'b 8:* r'    # /dev/sda+ (SATA/SAS, major 8)
+      - "b 8:* r" # /dev/sda+ (SATA/SAS, major 8)
     environment:
-      COLLECTOR_API_ENDPOINT: http://scrutiny.internal
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal:8080
       COLLECTOR_HOST_ID: clonenas
 
 networks:
