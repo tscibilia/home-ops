@@ -107,7 +107,7 @@ spec:
               PATH: /opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               PIP_BREAK_SYSTEM_PACKAGES: "1"
               MEMINI_URL: http://memini.ai.svc.cluster.local:8080
-              MEMINI_NAMESPACE: hermes
+              MEMINI_NAMESPACE: tscibilia/hermes
               SEARXNG_URL: http://searxng.default.svc.cluster.local:8080
               TERM: xterm-256color
             envFrom:
