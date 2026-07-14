@@ -36,14 +36,19 @@ spec:
               MEMINI_DEFAULT_NAMESPACE: "memini"
               MEMINI_DEMOTE_AFTER: 1440h
               MEMINI_TOMBSTONE_TTL: 720h
-              MEMINI_EMBED_BASE_URL: http://qwen3-embedding-0-6b.ai.svc.cluster.local:8080/v1
-              MEMINI_EMBED_MODEL: qwen3-embedding-0.6b
+              MEMINI_EMBED_BASE_URL: http://litellm.ai.svc.cluster.local:4000/v1
+              MEMINI_EMBED_MODEL: memini-embed # Qwen3-Embedding-0.6B, 8k ctx
               MEMINI_EMBED_DIMS: "1024"
               MEMINI_EMBED_QUERY_PREFIX: "Instruct: Given a user message, retrieve relevant past memories\nQuery: "
               MEMINI_RECALL_EMBED_TIMEOUT: "10s"
               MEMINI_EMBED_MAX_CONCURRENCY: "2"
-              MEMINI_RERANK: http://qwen3-reranker-0-6b.ai.svc.cluster.local:8080/v1
-              MEMINI_RERANK_MODEL: qwen3-reranker-0.6b
+              MEMINI_WRITE_DEDUP_SCORE: "0.80"
+              MEMINI_WRITE_DEDUP_ACTION: coalesce
+              MEMINI_DEDUP_TIERS: episodic
+              MEMINI_DEDUP_SIMILARITY: 0.80
+              MEMINI_SHORT_TERM_CAP: 300
+              MEMINI_RERANK: http://litellm.ai.svc.cluster.local:4000/v1
+              MEMINI_RERANK_MODEL: memini-rerank # Qwen3-Reranker-0.6B, 8k ctx
               MEMINI_POSTGRES_DSN:
                 valueFrom:
                   secretKeyRef:

@@ -3,8 +3,9 @@
 apiVersion: inference.llmkube.dev/v1alpha1
 kind: Model
 metadata:
-  name: qwen3-embedding-0.6b
+  name: memini-rerank
 spec:
+  source: https://huggingface.co/Voodisss/Qwen3-Reranker-0.6B-GGUF-llama_cpp/resolve/main/Qwen3-Reranker-0.6B-Q4_K_M.gguf
   format: gguf
   hardware:
     accelerator: vulkan
@@ -15,16 +16,15 @@ spec:
       # Shareable /dev/dri render node advertised by generic-device-plugin.
       resourceName: kernel.org/dri-render
       vendor: intel
-  quantization: Q8_0
-  source: https://huggingface.co/Qwen/Qwen3-Embedding-0.6B-GGUF/resolve/main/Qwen3-Embedding-0.6B-Q8_0.gguf
+  quantization: Q4_K_M
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/inferenceservice_v1alpha1.json
 apiVersion: inference.llmkube.dev/v1alpha1
 kind: InferenceService
 metadata:
-  name: qwen3-embedding-0.6b
+  name: memini-rerank
 spec:
-  modelRef: qwen3-embedding-0.6b
+  modelRef: memini-rerank
   runtime: llamacpp
   image: ghcr.io/ggml-org/llama.cpp:server-vulkan-b9982@sha256:f1584bb85d807108dfa4d798682acfea3a30a12443c8cc006a70338eec932c6a
   replicas: 1
@@ -45,7 +45,7 @@ spec:
     supplementalGroups:
       - 44
       - 992
-  # per-slot ctx = contextSize/parallelSlots; 2 slots = 4096, enough for long memini docs.
+  # per-slot ctx = contextSize/parallelSlots; 2 slots = 4096, fits memini's query+doc.
   contextSize: 8192
   parallelSlots: 2
   batchSize: 8192
@@ -55,19 +55,19 @@ spec:
     cpu: 100m
     memory: 2Gi
   extraArgs:
-    # Qwen3-Embedding uses last-token pooling with left padding;
-    # --embedding + --pooling last exposes the OpenAI-compatible
-    # /v1/embeddings endpoint.
-    - --embedding
+    # Qwen3-Reranker needs rank pooling; --reranking + --pooling rank exposes
+    # the Cohere-style /v1/rerank endpoint memini calls.
+    - --reranking
     - --pooling
-    - last
+    - rank
+    - --embedding
     - --cache-ram
     - "0"
     - --no-mmap
     - --sleep-idle-seconds
     - "300"
     - --alias
-    - qwen3-embedding-0.6b
+    - qwen3-reranker-0.6b
     - --metrics
   endpoint:
     port: 8080

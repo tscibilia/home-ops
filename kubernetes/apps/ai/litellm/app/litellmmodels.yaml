@@ -3,9 +3,9 @@
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: qwen-local
+  name: &name qwen-local
 spec:
-  modelName: qwen-local
+  modelName: *name
   params:
     model: openai/unsloth/Qwen3.6-27B
     apiBase: http://llama-cpp.ai.svc.cluster.local:10000/v1
@@ -32,9 +32,47 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: glm-5-2
+  name: &name memini-embed
 spec:
-  modelName: glm-5.2
+  modelName: *name
+  params:
+    model: openai/memini-embed
+    apiBase: http://memini-embed.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: MEMINI_EMBED_API_KEY
+  info:
+    mode: embedding
+    extra:
+      input_cost_per_token: 0.0000000100
+      output_cost_per_token: 0.0000000000
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name memini-rerank
+spec:
+  modelName: *name
+  params:
+    model: openai/memini-rerank
+    apiBase: http://memini-rerank.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: MEMINI_RERANK_API_KEY
+  info:
+    mode: rerank
+    extra:
+      input_cost_per_token: 0.0000000100
+      output_cost_per_token: 0.0000000000
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name glm-5-2
+spec:
+  modelName: *name
   params:
     model: openrouter/z-ai/glm-5.2
     apiBase: https://openrouter.ai/api/v1
@@ -58,9 +96,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: big-pickle-free
+  name: &name big-pickle-free
 spec:
-  modelName: big-pickle-free
+  modelName: *name
   params:
     model: openai/big-pickle
     apiBase: https://opencode.ai/zen/v1
@@ -83,9 +121,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: deepseek-v4-flash-free
+  name: &name deepseek-v4-flash-free
 spec:
-  modelName: deepseek-v4-flash-free
+  modelName: *name
   params:
     model: openai/deepseek-v4-flash-free
     apiBase: https://opencode.ai/zen/v1
