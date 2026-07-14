@@ -2,13 +2,15 @@
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
     [
-      "@eleboucher/opencode-memini",
+      "@eleboucher/opencode-memini@0.7.1",
       {
-        "namespace": "tscibilia/home-ops",
+        "home": "tscibilia",
+        "namespace": "home-ops",
         "base_url": "https://memini.t0m.co/",
         "Authorization": "Bearer {env:MEMINI_API_KEY}"
       }
     ],
-    "list"
+    "list",
+    "memini"
   ]
 }
