@@ -43,6 +43,21 @@ data:
       - "curl *$${SECRET_DOMAIN}*"
       - "curl *.ai.svc.cluster.local*"
       - "wget *$${SECRET_DOMAIN}*"
+    discord:
+      require_mention: true
+      thread_require_mention: false
+      auto_thread: true
+      reactions: true
+      ignored_channels: []
+      no_thread_channels: []
+      history_backfill: false
+      history_backfill_limit: 50
+      channel_prompts: {}
+      allow_mentions:
+        everyone: false
+        roles: false
+        users: true
+        replied_user: true
     gateway:
       platforms:
         photon:
