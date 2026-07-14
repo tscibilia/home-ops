@@ -40,12 +40,10 @@ spec:
               MEMINI_EMBED_MODEL: qwen3-embedding-0.6b
               MEMINI_EMBED_DIMS: "1024"
               MEMINI_EMBED_QUERY_PREFIX: "Instruct: Given a user message, retrieve relevant past memories\nQuery: "
-              MEMINI_RECALL_MIN_SEMANTIC_SCORE: "0.46"
+              MEMINI_RECALL_EMBED_TIMEOUT: "10s"
+              MEMINI_EMBED_MAX_CONCURRENCY: "2"
               MEMINI_RERANK: http://qwen3-reranker-0-6b.ai.svc.cluster.local:8080/v1
               MEMINI_RERANK_MODEL: qwen3-reranker-0.6b
-              MEMINI_RERANK_MAX_DOC_CHARS: "4000"
-              MEMINI_MERGE_HINT_MIN_SCORE: "0.90"
-              MEMINI_WRITE_DEDUP_MIN_SCORE: "0.80"
               MEMINI_POSTGRES_DSN:
                 valueFrom:
                   secretKeyRef:
