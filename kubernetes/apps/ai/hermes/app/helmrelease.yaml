@@ -161,6 +161,41 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 1Gi
+          codeserver:
+            image:
+              repository: ghcr.io/coder/code-server
+              tag: 4.128.0@sha256:bd4a3a022ff016954bf9ae6ea0bce6c7eef96a69da4d2fe34552638f32d4820c
+            args:
+              - --auth
+              - none
+              - --disable-telemetry
+              - --disable-update-check
+              - --user-data-dir
+              - /opt/data/.vscode
+              - --extensions-dir
+              - /opt/data/.vscode
+              - --port
+              - "12321"
+              - /opt/data
+            env:
+              GITHUB_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: hermes-secret
+                    key: GITHUB_TOKEN
+              # DISCORD_WEBHOOK:
+              #   valueFrom:
+              #     secretKeyRef:
+              #       name: hermes-secret
+              #       key: DISCORD_WEBHOOK
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
         serviceAccount:
           identifier: *app
     defaultPodOptions:
@@ -172,13 +207,12 @@ spec:
       app:
         controller: *app
         ports:
-          http:
+          api:
             port: *apiPort
-      dashboard:
-        controller: *app
-        ports:
-          http:
+          dashboard:
             port: *dashPort
+          codeserver:
+            port: 12321
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
@@ -187,8 +221,17 @@ spec:
             namespace: network
         rules:
           - backendRefs:
-              - identifier: dashboard
-                port: http
+              - identifier: app
+                port: dashboard
+      codeserver:
+        hostnames: ["{{ .Release.Name }}-code.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: codeserver
     persistence:
       data:
         existingClaim: *app
@@ -201,6 +244,8 @@ spec:
             app:
               - path: /opt/data
             dashboard:
+              - path: /opt/data
+            codeserver:
               - path: /opt/data
       config:
         type: configMap
