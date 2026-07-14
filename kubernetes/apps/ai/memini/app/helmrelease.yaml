@@ -30,9 +30,10 @@ spec:
         containers:
           main:
             env:
+              MEMINI_API_KEYS_FILE: &apiFile /etc/memini/api-keys.yaml
               MEMINI_BACKEND: postgres
               MEMINI_LOG_FORMAT: json
-              MEMINI_DEFAULT_NAMESPACE: "ai"
+              MEMINI_DEFAULT_NAMESPACE: "memini"
               MEMINI_DEMOTE_AFTER: 1440h
               MEMINI_TOMBSTONE_TTL: 720h
               MEMINI_EMBED_BASE_URL: http://qwen3-embedding-0-6b.ai.svc.cluster.local:8080/v1
@@ -74,6 +75,14 @@ spec:
     persistence:
       data:
         enabled: false
+      api-keys:
+        enabled: true
+        type: secret
+        name: memini-api-keys
+        globalMounts:
+          - path: *apiFile
+            subPath: api-keys.yaml
+            readOnly: true
       initdb:
         type: configMap
         name: memini-initdb

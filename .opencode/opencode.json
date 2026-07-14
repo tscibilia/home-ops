@@ -4,7 +4,6 @@
     [
       "@eleboucher/opencode-memini@0.7.1",
       {
-        "home": "tscibilia",
         "namespace": "home-ops",
         "base_url": "https://memini.t0m.co/",
         "Authorization": "Bearer {env:MEMINI_API_KEY}"
