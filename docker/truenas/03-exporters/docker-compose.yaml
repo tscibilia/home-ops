@@ -2,7 +2,7 @@
 name: exporters
 services:
   node-exporter:
-    image: quay.io/prometheus/node-exporter:v1.12.0
+    image: quay.io/prometheus/node-exporter:v1.12.1
     container_name: node-exporter
     restart: unless-stopped
     network_mode: host
