@@ -49,7 +49,7 @@ spec:
               MEMINI_SHORT_TERM_CAP: 300
               MEMINI_RERANK: http://litellm.ai.svc.cluster.local:4000/v1
               MEMINI_RERANK_MODEL: memini-rerank # Qwen3-Reranker-0.6B, 8k ctx
-              MEMINI_REEMBED_ON_MODEL_CHANGE: true
+              MEMINI_REEMBED_ON_MODEL_CHANGE: false # update when switching models, increase probes when true
               MEMINI_POSTGRES_DSN:
                 valueFrom:
                   secretKeyRef:
@@ -60,34 +60,6 @@ spec:
                   secretKeyRef:
                     name: &secret "{{ .Release.Name }}-secret"
                     key: MEMINI_API_KEY
-            probes:
-              startup:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /healthz
-                    port: 8080
-                  periodSeconds: 10
-                  failureThreshold: 180
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /healthz
-                    port: 8080
-                  periodSeconds: 30
-                  failureThreshold: 5
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /healthz
-                    port: 8080
-                  periodSeconds: 10
-                  failureThreshold: 3
             envFrom:
               - secretRef:
                   name: *secret
