@@ -5,3 +5,4 @@ kind: Component
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./servicemonitor.yaml

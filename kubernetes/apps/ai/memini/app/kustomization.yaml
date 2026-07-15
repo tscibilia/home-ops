@@ -6,6 +6,8 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./resources/memini-embed.yaml
+  - ./resources/memini-rerank.yaml
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
