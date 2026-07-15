@@ -60,6 +60,34 @@ spec:
                   secretKeyRef:
                     name: &secret "{{ .Release.Name }}-secret"
                     key: MEMINI_API_KEY
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+                  periodSeconds: 10
+                  failureThreshold: 180
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+                  periodSeconds: 30
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 8080
+                  periodSeconds: 10
+                  failureThreshold: 3
             envFrom:
               - secretRef:
                   name: *secret
