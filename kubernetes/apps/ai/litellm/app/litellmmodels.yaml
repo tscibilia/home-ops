@@ -55,7 +55,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: openai/memini-rerank
+    model: infinity/memini-rerank
     apiBase: http://memini-rerank.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
