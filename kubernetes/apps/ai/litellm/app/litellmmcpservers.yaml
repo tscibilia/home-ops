@@ -141,7 +141,6 @@ spec:
       - name: talosconfig
         mountPath: /var/run/secrets/talos.dev
         readOnly: true
----
 # TODO: Re-enable when MCPWorkloadSpec supports serviceAccountName (operator needs the field)
 # https://redirect.github.com/home-operations/litellm-operator/issues/25
 # ---
