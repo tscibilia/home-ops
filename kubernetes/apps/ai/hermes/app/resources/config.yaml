@@ -82,8 +82,6 @@ data:
     mcp_servers:
       homelab:
         url: http://litellm.ai.svc.cluster.local:4000/mcp
-        headers:
-          Authorization: "Bearer $${LITELLM_API_KEY}"
     platform_toolsets:
       cli:
         - hermes-cli
