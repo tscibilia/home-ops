@@ -4,22 +4,29 @@ metadata:
   name: hermes-configmap
 data:
   config.yaml: |-
+    providers:
+      litellm:
+        api: http://litellm.ai.svc.cluster.local:4000/v1
+        key_env: LITELLM_API_KEY
+        models:
+          qwen-local:
+            context_length: 148480
+          deepseek-v4-flash-free:
+            context_length: 1000000
+          big-pickle-free:
+            context_length: 200000
+          glm-5-2:
+            context_length: 1048560
     model:
-      default: big-pickle-free
+      default: deepseek-v4-flash-free
       provider: litellm
-      base_url: http://litellm.ai.svc.cluster.local:4000/v1
-      api_key: $${LITELLM_API_KEY}
     fallback_providers:
       - provider: litellm
         model: qwen-local
       - provider: litellm
-        model: deepseek-v4-flash
+        model: deepseek-v4-flash-free
       - provider: litellm
-        model: glm-5.2
-    providers:
-      litellm:
-        base_url: http://litellm.ai.svc.cluster.local:4000/v1
-        api_key: $${LITELLM_API_KEY}
+        model: glm-5-2
     agent:
       max_turns: 90
       gateway_timeout: 1800
@@ -69,6 +76,9 @@ data:
       auto_summarize:
         threshold: 50
       provider: memini
+    plugins:
+      enabled:
+        - memini
     mcp_servers:
       homelab:
         url: http://litellm.ai.svc.cluster.local:4000/mcp
@@ -96,3 +106,6 @@ data:
       - hermes-cli
     web:
       search_backend: searxng
+  env: |-
+    LITELLM_API_KEY={{ .LITELLM_MASTER_KEY }}
+    SECRET_DOMAIN={{ .SECRET_DOMAIN }}
