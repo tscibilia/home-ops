@@ -79,7 +79,7 @@ spec:
     - "1.03"
     - --mmap
     - --chat-template-kwargs
-    - '{"preserve_thinking":true}'
+    - '{"preserve_thinking":false}'
   probeOverrides:
     startup:
       httpGet:
