@@ -6,6 +6,8 @@ resources:
   - ./externalsecret.yaml
   - ./litellmproxy.yaml
   - ./litellmmodels.yaml
+  - ./llama-qwen.yaml
+  - ./llama-gemma.yaml
   - ./litellmmcpservers.yaml
   - ./mcp-secrets.yaml
   # - ./mcp-flux-rbac.yaml

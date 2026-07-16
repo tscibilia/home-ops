@@ -1,0 +1,83 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/model_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: llama-gemma
+spec:
+  source: hf://unsloth/gemma-4-26B-A4B-it-GGUF
+  files:
+    - gemma-4-26B-A4B-it-UD-IQ4_NL.gguf
+  mmproj: mmproj-BF16.gguf
+  format: gguf
+  quantization: UD-IQ4_NL
+  hardware:
+    accelerator: cuda
+    gpu:
+      enabled: true
+      vendor: nvidia
+      layers: 99
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/inferenceservice_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: llama-gemma
+spec:
+  modelRef: llama-gemma
+  runtime: llamacpp
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda-b9982@sha256:7b3d7834fc7307cb54f24f8869b67bfff276404c416452a48d11321bc36a81be
+  replicas: 1
+  priority: normal
+  runtimeClassName: nvidia
+  nodeSelector:
+    feature.node.kubernetes.io/pci-10de.present: "true"
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+  contextSize: 131072
+  batchSize: 4096
+  uBatchSize: 2048
+  flashAttention: true
+  cacheTypeK: q8_0
+  cacheTypeV: q8_0
+  jinja: true
+  parallelSlots: 1
+  resources:
+    gpu: 1
+    cpu: 100m
+    memory: 20Gi
+  endpoint:
+    port: 8080
+    type: ClusterIP
+  extraArgs:
+    - --sleep-idle-seconds
+    - "3600"
+    - --alias
+    - unsloth/gemma-4-26B-A4B
+    - --temp
+    - "1.0"
+    - --top-k
+    - "64"
+    - --top-p
+    - "0.95"
+  probeOverrides:
+    startup:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 10
+      failureThreshold: 60
+    liveness:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 30
+      failureThreshold: 3
+    readiness:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 10
+      failureThreshold: 3

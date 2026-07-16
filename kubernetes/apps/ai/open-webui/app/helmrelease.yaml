@@ -24,14 +24,14 @@ spec:
               JWT_EXPIRES_IN: 604800
               CORS_ALLOW_ORIGIN: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN};http://localhost:8080"
               WEBUI_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-              OPENAI_API_BASE_URLS: "http://llama-cpp.ai.svc.cluster.local:10000/v1"
-              OPENAI_API_KEYS: "sk-no-key"
+              OPENAI_API_BASE_URLS: "http://litellm.ai.svc.cluster.local:4000/v1"
+              OPENAI_API_KEYS: "${LLAMA_API_KEY}"
               ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: "searxng"
               RAG_WEB_SEARCH_RESULT_COUNT: "5"
               SEARXNG_QUERY_URL: "http://searxng.default.svc.cluster.local:8080/search?q=<query>"
               USER_AGENT: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-              TOOL_SERVER_CONNECTIONS: '[{"type":"mcp","url":"http://vmcp-mcp-gateway-int.ai.svc.cluster.local:4483/mcp","spec_type":"url","spec":"","path":"openapi.json","auth_type":"none","key":"","config":{"enable":true},"info":{"id":"mcp-gateway","name":"MCP Gateway","description":""}}]'
+              TOOL_SERVER_CONNECTIONS: '[{"type":"mcp","url":"http://litellm.ai.svc.cluster.local:4000/mcp","spec_type":"url","spec":"","path":"openapi.json","auth_type":"Bearer","key":"${LITELLM_MCP_API_KEY}","config":{"enable":true},"info":{"id":"mcp-gateway","name":"MCP Gateway","description":""}}]'
               USE_CUDA: false
               USE_OLLAMA: false
               ENABLE_SIGNUP: false
