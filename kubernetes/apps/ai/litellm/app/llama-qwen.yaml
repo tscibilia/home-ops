@@ -27,6 +27,9 @@ spec:
   modelRef: llama-qwen
   runtime: llamacpp
   image: ghcr.io/ggml-org/llama.cpp:server-cuda-b9982@sha256:7b3d7834fc7307cb54f24f8869b67bfff276404c416452a48d11321bc36a81be
+  rolloutPolicy:
+    waitForIdle: true
+    idleTimeoutSeconds: 3600
   replicas: 1
   priority: high
   runtimeClassName: nvidia
@@ -47,8 +50,8 @@ spec:
   cacheTypeV: q4_0
   jinja: true
   parallelSlots: 1
-  # reasoningBudget: 16384
-  # reasoningBudgetMessage: "Stop reasoning and produce the implementation, tool call, or final answer."
+  reasoningBudget: 16384
+  reasoningBudgetMessage: "Stop reasoning and produce the implementation, tool call, or final answer."
   resources:
     gpu: 1
     cpu: 100m
@@ -61,6 +64,19 @@ spec:
     - "3600"
     - --alias
     - openai/unsloth/Qwen3.6-27B
+    - --cont-batching
+    - --spec-type
+    - draft-mtp
+    - --spec-draft-p-min
+    - "0.75"
+    - --spec-draft-n-max
+    - "2"
+    - --spec-draft-type-k
+    - q4_0
+    - --spec-draft-type-v
+    - q4_0
+    - -sps
+    - "0.75"
     - --cache-prompt
     - --cache-ram
     - "20480"
@@ -70,7 +86,7 @@ spec:
     - --top-k
     - "20"
     - --top-p
-    - "0.95"
+    - "0.8"
     - --min-p
     - "0.0"
     - --presence-penalty
@@ -79,7 +95,7 @@ spec:
     - "1.03"
     - --mmap
     - --chat-template-kwargs
-    - '{"preserve_thinking":false}'
+    - '{"preserve_thinking":true}'
   probeOverrides:
     startup:
       httpGet:
