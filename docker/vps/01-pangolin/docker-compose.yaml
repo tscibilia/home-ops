@@ -91,7 +91,7 @@ services:
       - 4443:4443
 
   traefik:
-    image: ghcr.io/traefik/traefik:v3.7.7@sha256:6ed4e7c21f70c336bd10f798f259a75378affa622e328eae04484f64ff5882aa
+    image: ghcr.io/traefik/traefik:v3.7.8@sha256:5cb000ad823bfcfff911e22a4c4fa09cee74c7a2d960c012a1a46a8d0a159fcf
     container_name: traefik
     restart: unless-stopped
     environment:
