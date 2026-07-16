@@ -2,25 +2,29 @@
 
 Namespace: `ai`
 
-| App         | Storage  | Notes                                                   |
-| ----------- | -------- | ------------------------------------------------------- |
-| comfyui     | ceph-ssd | Image generation, external access                       |
-| honcho      | —        | AI memory service, pgvector-cluster + Dragonfly DB 6    |
-| litellm     | —        | LLM API proxy, internal only, Redis cache via Dragonfly |
-| llama-cpp   | ceph-ssd | NVIDIA GPU (ai3090), CUDA inference server              |
-| mcp-servers | —        | MCPServer CRDs managed by toolhive operator             |
-| open-webui  | ceph-ssd | LLM chat UI, external access, kopiur backup             |
-| toolhive    | —        | MCP operator, depends on Dragonfly                      |
+| App         | Storage  | Notes                                                     |
+| ----------- | -------- | --------------------------------------------------------- |
+| comfyui     | ceph-ssd | Image generation, external access                         |
+| memini      | —        | AI memory/context, pgvector-cluster, llmkube embed+rerank |
+| litellm     | —        | LLM API proxy, internal only, Redis cache via Dragonfly   |
+| llama-qwen  | —        | NVIDIA GPU (ai3090), llmkube InferenceService, CUDA       |
+| llama-gemma | —        | NVIDIA GPU (ai3090), llmkube InferenceService, dormant    |
+| mcp-servers | —        | MCPServer CRDs managed by toolhive operator               |
+| open-webui  | ceph-ssd | LLM chat UI, external access, kopiur backup               |
+| toolhive    | —        | MCP operator, depends on Dragonfly                        |
 
 ## Config Notes
 
-### honcho
+### memini
 
-AI memory service by [plastic-labs](https://github.com/plastic-labs/honcho). Backed by pgvector-cluster (Postgres with vector extension) and Dragonfly DB 6 for caching. Runs two controllers: `api` (FastAPI, port 8000) and `deriver` (background embedding worker). Schema migrations run via `alembic upgrade head` init container on every deploy. The `vector` extension must exist in the honcho database before migrations can run — was created manually via `kubectl exec` on pgvector-cluster; would need to be recreated if the database is wiped.
+AI memory/context service by [eleboucher](https://git.erwanleboucher.dev/eleboucher/memini). Backed by pgvector-cluster (vchord + vector). Embedding and rerank run as llmkube InferenceServices (`memini-embed`, `memini-rerank`) on the Intel iGPU node, routing through litellm. Stores agent session memories with semantic search. API keys managed per-agent (hermes, opencode).
 
-### llama-cpp
+### llama-qwen / llama-gemma
 
-Scheduled on ai3090 (needs `nvidia.com/gpu` toleration). Runs llama.cpp server with CUDA GPU acceleration.
+llmkube Model + InferenceService CRs replacing the old helm-based llama-cpp. Both use `hf://` source with `files:[]` + `mmproj:` for multimodal support. Models cache on node-local NVMe (perService, 20Gi). Only one holds the GPU at a time:
+
+- **llama-qwen** (`priority: high`, `replicas: 1`) — primary model, Qwen3.6-27B IQ4_NL
+- **llama-gemma** (`priority: normal`, `replicas: 0`) — dormant, scale up via `kubectl scale isvc` when needed
 
 ### toolhive
 

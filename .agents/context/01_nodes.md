@@ -28,7 +28,7 @@
 
 ## Worker: ai3090
 
-**Canonical GPU workload pattern** (match llama-cpp / comfyui):
+**Canonical GPU workload pattern** (match llmkube InferenceServices / comfyui):
 
 ```yaml
 defaultPodOptions:

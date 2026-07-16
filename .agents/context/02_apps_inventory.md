@@ -19,7 +19,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - comfyui
 - hermes _(AI agent gateway — Nous Research)_
 - litellm _(LLM API proxy)_ [cnpg]
-- llama-cpp
+- llama-cpp _(replaced by llmkube models in litellm/ — llama-qwen + llama-gemma)_
 - llmkube _(LLM inference orchestrator)_
 - mcp-servers
 - memini _(AI memory/context — pgvector + semantic search)_ [cnpg]
