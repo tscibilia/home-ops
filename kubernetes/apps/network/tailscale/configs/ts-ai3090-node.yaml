@@ -70,7 +70,7 @@ data:
         "$${TS_CERT_DOMAIN}:443": {
           "Handlers": {
             "/": {
-              "Proxy": "http://llama-cpp.ai.svc.cluster.local:10000"
+              "Proxy": "http://litellm.ai.svc.cluster.local:4000"
             }
           }
         }

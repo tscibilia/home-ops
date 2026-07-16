@@ -1,0 +1,91 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/model_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: llama-qwen
+spec:
+  source: hf://unsloth/Qwen3.6-27B-MTP-GGUF
+  files:
+    - Qwen3.6-27B-IQ4_NL.gguf
+  mmproj: mmproj-F16.gguf
+  format: gguf
+  quantization: IQ4_NL
+  hardware:
+    accelerator: cuda
+    gpu:
+      enabled: true
+      vendor: nvidia
+      layers: 99
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/inferenceservice_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: llama-qwen
+spec:
+  modelRef: llama-qwen
+  runtime: llamacpp
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda-b9982@sha256:7b3d7834fc7307cb54f24f8869b67bfff276404c416452a48d11321bc36a81be
+  replicas: 1
+  priority: high
+  runtimeClassName: nvidia
+  nodeSelector:
+    feature.node.kubernetes.io/pci-10de.present: "true"
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+  contextSize: 148480
+  batchSize: 2048
+  uBatchSize: 512
+  flashAttention: true
+  cacheTypeK: q4_0
+  cacheTypeV: q4_0
+  jinja: true
+  parallelSlots: 1
+  resources:
+    gpu: 1
+    cpu: 100m
+    memory: 20Gi
+  endpoint:
+    port: 8080
+    type: ClusterIP
+  extraArgs:
+    - --sleep-idle-seconds
+    - "3600"
+    - --alias
+    - unsloth/Qwen3.6-27B
+    - --temp
+    - "0.6"
+    - --top-k
+    - "20"
+    - --top-p
+    - "0.95"
+    - --min-p
+    - "0.0"
+    - --presence-penalty
+    - "0.0"
+    - --repeat-penalty
+    - "1.0"
+    - --chat-template-kwargs
+    - '{"enable_thinking":false}'
+  probeOverrides:
+    startup:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 10
+      failureThreshold: 60
+    liveness:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 30
+      failureThreshold: 3
+    readiness:
+      httpGet:
+        path: /health
+        port: 8080
+      periodSeconds: 10
+      failureThreshold: 3

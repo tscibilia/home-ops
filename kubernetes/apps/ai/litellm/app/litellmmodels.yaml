@@ -8,7 +8,36 @@ spec:
   modelName: *name
   params:
     model: openai/unsloth/Qwen3.6-27B
-    apiBase: http://llama-cpp.ai.svc.cluster.local:10000/v1
+    apiBase: http://llama-qwen.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: LLAMA_API_KEY
+    additional:
+      maxParallelRequests: 1
+    dropParams: true
+  info:
+    mode: chat
+    maxTokens: 32768
+    maxInputTokens: 262144
+    maxOutputTokens: 32768
+    supportsFunctionCalling: true
+    supportsVision: true
+    extra:
+      inputCostPerToken: 0.0000001250
+      cacheCreationInputTokenCost: 0.0000001250
+      cacheReadInputTokenCost: 0.0000000125
+      outputCostPerToken: 0.0000004999
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name gemma-local
+spec:
+  modelName: *name
+  params:
+    model: openai/unsloth/gemma-4-26B-A4B
+    apiBase: http://llama-gemma.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
       key: LLAMA_API_KEY
@@ -137,3 +166,8 @@ spec:
     maxOutputTokens: 384000
     supportsFunctionCalling: true
     supportsPromptCaching: true
+    extra:
+      inputCostPerToken: 0.0000001250
+      cacheCreationInputTokenCost: 0.0000001250
+      cacheReadInputTokenCost: 0.0000000125
+      outputCostPerToken: 0.0000004999
