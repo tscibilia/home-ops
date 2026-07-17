@@ -7,7 +7,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: openai/unsloth/Qwen3.6-27B
+    model: huggingface/Qwen3.6-27B
     apiBase: http://llama-qwen.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
@@ -23,6 +23,7 @@ spec:
     supportsFunctionCalling: true
     supportsVision: true
     extra:
+      supports_reasoning: true
       inputCostPerToken: 0.0000001250
       cacheCreationInputTokenCost: 0.0000001250
       cacheReadInputTokenCost: 0.0000000125
@@ -36,7 +37,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: openai/unsloth/gemma-4-26B-A4B
+    model: huggingface/gemma-4-26B-A4B
     apiBase: http://llama-gemma.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
@@ -103,7 +104,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: openrouter/z-ai/glm-5.2
+    model: deepinfra/glm-5.2
     apiBase: https://openrouter.ai/api/v1
     apiKeyRef:
       name: litellm-secret
@@ -115,11 +116,41 @@ spec:
           allowFallbacks: false
   info:
     mode: chat
-    maxTokens: 16384
+    maxTokens: 131072
     maxInputTokens: 1048560
-    maxOutputTokens: 16384
+    maxOutputTokens: 131072
     supportsFunctionCalling: true
     supportsPromptCaching: true
+    extra:
+      supports_reasoning: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name minimax-m3
+spec:
+  modelName: *name
+  params:
+    model: minimax/minimax-m3
+    apiBase: https://opencode.ai/zen/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENCODE_API_KEY
+  info:
+    mode: chat
+    maxTokens: 128000
+    maxInputTokens: 512000
+    maxOutputTokens: 128000
+    supportsFunctionCalling: true
+    supportsPromptCaching: true
+    supportsVision: true
+    extra:
+      supports_reasoning: true
+      inputCostPerToken: 0.0000003000
+      cacheCreationInputTokenCost: 0.0000000600
+      cacheReadInputTokenCost: 0.0000000600
+      outputCostPerToken: 0.0000012000
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -154,7 +185,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: openai/deepseek-v4-flash-free
+    model: deepseek/deepseek-v4-flash-free
     apiBase: https://opencode.ai/zen/v1
     apiKeyRef:
       name: litellm-secret

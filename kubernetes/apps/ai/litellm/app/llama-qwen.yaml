@@ -63,7 +63,7 @@ spec:
     - --sleep-idle-seconds
     - "3600"
     - --alias
-    - openai/unsloth/Qwen3.6-27B
+    - huggingface/Qwen3.6-27B
     - --cont-batching
     - --spec-type
     - draft-mtp
