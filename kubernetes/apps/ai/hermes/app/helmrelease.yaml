@@ -35,6 +35,9 @@ spec:
             image:
               repository: docker.io/library/alpine
               tag: "3.24"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             command:
               - sh
               - -c
@@ -42,6 +45,8 @@ spec:
                 set -euo pipefail
                 mkdir -p /opt/data
                 cp /run/config/config.yaml /opt/data/config.yaml
+                sed -i "s|\$${LITELLM_API_KEY}|$$LITELLM_API_KEY|g" /opt/data/config.yaml
+                sed -i "s|\$${SECRET_DOMAIN}|$$SECRET_DOMAIN|g" /opt/data/config.yaml
                 chown 10000:10000 /opt/data/config.yaml
             securityContext:
               allowPrivilegeEscalation: false
