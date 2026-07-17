@@ -7,7 +7,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: huggingface/Qwen3.6-27B
+    model: openai/Qwen3.6-27B
     apiBase: http://llama-qwen.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
@@ -37,7 +37,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: huggingface/gemma-4-26B-A4B
+    model: openai/gemma-4-26B-A4B
     apiBase: http://llama-gemma.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
@@ -104,7 +104,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: deepinfra/glm-5.2
+    model: openai/glm-5.2
     apiBase: https://openrouter.ai/api/v1
     apiKeyRef:
       name: litellm-secret
@@ -185,7 +185,7 @@ metadata:
 spec:
   modelName: *name
   params:
-    model: deepseek/deepseek-v4-flash-free
+    model: openai/deepseek-v4-flash-free
     apiBase: https://opencode.ai/zen/v1
     apiKeyRef:
       name: litellm-secret
