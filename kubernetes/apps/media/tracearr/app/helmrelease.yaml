@@ -29,6 +29,7 @@ spec:
               tag: 1.5.0@sha256:2b6aca8d86126bb57211f54f1a34e9d8292ad0d783dbc48015452b2af1b9fe3c
             env:
               CORS_ORIGIN: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+              TRUST_PROXY: true
               HOST: "0.0.0.0"
               NODE_ENV: production
               PORT: &port 3000
@@ -71,7 +72,7 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-        seccompProfile: {type: RuntimeDefault}
+        seccompProfile: { type: RuntimeDefault }
     service:
       app:
         controller: *app
@@ -95,7 +96,7 @@ spec:
         advancedMounts:
           *app :
             app:
-            - path: /app/data/image-cache
-              subPath: image-cache
-            - path: /tmp
-              subPath: tmp
+              - path: /app/data/image-cache
+                subPath: image-cache
+              - path: /tmp
+                subPath: tmp
