@@ -45,7 +45,7 @@ machine:
         noatime=True
   install:
     disk: /dev/nvme0n1
-    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC | safe }}:v1.13.5
+    image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC | safe }}:v1.13.6
     wipe: false
   kernel:
     modules:
