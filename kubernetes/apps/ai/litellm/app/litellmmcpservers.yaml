@@ -222,7 +222,7 @@ spec:
     allow_all_keys: true
   workload:
     # renovate: datasource=docker depName=ghcr.io/homeassistant-ai/ha-mcp
-    image: ghcr.io/homeassistant-ai/ha-mcp:7.13.0
+    image: ghcr.io/homeassistant-ai/ha-mcp:7.14.0
     port: 8080
     command: ["ha-mcp-web"]
     env:
