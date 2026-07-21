@@ -20,6 +20,12 @@
       sourceUrl: "https://github.com/dragonflydb/dragonfly-operator",
     },
     {
+      description: "Changelog URL for Hermes Agent",
+      matchPackageNames: ["/hermes-agent/"],
+      changelogUrl: "https://github.com/NousResearch/hermes-agent/releases",
+      sourceUrl: "https://github.com/NousResearch/hermes-agent",
+    },
+    {
       description: "Changelog URL for Jellyfin",
       matchPackageNames: ["/jellyfin/"],
       changelogUrl: "https://github.com/jellyfin/jellyfin/releases",
