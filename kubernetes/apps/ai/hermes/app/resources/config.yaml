@@ -74,6 +74,8 @@ data:
         photon:
           enabled: true
           require_mention: true
+        discord:
+          gateway_restart_notification: false
     group_sessions_per_user: false
     memory:
       auto_migrate: true
