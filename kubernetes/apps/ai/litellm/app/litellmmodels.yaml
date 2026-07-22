@@ -202,3 +202,4 @@ spec:
       cacheCreationInputTokenCost: 0.0000001250
       cacheReadInputTokenCost: 0.0000000125
       outputCostPerToken: 0.0000004999
+      supports_reasoning: true
