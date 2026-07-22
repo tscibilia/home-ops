@@ -39,7 +39,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: AI PR Review
-        uses: misospace/pr-reviewer-action@9e96ced346f7080b21f6e61722b04969c6d4b50a # v2.1.4
+        uses: misospace/pr-reviewer-action@071a13976b80df2d5ea0e45285bcafcdae2c8a9e # v2.1.5
         env:
           KONFLATE_MCP_URL: ${{ secrets.KONFLATE_MCP_URL }}
           KONFLATE_MCP_TOKEN: ${{ secrets.KONFLATE_API_KEY }}
