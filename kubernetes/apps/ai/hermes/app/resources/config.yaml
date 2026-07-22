@@ -75,6 +75,7 @@ data:
           enabled: true
           require_mention: true
         discord:
+          enabled: true
           gateway_restart_notification: false
     group_sessions_per_user: false
     memory:
