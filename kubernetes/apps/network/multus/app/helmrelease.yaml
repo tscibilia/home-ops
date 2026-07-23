@@ -11,11 +11,10 @@ spec:
   interval: 1h
   values:
     cni:
-      binPath: /opt/cni/bin
-      netPath: /etc/cni/net.d
-    *app :
-      resources:
-        requests:
-          cpu: 10m
-        limits:
-          memory: 512Mi
+      binDir: /opt/cni/bin
+      netDir: /etc/cni/net.d
+    resources:
+      requests:
+        cpu: 10m
+      limits:
+        memory: 512Mi
