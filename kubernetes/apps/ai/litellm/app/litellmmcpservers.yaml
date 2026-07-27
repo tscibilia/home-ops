@@ -3,9 +3,9 @@
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: searxng-mcp
+  name: &name searxng-mcp
 spec:
-  alias: searxng_mcp
+  alias: *name
   params:
     allow_all_keys: true
   workload:
@@ -30,9 +30,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: grafana-mcp
+  name: &name grafana-mcp
 spec:
-  alias: grafana_mcp
+  alias: *name
   params:
     allow_all_keys: true
   workload:
@@ -52,9 +52,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: victoria-logs-mcp
+  name: &name victoria-logs-mcp
 spec:
-  alias: victoria_logs_mcp
+  alias: *name
   params:
     allow_all_keys: true
   workload:
@@ -76,9 +76,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: sidero-mcp
+  name: &name sidero-mcp
 spec:
-  alias: sidero_mcp
+  alias: *name
   url: https://docs.siderolabs.com/mcp
   transport: http
   params:
@@ -88,9 +88,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: deepwiki-mcp
+  name: &name deepwiki-mcp
 spec:
-  alias: deepwiki_mcp
+  alias: *name
   url: https://mcp.deepwiki.com/mcp
   transport: http
   params:
@@ -100,9 +100,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: context7-mcp
+  name: &name context7-mcp
 spec:
-  alias: context7_mcp
+  alias: *name
   url: https://mcp.context7.com/mcp
   transport: http
   params:
@@ -116,9 +116,23 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: talos-mcp
+  name: &name github-mcp
 spec:
-  alias: talos_mcp
+  alias: *name
+  url: https://api.githubcopilot.com/mcp
+  transport: http
+  authType: bearer_token
+  authTokenRef:
+    name: github-mcp-secret
+    key: token
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: &name talos-mcp
+spec:
+  alias: *name
   params:
     allow_all_keys: true
   workload:
@@ -148,9 +162,9 @@ spec:
 # apiVersion: litellm.home-operations.com/v1alpha1
 # kind: LiteLLMMCPServer
 # metadata:
-#   name: kubectl-mcp
+#   name: &name kubectl-mcp
 # spec:
-#   alias: kubectl_mcp
+#   alias: *name
 #   params:
 #     allow_all_keys: true
 #   workload:
@@ -185,9 +199,9 @@ spec:
 # apiVersion: litellm.home-operations.com/v1alpha1
 # kind: LiteLLMMCPServer
 # metadata:
-#   name: flux-mcp
+#   name: &name flux-mcp
 # spec:
-#   alias: flux_mcp
+#   alias: *name
 #   params:
 #     allow_all_keys: true
 #   workload:
@@ -215,9 +229,9 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMMCPServer
 metadata:
-  name: ha-mcp
+  name: &name ha-mcp
 spec:
-  alias: ha_mcp
+  alias: *name
   params:
     allow_all_keys: true
   workload:
