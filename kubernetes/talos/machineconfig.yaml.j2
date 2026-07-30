@@ -66,6 +66,9 @@ machine:
     nodeIP:
       validSubnets:
         - 192.168.5.0/24
+  # Uncomment below if the tuppr upgrade complains about a mis-match in the image
+  {# nodeAnnotations:
+    tuppr.home-operations.com/factory-url: factory.talos.dev/metal-installer #}
   nodeLabels:
     node.kubernetes.io/gpu: "true"
     topology.kubernetes.io/region: main
