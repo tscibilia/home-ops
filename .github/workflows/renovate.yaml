@@ -92,8 +92,16 @@ jobs:
           RENOVATE_INTERNAL_CHECKS_FILTER: strict
           RENOVATE_PLATFORM: github
           RENOVATE_PLATFORM_COMMIT: true
+          RENOVATE_SECRETS: |-
+            {
+              "OCHARTED_USERNAME": "${{ secrets.OCHARTED_USERNAME }}",
+              "OCHARTED_PASSWORD": "${{ secrets.OCHARTED_PASSWORD }}"
+            }
           RENOVATE_HOST_RULES: |
-            [{"hostType": "docker", "matchHost": "ghcr.io", "username": "${{ github.actor }}", "password": "${{ secrets.GHCR_PAT }}"}]
+            [
+              {"hostType": "docker", "matchHost": "ghcr.io", "username": "${{ github.actor }}", "password": "${{ secrets.GHCR_PAT }}"},
+              {"hostType": "docker", "matchHost": "ocharted.${{ vars.SECRET_DOMAIN }}", "username": "{{ secrets.OCHARTED_USERNAME }}", "password": "{{ secrets.OCHARTED_PASSWORD }}"}
+            ]
         with:
           token: ${{ steps.app-token.outputs.token }}
           renovate-version: ${{ inputs.version || 'latest' }}

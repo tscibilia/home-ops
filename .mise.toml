@@ -37,6 +37,7 @@ TALOS_DIR = "{{config_root}}/kubernetes/talos"
 "github:home-operations/kopiur" = "0.9.1"
 "aqua:siderolabs/talos" = "1.13.7"
 "aqua:yannh/kubeconform" = "0.8.0"              # Kubernetes manifest validation
+actionlint = "1.7.12"
 
 [hooks]
 postinstall = "lefthook install"
