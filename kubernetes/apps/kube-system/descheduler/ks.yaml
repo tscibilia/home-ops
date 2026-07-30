@@ -8,10 +8,6 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/kube-system/descheduler/app
   prune: true
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: cluster-secrets
   sourceRef:
     kind: GitRepository
     name: flux-system
