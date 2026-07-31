@@ -44,6 +44,7 @@ spec:
             configBlock: |-
               match (^|\.)githubusercontent\.com\.$
               match (^|\.)github\.com\.$
+              fallthrough
           - name: forward
             parameters: . /etc/resolv.conf
           - name: cache
