@@ -25,7 +25,7 @@ spec:
                 name: memory
                 target:
                   type: Utilization
-                  averageUtilization: 80
+                  averageUtilization: 90
         initContainers:
           01-init-db:
             image:
