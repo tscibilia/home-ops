@@ -26,7 +26,7 @@ metadata:
 spec:
   modelRef: llama-gemma
   runtime: llamacpp
-  image: ghcr.io/ggml-org/llama.cpp:server-cuda-b10200@sha256:48b8053c05319cde97e64463d117b5747d3fb27475b176f85edf27bd503fa7f9
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda-b10236@sha256:fd68d13013141833e8214ecad6e1fbefb532db6a00b980cdecfe33603dbf2675
   # Can't schedule two models on the same GPU, You can scale it up manually when you want to use it.
   replicas: 0
   priority: normal
