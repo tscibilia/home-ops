@@ -11,4 +11,4 @@ spec:
     operation: copy
   ref:
     tag: 4.13.4
-  url: oci://ghcr.io/home-operations/charts-mirror/csi-driver-nfs
+  url: oci://ocharted.t0m.co/kubernetes-csi.github.io/csi-driver-nfs/csi-driver-nfs

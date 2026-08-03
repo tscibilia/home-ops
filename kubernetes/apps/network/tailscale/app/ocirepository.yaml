@@ -11,4 +11,4 @@ spec:
     operation: copy
   ref:
     tag: 1.98.9
-  url: oci://ghcr.io/home-operations/charts-mirror/tailscale-operator
+  url: oci://ocharted.t0m.co/pkgs.tailscale.com/helmcharts/tailscale-operator
