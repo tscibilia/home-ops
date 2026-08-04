@@ -5,7 +5,6 @@ set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
 controller := `talosctl config info -o yaml | yq -r -e '.endpoints[0]'`
-controllers := `talosctl config info -o yaml | yq -r -e '.endpoints | join(" ")'`
 nodes := `talosctl config info -o yaml | yq -r -e '([.endpoints // [], .nodes // []] | flatten | join(" "))'`
 
 [private]
@@ -53,21 +52,8 @@ kubeconfig lb="cilium":
     fi
 
 [private]
-base: api-ready nodes-ready namespaces resources crds
+base: nodes-ready namespaces resources crds
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
-
-# Wait until every control-plane apiserver answers /readyz. Helm and kubectl
-# calls after this stage are not retried.
-[private]
-api-ready:
-    just log info "Running stage..." "stage" "{{ recipe_name() }}"
-    just check-tools curl
-    for n in {{ controllers }}; do
-        until [[ "$(curl -ks -o /dev/null -w '%{http_code}' --connect-timeout 2 "https://${n}:6443/readyz")" == "200" ]]; do
-            just log info "Waiting for kube-apiserver. Retrying in 5 seconds..." "stage" "{{ recipe_name() }}" "node" "$n"
-            sleep 5
-        done
-    done
 
 # Wait until every node registers as Ready=False. They only become Ready=True
 # once the CNI is healthy.

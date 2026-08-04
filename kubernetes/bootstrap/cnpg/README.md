@@ -24,26 +24,33 @@ This directory contains a Kustomize overlay for bootstrapping CNPG PostgreSQL cl
 
 This overlay:
 
-1. References the base cluster config from `kubernetes/apps/database/cnpg/pgsql-cluster/app`
+1. References the base cluster config from `kubernetes/apps/database/cnpg/pgsql-cluster`
 2. Adds the `bootstrap.recovery` section to restore from Barman backups
 3. Restores from the **latest available backup** by default
 
 ## Usage
 
-### Fresh Bootstrap (No Restore)
+### Restore from Last Backup (Rebuild / Disaster Recovery)
 
 ```bash
-# Restore CNPG clusters from last backup
 just bootstrap cnpg
 ```
 
-### Bootstrap with Restore
+Applies the restore-overlay to create both clusters. If backups exist they
+are restored from the latest Barman backup; if not, cluster creation fails
+and Flux creates fresh clusters normally.
+
+### Fresh Rebuild (Full Chain)
 
 ```bash
-# 1. Run normal bootstrap with restore from last backup
 just bootstrap cluster
+```
 
-# 2. Verify clusters are healthy
+The full chain ends with the `cnpg` stage, which restores the databases once
+the CNPG operator (deployed in the `apps` stage) is up. Verify they are
+healthy:
+
+```bash
 kubectl get cluster -n database
 ```
 
@@ -84,8 +91,10 @@ bootstrap/
     └── README.md           # This file
 
 kubernetes/apps/database/cnpg/
+├── app/                    # CNPG operator (Flux GitOps)
 ├── pgsql-cluster/          # Main cluster (Flux GitOps)
-├── immich17/               # Immich cluster (Flux GitOps)
+├── pgvector-cluster/       # pgvector + vector search (Flux GitOps)
+├── barman-cloud/           # Barman-cloud backups (Flux GitOps)
 └── ks.yaml                 # Flux Kustomization
 ```
 
@@ -95,7 +104,7 @@ kubernetes/apps/database/cnpg/
 
 ```bash
 # Check CNPG operator logs
-kubectl logs -n cnpg-system -l app.kubernetes.io/name=cloudnative-pg -f
+kubectl logs -n database -l app.kubernetes.io/name=cloudnative-pg -f
 
 # Check cluster events
 kubectl describe cluster -n database pgsql-cluster

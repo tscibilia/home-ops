@@ -15,7 +15,7 @@ Full cluster rebuild from zero. You need this repo, aKeyless access, and Backbla
 flowchart TD
     A["1. nodes: apply Talos config"] --> B["2. k8s: bootstrap K8s"]
     B --> C["3. kubeconfig: fetch kubeconfig"]
-    C --> D["4. base: api-ready, nodes-ready, namespaces, secrets, CRDs"]
+    C --> D["4. base: nodes-ready, namespaces, secrets, CRDs"]
     D --> E["5. apps: core apps ¹"]
     E --> F(["6. Flux takes over"])
     F --> G["7. cnpg: restore CNPG from B2"]
@@ -25,15 +25,15 @@ flowchart TD
 
 <small>¹ Cilium → CoreDNS → cert-manager → external-secrets</small>
 
-| Stage                 | Command                     | Notes                                                   |
-| --------------------- | --------------------------- | ------------------------------------------------------- |
-| 1. Apply Talos config | `just bootstrap nodes`      |                                                         |
-| 2. Bootstrap K8s      | `just bootstrap k8s`        |                                                         |
-| 3. Fetch kubeconfig   | `just bootstrap kubeconfig` |                                                         |
-| 4. Base manifests     | `just bootstrap base`       | api-ready → nodes-ready → namespaces → resources → crds |
-| 5. Apply core apps    | `just bootstrap apps`       | Cilium → CoreDNS → cert-manager → external-secrets      |
-| 6. Flux takes over    | —                           | Reconciles everything else from Git                     |
-| 7. Restore databases  | `just bootstrap cnpg`       | Recovers CNPG clusters from B2 backups                  |
+| Stage                 | Command                     | Notes                                              |
+| --------------------- | --------------------------- | -------------------------------------------------- |
+| 1. Apply Talos config | `just bootstrap nodes`      |                                                    |
+| 2. Bootstrap K8s      | `just bootstrap k8s`        |                                                    |
+| 3. Fetch kubeconfig   | `just bootstrap kubeconfig` |                                                    |
+| 4. Base manifests     | `just bootstrap base`       | nodes-ready → namespaces → resources → crds        |
+| 5. Apply core apps    | `just bootstrap apps`       | Cilium → CoreDNS → cert-manager → external-secrets |
+| 6. Flux takes over    | —                           | Reconciles everything else from Git                |
+| 7. Restore databases  | `just bootstrap cnpg`       | Recovers CNPG clusters from B2 backups             |
 
 ## Post-Bootstrap Checks
 
