@@ -11,8 +11,5 @@ configMapGenerator:
   - name: authentik-customize
     files:
       - ./resources/custom.css
-  - name: authentik-plex-patch
-    files:
-      - ./resources/TRDZ4IVH.js
 generatorOptions:
   disableNameSuffixHash: true

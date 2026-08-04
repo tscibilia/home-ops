@@ -37,17 +37,10 @@ spec:
         - name: custom-css
           configMap:
             name: authentik-customize
-        - name: plex-patch
-          configMap:
-            name: authentik-plex-patch
       volumeMounts:
         - name: custom-css
           mountPath: /web/dist/custom.css
           subPath: custom.css
-          readOnly: true
-        - name: plex-patch
-          mountPath: /web/dist/chunks/TRDZ4IVH.js
-          subPath: TRDZ4IVH.js
           readOnly: true
     server:
       replicas: 1
