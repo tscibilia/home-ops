@@ -26,7 +26,7 @@ spec:
         type: RollingUpdate
       image:
         repository: ghcr.io/goauthentik/server
-        tag: 2026.5.5
+        tag: 2026.5.6
         # For development builds, uncomment the lines below and comment the two lines above
         # repository: ghcr.io/goauthentik/dev-server
         # tag: gh-cab3834f6da1fdd1fb3ab294a3d9d157f2c4679f
@@ -37,10 +37,17 @@ spec:
         - name: custom-css
           configMap:
             name: authentik-customize
+        - name: plex-patch
+          configMap:
+            name: authentik-plex-patch
       volumeMounts:
         - name: custom-css
           mountPath: /web/dist/custom.css
           subPath: custom.css
+          readOnly: true
+        - name: plex-patch
+          mountPath: /web/dist/chunks/TRDZ4IVH.js
+          subPath: TRDZ4IVH.js
           readOnly: true
     server:
       replicas: 1
