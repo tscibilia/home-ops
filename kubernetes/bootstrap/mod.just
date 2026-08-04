@@ -5,6 +5,7 @@ set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
 controller := `talosctl config info -o yaml | yq -r -e '.endpoints[0]'`
+controllers := `talosctl config info -o yaml | yq -r -e '.endpoints | join(" ")'`
 nodes := `talosctl config info -o yaml | yq -r -e '([.endpoints // [], .nodes // []] | flatten | join(" "))'`
 
 [private]
@@ -13,10 +14,10 @@ default:
 
 [confirm('Bootstrap cluster? [y|N]')]
 [doc('Bootstrap Cluster')]
-cluster: talos kube (kubeconfig "node") wait namespaces resources crds apps cnpg kubeconfig
+cluster: nodes k8s (kubeconfig "node") base apps cnpg kubeconfig
 
 [private]
-talos:
+nodes:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     just check-tools talosctl yq
     for n in {{ nodes }}; do
@@ -30,7 +31,7 @@ talos:
     done
 
 [private]
-kube:
+k8s:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     just check-tools talosctl
     until op=$(talosctl -n "{{ controller }}" bootstrap 2>&1 || true) && [[ "$op" == *"AlreadyExists"* ]]; do
@@ -52,7 +53,26 @@ kubeconfig lb="cilium":
     fi
 
 [private]
-wait:
+base: api-ready nodes-ready namespaces resources crds
+    just log info "Running stage..." "stage" "{{ recipe_name() }}"
+
+# Wait until every control-plane apiserver answers /readyz. Helm and kubectl
+# calls after this stage are not retried.
+[private]
+api-ready:
+    just log info "Running stage..." "stage" "{{ recipe_name() }}"
+    just check-tools curl
+    for n in {{ controllers }}; do
+        until [[ "$(curl -ks -o /dev/null -w '%{http_code}' --connect-timeout 2 "https://${n}:6443/readyz")" == "200" ]]; do
+            just log info "Waiting for kube-apiserver. Retrying in 5 seconds..." "stage" "{{ recipe_name() }}" "node" "$n"
+            sleep 5
+        done
+    done
+
+# Wait until every node registers as Ready=False. They only become Ready=True
+# once the CNI is healthy.
+[private]
+nodes-ready:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     just check-tools kubectl
     if ! kubectl wait nodes --for=condition=Ready=True --all --timeout=10s &>/dev/null; then
@@ -76,7 +96,7 @@ namespaces:
 resources:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     just check-tools minijinja-cli kubectl akeyless jq gum
-    if ! gum spin --title "Injecting secrets..." -- just template "{{ source_directory() }}/resources.yaml.j2" | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f -; then
+    if ! gum spin --title "Injecting secrets..." -- just template "{{ source_directory() }}/kustomize/resources.yaml.j2" | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f -; then
         just log fatal "Failed to apply resources" "stage" "{{ recipe_name() }}"
     fi
 
@@ -84,7 +104,7 @@ resources:
 crds:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     just check-tools helmfile kubectl
-    if ! helmfile -f "{{ source_directory() }}/helmfile.d/00-crds.yaml" template -q | yq ea -e 'select(.kind == "CustomResourceDefinition")' | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f -; then
+    if ! helmfile -f "{{ source_directory() }}/helmfile/crds.yaml" template -q | yq ea -e 'select(.kind == "CustomResourceDefinition")' | kubectl apply --server-side --field-manager bootstrap --force-conflicts -f -; then
         just log fatal "Failed to apply crds" "stage" "{{ recipe_name() }}"
     fi
 
@@ -93,7 +113,7 @@ apps:
     just log info "Running stage..." "stage" "{{ recipe_name() }}"
     just check-tools helmfile
     export SECRET_DOMAIN="$(kubectl get secret -n flux-system cluster-secrets -o jsonpath='{.data.SECRET_DOMAIN}' | base64 -d)"
-    if ! helmfile -f "{{ source_directory() }}/helmfile.d/01-apps.yaml" sync --hide-notes; then
+    if ! helmfile -f "{{ source_directory() }}/helmfile/apps.yaml" sync --hide-notes; then
         just log fatal "Failed to sync helmfile" "stage" "{{ recipe_name() }}"
     fi
 

@@ -1,0 +1,8 @@
+{{- /*
+  Resolves chart URL and version from the app's own OCIRepository, so chart
+  sources are never duplicated in helmfile. readFile resolves relative to the
+  helmfile dir (kubernetes/bootstrap/helmfile/), where ../../apps = kubernetes/apps.
+*/ -}}
+{{- $oci := fromYaml (readFile (printf "../../apps/%s/%s/app/ocirepository.yaml" .Release.Namespace .Release.Name)) -}}
+chart: {{ $oci.spec.url }}
+version: {{ $oci.spec.ref.tag }}
