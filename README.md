@@ -122,7 +122,8 @@ This Git repository contains the following directories.
 ├── 📁 apps                      # applications organized by namespace
 ├── 📁 bootstrap                 # exactly what it sounds like
 │   ├── 📁 cnpg                  # cnpg patch to run at bootstrap
-│   ├── 📁 helmfile.d            # helmreleases required at bootstrap
+│   ├── 📁 helmfile              # chart sources resolved from app OCIRepositories
+│   ├── 📁 kustomize             # bootstrap resources (secrets template)
 │   ├── 📁 scripts               # some janky hacks
 │   └── 📝 mod.just              # .justfile Bootstrap module
 ├── 📁 components                # re-useable kustomize components

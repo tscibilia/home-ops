@@ -94,7 +94,8 @@ kubernetes                    # K8s cluster
 │   └── kopiur-system        # Kopiur for PVC backup and restore
 ├── bootstrap                 # Directory to bootstrap Talos nodes
 │   ├── cnpg                  # CNPG patches applied during cluster bootstrap
-│   ├── helmfile.d            # Helmreleases required for cluster bootstrap
+│   ├── helmfile              # Chart sources resolved from app OCIRepositories
+│   ├── kustomize             # Bootstrap resources (secrets template)
 │   ├── scripts               # Bootstrap helper scripts
 │   └── mod.just              # .justfile Bootstrap module
 ├── components                # Reusable Kustomize components for apps
