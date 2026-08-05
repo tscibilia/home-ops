@@ -26,6 +26,9 @@ spec:
               RUSTFS_CONSOLE_ENABLE: "true"
               RUSTFS_BROWSER_REDIRECT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               RUSTFS_SERVER_DOMAINS: "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
+              # beta.12 routes OIDC discovery/JWKS/token calls through an
+              # outbound egress policy (rustfs#5159) that rejects private origins
+              RUSTFS_OUTBOUND_ALLOW_ORIGINS: "https://id.${SECRET_DOMAIN}"
               RUSTFS_IDENTITY_OPENID_ENABLE: "true"
               RUSTFS_IDENTITY_OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/rustfs/admin/v3/oidc/callback/default"
               RUSTFS_IDENTITY_OPENID_REDIRECT_URI_DYNAMIC: "off"
