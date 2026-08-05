@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.networking.k8s.io/referencegrant_v1beta1.json
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: ref-tinyauth-svc
+spec:
+  from:
+    - &policy
+      group: gateway.envoyproxy.io
+      kind: SecurityPolicy
+      namespace: default
+    - <<: *policy
+      namespace: media
+    - <<: *policy
+      namespace: network
+    - <<: *policy
+      namespace: observability
+  to:
+    - group: ""
+      kind: Service
+      name: tinyauth

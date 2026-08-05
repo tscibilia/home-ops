@@ -1,0 +1,69 @@
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDInstance
+metadata:
+  name: &app pocketid
+spec:
+  podTemplate:
+    spec:
+      initContainers:
+        - name: init-db
+          image: ghcr.io/home-operations/postgres-init:18
+          envFrom:
+            - secretRef:
+                name: "${APP}-initdb-secret"
+  image: ghcr.io/pocket-id/pocket-id:v2.12.0-distroless@sha256:b2fad8a82fab26fe4c11797dd13ea55aa6c7d6ea93fe829a139f2e28be2d339d
+  deploymentType: Deployment
+  timezone: "${TIMEZONE}"
+  appUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+  databaseUrl:
+    valueFrom:
+      secretKeyRef:
+        name: "${APP}-pguser-secret"
+        key: uri
+  encryptionKey:
+    valueFrom:
+      secretKeyRef:
+        name: &secret pocket-id-secret
+        key: ENCRYPTION_KEY
+  smtp:
+    host: "smtp-relay.default.svc.cluster.local"
+    port: 2525
+    from: "pocket-id@${SECRET_DOMAIN}"
+  geoip:
+    dbPath: "/app/data/GeoLite2-City.mmdb"
+    maxmindLicenseKey:
+      valueFrom:
+        secretKeyRef:
+          name: *secret
+          key: MAXMIND_LICENSE_KEY
+  ui:
+    appName: "Pocket ID"
+    sessionDuration: 43200
+  userManagement:
+    emailsVerified: true
+  logging:
+    level: "info"
+  metrics:
+    enabled: true
+  analyticsDisabled: true
+  versionCheckDisabled: true
+  trustedProxies:
+    enabled: true
+    cidrs: ["10.42.0.0/16"]
+  route:
+    enabled: true
+    hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+    parentRefs:
+      - name: envoy-external
+        namespace: network
+  persistence:
+    enabled: true
+    existingClaim: *app
+    path: /app/data
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    limits:
+      memory: 256Mi

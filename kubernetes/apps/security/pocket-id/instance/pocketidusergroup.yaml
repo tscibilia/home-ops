@@ -1,0 +1,35 @@
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDUserGroup
+metadata:
+  name: id-admin
+spec:
+  name: "ID-Admin"
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDUserGroup
+metadata:
+  name: id-home
+spec:
+  name: "ID-Home"
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDUserGroup
+metadata:
+  name: id-family
+spec:
+  name: "ID-Family"
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDUserGroup
+metadata:
+  name: id-friends
+spec:
+  name: "ID-Friends"
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDUserGroup
+metadata:
+  name: id-users
+spec:
+  name: "ID-Users"

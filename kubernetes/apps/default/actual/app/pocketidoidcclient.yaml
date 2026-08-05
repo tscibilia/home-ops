@@ -1,0 +1,20 @@
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDOIDCClient
+metadata:
+  name: actual
+spec:
+  name: Actual Budget
+  callbackUrls:
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/openid/callback"
+  pkceEnabled: true
+  instanceSelector:
+    matchLabels:
+      app.kubernetes.io/name: pocket-id
+  secret:
+    enabled: true
+    name: actual-oidc-secret
+    keys:
+      clientID: ACTUAL_OPENID_CLIENT_ID
+      clientSecret: ACTUAL_OPENID_CLIENT_SECRET
+      discoveryUrl: ACTUAL_OPENID_DISCOVERY_URL

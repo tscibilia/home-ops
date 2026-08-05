@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: security
+components:
+  - ../../components/alerts
+  - ../../components/secrets
+  - ../../components/kopiur/secret
+resources:
+  - ./namespace.yaml
+  - ./pocket-id/ks.yaml
+  - ./tinyauth/ks.yaml
