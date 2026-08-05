@@ -1,0 +1,77 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tinyauth
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/steveiliop56/tinyauth
+              tag: v5.0.7@sha256:0793c71c49906e079d90c7e693cded9df569217a92d717dc9b171f2116fcd1c6
+            env:
+              TZ: "${TIMEZONE}"
+              TINYAUTH_APPURL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+              TINYAUTH_ANALYTICS_ENABLED: false
+              TINYAUTH_AUTH_SECURECOOKIE: true
+              TINYAUTH_AUTH_SESSIONEXPIRY: 604800
+              TINYAUTH_AUTH_TRUSTEDPROXIES: 10.42.0.0/16
+              TINYAUTH_DATABASE_PATH: /data/tinyauth.db
+              TINYAUTH_RESOURCES_PATH: /data/resources
+              TINYAUTH_OAUTH_AUTOREDIRECT: pocketid
+              TINYAUTH_OAUTH_PROVIDERS_POCKETID_NAME: Pocket-ID
+              TINYAUTH_OAUTH_PROVIDERS_POCKETID_AUTHURL: "https://id.${SECRET_DOMAIN}/authorize"
+              TINYAUTH_OAUTH_PROVIDERS_POCKETID_TOKENURL: "https://id.${SECRET_DOMAIN}/api/oidc/token"
+              TINYAUTH_OAUTH_PROVIDERS_POCKETID_USERINFOURL: "https://id.${SECRET_DOMAIN}/api/oidc/userinfo"
+              TINYAUTH_OAUTH_PROVIDERS_POCKETID_SCOPES: openid email profile groups
+              TINYAUTH_OAUTH_PROVIDERS_POCKETID_REDIRECTURL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}/api/oauth/callback/pocketid"
+            envFrom:
+              - secretRef:
+                  name: tinyauth-oidc-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/healthz
+                    port: &port 3000
+                  periodSeconds: 10
+                  timeoutSeconds: 2
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 256Mi
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        type: emptyDir
