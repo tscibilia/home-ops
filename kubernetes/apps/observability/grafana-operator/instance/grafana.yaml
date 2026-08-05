@@ -15,6 +15,11 @@ spec:
     auth:
       signout_redirect_url: "https://id.${SECRET_DOMAIN}/api/oidc/end-session"
       oauth_auto_login: "true"
+      # Re-links the existing tscibilia account (created under authentik's
+      # generic_oauth identity) to pocket-id's different subject ID, matched
+      # by email — without this, sign-up-disabled logins fail with "user not
+      # found" since pocket-id's sub never matches the old authentik one.
+      oauth_allow_insecure_email_lookup: "true"
     "auth.generic_oauth":
       enabled: "true"
       name: PocketID
@@ -25,8 +30,9 @@ spec:
       # api_url intentionally unset — pocket-id's own Grafana integration guide
       # says to leave API URL empty; Grafana derives claims from the ID token.
       email_attribute_path: "email:primary"
+      use_pkce: "true"
     "auth.generic_oauth.group_mapping":
-      role_attribute_path: "contains(groups[*], 'ID-Home') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || 'Viewer'"
+      role_attribute_path: "contains(groups[*], 'id-home') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || 'Viewer'"
       org_id: "1"
     "auth.basic":
       enabled: "true"
