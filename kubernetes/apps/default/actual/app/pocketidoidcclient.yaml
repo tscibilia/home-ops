@@ -2,7 +2,7 @@
 apiVersion: pocketid.internal/v1alpha1
 kind: PocketIDOIDCClient
 metadata:
-  name: actual
+  name: actual-budget
 spec:
   name: Actual Budget
   callbackUrls:
