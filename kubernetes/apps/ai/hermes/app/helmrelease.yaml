@@ -156,6 +156,8 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-dashboard"
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
             ports:
               - containerPort: &dashPort 9119
                 name: http

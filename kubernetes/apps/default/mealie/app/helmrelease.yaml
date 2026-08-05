@@ -57,10 +57,11 @@ spec:
               # OIDC Values
               OIDC_AUTH_ENABLED: "true"
               OIDC_SIGNUP_ENABLED: "true"
-              OIDC_USER_GROUP: Plex User
-              OIDC_ADMIN_GROUP: authentik Admins
+              OIDC_USER_GROUP: ID-Family
+              OIDC_ADMIN_GROUP: ID-Admin
+              OIDC_SCOPES_OVERRIDE: "openid profile email groups"
               OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
-              OIDC_PROVIDER_NAME: Authentik
+              OIDC_PROVIDER_NAME: Pocket ID
               OIDC_REMEMBER_ME: "true"
               OIDC_USER_CLAIM: email
               # OpenAI Values
@@ -70,6 +71,8 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
             resources:
               requests:
                 cpu: 20m

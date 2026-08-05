@@ -29,6 +29,8 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
             probes:
               liveness: &probes
                 enabled: true
@@ -53,7 +55,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true

@@ -30,6 +30,8 @@ spec:
       namespace: observability
     - name: cnpg-cluster
       namespace: database
+    - name: pocket-id
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/observability/grafana-operator/instance
   postBuild:

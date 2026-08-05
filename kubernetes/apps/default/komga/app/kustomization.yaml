@@ -5,3 +5,5 @@ kind: Component
 resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./pocketidoidcclient.yaml
+  - ./pushsecret.yaml

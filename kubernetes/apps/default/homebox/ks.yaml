@@ -15,6 +15,8 @@ spec:
       namespace: database
     - name: kopiur
       namespace: kopiur-system
+    - name: pocket-id
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/default/homebox/app
   postBuild:
