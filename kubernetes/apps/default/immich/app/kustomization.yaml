@@ -9,6 +9,8 @@ resources:
   - ./resourceclaimtemplate.yaml
   - ./horizontalpodautoscaler.yaml
   - ./grafanaalert.yaml
+  - ./pocketidoidcclient.yaml
+  - ./pushsecret.yaml
 configMapGenerator:
   - name: immich-config-tpl
     files:

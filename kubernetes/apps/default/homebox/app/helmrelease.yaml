@@ -39,13 +39,15 @@ spec:
               HBOX_OPTIONS_ALLOW_REGISTRATION: "false"
               # OIDC Values
               HBOX_OIDC_ENABLED: "true"
-              HBOX_OIDC_ALLOWED_GROUPS: Plex User
+              HBOX_OIDC_ALLOWED_GROUPS: ID-Family
               HBOX_OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
-              HBOX_OIDC_BUTTON_TEXT: "Authentik Sign In"
-              HBOX_OIDC_SCOPE: openid profile email
+              HBOX_OIDC_BUTTON_TEXT: "Pocket ID"
+              HBOX_OIDC_SCOPE: openid profile email groups
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
             resources:
               requests:
                 cpu: 20m

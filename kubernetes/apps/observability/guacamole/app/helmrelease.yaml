@@ -57,6 +57,8 @@ spec:
             envFrom:
               - secretRef:
                   name: guacamole-secret
+              - secretRef:
+                  name: guacamole-oidc-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false

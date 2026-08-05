@@ -48,6 +48,8 @@ spec:
   envFrom:
     - secretRef:
         name: litellm-secret
+    - secretRef:
+        name: litellm-oidc-secret
   resources:
     requests:
       cpu: 10m

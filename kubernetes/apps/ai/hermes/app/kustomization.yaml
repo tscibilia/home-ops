@@ -6,4 +6,6 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./pocketidoidcclient.yaml
+  - ./pushsecret.yaml
   - ./resources/config.yaml

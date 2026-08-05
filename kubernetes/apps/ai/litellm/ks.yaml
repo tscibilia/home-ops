@@ -16,6 +16,8 @@ spec:
       namespace: database
     - name: litellm-operator
     - name: llmkube
+    - name: pocket-id
+      namespace: security
   # TODO: add gitops db init — operator has no initContainer support;
   # need to create CNPG superuser init job or use postgres-operator's
   # custom query to bootstrap the litellm database/user on first deploy.

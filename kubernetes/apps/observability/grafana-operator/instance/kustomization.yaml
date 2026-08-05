@@ -12,5 +12,7 @@ resources:
   - ./grafanafolder.yaml
   - ./httproute.yaml
   - ./pushsecret.yaml
+  - ./oidc-pushsecret.yaml
+  - ./pocketidoidcclient.yaml
   - ./serviceaccount.yaml
   - ./servicemonitor.yaml

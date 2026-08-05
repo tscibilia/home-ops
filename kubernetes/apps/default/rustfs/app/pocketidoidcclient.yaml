@@ -1,0 +1,30 @@
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDOIDCClient
+metadata:
+  name: rustfs
+spec:
+  name: RustFS
+  callbackUrls:
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/rustfs/admin/v3/oidc/callback/default"
+  pkceEnabled: true
+  # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
+  # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
+  # present), so any matchLabels selector here matches nothing and the client
+  # never gets a secret. There is exactly one PocketIDInstance in this cluster;
+  # the operator's default-instance fallback (proven working via pangolin's
+  # client) is what actually resolves this.
+  allowedUserGroups:
+    - name: id-home
+      namespace: security
+    - name: id-family
+      namespace: security
+    - name: id-friends
+      namespace: security
+  secret:
+    enabled: true
+    name: rustfs-oidc-secret
+    keys:
+      clientID: RUSTFS_IDENTITY_OPENID_CLIENT_ID
+      clientSecret: RUSTFS_IDENTITY_OPENID_CLIENT_SECRET
+      discoveryUrl: RUSTFS_IDENTITY_OPENID_CONFIG_URL

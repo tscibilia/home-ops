@@ -30,6 +30,8 @@ spec:
       namespace: database
     - name: guacamole-guacd
       namespace: observability
+    - name: pocket-id
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/observability/guacamole/app
   postBuild:

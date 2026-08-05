@@ -14,12 +14,14 @@ spec:
     - name: qbittorrent
     - name: kopiur
       namespace: kopiur-system
+    - name: pocket-id
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/media/qui/app
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: qb
+      GATUS_SUBDOMAIN: qui
       KOPIUR_CAPACITY: 2Gi
     substituteFrom:
       - kind: Secret

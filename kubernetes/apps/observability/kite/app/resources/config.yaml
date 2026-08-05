@@ -25,10 +25,10 @@ clusters:
     default: true
 
 oauth:
-  - name: authentik
+  - name: pocketid
     clientId: "{{ .KITE_OIDC_CLIENT_ID }}"
     clientSecret: "{{ .KITE_OIDC_CLIENT_SECRET }}"
-    issuer: "https://{{ .AUTHENTIK_SSO_SUBDOMAIN }}.${SECRET_DOMAIN}/application/o/${APP}/"
+    issuer: "{{ .KITE_OIDC_ISSUER_URL }}"
     scopes: "openid,profile,email,groups,offline_access"
     usernameClaim: "email"
     groupsClaim: "groups"
@@ -51,6 +51,6 @@ rbac:
   roleMapping:
     - name: admin
       users: ["sysadmin"]
-      oidcGroups: ["authentik-Admins"]
+      oidcGroups: ["ID-Admin"]
     - name: viewer
       users: ["*"]

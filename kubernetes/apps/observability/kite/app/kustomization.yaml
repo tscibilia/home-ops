@@ -6,6 +6,8 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
+  - ./pocketidoidcclient.yaml
+  - ./pushsecret.yaml
 configMapGenerator:
   - name: kite-config-tpl
     files:

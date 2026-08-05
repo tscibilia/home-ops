@@ -1,0 +1,26 @@
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDOIDCClient
+metadata:
+  name: hermes
+spec:
+  name: Hermes
+  callbackUrls:
+    - "https://${APP}.${SECRET_DOMAIN}/auth/callback"
+  pkceEnabled: true
+  # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
+  # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
+  # present), so any matchLabels selector here matches nothing and the client
+  # never gets a secret. There is exactly one PocketIDInstance in this cluster;
+  # the operator's default-instance fallback (proven working via pangolin's
+  # client) is what actually resolves this.
+  allowedUserGroups:
+    - name: id-family
+      namespace: security
+  secret:
+    enabled: true
+    name: hermes-oidc-secret
+    keys:
+      clientID: HERMES_DASHBOARD_OIDC_CLIENT_ID
+      clientSecret: HERMES_DASHBOARD_OIDC_CLIENT_SECRET
+      issuerUrl: HERMES_DASHBOARD_OIDC_ISSUER

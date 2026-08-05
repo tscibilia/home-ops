@@ -1,0 +1,31 @@
+---
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDOIDCClient
+metadata:
+  name: mealie
+spec:
+  name: Mealie
+  callbackUrls:
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login"
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login?direct=1"
+  pkceEnabled: true
+  # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
+  # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
+  # present), so any matchLabels selector here matches nothing and the client
+  # never gets a secret. There is exactly one PocketIDInstance in this cluster;
+  # the operator's default-instance fallback (proven working via pangolin's
+  # client) is what actually resolves this.
+  allowedUserGroups:
+    - name: id-home
+      namespace: security
+    - name: id-family
+      namespace: security
+    - name: id-friends
+      namespace: security
+  secret:
+    enabled: true
+    name: mealie-oidc-secret
+    keys:
+      clientID: OIDC_CLIENT_ID
+      clientSecret: OIDC_CLIENT_SECRET
+      discoveryUrl: OIDC_CONFIGURATION_URL
