@@ -12,12 +12,6 @@ spec:
     - "app.immich:///oauth-callback"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: true
-  # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
-  # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
-  # present), so any matchLabels selector here matches nothing and the client
-  # never gets a secret. There is exactly one PocketIDInstance in this cluster;
-  # the operator's default-instance fallback (proven working via pangolin's
-  # client) is what actually resolves this.
   allowedUserGroups:
     - name: id-admin
       namespace: security
