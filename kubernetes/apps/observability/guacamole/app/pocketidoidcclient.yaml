@@ -15,6 +15,10 @@ spec:
   # the operator's default-instance fallback (proven working via pangolin's
   # client) is what actually resolves this.
   allowedUserGroups:
+    - name: id-home
+      namespace: security
+    - name: id-family
+      namespace: security
     - name: id-friends
       namespace: security
   secret:

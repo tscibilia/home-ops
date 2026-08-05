@@ -7,9 +7,7 @@ spec:
   name: Komga
   callbackUrls:
     # Spring's registration id is "pocketid" (see helmrelease.yaml), so the
-    # callback path is /login/oauth2/code/pocketid, not .../authentik — komga
-    # never actually had OIDC wired up before this (no prior env vars existed),
-    # so there's no working .../authentik callback being replaced.
+    # callback path is /login/oauth2/code/pocketid, not .../authentik
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login/oauth2/code/pocketid"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
@@ -19,6 +17,10 @@ spec:
   # the operator's default-instance fallback (proven working via pangolin's
   # client) is what actually resolves this.
   allowedUserGroups:
+    - name: id-home
+      namespace: security
+    - name: id-family
+      namespace: security
     - name: id-friends
       namespace: security
   secret:

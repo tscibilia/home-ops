@@ -66,7 +66,7 @@ oauth:
   buttonText: Login with Pocket ID
   clientId: "{{ .IMMICH_OIDC_CLIENT_ID}}"
   clientSecret: "{{ .IMMICH_OIDC_CLIENT_SECRET }}"
-  scope: "openid email profile"
+  scope: "openid email profile groups"
 
 passwordLogin:
   enabled: false
