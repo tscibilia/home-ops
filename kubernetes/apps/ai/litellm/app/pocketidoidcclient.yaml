@@ -8,8 +8,9 @@ spec:
   name: LiteLLM
   callbackUrls:
     - "https://${APP}.${SECRET_DOMAIN}/sso/callback"
-  # LiteLLM's generic-OAuth SSO client doesn't send a code_challenge —
-  # PKCE required on the client caused "code_challenge missing" errors.
+  launchUrl: "https://${APP}.${SECRET_DOMAIN}/"
+  logo:
+    logoUrl: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/litellm.webp"
   pkceEnabled: false
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are

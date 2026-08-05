@@ -7,11 +7,10 @@ metadata:
 spec:
   name: Immich
   callbackUrls:
-    - "app.immich:///oauth-callback"
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/auth/login"
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/user-settings"
-    - "http://immich-app.default.svc.cluster.local:2283/auth/login"
-    - "http://immich-app.default.svc.cluster.local:2283/user-settings"
+    - "app.immich:///oauth-callback"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are

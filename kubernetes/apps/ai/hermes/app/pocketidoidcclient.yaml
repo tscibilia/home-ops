@@ -8,6 +8,9 @@ spec:
   name: Hermes
   callbackUrls:
     - "https://${APP}.${SECRET_DOMAIN}/auth/callback"
+  launchUrl: "https://${APP}.${SECRET_DOMAIN}/"
+  logo:
+    logoUrl: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/hermes-agent.webp"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are

@@ -8,6 +8,7 @@ spec:
   name: qui
   callbackUrls:
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/auth/oidc/callback"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are

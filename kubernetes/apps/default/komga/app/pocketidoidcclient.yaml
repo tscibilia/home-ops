@@ -10,6 +10,7 @@ spec:
     # Spring's registration id is "pocketid" (see helmrelease.yaml), so the
     # callback path is /login/oauth2/code/pocketid, not .../authentik
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login/oauth2/code/pocketid"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are

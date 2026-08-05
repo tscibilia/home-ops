@@ -8,6 +8,7 @@ spec:
   name: Pangolin
   callbackUrls:
     - "https://tun.${SECRET_DOMAIN}/auth/idp/1/oidc/callback"
+  launchUrl: "https://tun.${SECRET_DOMAIN}/"
   allowedUserGroups:
     - name: id-admin
       namespace: security

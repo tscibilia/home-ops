@@ -9,6 +9,7 @@ spec:
   callbackUrls:
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login"
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login?direct=1"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
