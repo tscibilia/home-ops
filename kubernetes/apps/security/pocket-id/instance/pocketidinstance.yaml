@@ -29,7 +29,7 @@ spec:
   smtp:
     host: "smtp-relay.default.svc.cluster.local"
     port: 2525
-    from: "pocket-id@${SECRET_DOMAIN}"
+    from: "pocket-id@mail.${SECRET_DOMAIN}"
   geoip:
     dbPath: "/app/data/GeoLite2-City.mmdb"
     maxmindLicenseKey:
