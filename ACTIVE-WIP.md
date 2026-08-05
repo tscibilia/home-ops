@@ -17,6 +17,7 @@
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
+- [ ] ⚠️ **Guacamole:** OpenID ext only supports implicit flow (`response_type=id_token`), pocket-id rejects it with `unsupported_response_type` - **needs auth-code-flow support upstream, or front it with ext-auth instead**
 
 ## ⛔ Blocked
 
