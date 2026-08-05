@@ -51,6 +51,6 @@ rbac:
   roleMapping:
     - name: admin
       users: ["sysadmin"]
-      oidcGroups: ["ID-Admin"]
+      oidcGroups: ["ID-Admin", "ID-Home"]
     - name: viewer
       users: ["*"]

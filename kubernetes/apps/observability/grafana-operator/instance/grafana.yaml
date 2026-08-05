@@ -32,7 +32,7 @@ spec:
       email_attribute_path: "email:primary"
       use_pkce: "true"
     "auth.generic_oauth.group_mapping":
-      role_attribute_path: "contains(groups[*], 'id-home') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || 'Viewer'"
+      role_attribute_path: "contains(groups[*], 'ID-Home') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || 'Viewer'"
       org_id: "1"
     "auth.basic":
       enabled: "true"

@@ -58,7 +58,7 @@ spec:
               OIDC_AUTH_ENABLED: "true"
               OIDC_SIGNUP_ENABLED: "true"
               OIDC_USER_GROUP: ID-Family
-              OIDC_ADMIN_GROUP: ID-Admin
+              OIDC_ADMIN_GROUP: ID-Home
               OIDC_SCOPES_OVERRIDE: "openid profile email groups"
               OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
               OIDC_PROVIDER_NAME: PocketID
