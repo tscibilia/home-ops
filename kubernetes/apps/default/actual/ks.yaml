@@ -12,6 +12,8 @@ spec:
       namespace: external-secrets
     - name: kopiur
       namespace: kopiur-system
+    - name: pocket-id
+      namespace: security
   interval: 1h
   path: ./kubernetes/apps/default/actual/app
   postBuild:
