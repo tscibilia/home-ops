@@ -11,7 +11,7 @@ spec:
     # callback path is /login/oauth2/code/pocketid, not .../authentik
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login/oauth2/code/pocketid"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
-  pkceEnabled: true
+  pkceEnabled: false
   allowedUserGroups:
     - name: id-admin
       namespace: security
