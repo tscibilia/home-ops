@@ -41,7 +41,14 @@ spec:
     appName: "Pocket ID"
     sessionDuration: 43200
   userManagement:
-    emailsVerified: true
+    emailsVerified: false # auto-verify emails
+    allowOwnAccountEdit: true # let users edit own details
+    allowUserSignups: "disabled"
+  emailNotifications:
+    loginNotification: false # notify on login from new device
+    oneTimeAccessAsAdmin: true # admins can send login codes
+    apiKeyExpiration: true # notify when API keys are about to expire
+    verification: true # email verification on signup/change
   logging:
     level: "info"
   metrics:
