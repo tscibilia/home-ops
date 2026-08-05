@@ -7,7 +7,9 @@ spec:
   name: Open WebUI
   callbackUrls:
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth/oidc/callback"
-  pkceEnabled: true
+  # Open WebUI's authlib-based OAuth client doesn't send a code_challenge —
+  # PKCE required on the client caused "code_challenge missing" errors.
+  pkceEnabled: false
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
   # present), so any matchLabels selector here matches nothing and the client

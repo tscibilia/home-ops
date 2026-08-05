@@ -31,4 +31,7 @@ spec:
     keys:
       clientID: IMMICH_OIDC_CLIENT_ID
       clientSecret: IMMICH_OIDC_CLIENT_SECRET
-      issuerUrl: IMMICH_OIDC_ISSUER_URL
+      # Immich's "Issuer URL" field actually wants the full discovery
+      # document URL (pocket-id's own immich integration guide pastes
+      # its "OIDC Discovery URL" here), not the bare issuer.
+      discoveryUrl: IMMICH_OIDC_ISSUER_URL

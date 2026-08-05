@@ -25,7 +25,7 @@ spec:
     enabled: true
     name: guacamole-oidc-secret
     keys:
-      clientID: GUAC_OIDC_CLIENT_ID
+      clientID: OPENID_CLIENT_ID
       authorizationUrl: OPENID_AUTHORIZATION_ENDPOINT
       jwksUrl: OPENID_JWKS_ENDPOINT
       issuerUrl: OPENID_ISSUER

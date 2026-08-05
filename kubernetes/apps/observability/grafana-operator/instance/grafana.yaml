@@ -22,12 +22,11 @@ spec:
       empty_scopes: "false"
       auth_url: "https://id.${SECRET_DOMAIN}/authorize"
       token_url: "https://id.${SECRET_DOMAIN}/api/oidc/token"
-      api_url: "https://id.${SECRET_DOMAIN}/api/oidc/userinfo"
-      login_attribute_path: preferred_username
-      groups_attribute_path: groups
-      name_attribute_path: name
+      # api_url intentionally unset — pocket-id's own Grafana integration guide
+      # says to leave API URL empty; Grafana derives claims from the ID token.
+      email_attribute_path: "email:primary"
     "auth.generic_oauth.group_mapping":
-      role_attribute_path: "contains(groups, 'ID-Home') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
+      role_attribute_path: "contains(groups[*], 'ID-Home') && 'Admin' || contains(groups[*], 'Grafana Editors') && 'Editor' || 'Viewer'"
       org_id: "1"
     "auth.basic":
       enabled: "true"

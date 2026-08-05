@@ -42,7 +42,11 @@ spec:
               HBOX_OIDC_ALLOWED_GROUPS: ID-Family
               HBOX_OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
               HBOX_OIDC_BUTTON_TEXT: "PocketID"
-              HBOX_OIDC_SCOPE: openid profile email
+              HBOX_OIDC_SCOPE: openid profile email groups
+              # Required behind a reverse proxy so homebox detects HTTPS
+              # correctly — without this it builds redirect_uri as http://,
+              # which pocket-id rejects since only https:// is registered.
+              HBOX_OPTIONS_TRUST_PROXY: "true"
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"

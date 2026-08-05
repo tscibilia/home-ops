@@ -6,7 +6,7 @@ metadata:
 spec:
   name: Homebox
   callbackUrls:
-    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/v1/users/login/oidc/callback"
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/v1/users/login/oidc/callback/"
   pkceEnabled: true
   # No instanceSelector: the PocketIDInstance carries no app.kubernetes.io/name
   # label (verified live — only Flux's kustomize.toolkit.fluxcd.io/* labels are
