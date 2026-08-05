@@ -13,7 +13,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: *app
+      GATUS_SUBDOMAIN: auth
       GATUS_PATH: /api/healthz
     substituteFrom:
       - kind: Secret

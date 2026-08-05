@@ -31,50 +31,42 @@ All apps use inline `route:` blocks in HelmRelease:
 
 ```yaml
 route:
-  app:
-    hostnames: ["app.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-internal
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *port  # Variable reference from service definition
+    app:
+        hostnames: ["app.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-internal
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *port # Variable reference from service definition
 ```
 
 **External Apps:**
 
 ```yaml
 route:
-  app:
-    hostnames: ["app.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-external
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *port  # Variable reference from service definition
+    app:
+        hostnames: ["app.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-external
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *port # Variable reference from service definition
 ```
 
-## Authentication (Authentik)
+## Authentication (Tinyauth)
 
-For apps requiring authentication, use the appropriate `ext-auth` component:
-
-**For internal apps (envoy-internal):**
-
-```yaml
-# In app's kustomization.yaml
-components:
-    - ../../../../components/auth/internal
-```
-
-**For external apps (envoy-external):**
+For apps requiring forward auth, add the `auth` component. There is a single
+component for both gateways — the SecurityPolicy targets the app's HTTPRoute,
+not the gateway, so internal and external apps use the same one:
 
 ```yaml
-# In app's kustomization.yaml
+# In app's ks.yaml
 components:
-    - ../../../../components/auth/external
+    - ../../../../components/auth
 ```
 
 **In app's ks.yaml:**
@@ -85,7 +77,9 @@ postBuild:
         APP: app-name # Must match HelmRelease/HTTPRoute name
 ```
 
-See `kubernetes/components/auth/internal/` and `kubernetes/components/auth/external/` for SecurityPolicy configuration.
+See `kubernetes/components/auth/` for SecurityPolicy configuration. Override
+`EXT_AUTH_TARGET`, `EXT_AUTH_KIND` or `EXT_AUTH_GROUP` if the policy needs to
+target something other than an HTTPRoute named `${APP}`.
 
 ## Monitoring
 
@@ -124,18 +118,18 @@ kubectl describe httproute <name> -n <namespace>
 # Check: parentRefs.name, parentRefs.namespace, sectionName
 ```
 
-**Authentik auth not working:**
+**Tinyauth forward auth not working:**
 
 ```bash
 kubectl get securitypolicy -A
-kubectl get referencegrant -n default
-# Verify ext-auth component is applied and APP variable is set
+kubectl get referencegrant -n security
+# Verify auth component is applied and APP variable is set
 ```
 
 ## Additional Documentation
 
 - **[MIGRATION.md](./MIGRATION.md)**: Migration guide with cloudflared integration and conversion patterns
-- **[ext-auth component](../../../components/ext-auth/)**: Authentik SecurityPolicy configuration
+- **[auth component](../../../components/auth/)**: Tinyauth SecurityPolicy configuration
 
 ## References
 

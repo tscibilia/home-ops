@@ -7,7 +7,7 @@ metadata:
 spec:
   name: Tinyauth
   callbackUrls:
-    - "https://tinyauth.${SECRET_DOMAIN}/api/oauth/callback/pocketid"
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/oauth/callback/pocketid"
   pkceEnabled: true
   allowedUserGroups:
     - name: id-admin

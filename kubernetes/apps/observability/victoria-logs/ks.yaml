@@ -6,7 +6,7 @@ metadata:
   name: &app victoria-logs
 spec:
   components:
-    - ../../../../components/auth/tinyauth-internal
+    - ../../../../components/auth
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
