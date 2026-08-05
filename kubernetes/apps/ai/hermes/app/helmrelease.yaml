@@ -153,9 +153,9 @@ spec:
             args: ["dashboard", "--host", "0.0.0.0"]
             env:
               GATEWAY_HEALTH_URL: http://localhost:8642
+              HERMES_DASHBOARD_OIDC_SCOPES: "openid profile email offline_access"
+              HERMES_DASHBOARD_PUBLIC_URL: https://${APP}.${SECRET_DOMAIN}
             envFrom:
-              - secretRef:
-                  name: "{{ .Release.Name }}-dashboard"
               - secretRef:
                   name: "{{ .Release.Name }}-oidc-secret"
             ports:
