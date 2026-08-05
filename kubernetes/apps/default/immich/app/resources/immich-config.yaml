@@ -63,7 +63,7 @@ oauth:
   issuerUrl: "{{ .IMMICH_OIDC_ISSUER_URL }}"
   autoLaunch: false
   autoRegister: true
-  buttonText: Login with Pocket ID
+  buttonText: Login with PocketID
   clientId: "{{ .IMMICH_OIDC_CLIENT_ID}}"
   clientSecret: "{{ .IMMICH_OIDC_CLIENT_SECRET }}"
   scope: "openid email profile groups"

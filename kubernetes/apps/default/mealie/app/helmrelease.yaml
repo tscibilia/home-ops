@@ -61,7 +61,7 @@ spec:
               OIDC_ADMIN_GROUP: ID-Admin
               OIDC_SCOPES_OVERRIDE: "openid profile email groups"
               OIDC_AUTO_REDIRECT: "false" # true, you will be sent directly to your Identity Provider
-              OIDC_PROVIDER_NAME: Pocket ID
+              OIDC_PROVIDER_NAME: PocketID
               OIDC_REMEMBER_ME: "true"
               OIDC_USER_CLAIM: email
               # OpenAI Values

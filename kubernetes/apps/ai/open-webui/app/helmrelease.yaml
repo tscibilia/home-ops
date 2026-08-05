@@ -35,7 +35,7 @@ spec:
               ENABLE_LOGIN_FORM: false
               ENABLE_OAUTH_SIGNUP: true
               OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
-              OAUTH_PROVIDER_NAME: Pocket ID
+              OAUTH_PROVIDER_NAME: PocketID
               OPENID_REDIRECT_URI: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth/oidc/callback"
               OAUTH_SCOPES: openid email profile
               TORCHINDUCTOR_CACHE_DIR: /tmp/.torch

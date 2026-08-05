@@ -48,6 +48,8 @@ spec:
       CNPG_NAME: &postgresAppName pgsql-cluster
       GATUS_SUBDOMAIN: id
       KOPIUR_CAPACITY: 1Gi
+      KOPIUR_PUID: "65534"
+      KOPIUR_PGID: "65534"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
