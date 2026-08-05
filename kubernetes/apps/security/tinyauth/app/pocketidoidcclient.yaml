@@ -10,7 +10,7 @@ spec:
   pkceEnabled: true
   instanceSelector:
     matchLabels:
-      app.kubernetes.io/name: pocket-id
+      app.kubernetes.io/name: pocketid
   secret:
     enabled: true
     name: tinyauth-oidc-secret
