@@ -9,7 +9,11 @@ spec:
     - &policy
       group: gateway.envoyproxy.io
       kind: SecurityPolicy
+      namespace: database
+    - <<: *policy
       namespace: default
+    - <<: *policy
+      namespace: flux-system
     - <<: *policy
       namespace: media
     - <<: *policy

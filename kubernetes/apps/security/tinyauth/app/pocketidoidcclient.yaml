@@ -14,6 +14,11 @@ spec:
   # never gets a secret. There is exactly one PocketIDInstance in this cluster;
   # the operator's default-instance fallback (proven working via pangolin's
   # client) is what actually resolves this.
+  allowedUserGroups:
+    - name: id-admin
+      namespace: security
+    - name: id-home
+      namespace: security
   secret:
     enabled: true
     name: tinyauth-oidc-secret

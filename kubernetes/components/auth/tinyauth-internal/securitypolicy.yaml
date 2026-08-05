@@ -7,23 +7,23 @@ metadata:
 spec:
   extAuth:
     failOpen: false
-    headersToExtAuth: ["cookie", "x-forwarded-proto", "x-forwarded-host", "x-forwarded-uri"]
+    headersToExtAuth:
+      - X-Forwarded-For
+      - X-Forwarded-Host
+      - X-Forwarded-Proto
+      - X-Forwarded-Uri
+      - accept
+      - cookie
+      - user-agent
     http:
       backendRefs:
         - name: tinyauth
           namespace: security
           port: 3000
-      path: /api/auth/envoy
+      path: /api/auth/envoy?path=
       headersToBackend:
-        [
-          "set-cookie",
-          "remote-user",
-          "remote-name",
-          "remote-email",
-          "remote-groups",
-          "remote-sub",
-          "authorization",
-        ]
+        - Location
+        - Set-Cookie
   targetRefs:
     - group: "${EXT_AUTH_GROUP:-gateway.networking.k8s.io}"
       kind: "${EXT_AUTH_KIND:-HTTPRoute}"
