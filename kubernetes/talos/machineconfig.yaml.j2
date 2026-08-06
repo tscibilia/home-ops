@@ -89,8 +89,10 @@ machine:
     net.ipv4.tcp_slow_start_after_idle: "0"    # 2.5GbE + CEPH
     net.ipv4.tcp_window_scaling: "1"           # enable tcp window scaling
     net.ipv4.tcp_wmem: 4096 65536 67108864     # 2.5GbE
-    net.ipv6.conf.all.disable_ipv6: "1"        # disable ipv6 (cluster is v4-only; otbr/matter re-enable per-pod on net1)
-    net.ipv6.conf.default.disable_ipv6: "1"    # disable ipv6 (cluster is v4-only; otbr/matter re-enable per-pod on net1)
+    # NOTE: do NOT set net.ipv6.conf.{all,default}.disable_ipv6=1 here. It removes ::1
+    # from lo, and kube-apiserver's admission chain calls itself at https://[::1]:6443,
+    # which breaks every PVC create/dry-run cluster-wide (kopiur snapshots, Flux ks).
+    # AAAA suppression for pods is handled in the coredns HelmRelease instead.
     sunrpc.tcp_max_slot_table_entries: "128"   # nfs
     sunrpc.tcp_slot_table_entries: "128"       # nfs
     user.max_user_namespaces: "11255"          # rootless containers
