@@ -39,11 +39,15 @@ spec:
               fallthrough in-addr.arpa ip6.arpa
           - name: autopath
             parameters: "@kubernetes"
+          # Cluster is IPv4-only (v4 podCIDRs, service ipFamilies: [IPv4], cilium v4).
+          # Pods have no IPv6 egress, so returning AAAA for upstream names makes Go's
+          # happy-eyeballs dial v6 first and fail ENETUNREACH. Suppress AAAA globally
+          # rather than per-domain; cluster.local services are v4-only so NODATA here
+          # matches what the kubernetes plugin would return anyway.
           - name: template
             parameters: IN AAAA
             configBlock: |-
-              match (^|\.)githubusercontent\.com\.$
-              match (^|\.)github\.com\.$
+              match .*
               fallthrough
           - name: forward
             parameters: . /etc/resolv.conf
