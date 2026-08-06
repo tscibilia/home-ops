@@ -11,6 +11,11 @@ spec:
       recordType: A
       targets:
         - ${VPS_IP}
+      # DNS-only: Cloudflare's proxy caps request bodies at 100MB, which breaks
+      # large Immich uploads. Pangolin/Traefik is the intended edge for this record.
+      providerSpecific:
+        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
+          value: "false"
     - dnsName: external.${CEAPP_DOMAIN}
       recordType: A
       targets:

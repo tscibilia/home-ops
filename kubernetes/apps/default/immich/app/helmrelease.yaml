@@ -29,7 +29,7 @@ spec:
               IMMICH_TELEMETRY_INCLUDE: all
               IMMICH_CONFIG_FILE: /config/immich-config.yaml
               IMMICH_IGNORE_MOUNT_CHECK_ERRORS: true
-              DB_STORAGE_TYPE: 'HDD'
+              DB_STORAGE_TYPE: "HDD"
               DB_USERNAME:
                 valueFrom:
                   secretKeyRef:
@@ -134,6 +134,10 @@ spec:
 
     route:
       app:
+        annotations:
+          # DNS-only: Cloudflare's proxy caps request bodies at 100MB, which fails
+          # large photo/video uploads with NSURLErrorDomain -1017 on the iOS client.
+          external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-external
