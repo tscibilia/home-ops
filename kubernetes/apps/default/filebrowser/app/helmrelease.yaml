@@ -17,8 +17,9 @@ spec:
         containers:
           app:
             image:
-              # TODO: v2 is in preview, so this pins a non-semver tag to keep Renovate on the
-              # 2.x-preview line. When v2.0.0 GA ships, move back to a semver tag
+              # TODO: v2 is in preview. Renovate is pinned to 2.x.x-preview-x via a regex
+              # versioning rule in .renovate/overrides.json5 — GA tags will NOT match, so
+              # the move to stable is deliberate. Drop both when v2.0.0 ships.
               repository: docker.io/gtstef/filebrowser
               tag: 2.0.0-preview-5@sha256:858a60fc6e742f2d4e12669074d08b242e2e670e71414aba1597caad54ed22c4
             env:
@@ -133,3 +134,9 @@ spec:
         path: /mnt/nas/data/work/grey
         globalMounts:
           - path: /srv/grey
+      nadesign:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/work/nadesign
+        globalMounts:
+          - path: /srv/nadesign
