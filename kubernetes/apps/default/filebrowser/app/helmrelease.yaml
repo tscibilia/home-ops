@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app boxbox
+  name: &app filebrowser
 spec:
   chartRef:
     kind: OCIRepository
@@ -17,21 +17,20 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/jr4dh3y/boxbox
-              tag: 0.2.1@sha256:cdcb9a61919cf64ca17812e16d792bf413657c71baa497e5fd2e9db93f22e7d5
+              # TODO: v2 is in preview, so this pins a non-semver tag to keep Renovate on the
+              # 2.x-preview line. When v2.0.0 GA ships, move back to a semver tag
+              repository: docker.io/gtstef/filebrowser
+              tag: 2.0.0-preview-5@sha256:858a60fc6e742f2d4e12669074d08b242e2e670e71414aba1597caad54ed22c4
             env:
-              BOXBOX_ALLOWED_ORIGINS: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
-            envFrom:
-              - secretRef:
-                  name: boxbox-secret
+              FILEBROWSER_CONFIG: /config/config.yaml
             probes:
               liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /health
-                    port: &port 80
+                    path: ${GATUS_PATH}
+                    port: &port ${FILEBROWSER_PORT}
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -39,25 +38,25 @@ spec:
               readiness: *probes
             resources:
               requests:
-                cpu: 100m
+                cpu: 20m
                 memory: 128Mi
               limits:
-                memory: 512Gi
+                memory: 1Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities:
-                drop: [ALL]
-                add: ["DAC_READ_SEARCH", "CHOWN", "FOWNER"]
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: &uid 568
+        runAsGroup: *uid
+        fsGroup: *uid
         fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [4006, 4007, 4008, 4009] # truenas GIDs; 4009=filebrowser_rw
         seccompProfile: { type: RuntimeDefault }
-        supplementalGroups: [3000, 4002, 4005, 4006]
     service:
       app:
         controller: *app
@@ -68,90 +67,69 @@ spec:
       app:
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
-          - name: envoy-external
+          - name: envoy-internal
             namespace: network
         rules:
           - backendRefs:
               - identifier: app
                 port: *port
-    configMaps:
-      config:
-        data:
-          config.yaml: |
-            port: 80
-            host: "0.0.0.0"
-            rate_limit_rps: 10
-            max_upload_mb: 10240
-            chunk_size_mb: 5
-            mount_points:
-              - name: "Users"
-                path: "/mnt/tscibilia"
-                read_only: false
-              - name: "System"
-                path: "/mnt/system"
-                read_only: false
-              - name: "Docs"
-                path: "/mnt/docs"
-                read_only: false
-              - name: "Lightroom"
-                path: "/mnt/lightroom"
-                read_only: false
-              - name: "Strata"
-                path: "/mnt/strata"
-                read_only: false
-              - name: "Grey"
-                path: "/mnt/grey"
-                read_only: false
     persistence:
-      config-file:
-        type: configMap
-        identifier: config
-        globalMounts:
-          - path: /app/config.yaml
-            subPath: config.yaml
-            readOnly: true
       data:
         existingClaim: *app
         globalMounts:
           - path: /data
-      tmp:
+      config-file:
+        type: secret
+        name: filebrowser-secret
+        globalMounts:
+          - path: /config/config.yaml
+            subPath: config.yaml
+            readOnly: true
+      cache:
         type: emptyDir
         globalMounts:
           - path: /tmp
-      # TODO: Not NFS shared from trueNAS
-      users:
+      # /srv/users itself is container-local; only the three homes below are NFS. The parent
+      # dataset is mode 0771 (traverse, no list), so nothing here depends on listing it.
+      users-tscibilia:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/users/tscibilia
         globalMounts:
-          - path: /mnt/tscibilia
-      system:
+          - path: /srv/users/tscibilia
+      users-samantha:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/system
+        path: /mnt/nas/data/users/samantha
         globalMounts:
-          - path: /mnt/system
+          - path: /srv/users/samantha
+      users-alice:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/users/alice
+        globalMounts:
+          - path: /srv/users/alice
       docs:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/docs
         globalMounts:
-          - path: /mnt/docs
-      lightroom:
+          - path: /srv/docs
+      system:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/shares/lightroom
+        path: /mnt/nas/data/system
         globalMounts:
-          - path: /mnt/lightroom
+          - path: /srv/system
       strata:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/work/strata
         globalMounts:
-          - path: /mnt/strata
+          - path: /srv/strata
       grey:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/work/grey
         globalMounts:
-          - path: /mnt/grey
+          - path: /srv/grey

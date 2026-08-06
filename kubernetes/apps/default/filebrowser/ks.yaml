@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app boxbox
+  name: &app filebrowser
 spec:
   components:
     - ../../../../components/kopiur/backup
@@ -12,15 +12,21 @@ spec:
       namespace: external-secrets
     - name: kopiur
       namespace: kopiur-system
+    - name: pocket-id
+      namespace: security
   interval: 1h
-  path: ./kubernetes/apps/default/boxbox/app
+  path: ./kubernetes/apps/default/filebrowser/app
   postBuild:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: drive
-      KOPIUR_CAPACITY: 2Gi
-      KOPIUR_PUID: "0"
-      KOPIUR_PGID: "0"
+      GATUS_PATH: /health
+      # Must be >1024 — the pod runs as uid 568 and cannot bind a privileged port.
+      # Shared by the HelmRelease (probes, service, route) and the templated config.yaml.
+      FILEBROWSER_PORT: "8080"
+      KOPIUR_CAPACITY: 1Gi
+      KOPIUR_PUID: "568"
+      KOPIUR_PGID: "568"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
