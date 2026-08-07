@@ -1,0 +1,18 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
+# The towonel-agent dashboard ships with the chart itself
+# (monitoring.dashboards.grafanaOperator in helmrelease.yaml), versioned with
+# the app. Only the hub/edge dashboard lives here — the agent chart does not
+# ship it. Panels stay empty until the VPS hub/edge metrics endpoint
+# (TOWONEL_EDGE_HEALTH_LISTEN_ADDR) is a Prometheus scrape target.
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: towonel-hub
+spec:
+  allowCrossNamespaceImport: true
+  instanceSelector:
+    matchLabels:
+      grafana.internal/instance: grafana
+  folder: "Networking"
+  url: https://codeberg.org/towonel/towonel/raw/tag/v1.5.2/deploy/grafana/towonel-hub.json

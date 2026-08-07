@@ -27,3 +27,19 @@ spec:
     serviceMonitor:
       main:
         enabled: true
+        endpoints:
+          - port: metrics
+            interval: 1m
+            scrapeTimeout: 10s
+            path: /metrics
+    monitoring:
+      prometheusRule:
+        enabled: true
+      dashboards:
+        enabled: true
+        grafanaOperator:
+          enabled: true
+          allowCrossNamespaceImport: true
+          folder: "Networking"
+          matchLabels:
+            grafana.internal/instance: grafana
