@@ -11,9 +11,6 @@ spec:
       recordTTL: 60
       targets: &target
         - ${TOWONEL_VPS_IP}
-      providerSpecific:
-        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
-          value: "false"
     - dnsName: twnl-external.${CEAPP_DOMAIN}
       recordType: A
       recordTTL: 60
@@ -22,9 +19,3 @@ spec:
       recordType: A
       recordTTL: 60
       targets: *target
-      # DNS-only: Caddy on the VPS obtains its cert for this hostname via
-      # ACME tls-alpn-01, which needs the challenge to reach Caddy directly.
-      # Proxying would terminate TLS at Cloudflare's edge and break issuance.
-      providerSpecific:
-        - name: external-dns.alpha.kubernetes.io/cloudflare-proxied
-          value: "false"
