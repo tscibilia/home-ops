@@ -106,10 +106,6 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-towonel/acme-email
-  UNIFI_HOSTNAME:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-unifi/hostname
 force_recreate: false
 reconciliation:
   enabled: true

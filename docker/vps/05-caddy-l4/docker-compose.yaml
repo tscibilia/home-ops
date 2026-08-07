@@ -9,10 +9,8 @@ services:
     environment:
       CADDY_ACME_EMAIL: ${CADDY_ACME_EMAIL}
       TOWONEL_HUB_HOSTNAME: ${TOWONEL_HUB_HOSTNAME}
-      UNIFI_HOSTNAME: ${UNIFI_HOSTNAME}
       VPS_LOCAL_HOSTS: >-
         ${TOWONEL_HUB_HOSTNAME}
-        ${UNIFI_HOSTNAME}
     ports:
       - 443:443
     volumes:
