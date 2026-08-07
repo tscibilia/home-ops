@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app towonel-agent
+spec:
+  dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
+  interval: 1h
+  path: ./kubernetes/apps/network/towonel-agent/app
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: network
+  wait: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: towonel-agent-config
+spec:
+  dependsOn:
+    - name: towonel-agent
+  interval: 1h
+  path: ./kubernetes/apps/network/towonel-agent/config
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+      - kind: Secret
+        name: towonel-agent-secret
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: network
+  wait: true

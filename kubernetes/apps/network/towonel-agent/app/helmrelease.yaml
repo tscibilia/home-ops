@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app towonel-agent
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    agent:
+      services:
+        - hostname: "*.${SECRET_DOMAIN}"
+          origin: &origin envoy-external.network.svc.cluster.local:443
+        - hostname: "*.${CEAPP_DOMAIN}"
+          origin: *origin
+        - hostname: "${CEAPP_DOMAIN}"
+          origin: *origin
+      inviteTokenSecret:
+        name: towonel-agent-secret
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+    serviceMonitor:
+      main:
+        enabled: true
