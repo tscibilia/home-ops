@@ -36,7 +36,7 @@
 
     - name: user
       become: true
-      when: bootstrap_mode | default(false)
+      when: bootstrap_mode | default(false) | bool
       tags: user
       block:
         - name: user | Create ubuntu user
@@ -51,9 +51,24 @@
             user: ubuntu
             key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
+        # Ubuntu's default `%sudo ALL=(ALL:ALL) ALL` requires a password, and
+        # this account is created without one. Without this drop-in every
+        # `become: true` task fails with "Missing sudo password" on the second
+        # run — by which point sshd has moved to {{ host_ssh_port }} and
+        # PermitRootLogin is off, leaving no privileged way back in.
+        # `validate` guards against a malformed file locking out sudo entirely.
+        - name: user | Grant passwordless sudo
+          ansible.builtin.copy:
+            dest: /etc/sudoers.d/90-ubuntu-nopasswd
+            content: "ubuntu ALL=(ALL) NOPASSWD:ALL\n"
+            owner: root
+            group: root
+            mode: "0440"
+            validate: visudo -cf %s
+
     - name: packages
       become: true
-      when: bootstrap_mode | default(false)
+      when: bootstrap_mode | default(false) | bool
       tags: packages
       block:
         - name: packages | Install Docker
@@ -70,7 +85,7 @@
 
     - name: ssh
       become: true
-      when: bootstrap_mode | default(false)
+      when: bootstrap_mode | default(false) | bool
       tags: ssh
       block:
         - name: ssh | Update SSH socket port
@@ -119,7 +134,7 @@
             rule: allow
             port: "4443"
             proto: tcp
-          when: unifi_host | default(false)
+          when: unifi_host | default(false) | bool
 
         # Provider images ship sshd on 22; the bootstrap run needs it to move
         # sshd to {{ host_ssh_port }}. Every non-bootstrap run removes it again.
@@ -128,7 +143,7 @@
             rule: allow
             port: "22"
             proto: tcp
-          when: bootstrap_mode | default(false)
+          when: bootstrap_mode | default(false) | bool
 
         - name: firewall | Remove original SSH port allow
           community.general.ufw:
@@ -136,7 +151,7 @@
             port: "22"
             proto: tcp
             delete: true
-          when: not (bootstrap_mode | default(false))
+          when: not (bootstrap_mode | default(false) | bool)
 
         - name: firewall | Enable UFW
           community.general.ufw:
@@ -239,7 +254,12 @@
             project_src: "{{ dococd_config_dir }}"
             files:
               - docker-compose.app.yaml
-            build: always
+            # `build: always` rebuilds akeyless-proxy on every run, orphaning
+            # the image the running container still references. `docker compose
+            # images` then fails with "No such image", so the second run always
+            # errors even though the stack is healthy. `policy` builds only when
+            # the image is missing, which is what idempotency needs.
+            build: policy
             pull: always
             state: present
           when: not ansible_check_mode
