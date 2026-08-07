@@ -3,6 +3,7 @@ name: towonel
 
 services:
   towonel-hub:
+    # renovate: datasource=docker depName=codeberg.org/towonel/towonel-node
     image: codeberg.org/towonel/towonel-node:1.5.2
     container_name: towonel-hub
     restart: unless-stopped
