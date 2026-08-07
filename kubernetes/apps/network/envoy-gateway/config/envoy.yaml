@@ -146,7 +146,7 @@ spec:
           - kind: Secret
             name: ${SECRET_DOMAIN/./-}-production-tls
 ---
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
@@ -170,8 +170,43 @@ spec:
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: ClientTrafficPolicy
 metadata:
-  name: envoy
+  name: envoy-external
 spec:
+  # The towonel agent prepends PROXY protocol v2, which gives Envoy the real
+  # client IP at the connection layer. Deliberately NO clientIPDetection here:
+  # with a PROXY header present, also trusting a client-supplied
+  # X-Forwarded-For would let any client spoof its source IP, poisoning
+  # pocket-id logs, Immich audit trails and every per-IP rate limit.
+  # `optional` keeps the gateway serving during the cutover window, while some
+  # connections still arrive from Traefik without a PROXY header.
+  proxyProtocol:
+    optional: true
+  connection:
+    bufferLimit: 8Mi
+  http2:
+    initialStreamWindowSize: 2Mi
+    initialConnectionWindowSize: 32Mi
+    onInvalidMessage: TerminateStream
+  http3: {}
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: envoy-external
+  tcpKeepalive: {}
+  tls:
+    minVersion: "1.2"
+    alpnProtocols:
+      - h2
+      - http/1.1
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: envoy-internal
+spec:
+  # LAN gateway: no PROXY protocol, so X-Forwarded-For remains the client-IP
+  # source as before.
   clientIPDetection:
     xForwardedFor:
       numTrustedHops: 1
@@ -182,9 +217,10 @@ spec:
     initialConnectionWindowSize: 32Mi
     onInvalidMessage: TerminateStream
   http3: {}
-  targetSelectors:
+  targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
+      name: envoy-internal
   tcpKeepalive: {}
   tls:
     minVersion: "1.2"
