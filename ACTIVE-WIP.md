@@ -18,6 +18,7 @@
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
 - [ ] ⚠️ **Guacamole:** OpenID ext only supports implicit flow (`response_type=id_token`), pocket-id rejects it with `unsupported_response_type` - **needs auth-code-flow support upstream, or front it with ext-auth instead**
+- [ ] ⚠️ **ComfyUI:** not working due to single gpu and single model loaded via `llmkube`
 
 ## ⛔ Blocked
 
@@ -31,7 +32,11 @@
 
 `Descending order, newest on top`
 
+- ✅ drop boxbox for FBQ - **2026-08-06** (see commit [6910641](https://github.com/tscibilia/home-ops/commit/6910641))
+- ✅ switch to pocketID/tinyauth - **2026-08-05** (see PR [#3233](https://github.com/tscibilia/home-ops/pull/3233)) due to an upstream plex issues [authentik#24613](https://redirect.github.com/goauthentik/authentik/issues/24613) & [authentik#24774](https://redirect.github.com/goauthentik/authentik/issues/24774), let's not depend on them
+- ✅ switch charts-mirror to ocharted - **2026-07-30** (see commit [2e53ec3](https://github.com/tscibilia/home-ops/commit/2e53ec3))
 - ✅ switch to kopiur - **2026-07-05** (see PR [#2863](https://github.com/tscibilia/home-ops/pull/2863) and a bazillion subsequent commits)
+- ✅ add hermes - **2026-06-26** (see commit [2fb957c](https://github.com/tscibilia/home-ops/commit/2fb957c))
 - ✅ llama-cpp intermittent `MUL_MAT failed` - **2026-06-25** [see upstream](https://redirect.github.com/ggml-org/llama.cpp/issues/24328)
 - ✅ boostrap didn't pick up ai3090 - **2026-06-22** (see commit [4a0af6c2](https://github.com/tscibilia/home-ops/commit/4a0af6c2) and [3266aaca](https://github.com/tscibilia/home-ops/commit/3266aaca))
 - ✅ Claude makes dumb mistakes - **2026-06-25** (attempted fix in commit [8075cdf](https://github.com/tscibilia/home-ops/commit/8075cdf))
