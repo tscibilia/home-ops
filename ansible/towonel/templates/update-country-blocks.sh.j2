@@ -13,6 +13,11 @@ IPSET_NAME="countries-blocked"
 LOCK_FILE="/var/run/geo-block.lock"
 LOG_FILE="/var/log/geo-block.log"
 COUNTRY_DIR="/opt/geo-block/zones"
+# Written only as the last action of a fully successful run. The Ansible task's
+# `creates:` points at this, so a run that aborted (no zones fetched, empty temp
+# set, iptables failure) is retried on the next playbook run rather than being
+# masked by the zones directory that mkdir -p creates before any download.
+STATE_FILE="/opt/geo-block/.last-success"
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
@@ -57,7 +62,11 @@ for country in $COUNTRIES; do
     fi
 done
 
-TEMP_MEMBERS=$(ipset list "$TEMP_SET" | grep -c '^[0-9]')
+# grep -c exits 1 when it counts zero matches. Under `set -e` a bare
+# VAR=$(pipeline) assignment propagates that status, so without `|| true` the
+# script would die here -- in exactly the case this guard exists to catch --
+# before logging the reason or destroying the temp set. Let the `if` decide.
+TEMP_MEMBERS=$(ipset list "$TEMP_SET" | grep -c '^[0-9]' || true)
 if [[ "$TEMP_MEMBERS" -eq 0 ]]; then
     log "ERROR: temp set has zero entries, aborting before swap (existing $IPSET_NAME left in place)"
     ipset destroy "$TEMP_SET"
@@ -97,3 +106,6 @@ else
 fi
 
 log "Iptables rules updated"
+
+# Success sentinel -- last action, success path only.
+date '+%Y-%m-%d %H:%M:%S' > "$STATE_FILE"
