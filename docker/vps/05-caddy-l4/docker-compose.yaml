@@ -1,0 +1,36 @@
+---
+name: caddy-l4
+
+services:
+  caddy:
+    image: ghcr.io/bjw-s-labs/caddy-l4:2.11.4
+    container_name: caddy-l4
+    restart: unless-stopped
+    environment:
+      CADDY_ACME_EMAIL: ${CADDY_ACME_EMAIL}
+      TOWONEL_HUB_HOSTNAME: ${TOWONEL_HUB_HOSTNAME}
+      UNIFI_HOSTNAME: ${UNIFI_HOSTNAME}
+      VPS_LOCAL_HOSTS: >-
+        ${TOWONEL_HUB_HOSTNAME}
+        ${UNIFI_HOSTNAME}
+    ports:
+      - 443:443
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+configs:
+  caddyfile:
+    file: ./config/Caddyfile
+
+networks:
+  default:
+    name: edge
+    external: true
