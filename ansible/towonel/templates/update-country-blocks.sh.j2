@@ -44,7 +44,7 @@ log "Creating ipset set if not exists"
 ipset create -exist "$IPSET_NAME" hash:net family inet hashsize 16384 maxelem 131072 timeout 0
 
 TEMP_SET="countries-blocked-tmp"
-ipset create "$TEMP_SET" hash:net family inet hashsize 16384 maxelem 131072 timeout 0
+ipset create -exist "$TEMP_SET" hash:net family inet hashsize 16384 maxelem 131072 timeout 0
 
 for country in $COUNTRIES; do
     ZONE_FILE="$COUNTRY_DIR/${country,,}.zone"
@@ -72,6 +72,14 @@ iptables -A GEO_BLOCK_CHAIN -m set --match-set "$IPSET_NAME" src -j DROP
 # containerized service on this host (towonel 51820/udp, caddy-l4 :443).
 iptables -C INPUT -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I INPUT -j GEO_BLOCK_CHAIN
 iptables -C FORWARD -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I FORWARD -j GEO_BLOCK_CHAIN
-iptables -C DOCKER-USER -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I DOCKER-USER -j GEO_BLOCK_CHAIN
+
+# DOCKER-USER is created by dockerd, not the kernel, so it may not exist yet
+# if this script runs (e.g. via @reboot) before dockerd has finished starting.
+# Skip and log rather than aborting under set -e -- the weekly cron re-applies.
+if iptables -L DOCKER-USER >/dev/null 2>&1; then
+    iptables -C DOCKER-USER -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I DOCKER-USER -j GEO_BLOCK_CHAIN
+else
+    log "WARNING: DOCKER-USER chain not found, skipping jump rule"
+fi
 
 log "Iptables rules updated"

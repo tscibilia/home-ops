@@ -49,7 +49,7 @@
         - name: user | Add SSH public key
           ansible.posix.authorized_key:
             user: ubuntu
-            key: "{{ lookup('file', '~/.ssh/home-ops.pub') }}"
+            key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
     - name: packages
       become: true
