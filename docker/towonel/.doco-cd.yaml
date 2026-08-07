@@ -34,6 +34,18 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-towonel/acme-email
+  DOMAIN:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/secret-domain
+  PROMETHEUS_USERNAME:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-prometheus/username
+  PROMETHEUS_PASSWORD:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-prometheus/password
 force_recreate: false
 reconciliation:
   enabled: true
