@@ -30,7 +30,7 @@ kind: Kustomization
 metadata:
     name: &app myapp # YAML anchor — reused below as *app
 spec:
-    components: # optional — add kopiur, cnpg, ext-auth, zeroscaler
+    components: # optional — add kopiur, cnpg, auth, zeroscaler
         - ../../../../components/kopiur/backup
     dependsOn: # always declare; see common chains below
         - name: secret-stores

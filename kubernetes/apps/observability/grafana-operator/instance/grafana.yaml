@@ -15,7 +15,9 @@ spec:
     auth:
       signout_redirect_url: "https://id.${SECRET_DOMAIN}/api/oidc/end-session"
       oauth_auto_login: "true"
-      # Re-links the existing account from authentik to pocket-id new subject ID
+      # One-time IdP migration leftover: matches existing accounts by email so they
+      # re-link to their new pocket-id subject ID. Removable once every user has
+      # logged in at least once via pocket-id.
       oauth_allow_insecure_email_lookup: "true"
     "auth.generic_oauth":
       enabled: "true"

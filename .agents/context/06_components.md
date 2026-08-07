@@ -6,7 +6,9 @@
 - **cnpg creates a CronJob:** The `cnpg` component creates a Secret AND an init CronJob in the app's namespace. Verify the namespace before applying.
 - **Update 02_apps_inventory.md:** When adding or removing a component from an app, update the app's entry in `02_apps_inventory.md`.
 
-Components live in `kubernetes/components/`. Add them to `spec.components` in the Flux Kustomization (`ks.yaml`). All components — including ext-auth — go in ks.yaml, never in the app's `kustomization.yaml`.
+Components live in `kubernetes/components/`. Add them to `spec.components` in the Flux Kustomization (`ks.yaml`). All components — including `auth` — go in ks.yaml, never in the app's `kustomization.yaml`.
+
+Available: `alerts/`, `auth/`, `cnpg/`, `kopiur/{backup,secret}`, `secrets/`, `zeroscaler/`.
 
 ## kopiur — PVC backup to NFS (clonenas) via Kopia
 
@@ -15,16 +17,16 @@ Replaces VolSync. Uses `kopiur.home-operations.com` CRDs (SnapshotPolicy, Snapsh
 ```yaml
 # ks.yaml
 components:
-  - ../../../../components/kopiur/backup
+    - ../../../../components/kopiur/backup
 postBuild:
-  substitute:
-    APP: *app
-    KOPIUR_CAPACITY: 5Gi   # optional; see 04_storage.md for full var table
+    substitute:
+        APP: *app
+        KOPIUR_CAPACITY: 5Gi # optional; see 04_storage.md for full var table
 dependsOn:
-  - name: secret-stores
-    namespace: external-secrets
-  - name: kopiur
-    namespace: kopiur-system
+    - name: secret-stores
+      namespace: external-secrets
+    - name: kopiur
+      namespace: kopiur-system
 ```
 
 A separate `kopiur/secret` component distributes the `kopiur-nas-secret` (Kopia repo password from aKeyless `/kubernetes/kopiur`) per namespace — not added per-app; the cluster-level setup handles it.
@@ -36,41 +38,43 @@ See `04_storage.md` for all Kopiur vars and restore command.
 ```yaml
 # ks.yaml
 components:
-  - ../../../../components/cnpg
+    - ../../../../components/cnpg
 postBuild:
-  substitute:
-    APP: *app
-    CNPG_NAME: &postgresAppName pgsql-cluster   # or immich17
-healthChecks: [...]       # see 04_storage.md for full block
+    substitute:
+        APP: *app
+        CNPG_NAME: &postgresAppName pgsql-cluster # or immich17
+healthChecks: [...] # see 04_storage.md for full block
 dependsOn:
-  - name: cnpg-cluster
-    namespace: database
+    - name: cnpg-cluster
+      namespace: database
 ```
 
 Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a CronJob for DB init.
 
-## auth/internal — SSO for internal apps
+## auth — tinyauth forward auth
 
-Add to the **Flux Kustomization (`ks.yaml`)** `spec.components` (not the app's `kustomization.yaml`):
+One component for **both** gateways — there is no internal/external split. Add to the **Flux Kustomization (`ks.yaml`)** `spec.components` (not the app's `kustomization.yaml`):
 
 ```yaml
 # kubernetes/apps/{ns}/{app}/ks.yaml
 spec:
     components:
-        - ../../../../components/auth/internal
+        - ../../../../components/auth
 ```
 
-Creates a `SecurityPolicy` targeting the HTTPRoute named `${APP}`. Override with `EXT_AUTH_TARGET: custom-name` in `postBuild.substitute` if route name differs.
+Creates a `SecurityPolicy` routing ext-auth to `tinyauth.security:3000`, targeting the HTTPRoute named `${APP}`.
 
-## auth/external — SSO for external apps
+**Substitution variables:**
 
-Same as above but for `envoy-external` gateway:
+| Var                  | Default                     | Purpose                      |
+| -------------------- | --------------------------- | ---------------------------- |
+| `${EXT_AUTH_TARGET}` | `${APP}`                    | Name of the targeted route   |
+| `${EXT_AUTH_KIND}`   | `HTTPRoute`                 | Target kind (e.g. `Gateway`) |
+| `${EXT_AUTH_GROUP}`  | `gateway.networking.k8s.io` | Target API group             |
 
-```yaml
-spec:
-    components:
-        - ../../../../components/auth/external
-```
+Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — see `03_networking.md`. Never apply both to one app.
+
+Forward-auth apps also need the Gatus route/service annotation swap — see `03_networking.md`.
 
 ## zeroscaler — scale-to-zero via native HPA + prometheus-adapter
 
@@ -79,30 +83,31 @@ Generic HPA component driven by Prometheus `probe_success` metric. Replaced `ked
 ```yaml
 # ks.yaml — defaults to truenas (job: nfs_probe)
 components:
-  - ../../../../components/zeroscaler
+    - ../../../../components/zeroscaler
 postBuild:
-  substitute:
-    APP: *app
+    substitute:
+        APP: *app
 ```
 
 For clonenas-backed apps (kopiur, rclone), override the probe job:
 
 ```yaml
 postBuild:
-  substitute:
-    APP: *app
-    ZEROSCALER_JOB_NAME: nfs_bkup_probe
+    substitute:
+        APP: *app
+        ZEROSCALER_JOB_NAME: nfs_bkup_probe
 ```
 
 No `dependsOn` on observability — the HPA uses the external metrics API served by `prometheus-adapter` (in `observability` namespace). If the API isn't available, HPA shows `TARGETS: <unknown>/1` and holds replicas — no scaling decisions made.
 
 **Substitution variables:**
-| Var | Default | Purpose |
-|---|---|---|
-| `${APP}` | (required) | Target Deployment/StatefulSet name |
-| `${CONTROLLER}` | `Deployment` | Workload kind |
-| `${ZEROSCALER_METRIC_NAME}` | `probe_success` | External metric name from adapter |
-| `${ZEROSCALER_JOB_NAME}` | `nfs_probe` | `job` label selector value |
+
+| Var                         | Default         | Purpose                            |
+| --------------------------- | --------------- | ---------------------------------- |
+| `${APP}`                    | (required)      | Target Deployment/StatefulSet name |
+| `${CONTROLLER}`             | `Deployment`    | Workload kind                      |
+| `${ZEROSCALER_METRIC_NAME}` | `probe_success` | External metric name from adapter  |
+| `${ZEROSCALER_JOB_NAME}`    | `nfs_probe`     | `job` label selector value         |
 
 **Behavior:** `stabilizationWindowSeconds: 0` on both scaleDown/scaleUp; `periodSeconds: 15`. Workload reacts within ~15 s of probe state change.
 

@@ -7,8 +7,8 @@ metadata:
 spec:
   name: Komga
   callbackUrls:
-    # Spring's registration id is "pocketid" (see helmrelease.yaml), so the
-    # callback path is /login/oauth2/code/pocketid, not .../authentik
+    # Spring derives the callback path from the registration id, which is
+    # "pocketid" here (see helmrelease.yaml) — hence /login/oauth2/code/pocketid.
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/login/oauth2/code/pocketid"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: false

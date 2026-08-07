@@ -41,9 +41,10 @@ Use `AskUserQuestion` to collect the following. Ask up to 4 questions per call, 
 
 6. **Authentication method**:
     - `None` — app handles its own auth or no auth needed
-    - `OIDC (native)` — app supports OIDC natively; just needs ESO secrets for Authentik
-    - `Forward auth (internal)` — ext-auth-internal component (Authentik, LAN only)
-    - `Forward auth (external)` — ext-auth-external component (Authentik, public)
+    - `OIDC (native)` (Recommended when supported) — app speaks OIDC itself; gets a `PocketIDOIDCClient` CR + `PushSecret`, no component
+    - `Forward auth` — `components/auth` component (tinyauth), for apps with no OIDC support
+
+    These are alternatives, never both. There is no internal/external auth split — one `auth` component serves both gateways.
 
 **Batch 5 — Gatus & Config details (conditional — only ask if ingress is NOT "None"):**
 
@@ -81,7 +82,9 @@ kubernetes/apps/{namespace}/{app-name}/
     ├── kustomization.yaml
     ├── helmrelease.yaml
     ├── ocirepository.yaml
-    └── externalsecret.yaml          # only if app needs secrets
+    ├── externalsecret.yaml          # only if app needs secrets
+    ├── pocketidoidcclient.yaml      # only if auth = OIDC (native)
+    └── pushsecret.yaml              # only if auth = OIDC (native)
     # If configMapGenerator pattern:
     └── resources/
         ├── {app}-config.yaml        # config template
@@ -108,18 +111,17 @@ spec:
     components:
         - ../../../../components/cnpg # if cnpg selected
         - ../../../../components/kopiur/backup # if kopiur selected
-        - ../../../../components/auth/internal # if forward-auth internal
-        - ../../../../components/auth/external # if forward-auth external
+        - ../../../../components/auth # if forward auth (both gateways — no internal/external split)
         - ../../../../components/zeroscaler # if zeroscaler selected (any variant)
     dependsOn:
         - name: secret-stores
           namespace: external-secrets
         - name: cnpg-cluster # if cnpg (CNPG_NAME=pgsql-cluster)
           namespace: database
-        - name: secret-stores # if kopiur
-          namespace: external-secrets
         - name: kopiur # if kopiur
           namespace: kopiur-system
+        - name: pocket-id # if auth = OIDC (native)
+          namespace: security
     interval: 1h
     path: ./kubernetes/apps/{NAMESPACE}/{APP_NAME}/app
     postBuild:
@@ -215,6 +217,8 @@ resources:
     - ./externalsecret.yaml # only if ESO needed
     - ./helmrelease.yaml
     - ./ocirepository.yaml
+    - ./pocketidoidcclient.yaml # only if auth = OIDC (native)
+    - ./pushsecret.yaml # only if auth = OIDC (native)
 ```
 
 **With configMapGenerator (immich pattern):**
@@ -352,8 +356,8 @@ spec:
 - Use `envoy-internal` or `envoy-external` based on ingress selection.
 - If GATUS_SUBDOMAIN is custom (differs from app name): use `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}` in hostnames.
 - If GATUS_SUBDOMAIN equals app name: use `{{ .Release.Name }}.${SECRET_DOMAIN}` in hostnames and omit GATUS_SUBDOMAIN from ks.yaml substitute.
-- **Gatus + ext-auth**: When the app uses ext-auth (forward auth), gatus probes are blocked by the auth layer. Move the gatus annotation to the **service** (with `enabled: "true"`) and add `gatus.home-operations.com/enabled: "false"` to the **route** annotations. See bazarr for the reference pattern.
-- **Gatus without ext-auth**: No action needed, envoy handles the annotations.
+- **Gatus + forward auth**: When the app uses the `auth` component, gatus probes are blocked by the tinyauth redirect. Move the gatus annotation to the **service** (with `enabled: "true"`) and add `gatus.home-operations.com/enabled: "false"` to the **route** annotations. See bazarr for the reference pattern. Native-OIDC apps do not need this — only forward-auth ones.
+- **Gatus without forward auth**: No action needed, envoy handles the annotations.
 - **Image tags**: Leave `{IMAGE_REPO}` and a `TODO` tag as placeholders — the user will fill these in.
 - **Security context**: Default to restrictive (`readOnlyRootFilesystem: true`, drop ALL capabilities). If an app fails to start due to security context, that is follow-up troubleshooting — do not pre-emptively add comments or relaxed settings.
 - **No extra blank lines** between YAML sections.
@@ -383,23 +387,7 @@ spec:
         key: /{AKEYLESS_PATH}   # TODO: aKeyless secret path
 ```
 
-**If OIDC auth is selected**, add Authentik-specific entries:
-
-```yaml
-  target:
-    name: *name
-    template:
-      data:
-        # TODO: verify exact env var names per app docs
-        OIDC_ISSUER_URL: "https://{{ .AUTHENTIK_SSO_SUBDOMAIN }}.${SECRET_DOMAIN}/application/o/${APP}/"
-        OIDC_CLIENT_ID: "{{ .{APP_UPPER}_OIDC_CLIENT_ID }}"
-        OIDC_CLIENT_SECRET: "{{ .{APP_UPPER}_OIDC_SECRET }}"
-  dataFrom:
-    - extract:
-        key: /authentik
-    - extract:
-        key: /{APP_NAME}
-```
+**Do NOT add OIDC entries here.** OIDC credentials are generated by pocket-id, not read from aKeyless — see the two files below.
 
 **If CNPG is selected**, template the DB connection vars directly in the app's ExternalSecret (homebox pattern — preferred approach). Add `/cnpg-users` to `dataFrom` and map individual vars in `target.template.data`:
 
@@ -425,6 +413,84 @@ DB_URI: "postgres://{{ .${APP}_postgres_password }}@${CNPG_NAME:=pgsql-cluster}-
 ```
 
 **If shared/external service secrets are requested** (e.g. Amazon SES, SMTP, S3, Cloudflare): use the exact aKeyless key names and env var mappings already established in the repo. Reference was already looked up in Phase 2 research — do not invent new key names.
+
+---
+
+##### app/pocketidoidcclient.yaml (only if auth = "OIDC (native)")
+
+The pocket-id operator registers the client and writes the credentials into the Secret named in `spec.secret.name`. Nothing is read from aKeyless.
+
+```yaml
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/pocketid.internal/pocketidoidcclient_v1alpha1.json
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDOIDCClient
+metadata:
+  name: {APP_NAME}
+spec:
+  name: {APP_DISPLAY_NAME}
+  callbackUrls:
+    # TODO: verify the app's real callback path from its docs
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/auth/callback"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
+  pkceEnabled: false
+  allowedUserGroups:
+    - name: id-admin
+      namespace: security
+    - name: id-home
+      namespace: security
+  secret:
+    enabled: true
+    name: {APP_NAME}-oidc-secret
+    keys:
+      # TODO: rename to the env vars the app actually expects
+      clientID: {APP_UPPER}_OIDC_CLIENT_ID
+      clientSecret: {APP_UPPER}_OIDC_CLIENT_SECRET
+      issuerUrl: {APP_UPPER}_OIDC_ISSUER_URL
+```
+
+**Rules:**
+
+- If `GATUS_SUBDOMAIN` is not set (subdomain == app name), use `{APP_NAME}.${SECRET_DOMAIN}` instead of `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}`.
+- Available groups (from `apps/security/pocket-id/instance/pocketidusergroup.yaml`): `id-admin`, `id-home`, `id-family`, `id-friends`, `id-users`. Ask the user which apply; default to `id-admin` + `id-home`.
+- The generated Secret is consumed via `envFrom.secretRef` in the HelmRelease, or rendered into a config file via ExternalSecret `templateFrom` (kite pattern).
+- `ks.yaml` must add `dependsOn: {name: pocket-id, namespace: security}`.
+
+---
+
+##### app/pushsecret.yaml (only if auth = "OIDC (native)")
+
+Backs the operator-generated credentials up to aKeyless. Note the direction — this **writes** to aKeyless.
+
+```yaml
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/external-secrets.io/pushsecret_v1alpha1.json
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: &name {APP_NAME}-oidc-secret
+spec:
+  refreshInterval: 1h
+  secretStoreRefs:
+    - kind: ClusterSecretStore
+      name: akeyless-secret-store
+  selector:
+    secret:
+      name: *name
+  data:
+    - match:
+        secretKey: {APP_UPPER}_OIDC_CLIENT_ID
+        remoteRef:
+          remoteKey: /security/pocket-id-clients
+          property: {APP_UPPER}_OIDC_CLIENT_ID
+    - match:
+        secretKey: {APP_UPPER}_OIDC_CLIENT_SECRET
+        remoteRef:
+          remoteKey: /security/pocket-id-clients
+          property: {APP_UPPER}_OIDC_CLIENT_SECRET
+```
+
+`secretKey` values must match the `spec.secret.keys` names chosen in `pocketidoidcclient.yaml`.
 
 ---
 
@@ -458,6 +524,7 @@ After generating all manifests:
 
 3. **Print next steps**:
     - Add secrets to aKeyless at the path referenced in externalsecret.yaml
+    - If OIDC: confirm the app's real callback path and the env var names it expects, then align `pocketidoidcclient.yaml` keys with `pushsecret.yaml` `secretKey`s. Do NOT pre-create `/security/pocket-id-clients` entries — the PushSecret writes them.
     - Fill in `{IMAGE_REPO}` and `{IMAGE_TAG}` in helmrelease.yaml
     - Fill in ExternalSecret template data mappings
     - If configMapGenerator: populate the config file in resources/

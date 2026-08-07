@@ -6,6 +6,12 @@ Migration reference from nginx Ingress to Envoy Gateway with Gateway API.
 
 ✅ Migration completed November 2025
 
+> **Historical record — do not copy the auth examples.** The SecurityPolicy /
+> forward-auth sections below describe Authentik and the since-removed
+> `components/auth/{internal,external}`. The cluster now uses pocket-id +
+> tinyauth behind a single `components/auth`. For current patterns see
+> `.agents/context/03_networking.md` and `.agents/context/06_components.md`.
+
 ## Architecture Comparison
 
 ### Before (nginx Ingress)
@@ -75,18 +81,18 @@ ingress:
 
 ```yaml
 route:
-  app:
-    annotations:
-      gatus.home-operations.com/endpoint: |-
-        conditions: ["[STATUS] == 200"]
-    hostnames: ["app.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-external
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *port  # Use variable reference from service definition
+    app:
+        annotations:
+            gatus.home-operations.com/endpoint: |-
+                conditions: ["[STATUS] == 200"]
+        hostnames: ["app.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-external
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *port # Use variable reference from service definition
 ```
 
 **Key Changes:**
@@ -107,21 +113,21 @@ For internal apps behind Authentik forward auth, gatus HTTPRoute monitoring fail
 ```yaml
 # Disable HTTPRoute monitoring, enable Service monitoring
 service:
-  app:
-    annotations:
-      gatus.home-operations.com/enabled: "true"
+    app:
+        annotations:
+            gatus.home-operations.com/enabled: "true"
 route:
-  app:
-    annotations:
-      gatus.home-operations.com/enabled: "false"
-    hostnames: ["app.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-internal
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *port
+    app:
+        annotations:
+            gatus.home-operations.com/enabled: "false"
+        hostnames: ["app.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-internal
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *port
 ```
 
 This monitors the backend ClusterIP service directly, bypassing Gateway and authentication layers.
@@ -163,45 +169,45 @@ route:
 
 ```yaml
 route:
-  app:
-    # Main app route
-    hostnames: ["minio.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-external
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *http  # Variable reference to console port
-  s3:
-    # S3 API route
-    annotations:
-      gatus.home-operations.com/enabled: "false"
-    hostnames: ["s3.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-external
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *port  # Variable reference to S3 API port
+    app:
+        # Main app route
+        hostnames: ["minio.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-external
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *http # Variable reference to console port
+    s3:
+        # S3 API route
+        annotations:
+            gatus.home-operations.com/enabled: "false"
+        hostnames: ["s3.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-external
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *port # Variable reference to S3 API port
 ```
 
 **Gatus (Disabled Monitoring):**
 
 ```yaml
 route:
-  app:
-    annotations:
-      gatus.home-operations.com/enabled: "false"  # Disable self-monitoring
-    hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
-    parentRefs:
-      - name: envoy-external
-        namespace: network
-    rules:
-      - backendRefs:
-          - identifier: app
-            port: *port  # Variable reference
+    app:
+        annotations:
+            gatus.home-operations.com/enabled: "false" # Disable self-monitoring
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+            - name: envoy-external
+              namespace: network
+        rules:
+            - backendRefs:
+                  - identifier: app
+                    port: *port # Variable reference
 ```
 
 ---
