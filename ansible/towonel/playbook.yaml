@@ -265,6 +265,8 @@
     - name: geo-block
       become: true
       tags: geo-block
+      vars:
+        blocked_countries: [RU, IL, IR, CN, KP, BY]
       block:
         - name: geo-block | Install ipset
           ansible.builtin.apt:
@@ -282,65 +284,41 @@
             mode: "0755"
 
         - name: geo-block | Install update-country-blocks.sh
-          ansible.builtin.copy:
+          ansible.builtin.template:
+            src: update-country-blocks.sh.j2
             dest: "{{ geoblock_dir }}/update-country-blocks.sh"
             owner: root
             group: root
             mode: "0755"
-            content: |
-              #!/usr/bin/env bash
-              # Managed by ansible/towonel/playbook.yaml -- do not edit on the host.
-              # L3 country blocking. TLS passthrough means nothing on this host can
-              # read HTTP, so the geo policy has to drop packets before towonel sees
-              # them (spec D5).
-              set -euo pipefail
 
-              COUNTRIES="RU CN KP IR BY IL"
-              SET_NAME="geoblock"
-              ZONE_URL="https://www.ipdeny.com/ipblocks/data/aggregated"
+        - name: geo-block | Apply country blocks
+          ansible.builtin.command:
+            cmd: >-
+              {{ geoblock_dir }}/update-country-blocks.sh
+              "{{ blocked_countries | join(' ') }}"
+            creates: "{{ geoblock_dir }}/zones"
 
-              tmp="$(mktemp -d)"
-              trap 'rm -rf "${tmp}"' EXIT
-
-              ipset create "${SET_NAME}-new" hash:net -exist
-              ipset flush "${SET_NAME}-new"
-
-              for cc in ${COUNTRIES}; do
-                lc="$(echo "${cc}" | tr '[:upper:]' '[:lower:]')"
-                if ! curl -fsSL "${ZONE_URL}/${lc}-aggregated.zone" -o "${tmp}/${lc}.zone"; then
-                  echo "warn: could not fetch zone for ${cc}, skipping" >&2
-                  continue
-                fi
-                while read -r cidr; do
-                  [ -n "${cidr}" ] || continue
-                  ipset add "${SET_NAME}-new" "${cidr}" -exist
-                done < "${tmp}/${lc}.zone"
-              done
-
-              ipset create "${SET_NAME}" hash:net -exist
-              ipset swap "${SET_NAME}-new" "${SET_NAME}"
-              ipset destroy "${SET_NAME}-new"
-
-              # INPUT covers host-local listeners; DOCKER-USER covers published
-              # container ports, which bypass INPUT entirely.
-              for chain in INPUT DOCKER-USER; do
-                iptables -L "${chain}" -n >/dev/null 2>&1 || continue
-                iptables -C "${chain}" -m set --match-set "${SET_NAME}" src -j DROP 2>/dev/null \
-                  || iptables -I "${chain}" 1 -m set --match-set "${SET_NAME}" src -j DROP
-              done
+        - name: geo-block | Install weekly refresh cron job
+          ansible.builtin.cron:
+            name: GeoIP country block weekly refresh
+            minute: "0"
+            hour: "3"
+            weekday: "0"
+            job: >-
+              {{ geoblock_dir }}/update-country-blocks.sh
+              "{{ blocked_countries | join(' ') }}" >> /var/log/geo-block.log 2>&1
+            user: root
+            state: present
 
         - name: geo-block | Install reboot cron job
           ansible.builtin.cron:
             name: geo-block country blocks
             special_time: reboot
-            job: "{{ geoblock_dir }}/update-country-blocks.sh"
+            job: >-
+              {{ geoblock_dir }}/update-country-blocks.sh
+              "{{ blocked_countries | join(' ') }}" >> /var/log/geo-block.log 2>&1
             user: root
             state: present
-
-        - name: geo-block | Apply country blocks
-          ansible.builtin.command: "{{ geoblock_dir }}/update-country-blocks.sh"
-          changed_when: false
-          when: not ansible_check_mode
 
     - name: Display summary
       ansible.builtin.debug:
