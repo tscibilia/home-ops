@@ -15,7 +15,7 @@ default:
 [script]
 install-collections:
     just check-tools ansible-galaxy
-    ansible-galaxy collection install -r "{{ ansible_dir }}/requirements.yml"
+    ansible-galaxy collection install -r "{{ ansible_dir }}/requirements.yaml"
 
 [doc('Bootstrap VPS (subsequent runs — ubuntu user, port 22222)')]
 [script]

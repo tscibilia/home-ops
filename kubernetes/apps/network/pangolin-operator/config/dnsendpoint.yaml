@@ -9,6 +9,7 @@ spec:
   endpoints:
     - dnsName: external.${SECRET_DOMAIN}
       recordType: A
+      recordTTL: 60
       targets:
         - ${VPS_IP}
       # DNS-only: Cloudflare's proxy caps request bodies at 100MB, which breaks
@@ -18,17 +19,21 @@ spec:
           value: "false"
     - dnsName: external.${CEAPP_DOMAIN}
       recordType: A
+      recordTTL: 60
       targets:
         - ${VPS_IP}
     - dnsName: ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
+      recordTTL: 60
       targets:
         - ${VPS_IP}
     - dnsName: api.${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
+      recordTTL: 60
       targets:
         - ${VPS_IP}
     - dnsName: doco.${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
+      recordTTL: 60
       targets:
         - ${VPS_IP}
