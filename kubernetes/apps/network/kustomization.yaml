@@ -16,4 +16,5 @@ resources:
   - ./multus/ks.yaml
   - ./pangolin-operator/ks.yaml
   - ./tailscale/ks.yaml
+  - ./towonel-agent/ks.yaml
   - ./unifi-dns/ks.yaml
