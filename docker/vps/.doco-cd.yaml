@@ -78,34 +78,6 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-unifi/b2-account-key
-  TOWONEL_HUB_HOSTNAME:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/hub-hostname
-  TOWONEL_IDENTITY_KEY:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/identity-key
-  TOWONEL_HUB_KEK:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/hub-kek
-  TOWONEL_INVITE_HASH_KEY:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/invite-hash-key
-  TOWONEL_HUB_OPERATOR_API_KEY:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/operator-api-key
-  TOWONEL_HUB_LINK_PSK:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/hub-link-psk
-  CADDY_ACME_EMAIL:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-towonel/acme-email
 force_recreate: false
 reconciliation:
   enabled: true

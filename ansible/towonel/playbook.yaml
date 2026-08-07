@@ -179,7 +179,7 @@
 
         - name: doco-cd | Copy docker-compose app file
           ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/docker-compose.app.yaml
+            src: ../../docker/towonel/.doco-cd/docker-compose.app.yaml
             dest: "{{ dococd_config_dir }}/docker-compose.app.yaml"
             owner: ubuntu
             group: ubuntu
@@ -187,7 +187,7 @@
 
         - name: doco-cd | Copy Dockerfile
           ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/Dockerfile
+            src: ../../docker/towonel/.doco-cd/Dockerfile
             dest: "{{ dococd_config_dir }}/Dockerfile"
             owner: ubuntu
             group: ubuntu
@@ -195,7 +195,7 @@
 
         - name: doco-cd | Copy proxy.py
           ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/proxy.py
+            src: ../../docker/towonel/.doco-cd/proxy.py
             dest: "{{ dococd_config_dir }}/proxy.py"
             owner: ubuntu
             group: ubuntu
@@ -203,7 +203,7 @@
 
         - name: doco-cd | Copy cron-update.sh
           ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/cron-update.sh
+            src: ../../docker/towonel/.doco-cd/cron-update.sh
             dest: "{{ dococd_config_dir }}/cron-update.sh"
             owner: ubuntu
             group: ubuntu
