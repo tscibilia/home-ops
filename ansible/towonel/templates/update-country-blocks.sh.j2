@@ -45,6 +45,7 @@ ipset create -exist "$IPSET_NAME" hash:net family inet hashsize 16384 maxelem 13
 
 TEMP_SET="countries-blocked-tmp"
 ipset create -exist "$TEMP_SET" hash:net family inet hashsize 16384 maxelem 131072 timeout 0
+ipset flush "$TEMP_SET"
 
 for country in $COUNTRIES; do
     ZONE_FILE="$COUNTRY_DIR/${country,,}.zone"
@@ -56,28 +57,41 @@ for country in $COUNTRIES; do
     fi
 done
 
+TEMP_MEMBERS=$(ipset list "$TEMP_SET" | grep -c '^[0-9]')
+if [[ "$TEMP_MEMBERS" -eq 0 ]]; then
+    log "ERROR: temp set has zero entries, aborting before swap (existing $IPSET_NAME left in place)"
+    ipset destroy "$TEMP_SET"
+    exit 1
+fi
+
 ipset swap "$TEMP_SET" "$IPSET_NAME"
 ipset destroy "$TEMP_SET"
 
-log "Country block update complete. Total entries: $(ipset list "$IPSET_NAME" | grep -c 'Members:')"
+log "Country block update complete. Total entries: $(ipset list "$IPSET_NAME" | grep -c '^[0-9]')"
 
 # Setup iptables rules
-iptables -N GEO_BLOCK_CHAIN 2>/dev/null || true
-iptables -F GEO_BLOCK_CHAIN
-iptables -A GEO_BLOCK_CHAIN -m set --match-set "$IPSET_NAME" src -j DROP
+# -w 5: wait up to 5s for the xtables lock. At @reboot this races dockerd,
+# which rewrites iptables heavily during startup; without -w a held lock
+# aborts the script under set -e with the new ipset already swapped in and
+# no jump rules referencing it -- a silently disabled geo-block.
+iptables -w 5 -N GEO_BLOCK_CHAIN 2>/dev/null || true
+iptables -w 5 -F GEO_BLOCK_CHAIN
+iptables -w 5 -A GEO_BLOCK_CHAIN -m set --match-set "$IPSET_NAME" src -j DROP
 
 # Insert jump rules if not already present.
 # DOCKER-USER is the critical one: Docker's own rules bypass INPUT entirely for
 # published container ports, so an INPUT-only geo-block is a no-op for every
 # containerized service on this host (towonel 51820/udp, caddy-l4 :443).
-iptables -C INPUT -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I INPUT -j GEO_BLOCK_CHAIN
-iptables -C FORWARD -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I FORWARD -j GEO_BLOCK_CHAIN
+iptables -w 5 -C INPUT -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -w 5 -I INPUT -j GEO_BLOCK_CHAIN
+iptables -w 5 -C FORWARD -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -w 5 -I FORWARD -j GEO_BLOCK_CHAIN
 
 # DOCKER-USER is created by dockerd, not the kernel, so it may not exist yet
 # if this script runs (e.g. via @reboot) before dockerd has finished starting.
 # Skip and log rather than aborting under set -e -- the weekly cron re-applies.
-if iptables -L DOCKER-USER >/dev/null 2>&1; then
-    iptables -C DOCKER-USER -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -I DOCKER-USER -j GEO_BLOCK_CHAIN
+# -n on the probe avoids reverse-DNS lookups, which may hang if DNS is down
+# this early in an @reboot path.
+if iptables -w 5 -n -L DOCKER-USER >/dev/null 2>&1; then
+    iptables -w 5 -C DOCKER-USER -j GEO_BLOCK_CHAIN 2>/dev/null || iptables -w 5 -I DOCKER-USER -j GEO_BLOCK_CHAIN
 else
     log "WARNING: DOCKER-USER chain not found, skipping jump rule"
 fi
