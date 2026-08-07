@@ -10,6 +10,22 @@ kubernetes_dir := justfile_dir() + '/kubernetes'
 default:
     just -l kube
 
+[doc('Write local OCI credentials for the private ocharted proxy (needed by flate)')]
+[script]
+registry-auth:
+    just check-tools akeyless jq
+    config="${FLATE_REGISTRY_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/flate/registry.json}"
+    host="$(grep -rhoE 'oci://ocharted\.[^/]+' "{{ kubernetes_dir }}/apps" | sed 's|oci://||' | sort -u | head -1)"
+    if [[ -z "$host" ]]; then just log fatal "No ocharted host found in OCIRepository urls"; fi
+    mkdir -p "$(dirname "$config")"
+    umask 077
+    akeyless get-secret-value --name /kubernetes/ocharted --json \
+        | jq -r 'if type=="object" and has("/kubernetes/ocharted") then .["/kubernetes/ocharted"] else . end' \
+        | jq -r 'if type=="string" then fromjson else . end' \
+        | jq --arg host "$host" '{auths: {($host): {auth: ((.OCHARTED_USERNAME + ":" + .OCHARTED_PASSWORD) | @base64)}}}' \
+        > "$config"
+    just log info "Wrote OCI registry credentials" "host" "$host" "path" "$config"
+
 [doc('Apply local Flux Kustomization')]
 [script]
 apply-ks ns ks:

@@ -3,6 +3,7 @@ _.python.venv = { path = "{{config_root}}/.venv", create = true }
 
 _.file = ["{{config_root}}/.secrets.env"]
 FLATE_PATH = "{{config_root}}/kubernetes/flux/cluster"
+FLATE_REGISTRY_CONFIG = "{{env.HOME}}/.config/flate/registry.json"
 KUBECONFIG = "{{config_root}}/kubeconfig"
 MINIJINJA_CONFIG_FILE = "{{config_root}}/.minijinja.toml"
 TALOSCONFIG = "{{config_root}}/talosconfig"

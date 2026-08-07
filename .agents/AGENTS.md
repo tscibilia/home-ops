@@ -70,6 +70,7 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 
 - `flate test all` — validate all Kustomizations, HelmReleases, sources
 - `flate build all` — render full cluster to YAML
+- `just kube registry-auth` — one-time (per machine) OCI credentials for the private `ocharted` chart proxy; required before the first `flate` run, see Troubleshooting
 
 **Workflow:**
 
@@ -159,6 +160,7 @@ Before requesting a commit, ensure:
 - **Cilium**: eBPF replacement for kube-proxy. Use `cilium` CLI for network debugging.
 - **CNPG**: Use `-rw` endpoint for app connections. Check health: `kubectl get cluster -n database`.
 - **Kopiur**: Restore by editing the `Restore` CR's `spec.offset` in the app namespace (0 = latest snapshot).
+- **`flate` fails with `basic credential not found`**: charts served by the private `ocharted` proxy (`oci://ocharted.${SECRET_DOMAIN}/…`) need OCI auth. The OCIRepositories carry no `secretRef` on purpose — ocharted's `auth.bypassNetworks` exempts in-cluster Flux, but a workstation is outside that CIDR. Fix: `just kube registry-auth`, which pulls `/kubernetes/ocharted` from aKeyless into `~/.config/flate/registry.json` (`FLATE_REGISTRY_CONFIG`, set in `.mise.toml`). Not a manifest bug — never "fix" it by editing the OCIRepositories.
 
 ## Active Work
 
