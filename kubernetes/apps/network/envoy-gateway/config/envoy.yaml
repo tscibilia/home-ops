@@ -146,7 +146,7 @@ spec:
           - kind: Secret
             name: ${SECRET_DOMAIN/./-}-production-tls
 ---
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: BackendTrafficPolicy
 metadata:
@@ -172,9 +172,21 @@ kind: ClientTrafficPolicy
 metadata:
   name: envoy
 spec:
+  # The towonel agent prepends PROXY protocol v2, giving Envoy the real client
+  # IP at the connection layer. `optional` accepts the header when present and
+  # ignores its absence, so the internal gateway and any pre-cutover Traefik
+  # traffic keep working unchanged.
+  proxyProtocol:
+    optional: true
+  # trustedCIDRs, not numTrustedHops: X-Forwarded-For is only believed when it
+  # arrives from the pod network. numTrustedHops would trust the last hop
+  # regardless of source, which — with no real proxy in front — means trusting
+  # whatever the client sent, letting anyone spoof their source IP and poison
+  # pocket-id logs, Immich audit trails and every per-IP rate limit.
   clientIPDetection:
     xForwardedFor:
-      numTrustedHops: 1
+      trustedCIDRs:
+        - 10.42.0.0/16
   connection:
     bufferLimit: 8Mi
   http2:
