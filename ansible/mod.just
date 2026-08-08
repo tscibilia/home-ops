@@ -17,13 +17,14 @@ install-collections:
     just check-tools ansible-galaxy
     ansible-galaxy collection install -r "{{ ansible_dir }}/requirements.yaml"
 
-[doc('Bootstrap VPS (subsequent runs — ubuntu user, port 22222)')]
+[doc('Bootstrap VPS (subsequent runs — ubuntu user, port 22222; prompts for root password)')]
 [script]
 bootstrap-vps *args:
     just check-tools ansible-playbook
     ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/vps/playbook.yaml \
         --limit vps \
         --private-key ~/.ssh/home-ops \
+        --ask-become-pass \
         {{ args }}
 
 [doc('Bootstrap VPS first run (root user, port 22)')]
