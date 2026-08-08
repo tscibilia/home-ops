@@ -23,6 +23,9 @@
 		}
 	}
 
+	# Only TCP is published to this container, so HTTP/3 is unreachable.
+	# Left on, Caddy still advertises Alt-Svc h3 and browsers cache it for
+	# 30 days, then blackhole every request onto UDP that never arrives.
 	servers :8443 {
 		listener_wrappers {
 			proxy_protocol {
@@ -31,6 +34,7 @@
 			}
 			tls
 		}
+		protocols h1 h2
 	}
 
 	log default {
@@ -48,21 +52,21 @@
 # remote upstream. It presents a self-signed cert, so TLS verification is
 # disabled for this upstream only.
 #
-# UniFi 10.4.57 answers 403 with an empty body to any request carrying an
-# Origin header, including its own. Browsers always send Origin on a POST,
-# so login fails. Caddy enforces same-origin itself, then strips the
-# header so the controller sees the shape it accepts.
-{$UNIFI_HOSTNAME}:4443 {
+# Served on the default port like every other vhost, so it goes through
+# the layer4 :443 SNI path. The controller's own super_identity.hostname
+# is "unf.t0m.co" with no port; publishing it on :4443 gave the browser an
+# origin the controller did not recognise as itself, and it discarded the
+# session it had just issued.
+#
+# UniFi validates Origin against the request Host itself, and does it
+# correctly: a matching Origin is accepted, a foreign one gets an empty
+# 403. Do not reintroduce an Origin allowlist or a `header_up -Origin`
+# strip here -- the earlier "403 on any Origin" reading came from probing
+# with a Host that did not match the Origin being sent.
+{$UNIFI_HOSTNAME} {
 	log
 
-	@foreign_origin {
-		header Origin *
-		not header Origin https://{$UNIFI_HOSTNAME}:4443
-	}
-	respond @foreign_origin 403
-
 	reverse_proxy https://unifi-network-application:8443 {
-		header_up -Origin
 		transport http {
 			tls_insecure_skip_verify
 		}
