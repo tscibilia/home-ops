@@ -1,0 +1,69 @@
+---
+name: crowdsec
+services:
+  crowdsec:
+    image: ghcr.io/crowdsecurity/crowdsec:v1.7.8@sha256:2f527c9bb8b367120eb08b82890aa912ce96bfa1ada93dda0721700e4b4e0dde
+    container_name: crowdsec
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: crowdsecurity/linux crowdsecurity/sshd crowdsecurity/caddy
+      # whitelists backs the home allowlist below; geoip-enrich populates
+      # evt.Meta.ASNumber, without which the ban-asn scenario never matches.
+      PARSERS: crowdsecurity/whitelists crowdsecurity/geoip-enrich
+      ENROLL_KEY: ${CROWDSEC_ENROLL_KEY}
+      ENROLL_INSTANCE_NAME: vps-crowdsec
+      ENROLL_TAGS: vps towonel
+      GID: "1000"
+    ports:
+      # LAPI for the host firewall bouncer, and Prometheus metrics. Both bound
+      # to loopback: published container ports bypass ufw entirely, so binding
+      # 0.0.0.0 would expose them publicly no matter what the firewall says.
+      # Host port 8088 because UniFi already holds 8080.
+      - 127.0.0.1:8088:8080
+      - 127.0.0.1:6060:6060
+    volumes:
+      - /opt/crowdsec/config:/etc/crowdsec
+      - /opt/crowdsec/data:/var/lib/crowdsec/data
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    configs:
+      - source: acquis
+        target: /etc/crowdsec/acquis.d/vps.yaml
+      - source: allowlist
+        target: /etc/crowdsec/parsers/s02-enrich/my-allowlists.yaml
+      - source: ban_asn
+        target: /etc/crowdsec/scenarios/ban-asn.yaml
+      - source: ban_ai_crawlers
+        target: /etc/crowdsec/scenarios/ban-ai-crawlers.yaml
+    healthcheck:
+      test: ["CMD", "cscli", "lapi", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+configs:
+  acquis:
+    file: ./config/acquis.d/vps.yaml
+  ban_asn:
+    file: ./config/scenarios/ban-asn.yaml
+  ban_ai_crawlers:
+    file: ./config/scenarios/ban-ai-crawlers.yaml
+  # Inline rather than a file because only `content` interpolates variables,
+  # and HOME_IP_CIDR comes from aKeyless. Editing this block does NOT recreate
+  # the container on its own — force-recreate after any change.
+  #
+  # HOME_IP_CIDR is a flow-style YAML list body, so it holds any number of
+  # ranges and a new one needs only an aKeyless edit, no repo change
+  allowlist:
+    content: |
+      name: custom/home-allowlist
+      description: "Allow home ISP ranges"
+      whitelist:
+        reason: "Home ISP"
+        cidr: [${HOME_IP_CIDR}]
+
+networks:
+  default:
+    name: edge
+    external: true

@@ -1,0 +1,21 @@
+---
+# sshd on 22222. rsyslog is active on this host, so auth.log is the simplest
+# source; no journald plumbing needed inside the container.
+source: file
+filenames:
+  - /var/log/auth.log
+labels:
+  type: syslog
+---
+# caddy-l4 logs JSON to stdout under the json-file driver, so the docker
+# datasource reads it straight from the socket.
+#
+# SCOPE: caddy only terminates TLS for the UniFi vhost. Everything else on
+# :443 is SNI-routed to the towonel edge without decryption, so no HTTP for
+# tunnelled apps ever reaches these logs. The ban-ai-crawlers scenario keys
+# off http_user_agent and therefore only ever sees UniFi traffic.
+source: docker
+container_name:
+  - caddy-l4
+labels:
+  type: caddy
