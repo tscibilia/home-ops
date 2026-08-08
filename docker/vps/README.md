@@ -50,7 +50,7 @@ graph TD
 All stacks join the external `edge` Docker network so containers can resolve
 each other by name regardless of which compose project they belong to. Unlike
 the network it replaced, `edge` is provisioned by Ansible
-(`ansible/towonel/playbook.yaml`, tag `network`) rather than by a stack — so it
+(`ansible/vps/playbook.yaml`, tag `network`) rather than by a stack — so it
 survives any stack being removed.
 
 | #   | Directory           | Services                                    | Data path       |
