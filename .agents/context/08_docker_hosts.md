@@ -16,36 +16,40 @@ Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each
 ### truenas
 
 Path: `docker/truenas/`
-| # | Service | Compose file |
-|---|---------|-------------|
-| 01 | tailscale | `01-tailscale/docker-compose.yaml` |
-| 02 | scrutiny (collector) | `02-scrutiny/docker-compose.yaml` |
-| 03 | node-exporter, fluent-bit | `03-exporters/docker-compose.yaml` |
+
+| #   | Service                   | Compose file                       |
+| --- | ------------------------- | ---------------------------------- |
+| 01  | tailscale                 | `01-tailscale/docker-compose.yaml` |
+| 02  | scrutiny (collector)      | `02-scrutiny/docker-compose.yaml`  |
+| 03  | node-exporter, fluent-bit | `03-exporters/docker-compose.yaml` |
 
 NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
 
 ### clonenas
 
 Path: `docker/clonenas/`
-| # | Service | Compose file |
-|---|---------|-------------|
-| 01 | matchbox | `01-matchbox/docker-compose.yaml` |
-| 02 | scrutiny (collector) | `02-scrutiny/docker-compose.yaml` |
-| 03 | node-exporter, fluent-bit, nut-server | `03-exporters/docker-compose.yaml` |
+
+| #   | Service                               | Compose file                       |
+| --- | ------------------------------------- | ---------------------------------- |
+| 01  | matchbox                              | `01-matchbox/docker-compose.yaml`  |
+| 02  | scrutiny (collector)                  | `02-scrutiny/docker-compose.yaml`  |
+| 03  | node-exporter, fluent-bit, nut-server | `03-exporters/docker-compose.yaml` |
 
 clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
 
 ### vps
 
 Path: `docker/vps/`
-| # | Service | Compose file |
-|---|---------|-------------|
-| 01 | pangolin | `01-pangolin/docker-compose.yaml` |
-| 02 | unifi | `02-unifi/docker-compose.yaml` |
-| 03 | node-exporter, fluent-bit, prometheus-agent | `03-observability/docker-compose.yaml` |
-| 04 | unifi-backup (restic→B2), ofelia scheduler | `04-unfbkup/docker-compose.yaml` |
 
-VPS role: Pangolin ingress gateway (Cloudflare → VPS → Newt WireGuard tunnel → in-cluster `envoy-external`), UniFi controller. Ansible bootstrap owns `/opt/doco-cd/`; doco-cd owns the `01-pangolin/` and `02-unifi/` stacks via its own git clone of the repo.
+| #   | Service                                     | Compose file                           |
+| --- | ------------------------------------------- | -------------------------------------- |
+| 00  | caddy-l4                                    | `00-caddy-l4/docker-compose.yaml`      |
+| 01  | towonel                                     | `01-towonel/docker-compose.yaml`       |
+| 02  | unifi                                       | `02-unifi/docker-compose.yaml`         |
+| 03  | node-exporter, fluent-bit, prometheus-agent | `03-observability/docker-compose.yaml` |
+| 04  | unifi-backup (restic→B2), ofelia scheduler  | `04-unfbkup/docker-compose.yaml`       |
+
+VPS role: towonel hub/edge ingress gateway (Cloudflare → VPS → towonel tunnel → in-cluster `envoy-external`), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `01-towonel/` and `02-unifi/` stacks via its own git clone of the repo.
 
 ## doco-cd GitOps Pattern
 
