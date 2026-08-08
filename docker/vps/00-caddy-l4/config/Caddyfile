@@ -47,9 +47,22 @@
 # UniFi controller UI. Sibling container on the edge network, not a
 # remote upstream. It presents a self-signed cert, so TLS verification is
 # disabled for this upstream only.
+#
+# UniFi 10.4.57 answers 403 with an empty body to any request carrying an
+# Origin header, including its own. Browsers always send Origin on a POST,
+# so login fails. Caddy enforces same-origin itself, then strips the
+# header so the controller sees the shape it accepts.
 {$UNIFI_HOSTNAME}:4443 {
 	log
+
+	@foreign_origin {
+		header Origin *
+		not header Origin https://{$UNIFI_HOSTNAME}:4443
+	}
+	respond @foreign_origin 403
+
 	reverse_proxy https://unifi-network-application:8443 {
+		header_up -Origin
 		transport http {
 			tls_insecure_skip_verify
 		}
