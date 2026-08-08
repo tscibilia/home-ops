@@ -15,7 +15,6 @@ services:
         ${UNIFI_HOSTNAME}
     ports:
       - 443:443
-      - 4443:4443
     volumes:
       - caddy-data:/data
       - caddy-config:/config
