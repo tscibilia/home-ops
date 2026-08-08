@@ -2,6 +2,10 @@
 - name: Bootstrap towonel VPS
   hosts: all
   gather_facts: false
+  # The ubuntu account is passwordless by design and there is no NOPASSWD
+  # drop-in, so sudo cannot escalate. root has a password, so su can.
+  # Every run needs -K, and the prompt wants root's password, not ubuntu's.
+  become_method: ansible.builtin.su
   vars:
     ansible_user: ubuntu
     ansible_python_interpreter: auto_silent
