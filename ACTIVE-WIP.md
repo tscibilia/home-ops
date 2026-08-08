@@ -32,6 +32,7 @@
 
 `Descending order, newest on top`
 
+- ✅ switch pangolin to towonel - **2026-08-08** (see PRs [#3265](https://github.com/tscibilia/home-ops/pull/3265) thru [#3272](https://github.com/tscibilia/home-ops/pull/3272)) resolves issue [#2733](https://github.com/tscibilia/home-ops/issues/2733)
 - ✅ drop boxbox for FBQ - **2026-08-06** (see commit [6910641](https://github.com/tscibilia/home-ops/commit/6910641))
 - ✅ switch to pocketID/tinyauth - **2026-08-05** (see PR [#3233](https://github.com/tscibilia/home-ops/pull/3233)) due to an upstream plex issues [authentik#24613](https://redirect.github.com/goauthentik/authentik/issues/24613) & [authentik#24774](https://redirect.github.com/goauthentik/authentik/issues/24774), let's not depend on them
 - ✅ switch charts-mirror to ocharted - **2026-07-30** (see commit [2e53ec3](https://github.com/tscibilia/home-ops/commit/2e53ec3))
