@@ -372,12 +372,23 @@
             group: root
             mode: "0644"
 
+        # deb822_repository writes crowdsec.sources; the older apt_repository
+        # wrote crowdsec.list. Leaving both defines the repo twice.
+        - name: crowdsec | Remove legacy one-line apt repository
+          ansible.builtin.file:
+            path: /etc/apt/sources.list.d/crowdsec.list
+            state: absent
+
         - name: crowdsec | Add apt repository
-          ansible.builtin.apt_repository:
-            repo: "deb [signed-by=/etc/apt/keyrings/crowdsec.asc] https://packagecloud.io/crowdsec/crowdsec/any any main"
-            filename: crowdsec
+          ansible.builtin.deb822_repository:
+            name: crowdsec
+            types: deb
+            uris: https://packagecloud.io/crowdsec/crowdsec/any
+            suites: any
+            components: main
+            signed_by: /etc/apt/keyrings/crowdsec.asc
+            enabled: true
             state: present
-            update_cache: true
 
         # Only the bouncer is a host package. The engine runs as a container
         # in 03-crowdsec; the bouncer must be on the host to write iptables.
@@ -385,6 +396,7 @@
           ansible.builtin.apt:
             name: crowdsec-firewall-bouncer-iptables
             state: present
+            update_cache: true
 
         - name: crowdsec | Render bouncer config
           ansible.builtin.template:
@@ -478,7 +490,21 @@
         name: ssh.socket
         state: restarted
 
+    # Type=notify, and the bouncer only signals ready after it reconciles every
+    # decision into ipset -- tens of thousands after a CAPI pull. That overruns
+    # systemctl's D-Bus call timeout, so a blocking restart reports "Connection
+    # timed out" while the job is still succeeding. Start it detached, then
+    # poll for the result.
     - name: Restart crowdsec-firewall-bouncer
-      ansible.builtin.service:
-        name: crowdsec-firewall-bouncer
-        state: restarted
+      ansible.builtin.shell: |
+        set -e
+        systemctl restart --no-block crowdsec-firewall-bouncer
+        for _ in $(seq 1 24); do
+          if [ "$(systemctl is-active crowdsec-firewall-bouncer)" = "active" ]; then
+            exit 0
+          fi
+          sleep 5
+        done
+        systemctl status crowdsec-firewall-bouncer --no-pager -l || true
+        exit 1
+      changed_when: true
