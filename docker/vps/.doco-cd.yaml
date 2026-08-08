@@ -82,6 +82,14 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-towonel/acme-email
+  CROWDSEC_ENROLL_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-crowdsec/enroll-key
+  HOME_IP_CIDR:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-crowdsec/home-ip-cidr
 force_recreate: false
 reconciliation:
   enabled: true

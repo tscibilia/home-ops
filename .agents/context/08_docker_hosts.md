@@ -45,6 +45,7 @@ Path: `docker/vps/`
 | --- | ------------------------------------------- | -------------------------------------- |
 | 01  | caddy-l4                                    | `01-caddy-l4/docker-compose.yaml`      |
 | 02  | towonel                                     | `02-towonel/docker-compose.yaml`       |
+| 03  | crowdsec (engine; host bouncer via Ansible) | `03-crowdsec/docker-compose.yaml`      |
 | 04  | unifi                                       | `04-unifi/docker-compose.yaml`         |
 | 05  | node-exporter, fluent-bit, prometheus-agent | `05-observability/docker-compose.yaml` |
 | 06  | unifi-backup (restic→B2), ofelia scheduler  | `06-unfbkup/docker-compose.yaml`       |

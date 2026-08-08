@@ -54,13 +54,13 @@ the network it replaced, `edge` is provisioned by Ansible
 survives any stack being removed.
 
 Directories are numbered by dependency order — `caddy-l4` owns `:443` and must
-come up first, and `towonel` is the tunnel it feeds. `03` is reserved for
-`crowdsec`.
+come up first, `towonel` is the tunnel it feeds, and `crowdsec` watches both.
 
 | #   | Directory           | Services                                    | Data path       |
 | --- | ------------------- | ------------------------------------------- | --------------- |
 | 01  | `01-caddy-l4/`      | caddy-l4 (SNI splitter, UniFi vhost)        | —               |
 | 02  | `02-towonel/`       | towonel-node (hub + edge)                   | `/opt/towonel/` |
+| 03  | `03-crowdsec/`      | crowdsec engine (LAPI on 127.0.0.1:8088)    | —               |
 | 04  | `04-unifi/`         | unifi-network-application, unifi-db (mongo) | `/opt/unifi/`   |
 | 05  | `05-observability/` | node-exporter, fluent-bit, prometheus-agent | —               |
 | 06  | `06-unfbkup/`       | restic (UniFi → B2), ofelia (scheduler)     | —               |
@@ -115,6 +115,8 @@ mapping. Key paths:
 | Prometheus remote-write  | `docker/vps-prometheus/username`, `.../password`             |
 | UniFi Mongo credentials  | `docker/vps-unifi/mongo-*`                                   |
 | UniFi restic/B2 backup   | `docker/vps-unifi/restic-*`, `docker/vps-unifi/b2-*`         |
+| CrowdSec bouncer key     | `docker/vps-crowdsec/bouncer-api-key`                        |
+| CrowdSec console enrol   | `docker/vps-crowdsec/enroll-key`                             |
 
 ## SSH access
 

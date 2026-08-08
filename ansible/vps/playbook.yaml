@@ -327,6 +327,97 @@
             user: root
             state: present
 
+    - name: crowdsec
+      become: true
+      tags: crowdsec
+      block:
+        - name: crowdsec | Read bouncer key from aKeyless
+          ansible.builtin.shell: "akeyless get-secret-value --name 'docker/vps-crowdsec/bouncer-api-key'"
+          delegate_to: localhost
+          become: false
+          check_mode: false
+          changed_when: false
+          no_log: true
+          register: crowdsec_secret_raw
+
+        - name: crowdsec | Set bouncer key fact
+          ansible.builtin.set_fact:
+            crowdsec_bouncer_api_key: "{{ crowdsec_secret_raw.stdout }}"
+          no_log: true
+
+        - name: crowdsec | Create data directories
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+          loop:
+            - /opt/crowdsec/config
+            - /opt/crowdsec/data
+
+        - name: crowdsec | Create apt keyring directory
+          ansible.builtin.file:
+            path: /etc/apt/keyrings
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+
+        - name: crowdsec | Add apt signing key
+          ansible.builtin.get_url:
+            url: https://packagecloud.io/crowdsec/crowdsec/gpgkey
+            dest: /etc/apt/keyrings/crowdsec.asc
+            owner: root
+            group: root
+            mode: "0644"
+
+        - name: crowdsec | Add apt repository
+          ansible.builtin.apt_repository:
+            repo: "deb [signed-by=/etc/apt/keyrings/crowdsec.asc] https://packagecloud.io/crowdsec/crowdsec/any any main"
+            filename: crowdsec
+            state: present
+            update_cache: true
+
+        # Only the bouncer is a host package. The engine runs as a container
+        # in 03-crowdsec; the bouncer must be on the host to write iptables.
+        - name: crowdsec | Install host firewall bouncer
+          ansible.builtin.apt:
+            name: crowdsec-firewall-bouncer-iptables
+            state: present
+
+        - name: crowdsec | Render bouncer config
+          ansible.builtin.template:
+            src: crowdsec-firewall-bouncer.yaml.j2
+            dest: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+            owner: root
+            group: root
+            mode: "0600"
+          no_log: true
+          notify: Restart crowdsec-firewall-bouncer
+
+        # doco-cd deploys the engine on its own poll cycle, so on a first
+        # bootstrap the container may not exist yet. Registration is skipped
+        # rather than failed; re-run this tag once the stack is up.
+        - name: crowdsec | Check the engine container is running
+          ansible.builtin.command: docker ps --filter name=^crowdsec$ --format '{{ '{{' }}.Names{{ '}}' }}'
+          register: crowdsec_engine
+          changed_when: false
+          failed_when: false
+
+        - name: crowdsec | Register firewall bouncer (idempotent)
+          ansible.builtin.shell: |
+            set -e
+            if docker exec crowdsec cscli bouncers list -o json | grep -q '"name":"firewall"'; then
+              echo "ALREADY_REGISTERED"
+            else
+              docker exec crowdsec cscli bouncers add firewall --key "{{ crowdsec_bouncer_api_key }}"
+            fi
+          register: crowdsec_bouncer_reg
+          changed_when: "'ALREADY_REGISTERED' not in crowdsec_bouncer_reg.stdout"
+          no_log: true
+          when: "'crowdsec' in crowdsec_engine.stdout"
+
     # Needs `-e unifi_host=true`.
     - name: unfbkup
       when: unifi_host | default(false) | bool
@@ -385,4 +476,9 @@
     - name: Restart ssh.socket
       ansible.builtin.service:
         name: ssh.socket
+        state: restarted
+
+    - name: Restart crowdsec-firewall-bouncer
+      ansible.builtin.service:
+        name: crowdsec-firewall-bouncer
         state: restarted
