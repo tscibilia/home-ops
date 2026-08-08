@@ -2,9 +2,8 @@
 - name: Bootstrap towonel VPS
   hosts: all
   gather_facts: false
-  # The ubuntu account is passwordless by design and there is no NOPASSWD
-  # drop-in, so sudo cannot escalate. root has a password, so su can.
-  # Every run needs -K, and the prompt wants root's password, not ubuntu's.
+  # ubuntu is passwordless by design and has no NOPASSWD drop-in, so sudo
+  # cannot escalate. root has a password, so su can. Runs prompt for it.
   become_method: ansible.builtin.su
   vars:
     ansible_user: ubuntu
@@ -118,6 +117,7 @@
               port: "51820"
               protocol: udp
 
+        # Needs `-e unifi_host=true`.
         - name: firewall | Allow UniFi controller UI
           community.general.ufw:
             rule: allow
@@ -125,8 +125,7 @@
             proto: tcp
           when: unifi_host | default(false) | bool
 
-        # Provider images ship sshd on 22; the bootstrap run needs it to move
-        # sshd to {{ host_ssh_port }}. Every non-bootstrap run removes it again.
+        # Bootstrap needs 22 to move sshd; every later run removes it.
         - name: firewall | Allow original SSH port during bootstrap
           community.general.ufw:
             rule: allow
@@ -148,26 +147,10 @@
             policy: deny
 
     - name: network
-      become: true
+      become: false
       tags: network
       block:
-        # Some provider images ship a netplan overlay for extra IPs that the
-        # host does not have. It is absent on a clean image, so this is a
-        # no-op there. `netplan apply` runs only if the file was really
-        # removed, so a normal run never touches networking.
-        - name: network | Remove legacy additional-IPs netplan overlay
-          ansible.builtin.file:
-            path: /etc/netplan/60-additional-ips.yaml
-            state: absent
-          register: netplan_additional_removed
-
-        - name: network | Apply netplan
-          ansible.builtin.command: netplan apply
-          when: netplan_additional_removed.changed | bool
-          changed_when: true
-
         - name: network | Create edge Docker network
-          become: false
           community.docker.docker_network:
             name: edge
             driver: bridge
@@ -259,11 +242,8 @@
             project_src: "{{ dococd_config_dir }}"
             files:
               - docker-compose.app.yaml
-            # `build: always` rebuilds akeyless-proxy on every run, orphaning
-            # the image the running container still references. `docker compose
-            # images` then fails with "No such image", so the second run always
-            # errors even though the stack is healthy. `policy` builds only when
-            # the image is missing, which is what idempotency needs.
+            # Not `always`: rebuilding orphans the running image and the
+            # next run fails with "No such image".
             build: policy
             pull: always
             state: present
@@ -321,10 +301,8 @@
             cmd: >-
               {{ geoblock_dir }}/update-country-blocks.sh
               "{{ blocked_countries | join(' ') }}"
-            # Sentinel written by the script as its last action on the success
-            # path only. Not {{ geoblock_dir }}/zones -- the script's own
-            # mkdir -p creates that before any download, so it would mark the
-            # run done even when every zone fetch failed and the script aborted.
+            # Sentinel written only on success. Not zones/ -- the script
+            # mkdirs that before downloading anything.
             creates: "{{ geoblock_dir }}/.last-success"
 
         - name: geo-block | Install weekly refresh cron job
@@ -349,6 +327,7 @@
             user: root
             state: present
 
+    # Needs `-e unifi_host=true`.
     - name: unfbkup
       when: unifi_host | default(false) | bool
       tags: unfbkup
