@@ -111,7 +111,7 @@ restart-doco-cd host:
 
 [doc('List active CrowdSec bans on the VPS')]
 [script]
-bans:
+ban-list:
     just check-tools ssh
     ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal \
         "docker exec crowdsec cscli decisions list"
