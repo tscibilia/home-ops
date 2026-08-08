@@ -16,7 +16,7 @@ services:
       - /opt/unifi/db:/data/db
       - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
     healthcheck:
-      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\" --quiet || exit 1"]
+      test: ["CMD-SHELL", 'mongosh --eval "db.adminCommand(''ping'')" --quiet || exit 1']
       interval: 10s
       timeout: 10s
       retries: 5
@@ -58,5 +58,5 @@ services:
 
 networks:
   default:
-    name: pangolin
+    name: edge
     external: true

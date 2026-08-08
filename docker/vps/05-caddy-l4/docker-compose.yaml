@@ -22,11 +22,6 @@ services:
     configs:
       - source: caddyfile
         target: /etc/caddy/Caddyfile
-    # UniFi's controller UI lives on the pangolin network (docker/vps/02-unifi),
-    # not edge. Join both so the :4443 vhost can resolve it by container name.
-    networks:
-      - default
-      - pangolin
 
 volumes:
   caddy-data:
@@ -39,7 +34,4 @@ configs:
 networks:
   default:
     name: edge
-    external: true
-  pangolin:
-    name: pangolin
     external: true
