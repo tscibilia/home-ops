@@ -6,38 +6,10 @@ auto_discovery:
   delete: true
 # Must be stored as individual text-based static secrets in aKeyless (not JSON)
 external_secrets:
-  PANGOLIN_SERVER_SECRET:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-pangolin/secret-domain
-  CF_CLOUDFLARE_TOKEN:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-cloudflare/dns-token
-  CROWDSEC_TRAEFIK_API_KEY:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-pangolin/crowdsec-traefik-api-key
-  HOME_IP_CIDR:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-pangolin/home-ip-cidr
-  MAXMIND_ACCOUNT_ID:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-maxmind/account-id
-  MAXMIND_PANGOLIN_LICENSE_KEY:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/vps-maxmind/license-key
   DOMAIN:
     store_ref: akeyless
     remote_ref:
       key: docker/secret-domain
-  CEAPP_DOMAIN:
-    store_ref: akeyless
-    remote_ref:
-      key: docker/secret-ceapp-domain
   PROMETHEUS_USERNAME:
     store_ref: akeyless
     remote_ref:
@@ -78,6 +50,38 @@ external_secrets:
     store_ref: akeyless
     remote_ref:
       key: docker/vps-unifi/b2-account-key
+  UNIFI_HOSTNAME:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-unifi/hostname
+  TOWONEL_HUB_HOSTNAME:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/hub-hostname
+  TOWONEL_IDENTITY_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/identity-key
+  TOWONEL_HUB_KEK:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/hub-kek
+  TOWONEL_INVITE_HASH_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/invite-hash-key
+  TOWONEL_HUB_OPERATOR_API_KEY:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/operator-api-key
+  TOWONEL_HUB_LINK_PSK:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/hub-link-psk
+  CADDY_ACME_EMAIL:
+    store_ref: akeyless
+    remote_ref:
+      key: docker/vps-towonel/acme-email
 force_recreate: false
 reconciliation:
   enabled: true

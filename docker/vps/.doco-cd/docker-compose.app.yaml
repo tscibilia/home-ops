@@ -64,7 +64,7 @@ services:
 
 networks:
   default:
-    name: pangolin
+    name: edge
     external: true
 
 volumes:
