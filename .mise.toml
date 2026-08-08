@@ -38,6 +38,6 @@ zizmor = "1.29.0"
 "aqua:mitsuhiko/minijinja" = "2.23.0"
 "aqua:cilium/cilium-cli" = "0.19.7"
 "aqua:cli/cli" = "2.97.0"                  # GitHub CLI
-"aqua:fluxcd/flux2" = "2.9.3"
+"aqua:fluxcd/flux2" = "2.9.4"
 "aqua:helmfile/helmfile" = "1.7.3"
 "aqua:kubernetes-sigs/kustomize" = "5.6.0"
