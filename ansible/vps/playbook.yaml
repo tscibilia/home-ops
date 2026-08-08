@@ -417,10 +417,16 @@
           changed_when: false
           failed_when: false
 
+        # cscli pretty-prints JSON as `"name": "firewall"` with a space, so an
+        # exact-string grep never matches and this re-runs `add` every time,
+        # failing once the bouncer exists. Match either spacing.
+        #
+        # Rotating the key needs `cscli bouncers delete firewall` first --
+        # this only checks that the name exists, not which key it holds.
         - name: crowdsec | Register firewall bouncer (idempotent)
           ansible.builtin.shell: |
             set -e
-            if docker exec crowdsec cscli bouncers list -o json | grep -q '"name":"firewall"'; then
+            if docker exec crowdsec cscli bouncers list -o json | grep -qE '"name":[[:space:]]*"firewall"'; then
               echo "ALREADY_REGISTERED"
             else
               docker exec crowdsec cscli bouncers add firewall --key "{{ crowdsec_bouncer_api_key }}"
