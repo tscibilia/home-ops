@@ -7,26 +7,29 @@ passthrough over iroh QUIC) for public ingress.
 
 ✅ Migration completed August 2026
 
+Model: Opus 5 | Context: [████████░░░░░░░░] 477k/1.0M (48%) | Cost: $227.65
+
 The live architecture, stack list and secret map are in [`README.md`](README.md).
 This document covers why the move happened, how it was sequenced, and what went
 wrong along the way.
 
 ## Why We Moved
 
-Pangolin terminated TLS on the VPS. That single fact caused three problems.
+This migration improved your security posture. Pangolin terminated TLS on the VPS,
+it held certs and saw all request in plaintext. That fact caused three problems:
 
-The tunnel operator held a valid private key for every hostname. Any traffic
-between the VPS and the cluster was decrypted and re-encrypted by software we
-did not control.
+1. The tunnel operator held a valid private key for every hostname. Any traffic
+   between the VPS and the cluster was decrypted and re-encrypted by software we
+   did not control.
 
-Cloudflare's proxy sat in front, so request bodies were capped at 100 MB.
-Uploads to Immich and similar apps failed above that.
+2. Cloudflare's proxy sat in front, so request bodies were capped at 100 MB.
+   Uploads to Immich and similar apps failed above that.
 
-Client IPs arrived through two proxy hops, the second being the `newt` pod.
-`X-Forwarded-For` read `157.230.51.94,10.42.0.75`, so apps that trusted the
-last hop saw a pod IP.
+3. Client IPs arrived through two proxy hops, the second being the `newt` pod.
+   `X-Forwarded-For` read `157.230.51.94,10.42.0.75`, so apps that trusted the
+   last hop saw a pod IP.
 
-towonel solves all three by never decrypting. `caddy-l4` reads the TLS SNI to
+[towonel](https://towonel.dev/) solves all three by never decrypting. `caddy-l4` reads the TLS SNI to
 decide where a connection goes, then forwards the raw bytes. TLS terminates at
 `envoy-external` inside the cluster, where the certificate already lives.
 Through towonel the same request yields a single clean hop: `100.35.75.195`.
