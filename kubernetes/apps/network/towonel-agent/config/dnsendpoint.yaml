@@ -19,3 +19,13 @@ spec:
       recordType: A
       recordTTL: 60
       targets: *target
+    - dnsName: external.${SECRET_DOMAIN}
+      recordType: A
+      recordTTL: 60
+      targets: *target
+      # DNS-only (global default): Cloudflare's proxy caps request bodies at
+      # 100MB, which breaks large Immich uploads.
+    - dnsName: external.${CEAPP_DOMAIN}
+      recordType: A
+      recordTTL: 60
+      targets: *target

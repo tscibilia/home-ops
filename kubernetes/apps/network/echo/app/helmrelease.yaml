@@ -17,11 +17,6 @@ spec:
     httpRoute:
       enabled: true
       annotations:
-        # CANARY for the towonel migration: this route alone resolves to the
-        # towonel edge instead of the gateway's default Pangolin target. Every
-        # other app keeps using external.${SECRET_DOMAIN}. Removing this line
-        # reverts echo to Pangolin in one DNS TTL (60s).
-        external-dns.alpha.kubernetes.io/target: twnl-external.${SECRET_DOMAIN}
         gatus.home-operations.com/endpoint: |-
           conditions: ["[STATUS] == 200"]
       hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
