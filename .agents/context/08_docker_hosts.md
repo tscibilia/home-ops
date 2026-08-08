@@ -43,13 +43,13 @@ Path: `docker/vps/`
 
 | #   | Service                                     | Compose file                           |
 | --- | ------------------------------------------- | -------------------------------------- |
-| 00  | caddy-l4                                    | `00-caddy-l4/docker-compose.yaml`      |
-| 01  | towonel                                     | `01-towonel/docker-compose.yaml`       |
-| 02  | unifi                                       | `02-unifi/docker-compose.yaml`         |
-| 03  | node-exporter, fluent-bit, prometheus-agent | `03-observability/docker-compose.yaml` |
-| 04  | unifi-backup (restic→B2), ofelia scheduler  | `04-unfbkup/docker-compose.yaml`       |
+| 01  | caddy-l4                                    | `01-caddy-l4/docker-compose.yaml`      |
+| 02  | towonel                                     | `02-towonel/docker-compose.yaml`       |
+| 04  | unifi                                       | `04-unifi/docker-compose.yaml`         |
+| 05  | node-exporter, fluent-bit, prometheus-agent | `05-observability/docker-compose.yaml` |
+| 06  | unifi-backup (restic→B2), ofelia scheduler  | `06-unfbkup/docker-compose.yaml`       |
 
-VPS role: towonel hub/edge ingress gateway (Cloudflare → VPS → towonel tunnel → in-cluster `envoy-external`), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `01-towonel/` and `02-unifi/` stacks via its own git clone of the repo.
+VPS role: towonel hub/edge ingress gateway (Cloudflare → VPS → towonel tunnel → in-cluster `envoy-external`), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `02-towonel/` and `04-unifi/` stacks via its own git clone of the repo.
 
 ## doco-cd GitOps Pattern
 

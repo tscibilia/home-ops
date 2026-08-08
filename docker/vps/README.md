@@ -53,13 +53,17 @@ the network it replaced, `edge` is provisioned by Ansible
 (`ansible/vps/playbook.yaml`, tag `network`) rather than by a stack — so it
 survives any stack being removed.
 
+Directories are numbered by dependency order — `caddy-l4` owns `:443` and must
+come up first, and `towonel` is the tunnel it feeds. `03` is reserved for
+`crowdsec`.
+
 | #   | Directory           | Services                                    | Data path       |
 | --- | ------------------- | ------------------------------------------- | --------------- |
-| 01  | `01-towonel/`       | towonel-node (hub + edge)                   | `/opt/towonel/` |
-| 02  | `02-unifi/`         | unifi-network-application, unifi-db (mongo) | `/opt/unifi/`   |
-| 03  | `03-observability/` | node-exporter, fluent-bit, prometheus-agent | —               |
-| 04  | `04-unfbkup/`       | restic (UniFi → B2), ofelia (scheduler)     | —               |
-| 05  | `05-caddy-l4/`      | caddy-l4 (SNI splitter, UniFi vhost)        | —               |
+| 01  | `01-caddy-l4/`      | caddy-l4 (SNI splitter, UniFi vhost)        | —               |
+| 02  | `02-towonel/`       | towonel-node (hub + edge)                   | `/opt/towonel/` |
+| 04  | `04-unifi/`         | unifi-network-application, unifi-db (mongo) | `/opt/unifi/`   |
+| 05  | `05-observability/` | node-exporter, fluent-bit, prometheus-agent | —               |
+| 06  | `06-unfbkup/`       | restic (UniFi → B2), ofelia (scheduler)     | —               |
 
 ## GitOps — doco-cd
 
