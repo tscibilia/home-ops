@@ -5,18 +5,6 @@
   vulnerabilityAlerts: false,
   packageRules: [
     {
-      description: "Override Talos Installer Package Name",
-      matchDatasources: ["docker"],
-      matchPackageNames: ["/factory\\.talos\\.dev/"],
-      overridePackageName: "ghcr.io/siderolabs/installer",
-    },
-    {
-      description: "Loose versioning for non-semver packages",
-      matchDatasources: ["docker"],
-      versioning: "loose",
-      matchPackagePatterns: ["changedetection", "plex"],
-    },
-    {
       description: "Loose versioning for RustFS excluding -glibc tags",
       matchDatasources: ["docker"],
       matchPackagePatterns: ["rustfs/rustfs"],
@@ -24,17 +12,11 @@
       allowedVersions: "/^\\d+\\.\\d+\\.\\d+-(alpha|beta)\\.\\d+$/",
     },
     {
-      description: "Cal-commit versioning for SearXNG (weekly updates)",
+      description: "Cal-commit versioning for SearXNG (weekly updates) shaped semver/calver + '-<commit-sha>'",
       matchDatasources: ["docker"],
       matchPackagePatterns: ["ghcr.io/searxng/searxng"],
-      versioning: "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d{1,2})-[0-9a-f]+$",
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[a-f0-9]+$",
       schedule: ["before 3am on Monday"],
-    },
-    {
-      description: "Regex versioning for llama.cpp server-cuda-bNNNNN tags",
-      matchDatasources: ["docker"],
-      matchPackageNames: ["ghcr.io/ggml-org/llama.cpp"],
-      versioning: "regex:^server-(?<compatibility>[a-z]+)-b(?<patch>\\d+)$",
     },
     {
       description: "Track FileBrowser Quantum 2.x.x-preview-x only (v2 config layout is still moving; a silent jump to stable risks a config migration)",
