@@ -6,19 +6,11 @@ metadata:
   name: towonel-agent
 spec:
   endpoints:
-    - dnsName: twnl-external.${SECRET_DOMAIN}
+    - dnsName: twnl.${SECRET_DOMAIN}
       recordType: A
       recordTTL: 60
       targets: &target
         - ${TOWONEL_VPS_IP}
-    - dnsName: twnl-external.${CEAPP_DOMAIN}
-      recordType: A
-      recordTTL: 60
-      targets: *target
-    - dnsName: twnl.${SECRET_DOMAIN}
-      recordType: A
-      recordTTL: 60
-      targets: *target
     - dnsName: external.${SECRET_DOMAIN}
       recordType: A
       recordTTL: 60
