@@ -13,6 +13,12 @@
     - name: Check host connectivity
       ansible.builtin.ping:
 
+    - name: Set hostname
+      become: true
+      tags: hostname
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname_short }}"
+
     - name: Read secrets from aKeyless
       ansible.builtin.shell: "akeyless get-secret-value --name '{{ item }}'"
       delegate_to: localhost
@@ -49,22 +55,7 @@
         - name: user | Add SSH public key
           ansible.posix.authorized_key:
             user: ubuntu
-            key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-
-        # Ubuntu's default `%sudo ALL=(ALL:ALL) ALL` requires a password, and
-        # this account is created without one. Without this drop-in every
-        # `become: true` task fails with "Missing sudo password" on the second
-        # run — by which point sshd has moved to {{ host_ssh_port }} and
-        # PermitRootLogin is off, leaving no privileged way back in.
-        # `validate` guards against a malformed file locking out sudo entirely.
-        - name: user | Grant passwordless sudo
-          ansible.builtin.copy:
-            dest: /etc/sudoers.d/90-ubuntu-nopasswd
-            content: "ubuntu ALL=(ALL) NOPASSWD:ALL\n"
-            owner: root
-            group: root
-            mode: "0440"
-            validate: visudo -cf %s
+            key: "{{ lookup('file', '~/.ssh/home-ops.pub') }}"
 
     - name: packages
       become: true
@@ -129,7 +120,7 @@
               port: "51820"
               protocol: udp
 
-        - name: firewall | Allow UniFi inform port
+        - name: firewall | Allow UniFi controller UI
           community.general.ufw:
             rule: allow
             port: "4443"
@@ -159,10 +150,26 @@
             policy: deny
 
     - name: network
-      become: false
+      become: true
       tags: network
       block:
+        # Some provider images ship a netplan overlay for extra IPs that the
+        # host does not have. It is absent on a clean image, so this is a
+        # no-op there. `netplan apply` runs only if the file was really
+        # removed, so a normal run never touches networking.
+        - name: network | Remove legacy additional-IPs netplan overlay
+          ansible.builtin.file:
+            path: /etc/netplan/60-additional-ips.yaml
+            state: absent
+          register: netplan_additional_removed
+
+        - name: network | Apply netplan
+          ansible.builtin.command: netplan apply
+          when: netplan_additional_removed.changed | bool
+          changed_when: true
+
         - name: network | Create edge Docker network
+          become: false
           community.docker.docker_network:
             name: edge
             driver: bridge
