@@ -44,7 +44,7 @@
 	reverse_proxy towonel-hub:8443
 }
 
-# UniFi controller UI. Sibling container on the pangolin network, not a
+# UniFi controller UI. Sibling container on the edge network, not a
 # remote upstream. It presents a self-signed cert, so TLS verification is
 # disabled for this upstream only.
 {$UNIFI_HOSTNAME}:4443 {

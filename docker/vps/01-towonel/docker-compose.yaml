@@ -36,7 +36,7 @@ services:
     ports:
       - 51820:51820/udp
       # Metrics on loopback only, for the host-networked prometheus-agent in
-      # 03-exporters. Not reachable off-box: ufw denies both ports, and the
+      # 03-observability. Not reachable off-box: ufw denies both ports, and the
       # 127.0.0.1 bind means Docker never opens them to the outside anyway.
       # 9091 = hub metrics, 9092 = edge metrics (one process, two endpoints).
       - 127.0.0.1:9091:9091
