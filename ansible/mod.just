@@ -109,6 +109,25 @@ restart-doco-cd host:
         ;;
     esac
 
+[doc('List active CrowdSec bans on the VPS')]
+[script]
+bans:
+    just check-tools ssh
+    ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal \
+        "docker exec crowdsec cscli decisions list"
+
+[doc('Unban an IP from CrowdSec on the VPS')]
+[script]
+unban ip:
+    just check-tools ssh
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal \
+        "docker exec crowdsec cscli decisions delete --ip '{{ ip }}'"
+    echo "Remaining decisions:"
+    ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal \
+        "docker exec crowdsec cscli decisions list"
+
 [doc('Emergency: SCP compose file directly to VPS and restart service (bypasses doco-cd/git)')]
 [script]
 deploy-direct service:
