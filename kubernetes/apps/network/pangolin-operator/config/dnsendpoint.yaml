@@ -7,16 +7,6 @@ metadata:
   namespace: network
 spec:
   endpoints:
-    - dnsName: external.${SECRET_DOMAIN}
-      recordType: A
-      recordTTL: 60
-      targets:
-        - ${VPS_IP}
-    - dnsName: external.${CEAPP_DOMAIN}
-      recordType: A
-      recordTTL: 60
-      targets:
-        - ${VPS_IP}
     - dnsName: ${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
       recordType: A
       recordTTL: 60
