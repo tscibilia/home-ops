@@ -71,6 +71,16 @@ configs:
             - targets: ['localhost:2020']
               labels:
                 host: vps
+        - job_name: towonel-hub
+          static_configs:
+            - targets: ['localhost:9091']
+              labels:
+                host: vps
+        - job_name: towonel-edge
+          static_configs:
+            - targets: ['localhost:9092']
+              labels:
+                host: vps
 
       remote_write:
         - url: https://prometheus-rw.${DOMAIN}/api/v1/write

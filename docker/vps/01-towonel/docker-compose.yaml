@@ -1,0 +1,64 @@
+---
+name: towonel
+
+services:
+  towonel-hub:
+    # renovate: datasource=docker depName=codeberg.org/towonel/towonel-node
+    image: codeberg.org/towonel/towonel-node:1.5.2
+    container_name: towonel-hub
+    restart: unless-stopped
+    user: "10001:10001"
+    environment:
+      RUST_LOG: info
+      # Hub (control plane)
+      TOWONEL_HUB_ENABLED: "true"
+      TOWONEL_HUB_PUBLIC_URL: https://${TOWONEL_HUB_HOSTNAME}
+      TOWONEL_HUB_ALLOW_PRIVILEGED_PORTS: "true"
+      TOWONEL_HUB_TRUSTED_PROXIES: 172.16.0.0/12
+      TOWONEL_IDENTITY_KEY: ${TOWONEL_IDENTITY_KEY}
+      TOWONEL_HUB_KEK: ${TOWONEL_HUB_KEK}
+      TOWONEL_INVITE_HASH_KEY: ${TOWONEL_INVITE_HASH_KEY}
+      TOWONEL_HUB_OPERATOR_API_KEY: ${TOWONEL_HUB_OPERATOR_API_KEY}
+      TOWONEL_HUB_LINK_PSK: ${TOWONEL_HUB_LINK_PSK}
+      # Edge (data plane). Behind caddy-l4 on :443, so listen internally
+      # and require PROXY v2.
+      TOWONEL_EDGE_ENABLED: "true"
+      TOWONEL_EDGE_LISTEN_ADDR: 0.0.0.0:4443
+      TOWONEL_EDGE_PROXY_PROTOCOL: "true"
+      TOWONEL_EDGE_HEALTH_LISTEN_ADDR: 0.0.0.0:9092
+      # Must be set, or the edge advertises no iroh address and the agent
+      # never forms a tunnel despite reporting Ready. See spec D3.
+      TOWONEL_EDGE_IROH_PORT: "51820"
+      TOWONEL_EDGE_ADVERTISED_ADDRESSES: ${TOWONEL_HUB_HOSTNAME}:443
+    expose:
+      - "4443"
+      - "8443"
+    ports:
+      - 51820:51820/udp
+      # Metrics on loopback only, for the host-networked prometheus-agent in
+      # 03-exporters. Not reachable off-box: ufw denies both ports, and the
+      # 127.0.0.1 bind means Docker never opens them to the outside anyway.
+      # 9091 = hub metrics, 9092 = edge metrics (one process, two endpoints).
+      - 127.0.0.1:9091:9091
+      - 127.0.0.1:9092:9092
+    volumes:
+      - /opt/towonel:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://127.0.0.1:8443/v1/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+networks:
+  default:
+    name: edge
+    external: true

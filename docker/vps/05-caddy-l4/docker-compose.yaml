@@ -1,0 +1,45 @@
+---
+name: caddy-l4
+
+services:
+  caddy:
+    image: ghcr.io/bjw-s-labs/caddy-l4:2.11.4
+    container_name: caddy-l4
+    restart: unless-stopped
+    environment:
+      CADDY_ACME_EMAIL: ${CADDY_ACME_EMAIL}
+      TOWONEL_HUB_HOSTNAME: ${TOWONEL_HUB_HOSTNAME}
+      UNIFI_HOSTNAME: ${UNIFI_HOSTNAME}
+      VPS_LOCAL_HOSTS: >-
+        ${TOWONEL_HUB_HOSTNAME}
+        ${UNIFI_HOSTNAME}
+    ports:
+      - 443:443
+      - 4443:4443
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    # UniFi's controller UI lives on the pangolin network (docker/vps/02-unifi),
+    # not edge. Join both so the :4443 vhost can resolve it by container name.
+    networks:
+      - default
+      - pangolin
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+configs:
+  caddyfile:
+    file: ./config/Caddyfile
+
+networks:
+  default:
+    name: edge
+    external: true
+  pangolin:
+    name: pangolin
+    external: true
