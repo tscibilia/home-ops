@@ -1,0 +1,44 @@
+---
+# Loaded by prometheus.yml via `scrape_config_files`. A separate file so
+# doco-cd force-recreates the agent when it changes.
+scrape_configs:
+  - job_name: node-exporter
+    static_configs:
+      - targets: ["localhost:9100"]
+        labels:
+          host: vps
+  - job_name: fluent-bit
+    static_configs:
+      - targets: ["localhost:2020"]
+        labels:
+          host: vps
+  - job_name: towonel-hub
+    static_configs:
+      - targets: ["localhost:9091"]
+        labels:
+          host: vps
+  - job_name: towonel-edge
+    static_configs:
+      - targets: ["localhost:9092"]
+        labels:
+          host: vps
+  # Label-driven discovery: a container opts in with `prometheus.scrape=true`
+  # plus port/job labels. No edit here, and no published host port needed.
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 30s
+        filters:
+          - name: label
+            values: ["prometheus.scrape=true"]
+    relabel_configs:
+      - source_labels: [__meta_docker_network_ip, __meta_docker_container_label_prometheus_port]
+        separator: ":"
+        target_label: __address__
+      - source_labels: [__meta_docker_container_label_prometheus_job]
+        target_label: job
+      - source_labels: [__meta_docker_container_name]
+        regex: "/(.*)"
+        target_label: container
+      - target_label: host
+        replacement: vps

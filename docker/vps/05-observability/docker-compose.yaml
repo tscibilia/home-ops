@@ -39,8 +39,7 @@ services:
     container_name: prometheus-agent
     restart: unless-stopped
     network_mode: host
-    # Host docker group, for read-only /var/run/docker.sock. Required by the
-    # `docker` scrape job's service discovery.
+    # Host docker group, for read-only docker.sock (the `docker` scrape job).
     group_add:
       - "988"
     command:
@@ -50,6 +49,8 @@ services:
     configs:
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
+      - source: prometheus_scrape_configs
+        target: /etc/prometheus/scrape_configs.yml
     volumes:
       - prometheus-data:/prometheus
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -59,55 +60,16 @@ volumes:
   prometheus-data:
 
 configs:
+  # doco-cd force-recreates on changed config *files* but skips inline
+  # `content` — so only what needs ${VAR} interpolation stays inline.
   prometheus_config:
     content: |
       global:
         scrape_interval: 1m
         scrape_timeout: 30s
 
-      scrape_configs:
-        - job_name: node-exporter
-          static_configs:
-            - targets: ['localhost:9100']
-              labels:
-                host: vps
-        - job_name: fluent-bit
-          static_configs:
-            - targets: ['localhost:2020']
-              labels:
-                host: vps
-        - job_name: towonel-hub
-          static_configs:
-            - targets: ['localhost:9091']
-              labels:
-                host: vps
-        - job_name: towonel-edge
-          static_configs:
-            - targets: ['localhost:9092']
-              labels:
-                host: vps
-        # Label-driven discovery for everything else. A container opts in with
-        # `prometheus.scrape=true` plus a port/job label — no edit here, and no
-        # published host port, because this agent is host-networked and reaches
-        # the container directly on its `edge` bridge IP.
-        - job_name: docker
-          docker_sd_configs:
-            - host: unix:///var/run/docker.sock
-              refresh_interval: 30s
-              filters:
-                - name: label
-                  values: ['prometheus.scrape=true']
-          relabel_configs:
-            - source_labels: [__meta_docker_network_ip, __meta_docker_container_label_prometheus_port]
-              separator: ':'
-              target_label: __address__
-            - source_labels: [__meta_docker_container_label_prometheus_job]
-              target_label: job
-            - source_labels: [__meta_docker_container_name]
-              regex: '/(.*)'
-              target_label: container
-            - target_label: host
-              replacement: vps
+      scrape_config_files:
+        - /etc/prometheus/scrape_configs.yml
 
       remote_write:
         - url: https://prometheus-rw.${DOMAIN}/api/v1/write
@@ -115,103 +77,9 @@ configs:
             username: ${PROMETHEUS_USERNAME}
             password: ${PROMETHEUS_PASSWORD}
 
+  prometheus_scrape_configs:
+    file: ./config/scrape_configs.yml
   fluent_bit_config:
-    content: |
-      [SERVICE]
-          Daemon Off
-          Flush 5
-          Log_Level info
-          Parsers_File /fluent-bit/etc/parsers.conf
-
-      [INPUT]
-          Name tail
-          Path /var/lib/docker/containers/*/*-json.log
-          Parser docker
-          Tag docker
-          Path_Key filename
-          Refresh_Interval 5
-          Mem_Buf_Limit 10MB
-          Skip_Long_Lines On
-          DB /fluent-bit/data/docker.db
-
-      [FILTER]
-          Name lua
-          Match docker
-          Script /fluent-bit/etc/conf/enrich.lua
-          call enrich_container_name
-
-      # Known-benign lines that would otherwise be counted. logback announces
-      # its configured levels at startup ("... to ERROR") on INFO lines, and
-      # akeyless-proxy raises BrokenPipeError whenever doco-cd hangs up mid
-      # response — doco-cd already reports that same event at error level.
-      [FILTER]
-          Name grep
-          Match docker
-          Exclude log (?i)error:\s*none
-          Exclude log \|-INFO in ch\.qos\.logback
-          Exclude log Setting level of logger
-          Exclude log BrokenPipeError
-
-      # Match the log *level marker*, never a bare "error" substring. A plain
-      # (?i)error also matches prose like "Broken pipe (os error 32)" on a WARN
-      # line, which is what made this metric unusable. Formats, in order:
-      # JSON logger (caddy, doco-cd, towonel) / logfmt (crowdsec) / mongo
-      # severity / uppercase level word (unifi) / python exception type.
-      [FILTER]
-          Name log_to_metrics
-          Match docker
-          Tag node_metrics
-          Metric_Name container_log_errors_total
-          metric_mode counter
-          metric_description Container log error count
-          regex log ("level":"(error|ERROR|fatal|FATAL)"|level=(error|fatal)|"s":"[EF]"|\b(ERROR|FATAL|SEVERE)\b|^[A-Za-z_][A-Za-z0-9_.]*(Error|Exception):)
-          Label_Field container
-          Label_Field host
-
-      [FILTER]
-          Name log_to_metrics
-          Match docker
-          Tag node_metrics
-          Metric_Name container_log_warnings_total
-          metric_mode counter
-          metric_description Container log warning count
-          regex log ("level":"(warn|WARN|warning|WARNING)"|level=warn(ing)?|"s":"W"|\b(WARN|WARNING)\b)
-          Label_Field container
-          Label_Field host
-
-      [OUTPUT]
-          Name prometheus_exporter
-          Match node_metrics
-          Host 0.0.0.0
-          Port 2020
-
-      [OUTPUT]
-          Name null
-          Match docker
-
+    file: ./config/fluent-bit.conf
   fluent_bit_enrich:
-    content: |
-      function enrich_container_name(tag, timestamp, record)
-          local filename = record["filename"]
-          if filename then
-              local container_id = filename:match("/containers/([^/]+)/")
-              if container_id then
-                  local config_path = "/var/lib/docker/containers/" .. container_id .. "/config.v2.json"
-                  local f = io.open(config_path, "r")
-                  if f then
-                      local content = f:read("*all")
-                      f:close()
-                      local name = content:match('"Name":"/?([^"]+)"')
-                      if name then
-                          record["container"] = name
-                      end
-                  end
-                  if not record["container"] then
-                      record["container"] = container_id
-                  end
-              end
-              record["filename"] = nil
-          end
-          record["host"] = "vps"
-          return 1, timestamp, record
-      end
+    file: ./config/enrich.lua

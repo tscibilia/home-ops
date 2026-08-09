@@ -73,12 +73,10 @@ listeners and must come up first, `towonel` is the tunnel it feeds, and
 
 ## Monitoring
 
-`prometheus-agent` remote-writes to the cluster. Host-level jobs
-(`node-exporter`, `fluent-bit`, `towonel-hub`, `towonel-edge`) are static
-because they are host-networked or bound to loopback. Everything else is
-discovered from the Docker socket by the `docker` job. A container opts in
-with three labels — no edit to the observability stack, and no published
-host port, since the agent reaches it directly on its `edge` bridge IP:
+`prometheus-agent` remote-writes to the cluster. Host-networked and loopback
+targets are static jobs; everything else is discovered from the Docker socket
+by the `docker` job. A container opts in with three labels — no edit here, and
+no published port, since the agent reaches it on its `edge` bridge IP:
 
 ```yaml
 labels:
@@ -88,25 +86,41 @@ labels:
 ```
 
 > [!NOTE]
-> Prefer a real metrics endpoint over log scraping. `doco-cd` (`:9120`),
-> `crowdsec` (`:6060`) and towonel all export their own health; alerts in
-> `kube-prometheus-stack/app/scrapeconfigs/prometheusrule.yaml` are built on
-> those, not on log lines.
+> Prefer a metrics endpoint over log scraping. `doco-cd` (`:9120`), `crowdsec`
+> (`:6060`) and towonel export their own health, and the alerts in
+> `kube-prometheus-stack/app/scrapeconfigs/prometheusrule.yaml` use those.
 
-`fluent-bit` still derives `container_log_{errors,warnings}_total` for the
-containers that have **no** metrics endpoint at all — the UniFi application,
-`akeyless-proxy`, `ofelia` and `restic`.
+`fluent-bit` derives `container_log_{errors,warnings}_total` only for the
+containers with no metrics endpoint — the UniFi application, `akeyless-proxy`,
+`ofelia` and `restic`. Logs are discarded afterwards (`[OUTPUT] Name null`),
+so a firing alert can only be investigated with `docker logs` on the host.
 
 > [!WARNING]
-> The log→metric regexes match a **log level marker**, not the word "error".
-> A bare `(?i)error` also matches prose such as `Broken pipe (os error 32)` on
-> a WARN line, which made `RemoteContainerLogErrors` fire on healthy traffic.
-> If you widen these regexes, re-check them against real output first —
+> The regexes match a **log level marker**, not the word "error" — a bare
+> `(?i)error` also matches prose like `Broken pipe (os error 32)` on a WARN
+> line. Some containers also log ordinary events _at_ error level (caddy's
+> scanner probes and client disconnects); those are dropped by name in the
+> grep `Exclude` list. Re-check any change against real output:
 > `docker logs <c> --since 24h | grep -cE '<regex>'`.
 
-Logs themselves are discarded after metric extraction (`[OUTPUT] Name null`),
-so when one of these alerts fires the only way to see the offending line is
-`docker logs` on the host.
+### Why these configs are files, not inline
+
+doco-cd force-recreates a service when a **file** it references changes, but
+skips inline configs — `internal/docker/compose.go` leaves the changed-service
+scan with `if c.File == "" { continue }`. Compose recreates on neither form
+(its `config-hash` covers neither), so an inline edit deploys the stack and
+leaves the old container running. That is how a fluent-bit regex fix once
+went live in git without reaching the running process.
+
+> [!IMPORTANT]
+> Only `content` interpolates `${VAR}`, and those blocks will **not**
+> auto-recreate — hence `prometheus.yml` keeps just `global` and
+> `remote_write` inline, loading its jobs from `config/scrape_configs.yml` via
+> `scrape_config_files`. After editing an inline block, force-recreate with
+> `docker rm -f <container>`; the `die` reconciler restores it in seconds.
+
+`force_recreate: true` is not the fix — it bypasses the unchanged-skip
+(`stage_2_pre-deploy.go`), recreating the stack on every hourly poll.
 
 ## GitOps — doco-cd
 

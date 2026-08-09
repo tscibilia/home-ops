@@ -19,14 +19,16 @@ spec:
           annotations:
             summary: "Remote host {{ $labels.instance }} is down"
             description: "node-exporter on {{ $labels.instance }} is unreachable. The host may be offline."
+        # Needs a cluster of lines, not one: `rate(...) > 0` stayed above zero
+        # for a full 5m window after a single log line.
         - alert: RemoteContainerLogErrors
-          expr: rate(log_metric_counter_container_log_errors_total[5m]) > 0
+          expr: increase(log_metric_counter_container_log_errors_total[15m]) > 2
           for: 5m
           labels:
             severity: warning
           annotations:
             summary: "Container errors on {{ $labels.instance }}: {{ $labels.container }}"
-            description: "Error log lines detected in container {{ $labels.container }} on {{ $labels.instance }}."
+            description: "Repeated error log lines in container {{ $labels.container }} on {{ $labels.instance }}."
         - alert: RemoteContainerLogWarnings
           expr: rate(log_metric_counter_container_log_warnings_total[5m]) > 0.1
           for: 5m
@@ -43,9 +45,7 @@ spec:
           annotations:
             summary: "Disk almost full on {{ $labels.instance }}: {{ $labels.mountpoint }}"
             description: "Filesystem {{ $labels.mountpoint }} on {{ $labels.instance }} has less than 10% free."
-    # Alerts driven by the services' own metrics rather than by log scraping.
-    # These describe actual tunnel and GitOps health; a log line mentioning
-    # "error" does not.
+    # Driven by the services' own metrics rather than by log scraping.
     - name: vps-services.rules
       rules:
         - alert: TowonelEdgeNoSessions
