@@ -58,8 +58,9 @@ the network it replaced, `edge` is provisioned by Ansible
 (`ansible/vps/playbook.yaml`, tag `network`) rather than by a stack — so it
 survives any stack being removed.
 
-Directories are numbered by dependency order — `caddy-l4` owns `:443` and must
-come up first, `towonel` is the tunnel it feeds, and `crowdsec` watches both.
+Directories are numbered by dependency order — `caddy-l4` owns the public
+listeners and must come up first, `towonel` is the tunnel it feeds, and
+`crowdsec` watches both.
 
 | #   | Directory           | Services                                    | Data path       |
 | --- | ------------------- | ------------------------------------------- | --------------- |

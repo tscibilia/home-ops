@@ -322,10 +322,11 @@ services no external route serves.
 
 ### Caddy advertises HTTP/3 that cannot be reached
 
-Only TCP is published to `caddy-l4`, but Caddy still sends
-`alt-svc: h3=":8443"; ma=2592000`. Browsers cache that for 30 days and then send
-requests over UDP that never arrives, producing `NetworkError` and
-`NS_BINDING_ABORTED` on XHRs after the page loads.
+Only TCP is published to `caddy-l4`, but every HTTP server still advertised
+`alt-svc` — `h3=":8443"` behind the layer4 path and `h3=":4443"` on the directly
+bound one. Browsers cache that for 30 days and then send requests over UDP that
+never arrives, producing `NetworkError` and `NS_BINDING_ABORTED` on XHRs after
+the page loads. Pin every server that terminates HTTP:
 
 ```caddy
 servers :8443 { protocols h1 h2 }
@@ -380,15 +381,41 @@ downstream as a `401 api.err.LoginRequired` on `GET /api/self` immediately after
 a `200` login, which is far harder to trace.
 
 The port is irrelevant to this bug — `header_up Host` keeps `Origin` matching on
-whichever port the client used. The vhost is therefore served on **both** `:443`
-and `:4443` from one site block: `:443` for the browser, `:4443` because the
-UniFi iOS app treats port 443 as a UniFi OS console and probes
-`/proxy/network/*`, which a standalone Network Application answers with 404.
-A `super_identity.hostname` of `unf.t0m.co` without a port does **not** need to
-match the published port; that was a wrong turn during diagnosis.
+whichever port the client used, which is why the vhost can safely serve both
+`:443` and `:4443` (see the next section). A `super_identity.hostname` of
+`unf.t0m.co` without a port does **not** need to match the published port; that
+was a wrong turn during diagnosis, and moving the vhost between ports fixed
+nothing on its own.
 
 bjw-s-labs' reference Caddyfile never hits any of this because its upstreams are
 plain HTTP, which triggers no `Host` override.
+
+### The UniFi mobile app hangs when the controller is on port 443
+
+The iOS app branches on the **port** when adding a console. On `443` it assumes
+a UniFi OS console (UDM, Cloud Key) and probes `/proxy/network/*`. A standalone
+Network Application has no such prefix and answers 404, so the add-console
+screen spins forever — and sends nothing further, so the server log looks idle
+rather than broken.
+
+```sh
+curl -sk -o /dev/null -w '%{http_code}\n' https://unf.t0m.co/proxy/network/status
+# 404 = standalone Network Application;  200 = real UniFi OS console
+```
+
+A non-standard port makes the app use the standalone Network API
+(`/status`, `/api/login`, `/api/s/<site>/…`) and it works. The vhost therefore
+carries both addresses in one site block, sharing the upstream config:
+
+```caddy
+{$UNIFI_HOSTNAME}, {$UNIFI_HOSTNAME}:4443 {
+	…
+}
+```
+
+`:443` is the browser URL and rides the layer4 SNI path; `:4443` binds directly
+and is what the app needs. Both were verified to accept a matching `Origin` and
+still reject a foreign one.
 
 ### CrowdSec sees almost no HTTP
 
