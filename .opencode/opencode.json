@@ -6,10 +6,8 @@
       {
         "namespace": "tscibilia/home-ops",
         "base_url": "https://memini.t0m.co/",
-        "Authorization": "Bearer {env:MEMINI_API_KEY}"
+        "recall_budget_ms": 8000
       }
-    ],
-    "list",
-    "memini"
+    ]
   ]
 }
