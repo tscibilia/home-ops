@@ -58,15 +58,18 @@
 # origin the controller did not recognise as itself, and it discarded the
 # session it had just issued.
 #
-# UniFi validates Origin against the request Host itself, and does it
-# correctly: a matching Origin is accepted, a foreign one gets an empty
-# 403. Do not reintroduce an Origin allowlist or a `header_up -Origin`
-# strip here -- the earlier "403 on any Origin" reading came from probing
-# with a Host that did not match the Origin being sent.
+# UniFi rejects a request whose Origin does not match its Host with an
+# empty 403. Since v2.11.0 Caddy silently overwrites Host with the upstream
+# address when the upstream is https:// -- which it must be here, because
+# the controller serves a self-signed cert. UniFi then compared the
+# browser's Origin against "unifi-network-application:8443" and refused
+# every login. Restoring the client's Host is the fix; do NOT "solve" this
+# by stripping Origin, which only hides the mismatch.
 {$UNIFI_HOSTNAME} {
 	log
 
 	reverse_proxy https://unifi-network-application:8443 {
+		header_up Host {http.request.hostport}
 		transport http {
 			tls_insecure_skip_verify
 		}
