@@ -71,6 +71,43 @@ listeners and must come up first, `towonel` is the tunnel it feeds, and
 | 05  | `05-observability/` | node-exporter, fluent-bit, prometheus-agent | —               |
 | 06  | `06-unfbkup/`       | restic (UniFi → B2), ofelia (scheduler)     | —               |
 
+## Monitoring
+
+`prometheus-agent` remote-writes to the cluster. Host-level jobs
+(`node-exporter`, `fluent-bit`, `towonel-hub`, `towonel-edge`) are static
+because they are host-networked or bound to loopback. Everything else is
+discovered from the Docker socket by the `docker` job. A container opts in
+with three labels — no edit to the observability stack, and no published
+host port, since the agent reaches it directly on its `edge` bridge IP:
+
+```yaml
+labels:
+    prometheus.scrape: "true"
+    prometheus.port: "9120"
+    prometheus.job: "doco-cd"
+```
+
+> [!NOTE]
+> Prefer a real metrics endpoint over log scraping. `doco-cd` (`:9120`),
+> `crowdsec` (`:6060`) and towonel all export their own health; alerts in
+> `kube-prometheus-stack/app/scrapeconfigs/prometheusrule.yaml` are built on
+> those, not on log lines.
+
+`fluent-bit` still derives `container_log_{errors,warnings}_total` for the
+containers that have **no** metrics endpoint at all — the UniFi application,
+`akeyless-proxy`, `ofelia` and `restic`.
+
+> [!WARNING]
+> The log→metric regexes match a **log level marker**, not the word "error".
+> A bare `(?i)error` also matches prose such as `Broken pipe (os error 32)` on
+> a WARN line, which made `RemoteContainerLogErrors` fire on healthy traffic.
+> If you widen these regexes, re-check them against real output first —
+> `docker logs <c> --since 24h | grep -cE '<regex>'`.
+
+Logs themselves are discarded after metric extraction (`[OUTPUT] Name null`),
+so when one of these alerts fires the only way to see the offending line is
+`docker logs` on the host.
+
 ## GitOps — doco-cd
 
 [`.doco-cd.yaml`](.doco-cd.yaml) is the doco-cd configuration. It tells the

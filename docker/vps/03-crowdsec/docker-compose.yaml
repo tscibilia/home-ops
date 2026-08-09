@@ -14,6 +14,10 @@ services:
       ENROLL_INSTANCE_NAME: vps-crowdsec
       ENROLL_TAGS: vps towonel
       GID: "1000"
+    labels:
+      prometheus.scrape: "true"
+      prometheus.port: "6060"
+      prometheus.job: "crowdsec"
     ports:
       # LAPI for the host firewall bouncer, and Prometheus metrics. Both bound
       # to loopback: published container ports bypass ufw entirely, so binding

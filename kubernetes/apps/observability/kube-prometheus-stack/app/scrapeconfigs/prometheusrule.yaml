@@ -43,3 +43,48 @@ spec:
           annotations:
             summary: "Disk almost full on {{ $labels.instance }}: {{ $labels.mountpoint }}"
             description: "Filesystem {{ $labels.mountpoint }} on {{ $labels.instance }} has less than 10% free."
+    # Alerts driven by the services' own metrics rather than by log scraping.
+    # These describe actual tunnel and GitOps health; a log line mentioning
+    # "error" does not.
+    - name: vps-services.rules
+      rules:
+        - alert: TowonelEdgeNoSessions
+          expr: towonel_edge_active_sessions == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "towonel edge has no agent sessions"
+            description: "No in-cluster towonel agent is registered with the VPS edge. Everything published through the tunnel is unreachable."
+        - alert: TowonelEdgeRouteNoSession
+          expr: rate(towonel_edge_route_no_session_total[5m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "towonel edge routing to a missing agent session"
+            description: "Requests are reaching the edge with no session registered for the target agent, so clients are seeing failures."
+        - alert: TowonelEdgeOverload
+          expr: rate(towonel_edge_connections_rejected_overload_total[5m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "towonel edge rejecting connections ({{ $labels.reason }})"
+            description: "The {{ $labels.reason }} concurrency cap is saturating. Sustained values mean an accept-time DoS or an undersized cap."
+        - alert: TowonelHubServerErrors
+          expr: rate(towonel_hub_requests_total{status=~"5.."}[5m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "towonel hub returning 5xx on {{ $labels.endpoint }}"
+            description: "The hub control-plane API is failing on {{ $labels.endpoint }}."
+        - alert: DocoCdPollErrors
+          expr: increase(doco_cd_poll_errors_total[30m]) > 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "doco-cd is failing to converge {{ $labels.repository }}"
+            description: "doco-cd polling or deployment is erroring, so VPS stacks are drifting from git. Check `docker logs doco-cd`."

@@ -39,6 +39,10 @@ services:
     container_name: prometheus-agent
     restart: unless-stopped
     network_mode: host
+    # Host docker group, for read-only /var/run/docker.sock. Required by the
+    # `docker` scrape job's service discovery.
+    group_add:
+      - "988"
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --agent
@@ -48,6 +52,7 @@ services:
         target: /etc/prometheus/prometheus.yml
     volumes:
       - prometheus-data:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
 volumes:
   fluent-bit-data:
@@ -81,6 +86,28 @@ configs:
             - targets: ['localhost:9092']
               labels:
                 host: vps
+        # Label-driven discovery for everything else. A container opts in with
+        # `prometheus.scrape=true` plus a port/job label — no edit here, and no
+        # published host port, because this agent is host-networked and reaches
+        # the container directly on its `edge` bridge IP.
+        - job_name: docker
+          docker_sd_configs:
+            - host: unix:///var/run/docker.sock
+              refresh_interval: 30s
+              filters:
+                - name: label
+                  values: ['prometheus.scrape=true']
+          relabel_configs:
+            - source_labels: [__meta_docker_network_ip, __meta_docker_container_label_prometheus_port]
+              separator: ':'
+              target_label: __address__
+            - source_labels: [__meta_docker_container_label_prometheus_job]
+              target_label: job
+            - source_labels: [__meta_docker_container_name]
+              regex: '/(.*)'
+              target_label: container
+            - target_label: host
+              replacement: vps
 
       remote_write:
         - url: https://prometheus-rw.${DOMAIN}/api/v1/write
@@ -113,11 +140,23 @@ configs:
           Script /fluent-bit/etc/conf/enrich.lua
           call enrich_container_name
 
+      # Known-benign lines that would otherwise be counted. logback announces
+      # its configured levels at startup ("... to ERROR") on INFO lines, and
+      # akeyless-proxy raises BrokenPipeError whenever doco-cd hangs up mid
+      # response — doco-cd already reports that same event at error level.
       [FILTER]
           Name grep
           Match docker
           Exclude log (?i)error:\s*none
+          Exclude log \|-INFO in ch\.qos\.logback
+          Exclude log Setting level of logger
+          Exclude log BrokenPipeError
 
+      # Match the log *level marker*, never a bare "error" substring. A plain
+      # (?i)error also matches prose like "Broken pipe (os error 32)" on a WARN
+      # line, which is what made this metric unusable. Formats, in order:
+      # JSON logger (caddy, doco-cd, towonel) / logfmt (crowdsec) / mongo
+      # severity / uppercase level word (unifi) / python exception type.
       [FILTER]
           Name log_to_metrics
           Match docker
@@ -125,7 +164,7 @@ configs:
           Metric_Name container_log_errors_total
           metric_mode counter
           metric_description Container log error count
-          regex log (?i)error
+          regex log ("level":"(error|ERROR|fatal|FATAL)"|level=(error|fatal)|"s":"[EF]"|\b(ERROR|FATAL|SEVERE)\b|^[A-Za-z_][A-Za-z0-9_.]*(Error|Exception):)
           Label_Field container
           Label_Field host
 
@@ -136,7 +175,7 @@ configs:
           Metric_Name container_log_warnings_total
           metric_mode counter
           metric_description Container log warning count
-          regex log (?i)warn
+          regex log ("level":"(warn|WARN|warning|WARNING)"|level=warn(ing)?|"s":"W"|\b(WARN|WARNING)\b)
           Label_Field container
           Label_Field host
 

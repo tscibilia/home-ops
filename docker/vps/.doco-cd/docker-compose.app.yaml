@@ -20,6 +20,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - data:/data
+    # Metrics are served on 9120 but no port is published, so the prometheus
+    # agent reaches them over the `edge` bridge via docker service discovery.
+    labels:
+      prometheus.scrape: "true"
+      prometheus.port: "9120"
+      prometheus.job: "doco-cd"
     environment:
       LOG_LEVEL: info
       DEPLOY_CONFIG_BASE_DIR: ./docker/vps/
