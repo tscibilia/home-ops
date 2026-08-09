@@ -323,22 +323,65 @@ services no external route serves.
 ### Caddy advertises HTTP/3 that cannot be reached
 
 Only TCP is published to `caddy-l4`, but Caddy still sends
-`alt-svc: h3=":4443"; ma=2592000`. Browsers cache that for 30 days and then send
+`alt-svc: h3=":8443"; ma=2592000`. Browsers cache that for 30 days and then send
 requests over UDP that never arrives, producing `NetworkError` and
 `NS_BINDING_ABORTED` on XHRs after the page loads.
 
 ```caddy
 servers :8443 { protocols h1 h2 }
-servers :4443 { protocols h1 h2 }
 ```
+
+The tell is a request the browser reports as failed with **no matching entry in
+the Caddy access log at all** — it never arrived. Real HTTP/3 would need
+`443/udp` published, opened in ufw, _and_ a UDP route in the `layer4` block,
+which is TCP-only; none of that exists, so h1+h2 costs nothing.
 
 A cached `alt-svc` outlives the fix — test in a fresh browser profile.
 
-### UniFi controller
+### UniFi login returned an empty 403
 
-Placeholder. The controller moved to this VPS during Phase 4 and `caddy-l4`
-terminates TLS for its vhost. Its own issues are still being worked through and
-are not documented here yet.
+The controller moved to this VPS during Phase 4 and `caddy-l4` terminates TLS
+for its vhost. Every browser login answered `403` with an empty `text/plain`
+body, while header-free API calls worked.
+
+UniFi rejects a request whose `Origin` does not match its `Host`. That check is
+correct — the proxy was breaking it. **Since v2.11.0 Caddy overwrites `Host`
+with the upstream address whenever the upstream is `https://`**, to align it
+with the TLS ServerName; the client's value survives only in `X-Forwarded-Host`.
+The controller serves a self-signed cert, so the upstream must be `https://`,
+and UniFi was comparing the browser's `Origin: https://unf.t0m.co` against
+`unifi-network-application:8443`.
+
+```caddy
+reverse_proxy https://unifi-network-application:8443 {
+	header_up Host {http.request.hostport}
+	transport http {
+		tls_insecure_skip_verify
+	}
+}
+```
+
+To prove it on any host, send a login through the proxy with `Origin` set to the
+_upstream_ address — if that is accepted while the real public origin is
+refused, `Host` is being rewritten:
+
+```sh
+curl -sk -o /dev/null -w '%{http_code}\n' -X POST https://unf.t0m.co/api/login \
+  -H 'Content-Type: application/json' -H 'Origin: https://unf.t0m.co' \
+  -d '{"username":"x","password":"x"}'
+# 400 = Origin accepted and login processed;  403 = Host mismatch
+```
+
+Do **not** work around this by stripping `Origin` (`header_up -Origin`). That
+suppresses the check instead of fixing the mismatch, and it makes a browser
+login look like an API client to the controller — the failure then reappears
+downstream as a `401 api.err.LoginRequired` on `GET /api/self` immediately after
+a `200` login, which is far harder to trace.
+
+Note the controller's `super_identity.hostname` in Mongo is `unf.t0m.co` with no
+port, so the vhost must stay on the default `:443` to match. bjw-s-labs'
+reference Caddyfile never hits any of this because its upstreams are plain HTTP,
+which triggers no `Host` override.
 
 ### CrowdSec sees almost no HTTP
 
