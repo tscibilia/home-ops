@@ -25,12 +25,14 @@ graph LR
     envoy --> apps[Cluster apps]
 ```
 
-`caddy-l4` owns `443`. `towonel-hub` owns `51820/udp` and publishes its hub and
-edge metrics on loopback only. The UniFi container publishes its own device
-ports (`8080`, `8843`, `6789`, `3478/udp`, `10001/udp`) directly.
+`caddy-l4` owns `443` and `4443`. `towonel-hub` owns `51820/udp` and publishes
+its hub and edge metrics on loopback only. The UniFi container publishes its own
+device ports (`8080`, `8843`, `6789`, `3478/udp`, `10001/udp`) directly.
 
-Both VPS-local vhosts sit on the default port behind the SNI split; the UniFi UI
-is served at `https://unf.t0m.co` with no port. Nothing binds `4443` on the host.
+The UniFi UI is served on **both** ports from one site block. `https://unf.t0m.co`
+is the browser URL and rides the layer4 SNI path; `:4443` is bound directly and
+is what the UniFi iOS app needs — it treats port 443 as a UniFi OS console and
+probes `/proxy/network/*`, which a standalone Network Application does not serve.
 
 The towonel binary runs the hub (control plane) and the edge (data plane) in one
 process. The agent **dials out** from the cluster, so no inbound port is needed
@@ -39,7 +41,7 @@ on the cluster side.
 ```mermaid
 graph TD
     subgraph VPS Docker network: edge
-        caddy[caddy-l4 :443]
+        caddy[caddy-l4 :443 :4443]
         towonel[towonel-hub\nhub + edge, one process]
         unifi[unifi-network-application]
         dococd[doco-cd]

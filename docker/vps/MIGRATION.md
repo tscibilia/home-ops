@@ -329,6 +329,7 @@ requests over UDP that never arrives, producing `NetworkError` and
 
 ```caddy
 servers :8443 { protocols h1 h2 }
+servers :4443 { protocols h1 h2 }
 ```
 
 The tell is a request the browser reports as failed with **no matching entry in
@@ -378,10 +379,16 @@ login look like an API client to the controller — the failure then reappears
 downstream as a `401 api.err.LoginRequired` on `GET /api/self` immediately after
 a `200` login, which is far harder to trace.
 
-Note the controller's `super_identity.hostname` in Mongo is `unf.t0m.co` with no
-port, so the vhost must stay on the default `:443` to match. bjw-s-labs'
-reference Caddyfile never hits any of this because its upstreams are plain HTTP,
-which triggers no `Host` override.
+The port is irrelevant to this bug — `header_up Host` keeps `Origin` matching on
+whichever port the client used. The vhost is therefore served on **both** `:443`
+and `:4443` from one site block: `:443` for the browser, `:4443` because the
+UniFi iOS app treats port 443 as a UniFi OS console and probes
+`/proxy/network/*`, which a standalone Network Application answers with 404.
+A `super_identity.hostname` of `unf.t0m.co` without a port does **not** need to
+match the published port; that was a wrong turn during diagnosis.
+
+bjw-s-labs' reference Caddyfile never hits any of this because its upstreams are
+plain HTTP, which triggers no `Host` override.
 
 ### CrowdSec sees almost no HTTP
 

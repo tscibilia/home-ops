@@ -117,6 +117,16 @@
               port: "51820"
               protocol: udp
 
+        # Needs `-e unifi_host=true`. The controller is served on :443 too,
+        # but the UniFi iOS app only treats a non-standard port as a
+        # standalone Network controller, so 4443 stays open for mobile.
+        - name: firewall | Allow UniFi controller UI
+          community.general.ufw:
+            rule: allow
+            port: "4443"
+            proto: tcp
+          when: unifi_host | default(false) | bool
+
         # Bootstrap needs 22 to move sshd; every later run removes it.
         - name: firewall | Allow original SSH port during bootstrap
           community.general.ufw:

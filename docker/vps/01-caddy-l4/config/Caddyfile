@@ -37,6 +37,10 @@
 		protocols h1 h2
 	}
 
+	servers :4443 {
+		protocols h1 h2
+	}
+
 	log default {
 		output stdout
 		format json
@@ -65,7 +69,14 @@
 # browser's Origin against "unifi-network-application:8443" and refused
 # every login. Restoring the client's Host is the fix; do NOT "solve" this
 # by stripping Origin, which only hides the mismatch.
-{$UNIFI_HOSTNAME} {
+#
+# Served on both ports deliberately. :443 is the browser URL and goes
+# through the layer4 SNI path; :4443 is bound directly and is the one the
+# UniFi iOS app needs -- it treats 443 as a UniFi OS console and probes
+# /proxy/network/*, which a standalone Network Application does not serve.
+# `header_up Host` keeps Origin matching on whichever port is used, so
+# neither address needs special handling.
+{$UNIFI_HOSTNAME}, {$UNIFI_HOSTNAME}:4443 {
 	log
 
 	reverse_proxy https://unifi-network-application:8443 {
