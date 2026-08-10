@@ -8,7 +8,7 @@
 
 ## Secret Store
 
-All secrets come from aKeyless via the `akeyless-secret-store` ClusterSecretStore in `external-secrets` namespace. Every app's `ks.yaml` includes `substituteFrom: cluster-secrets` — see `07_flux_conventions.md` for the full ks.yaml pattern.
+All secrets come from aKeyless via the `akeyless-secret-store` ClusterSecretStore in `external-secrets` namespace ([ADR-0003](../adr/0003-external-secrets-akeyless-over-sops.md)). Every app's `ks.yaml` includes `substituteFrom: cluster-secrets` — see [ADR-0002](../adr/0002-flux-repository-conventions.md) for the full ks.yaml pattern.
 
 ## cluster-secrets Variables
 
@@ -20,7 +20,6 @@ Available to all apps via `substituteFrom`. Key vars:
 | `CEAPP_DOMAIN`       | `/kubernetes/cluster-secrets` |
 | `TIMEZONE`           | `/kubernetes/cluster-secrets` |
 | `TAILSCALE_MAGICDNS` | `/network/tailscale/operator` |
-| `AWS_VOLSYNC_BUCKET` | `/cloud-providers/b2-creds`   |
 
 ## ExternalSecret Pattern
 
@@ -80,7 +79,7 @@ Only consume `/security/pocket-id-clients` with an ExternalSecret when a _differ
 | `/kubernetes/cluster-secrets`    | Cluster-wide vars (domain, timezone)                                                                                                                                                   |
 | `/{namespace}/{app-name}`        | App-specific secrets (e.g. `/ai/memini`, `/default/open-webui`)                                                                                                                        |
 | `/database/cnpg-users`           | CNPG user passwords (all apps share one secret, fields per-app)                                                                                                                        |
-| `/security/pocket-id-clients`    | OIDC client credentials, `{APP}_OIDC_CLIENT_ID` / `{APP}_OIDC_CLIENT_SECRET` per app. **Written by `PushSecret`, not read by hand** — see "OIDC credentials" below.                    |
+| `/security/pocket-id-clients`    | OIDC client credentials, `{APP}_OIDC_CLIENT_ID` / `{APP}_OIDC_CLIENT_SECRET` per app. **Written by `PushSecret`, not read by hand** — see "OIDC credentials" above.                    |
 | `/cloud-providers/b2-creds`      | Backblaze B2 (Kopiur bucket)                                                                                                                                                           |
 | `/kubernetes/github`             | GHCR pull credentials: `GHCR_USER`, `GHCR_TOKEN` — used by `ceapp-ghcr-pull` ExternalSecret (type: `kubernetes.io/dockerconfigjson`)                                                   |
 | `/network/tailscale/operator`    | Tailscale operator credentials                                                                                                                                                         |

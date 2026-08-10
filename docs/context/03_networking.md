@@ -18,7 +18,7 @@ Domain variable: `${SECRET_DOMAIN}` (from `cluster-secrets` Secret).
 
 ## HTTPRoute Pattern
 
-Routes are **inline in the HelmRelease** `values.route` block — no separate HTTPRoute manifest. Exception: routes needing path-level auth (e.g., `prometheus-remote-write`) use a standalone `httproute-*.yaml` file.
+Routes are **inline in the HelmRelease** `values.route` block — no separate HTTPRoute manifest. Exception: routes needing path-level auth (e.g., `prometheus-remote-write`) use a standalone `httproute-*.yaml` file. ([ADR-0002](../adr/0002-flux-repository-conventions.md))
 
 ```yaml
 # values section of HelmRelease
@@ -36,7 +36,7 @@ route:
 
 ## SSO / Authentication (pocket-id + tinyauth)
 
-`pocket-id` (`security` ns, at `id.${SECRET_DOMAIN}`) is the cluster IdP. `tinyauth` (`security` ns, at `auth.${SECRET_DOMAIN}`) is the forward-auth proxy in front of apps that have no OIDC support of their own. Both live in `kubernetes/apps/security/`.
+`pocket-id` (`security` ns, at `id.${SECRET_DOMAIN}`) is the cluster IdP. `tinyauth` (`security` ns, at `auth.${SECRET_DOMAIN}`) is the forward-auth proxy in front of apps that have no OIDC support of their own. Both live in `kubernetes/apps/security/`. ([ADR-0014](../adr/0014-pocket-id-tinyauth-over-authentik.md))
 
 ### Native OIDC (preferred when the app supports it)
 

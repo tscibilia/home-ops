@@ -12,7 +12,7 @@ Available: `alerts/`, `auth/`, `cnpg/`, `kopiur/{backup,secret}`, `secrets/`, `z
 
 ## kopiur — PVC backup to NFS (clonenas) via Kopia
 
-Replaces VolSync. Uses `kopiur.home-operations.com` CRDs (SnapshotPolicy, SnapshotSchedule, Restore) with a `ClusterRepository` pointing to NFS on `clonenas.internal`.
+Uses `kopiur.home-operations.com` CRDs (SnapshotPolicy, SnapshotSchedule, Restore) with a `ClusterRepository` pointing to NFS on `clonenas.internal`. ([ADR-0013](../adr/0013-kopiur-over-volsync.md))
 
 ```yaml
 # ks.yaml
@@ -72,13 +72,13 @@ Creates a `SecurityPolicy` routing ext-auth to `tinyauth.security:3000`, targeti
 | `${EXT_AUTH_KIND}`   | `HTTPRoute`                 | Target kind (e.g. `Gateway`) |
 | `${EXT_AUTH_GROUP}`  | `gateway.networking.k8s.io` | Target API group             |
 
-Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — see `03_networking.md`. Never apply both to one app.
+Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — see `03_networking.md`. Never apply both to one app. ([ADR-0014](../adr/0014-pocket-id-tinyauth-over-authentik.md))
 
 Forward-auth apps also need the Gatus route/service annotation swap — see `03_networking.md`.
 
 ## zeroscaler — scale-to-zero via native HPA + prometheus-adapter
 
-Generic HPA component driven by Prometheus `probe_success` metric. Replaced `keda/nfs-scaler` + `keda/nfs-bkup-scaler` (2026-05-17).
+Generic HPA component driven by Prometheus `probe_success` metric. ([ADR-0010](../adr/0010-zeroscaler-over-keda.md))
 
 ```yaml
 # ks.yaml — defaults to truenas (job: nfs_probe)

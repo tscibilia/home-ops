@@ -16,7 +16,7 @@
 
 ## Kopiur (PVC Backup/Restore via Kopia)
 
-Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.internal:/mnt/vault/backups/kubernetes/kopia`). Uses `kopiur.home-operations.com/v1alpha1` CRDs (SnapshotPolicy, SnapshotSchedule, Restore). rclone syncs the NFS repo to B2 separately. Add component `../../../../components/kopiur/backup` in `ks.yaml`.
+Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.internal:/mnt/vault/backups/kubernetes/kopia`). Uses `kopiur.home-operations.com/v1alpha1` CRDs (SnapshotPolicy, SnapshotSchedule, Restore). rclone syncs the NFS repo to B2 separately. Add component `../../../../components/kopiur/backup` in `ks.yaml`. ([ADR-0013](../adr/0013-kopiur-over-volsync.md))
 
 ### Required ks.yaml postBuild vars
 
@@ -45,7 +45,7 @@ Manually trigger a restore by editing the `Restore` CR (named `${APP}` in the ap
 
 **Backups:** Two layers — pgdumps (via `cnpg` component CronJob) to NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/postgres`), and continuous WAL archival via barman-cloud to Backblaze B2.
 
-Two clusters in the `database` namespace:
+Two clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-postgresql.md), [ADR-0011](../adr/0011-pgvector-cluster-split.md)):
 
 | Cluster            | Purpose                | PG Version         | Notes                                         |
 | ------------------ | ---------------------- | ------------------ | --------------------------------------------- |

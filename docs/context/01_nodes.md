@@ -4,6 +4,7 @@
 
 - **ai3090 GPU toleration required:** Any pod targeting ai3090 must include `tolerations: [{key: "nvidia.com/gpu", operator: "Exists", effect: "NoSchedule"}]` — there is no fallback node; the pod will be unschedulable without it.
 - **openebs-hostpath is node-local:** If a pod using `openebs-hostpath` reschedules to a different node, the PVC data is inaccessible. Do not use for workloads that may move nodes.
+- **`local-hdd` is ai3090-only:** Static PV on the ai3090 HDD (`/var/mnt/local-hdd`), no dynamic provisioning. Only comfyui uses it. See `04_storage.md`.
 
 ## All Nodes (base config)
 

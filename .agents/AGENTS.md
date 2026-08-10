@@ -19,7 +19,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 
 **Skill config:**
 
-- **Domain docs** — single-context: `docs/context/` (state), `docs/adr/` (decisions). See `docs/agents/domain.md`.
+- **Domain docs** — [`CONTEXT.md`](../CONTEXT.md) is the map (glossary, state routing, ADR index). `docs/context/` = state, `docs/adr/` = decisions. See `docs/agents/domain.md`.
 - **Issue tracker** — GitHub Issues on `tscibilia/home-ops`, via `gh`. See `docs/agents/issue-tracker.md`.
 - **Triage labels** — five canonical roles, default label strings. See `docs/agents/triage-labels.md`.
 
@@ -46,13 +46,14 @@ Report concisely — sacrifice grammar for the sake of concision.
 1. New app: follow `.agents/skills/add-app/SKILL.md`
 2. Secrets: aKeyless → `externalsecret.yaml`
 3. Provide human in the loop with commit message
-4. Docs: update the affected `docs/context/` file(s) in the same change
+4. Docs: update the affected `docs/context/` file(s) in the same change. If the change involved a decision — a trade-off with real alternatives that's costly to reverse — add an ADR instead of writing the rationale into a context file.
 
 ## Architecture & Structure
 
 **Monorepo Layout:**
 
 ```text
+CONTEXT.md                    # Map: glossary · state routing · ADR index — read first
 docker/                       # Server configs (unraid, truenas, vps)
 docs/                         # context/ (state) · adr/ (decisions) · agents/ (skill config) · WORKLOG.md
 kubernetes/
@@ -77,21 +78,14 @@ _(For sub-directory specifics not covered by `docs/context/`, read that director
 - `openebs-hostpath` — local node storage (CNPG, logs, actions-runner)
 - `nfs-media` — external NFS for media library
 
-## Context Reference Files
+## Reference Docs
 
-Targeted reference docs in `docs/context/`. **Read the relevant file(s) before touching code** — don't grep READMEs.
+**Read [`CONTEXT.md`](../CONTEXT.md) first.** It is the map: the glossary, the routing table for `docs/context/` (state), and the index of `docs/adr/` (decisions).
 
-| File                     | Read when…                                                                                       |
-| ------------------------ | ------------------------------------------------------------------------------------------------ |
-| `01_nodes.md`            | Scheduling a pod, adding node selectors/tolerations, GPU workloads, storage class choice by node |
-| `02_apps_inventory.md`   | Checking if an app exists, finding its namespace, understanding what's deployed                  |
-| `03_networking.md`       | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS                      |
-| `04_storage.md`          | Adding a PVC, wiring Kopiur backup, connecting to CNPG, choosing a storage class                 |
-| `05_secrets.md`          | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars      |
-| `06_components.md`       | Adding kopiur/cnpg/auth/zeroscaler to an app — exact ks.yaml stanzas                             |
-| `07_flux_conventions.md` | Writing or reviewing a ks.yaml, dependsOn chains, YAML anchor pattern, configMapGenerator        |
-| `08_docker_hosts.md`     | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps                            |
-| `09_interactions.md`     | Infra migrations, removing/replacing a component, something works alone but fails in context     |
+Two rules it enforces:
+
+- Read the `docs/context/` file covering the area before touching code — don't grep READMEs.
+- Read the ADRs touching that area too. Don't re-litigate a recorded decision; supersede it if it's wrong.
 
 ## Commit Protocol
 

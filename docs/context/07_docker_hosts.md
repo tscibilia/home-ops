@@ -50,7 +50,7 @@ Path: `docker/vps/`
 | 05  | node-exporter, fluent-bit, prometheus-agent | `05-observability/docker-compose.yaml` |
 | 06  | unifi-backup (restic→B2), ofelia scheduler  | `06-unfbkup/docker-compose.yaml`       |
 
-VPS role: towonel hub/edge ingress gateway (DNS-only → VPS:443 → SNI split → towonel tunnel → in-cluster `envoy-external`, which terminates TLS), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `02-towonel/` and `04-unifi/` stacks via its own git clone of the repo.
+VPS role: towonel hub/edge ingress gateway (DNS-only → VPS:443 → SNI split → towonel tunnel → in-cluster `envoy-external`, which terminates TLS), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `02-towonel/` and `04-unifi/` stacks via its own git clone of the repo. ([ADR-0015](../adr/0015-towonel-over-pangolin.md))
 
 [`docker/vps/MIGRATION.md`](../../docker/vps/MIGRATION.md) — read before renaming a stack directory, editing an inline `configs:` block, debugging a missing certificate, changing ufw or `DOCKER-USER` rules, or touching `towonel-agent`. Traps and reasons only; the live architecture is in `docker/vps/README.md`.
 

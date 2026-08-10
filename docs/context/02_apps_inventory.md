@@ -33,13 +33,13 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 - cnpg _(CloudNativePG operator + clusters)_
 - dragonfly _(Redis-compatible cache)_
-- pgadmin [kopiur, cnpg]
+- pgadmin [kopiur]
 
 ## default
 
 - actual _(budgeting)_ [kopiur, oidc]
 - cetranscript _(CE Transcript — custom app)_ [cnpg]
-- filebrowser _(NFS file share/drive UI — replaced boxbox)_ [kopiur, oidc]
+- filebrowser _(NFS file share/drive UI)_ [kopiur, oidc]
 - homebox _(inventory)_ [kopiur, cnpg, oidc]
 - homepage _(dashboard)_
 - immich _(photos)_ [cnpg, oidc]
@@ -85,6 +85,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - k8tz _(timezone injection admission controller)_
 - metrics-server
 - nvidia-device-plugin
+- ocharted _(private OCI chart proxy — workstations need `just kube registry-auth`)_
 - reloader
 - snapshot-controller
 - spegel _(OCI mirror)_
@@ -119,7 +120,7 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - external-dns
 - greenlight _(custom UniFi network status app)_ [auth]
 - multus
-- pangolin-operator _(VPS tunnel ingress via Newt/WireGuard)_
+- towonel-agent _(VPS tunnel ingress via iroh QUIC — see ADR-0015)_
 - tailscale
 - unifi-dns
 

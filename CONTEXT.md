@@ -1,0 +1,89 @@
+# CONTEXT
+
+The map for this repo: what the words mean, where the state is written down, and which decisions have been recorded.
+
+Three kinds of documentation, split by tense:
+
+- **`CONTEXT.md`** (this file) — vocabulary and navigation.
+- **`docs/context/`** — how things are wired **now**. Updated in place as the cluster changes.
+- **`docs/adr/`** — **why** a choice was made. Written once; superseded, not edited.
+
+---
+
+## Glossary
+
+Use these terms exactly. They are the repo's vocabulary — synonyms drift.
+
+| Term                   | Meaning                                                                                                                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **app**                | A directory at `kubernetes/apps/{namespace}/{app}/`. The unit of deployment. Contains `app/` and `ks.yaml`.                                                                                                                   |
+| **ks.yaml**            | An app's Flux `Kustomization` — its entry point. Declares `dependsOn`, `postBuild.substitute`, `components`, `targetNamespace`. Not the same file as `app/kustomization.yaml`.                                                |
+| **kustomization.yaml** | The plain Kustomize file inside `app/`, listing resources. Components never go here.                                                                                                                                          |
+| **component**          | A reusable Kustomize overlay in `kubernetes/components/` — `alerts`, `auth`, `cnpg`, `kopiur/{backup,secret}`, `secrets`, `zeroscaler`. Added to `ks.yaml` `spec.components`. Never means "a piece of software" in this repo. |
+| **HelmRelease**        | The Flux resource deploying a chart. Most apps use `bjw-s/app-template`. Distinct from the Kustomization that wraps it — `dependsOn` references the Kustomization's name, never this.                                         |
+| **native OIDC**        | Auth path for apps that speak OIDC: a `PocketIDOIDCClient` CR in `app/`. No component. Preferred.                                                                                                                             |
+| **forward auth**       | Auth path for apps that don't: the `auth` component, routing ext-auth to tinyauth. Mutually exclusive with native OIDC.                                                                                                       |
+| **kopiur**             | The PVC backup/restore operator (Kopia to NFS). Restores are done by editing a `Restore` CR's `spec.offset`.                                                                                                                  |
+| **zeroscaler**         | The scale-to-zero component — a native HPA driven by `probe_success` through prometheus-adapter. Needs a matching prometheus-adapter ConfigMap entry or it silently never scales.                                             |
+| **flate**              | The `konflate` CLI. Local rendering and validation (`flate test all`, `flate build all`). Replaced flux-local.                                                                                                                |
+| **cluster-secrets**    | The cluster-wide Secret supplying `postBuild` substitutions (`SECRET_DOMAIN`, `TIMEZONE`, …) to every app via `substituteFrom`.                                                                                               |
+| **truenas**            | Primary NAS. Serves the media library over NFS (`nfs-media`). Probe job `nfs_probe`.                                                                                                                                          |
+| **clonenas**           | Backup NAS. Holds the Kopia repository and pgdumps. Probe job `nfs_bkup_probe`.                                                                                                                                               |
+| **ocharted**           | The in-cluster private OCI chart proxy. Workstations need `just kube registry-auth` before the first `flate` run.                                                                                                             |
+| **towonel**            | The VPS ingress path — SNI passthrough over iroh QUIC to the in-cluster `envoy-external` gateway.                                                                                                                             |
+| **doco-cd**            | Pull-based GitOps for the non-Kubernetes Docker hosts (truenas, clonenas, vps).                                                                                                                                               |
+
+---
+
+## State — `docs/context/`
+
+**Read the relevant file before touching code.** Don't grep READMEs.
+
+| File                   | Read when…                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| `01_nodes.md`          | Scheduling a pod, adding node selectors/tolerations, GPU workloads, storage class choice by node |
+| `02_apps_inventory.md` | Checking if an app exists, finding its namespace, understanding what's deployed                  |
+| `03_networking.md`     | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS                      |
+| `04_storage.md`        | Adding a PVC, wiring kopiur backup, connecting to CNPG, choosing a storage class                 |
+| `05_secrets.md`        | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars      |
+| `06_components.md`     | Adding kopiur/cnpg/auth/zeroscaler to an app — exact `ks.yaml` stanzas                           |
+| `07_docker_hosts.md`   | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps                            |
+| `08_interactions.md`   | Infra migrations, removing/replacing a component, something works alone but fails in context     |
+
+Writing or reviewing a `ks.yaml`? That's ADR-0002, not a context file.
+
+For sub-directory specifics not covered above, read that directory's `README.md` (e.g. `kubernetes/bootstrap/cnpg/README.md`).
+
+---
+
+## Decisions — `docs/adr/`
+
+Read the ADRs touching the area you're about to work in. Don't re-litigate a recorded decision; if you think one is wrong, supersede it.
+
+| #                                                            | Decision                                                    | Date       | Status                  |
+| ------------------------------------------------------------ | ----------------------------------------------------------- | ---------- | ----------------------- |
+| [0001](docs/adr/0001-follow-onedr0p-cluster-template.md)     | Follow onedr0p's cluster-template and his home-ops patterns | 2025-03-24 | accepted · living table |
+| [0002](docs/adr/0002-flux-repository-conventions.md)         | Flux repository conventions                                 | —          | accepted · living table |
+| [0003](docs/adr/0003-external-secrets-akeyless-over-sops.md) | External Secrets Operator with aKeyless, replacing SOPS     | 2025-04-06 | accepted                |
+| [0004](docs/adr/0004-cloudnativepg-for-postgresql.md)        | CloudNativePG for PostgreSQL                                | 2025-04-21 | accepted                |
+| [0005](docs/adr/0005-volsync-for-pvc-backup.md)              | VolSync for PVC backup                                      | 2025-04-23 | superseded by 0013      |
+| [0006](docs/adr/0006-authentik-for-sso.md)                   | Authentik for SSO                                           | 2025-05-01 | superseded by 0014      |
+| [0007](docs/adr/0007-keda-for-scale-to-zero.md)              | KEDA for scale-to-zero                                      | 2025-06-14 | superseded by 0010      |
+| [0008](docs/adr/0008-envoy-gateway-over-ingress-nginx.md)    | Envoy Gateway over ingress-nginx                            | 2025-10-21 | accepted                |
+| [0009](docs/adr/0009-pangolin-for-external-ingress.md)       | Pangolin for external ingress                               | 2026-05-02 | superseded by 0015      |
+| [0010](docs/adr/0010-zeroscaler-over-keda.md)                | zeroscaler (native HPA + prometheus-adapter) over KEDA      | 2026-05-17 | accepted                |
+| [0011](docs/adr/0011-pgvector-cluster-split.md)              | Separate pgvector cluster for vector workloads              | 2026-05-21 | accepted                |
+| [0012](docs/adr/0012-konflate-over-flux-local.md)            | konflate (flate) over flux-local                            | 2026-06-18 | accepted                |
+| [0013](docs/adr/0013-kopiur-over-volsync.md)                 | kopiur over VolSync for PVC backup                          | 2026-07-05 | accepted                |
+| [0014](docs/adr/0014-pocket-id-tinyauth-over-authentik.md)   | pocket-id and tinyauth over Authentik                       | 2026-08-05 | accepted                |
+| [0015](docs/adr/0015-towonel-over-pangolin.md)               | towonel over Pangolin for public ingress                    | 2026-08-08 | accepted                |
+
+**0005, 0006, 0007 and 0009 are reconstructed** — written after the fact from the commits that removed them, not from contemporaneous notes. Each says so. Trust their consequences more than their rationale.
+
+---
+
+## Also
+
+- **`docs/WORKLOG.md`** — active work, known issues, blocked items. Check before proposing work that may already be underway or known-broken.
+- **`docs/agents/`** — how agents should consume this documentation (`domain.md`), issue-tracker conventions, triage labels.
+- **`MIGRATION.md` files** — long-form migration narratives, referenced from the ADR they belong to. Currently `docker/vps/` (Pangolin→towonel) and `kubernetes/apps/network/envoy-gateway/` (nginx→Envoy, marked historical).
