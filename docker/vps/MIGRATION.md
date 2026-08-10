@@ -481,6 +481,6 @@ than re-terminated at the edge.
 - [`README.md`](README.md) — live architecture, stacks, secrets, doco-cd behaviour
 - [`../../ansible/vps/playbook.yaml`](../../ansible/vps/playbook.yaml) — host build
 - [`../../kubernetes/apps/network/towonel-agent/`](../../kubernetes/apps/network/towonel-agent/) — in-cluster agent
-- [`../../.agents/context/08_docker_hosts.md`](../../.agents/context/08_docker_hosts.md) — docker host reference
+- [`../../docs/context/08_docker_hosts.md`](../../docs/context/08_docker_hosts.md) — docker host reference
 - Full task-by-task record, including every failed attempt: git-ignored
   `.superpowers/sdd/2026-08-06-towonel-migration/`

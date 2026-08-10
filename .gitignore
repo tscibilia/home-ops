@@ -18,7 +18,6 @@ talosconfig
 .agents/*
 !.agents/*.md
 !.agents/settings.json
-!.agents/context/
 !.agents/plugins/
 !.agents/skills/
 # Private

@@ -21,8 +21,8 @@ Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.intern
 ### Required ks.yaml postBuild vars
 
 ```yaml
-APP: *app               # always required
-KOPIUR_CAPACITY: 5Gi    # PVC size (default 5Gi)
+APP: *app # always required
+KOPIUR_CAPACITY: 5Gi # PVC size (default 5Gi)
 ```
 
 ### Optional ks.yaml postBuild vars (with defaults)

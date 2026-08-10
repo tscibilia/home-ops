@@ -7,7 +7,7 @@ This file provides guidance to AI agents when working in this repository.
 Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-metal nodes with Rook Ceph.
 **Stack:** Talos Linux → Kubernetes → Flux CD → Helm/Kustomize
 **Server-side rendering:** `flate` (konflate) — replaces `flux-local` for dry-run validation.
-**Layout:** `/kubernetes/` (apps, talos, bootstrap), `/docker/` (server configs), `docs/` (MKDocs).
+**Layout:** `/kubernetes/` (apps, talos, bootstrap), `/docker/` (server configs), `docs/` (agent reference docs).
 
 ## Karpathy Skills
 
@@ -77,7 +77,7 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 1. New app: use `add-app` skill
 2. Secrets: aKeyless → `externalsecret.yaml`
 3. Provide human in the loop with commit message
-4. Docs: use `update-docs` skill
+4. Docs: update the affected `docs/context/` file(s) in the same change
 
 **`just talos`:** `apply-node <node>`, `upgrade-node <node>/upgrade-k8s <version>`
 
@@ -87,7 +87,11 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 
 ```
 docker                        # Server configs (unraid, truenas, ai3090)
-docs                          # MKDocs documentation
+docs                          # Agent reference docs
+├── context                   # Topic reference files (read before touching that area)
+├── adr                       # Architecture decision records — why, not how
+├── agents                    # Skill config (issue tracker, triage labels, domain docs)
+└── WORKLOG.md                # In Progress / Known Issues / Blocked / Resolved
 kubernetes                    # K8s cluster
 ├── apps                      # Applications organized by namespace
 │   ├── default               # General purpose self-hosted applications
@@ -132,7 +136,7 @@ _(For detailed references, prioritize reading the relevant sub-directory's `READ
 
 ## Context Reference Files
 
-Targeted reference docs in `.agents/context/`. **Read the relevant file(s) before touching code** — don't grep READMEs.
+Targeted reference docs in `docs/context/`. **Read the relevant file(s) before touching code** — don't grep READMEs.
 
 | File                     | Read when…                                                                                       |
 | ------------------------ | ------------------------------------------------------------------------------------------------ |
@@ -164,4 +168,18 @@ Before requesting a commit, ensure:
 
 ## Active Work
 
-Check `../ACTIVE-WIP.md` for: **In Progress**, **Known Issues**, **Blocked**, or **Resolved**.
+Check `docs/WORKLOG.md` for: **In Progress**, **Known Issues**, **Blocked**, or **Resolved**.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in the `tscibilia/home-ops` GitHub Issues, driven by the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles, using their default label strings. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: reference docs in `docs/context/`, decision records in `docs/adr/` (no root `CONTEXT.md` yet). See `docs/agents/domain.md`.
