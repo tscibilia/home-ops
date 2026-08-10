@@ -5,7 +5,7 @@
 - **DNS source partitioning:** `external-dns` writes to Cloudflare; `unifi-dns` writes to UniFi LAN. The `service` source is UniFi-only. Gateway annotations create split-horizon LAN entries — not a Cloudflare conflict.
 - **Two distinct auth paths:** apps with native OIDC support get a `PocketIDOIDCClient` CR in `app/` (no component). Apps without it get forward auth via the single `components/auth` component in `ks.yaml` — never just a HTTPRoute annotation. Don't apply both to one app.
 - **BGP peerAddress is the VLAN5 gateway, not the router-id:** UDM-Pro BGP router-id is `192.168.1.1` but it sources connections from `192.168.5.1` (its VLAN5 interface). `CiliumBGPClusterConfig` must use `peerAddress: 192.168.5.1`. Using `192.168.1.1` will fail — Cilium rejects connections from the wrong source IP.
-- **BGP CRDs are feature-gated:** They only install when `bgpControlPlane.enabled: true` in the Helm chart. Enabling it in an existing cluster via Flux causes a dry-run deadlock (KS validates `networks.yaml` before HR upgrades). Fix: `kubectl apply -n kube-system -f kubernetes/apps/kube-system/cilium/app/helmrelease.yaml --server-side --field-manager=kustomize-controller` to break the cycle.
+- **BGP CRDs are feature-gated:** They only install when `bgpControlPlane.enabled: true` in the Helm chart. Enabling it in an existing cluster via Flux causes a dry-run deadlock (the Kustomization validates `networks.yaml` before the HelmRelease upgrades). Fix: `kubectl apply -n kube-system -f kubernetes/apps/kube-system/cilium/app/helmrelease.yaml --server-side --field-manager=kustomize-controller` to break the cycle.
 
 ## Gateways
 
