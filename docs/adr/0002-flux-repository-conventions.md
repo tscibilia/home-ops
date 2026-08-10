@@ -62,7 +62,7 @@ spec:
             APP: *app # always set APP — components depend on it
             GATUS_SUBDOMAIN: sub # sets monitoring URL subdomain
             GATUS_PATH: /health # optional, default is /
-            KOPIUR_CAPACITY: 5Gi # optional; defaults in 04_storage.md
+            KOPIUR_CAPACITY: 5Gi # optional; defaults in components.md
         substituteFrom:
             - kind: Secret
               name: cluster-secrets # always include for SECRET_DOMAIN, TIMEZONE etc
@@ -100,7 +100,7 @@ components:
     - ../../components/kopiur/secret # only where the namespace has kopiur-backed apps
 ```
 
-App components (`auth`, `cnpg`, `kopiur/backup`, `zeroscaler`) go in the app's own `ks.yaml` instead — see `docs/context/06_components.md`.
+App components (`auth`, `cnpg`, `kopiur/backup`, `zeroscaler`) go in the app's own `ks.yaml` instead — see `docs/context/components.md`.
 
 ## HelmRelease schema
 

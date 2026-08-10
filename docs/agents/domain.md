@@ -6,7 +6,7 @@ How the engineering skills should consume this repo's domain documentation when 
 
 - **`CONTEXT.md`** at the repo root — the map. Glossary, the routing table for `docs/context/`, and the ADR index. Start here.
 - **`docs/adr/`** — read the ADRs touching the area you're about to work in. `CONTEXT.md`'s index says what each covers, so you don't have to open all of them.
-- **`docs/context/`** — read the file(s) covering the scoped area you're about to touch, organized into eight topic files (`01_nodes.md` … `08_interactions.md`).
+- **`docs/context/`** — read the file(s) covering the scoped area you're about to touch. One file per topic, named for it; `CONTEXT.md`'s routing table says which to open.
 - **`docs/WORKLOG.md`** — Status tracker used to support github issues. Check before proposing work that may already be underway or already known-broken.
 
 ## File structure
@@ -19,10 +19,8 @@ How the engineering skills should consume this repo's domain documentation when 
 │   │   ├── 0001-follow-onedr0p-cluster-template.md
 │   │   ├── 0002-flux-repository-conventions.md
 │   │   └── …0015
-│   ├── context/
-│   │   ├── 01_nodes.md
-│   │   ├── …
-│   │   └── 08_interactions.md
+│   ├── context/           # one file per topic, routed from CONTEXT.md
+│   ├── scripts/           # generate.py — renders the generated doc blocks
 │   └── agents/
 ├── kubernetes/
 └── docker/

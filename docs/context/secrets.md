@@ -46,7 +46,7 @@ spec:
 
 ## OIDC credentials (pocket-id)
 
-Apps with native OIDC do **not** hand-template SSO endpoints. The `PocketIDOIDCClient` CR (see `03_networking.md`) makes the operator create the client and write a Secret named in `spec.secret.name`. A `PushSecret` alongside it backs those generated values up to aKeyless:
+Apps with native OIDC do **not** hand-template SSO endpoints. The `PocketIDOIDCClient` CR (see `networking.md`) makes the operator create the client and write a Secret named in `spec.secret.name`. A `PushSecret` alongside it backs those generated values up to aKeyless:
 
 ```yaml
 # kubernetes/apps/{ns}/{app}/app/pushsecret.yaml

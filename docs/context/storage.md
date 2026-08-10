@@ -18,7 +18,7 @@
 
 Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.internal:/mnt/vault/backups/kubernetes/kopia`). Uses `kopiur.home-operations.com/v1alpha1` CRDs (SnapshotPolicy, SnapshotSchedule, Restore). rclone syncs the NFS repo to B2 separately. ([ADR-0013](../adr/0013-kopiur-over-volsync.md))
 
-Backing up an app's PVC, the substitution vars, and the restore procedure are all in `06_components.md` → `kopiur/backup`.
+Backing up an app's PVC, the substitution vars, and the restore procedure are all in `components.md` → `kopiur/backup`.
 
 ## CNPG (PostgreSQL)
 
@@ -40,4 +40,4 @@ Secret keys (from component-generated ExternalSecret):
 
 - `host`, `ro_host`, `port`, `user`, `password`, `db`, `uri`, `dsn`
 
-Connecting an app to one of these clusters — the `ks.yaml` stanza, the health checks, and the aKeyless credential the component expects — is in `06_components.md` → `cnpg`.
+Connecting an app to one of these clusters — the `ks.yaml` stanza, the health checks, and the aKeyless credential the component expects — is in `components.md` → `cnpg`.

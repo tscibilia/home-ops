@@ -4,7 +4,7 @@
 
 - **zeroscaler requires a prometheus-adapter metric:** Adding the `zeroscaler` component to `ks.yaml` is not enough — the app also needs a custom metric entry in the `prometheus-adapter` ConfigMap. Component without metric = scaling never triggers, silently.
 - **cnpg does not create the database:** the component only supplies the credentials. The app's HelmRelease must declare the `postgres-init` initContainer that actually creates the role and database — adding the component alone leaves the app starting against a database that does not exist.
-- **Regenerate the inventory:** Adding or removing an app component changes the app's `[flags]` in `02_apps_inventory.md`. Run `just docs generate` — that list is rendered from disk, not hand-edited.
+- **Regenerate the inventory:** Adding or removing an app component changes the app's `[flags]` in `apps.md`. Run `just docs generate` — that list is rendered from disk, not hand-edited.
 - **Placement is not interchangeable:** An app component in a namespace `kustomization.yaml` applies to every app in the namespace; a namespace component in a `ks.yaml` is missing the substitutions it never had. Check which kind you are adding before you add it.
 
 Components live in `kubernetes/components/`. They come in two kinds, and the difference is where they are declared:
@@ -102,7 +102,7 @@ initContainers:
                   name: "{{ .Release.Name }}-initdb-secret"
 ```
 
-`CNPG_NAME` picks the cluster: `pgsql-cluster` for general apps, `pgvector-cluster` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgsql-cluster` in the component (`${CNPG_NAME:=pgsql-cluster}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `04_storage.md` says what each is for.
+`CNPG_NAME` picks the cluster: `pgsql-cluster` for general apps, `pgvector-cluster` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgsql-cluster` in the component (`${CNPG_NAME:=pgsql-cluster}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `storage.md` says what each is for.
 
 The generated `host` is `{cluster}-rw…`, shared by every app on that cluster — apps read it from the Secret, they never compose it.
 
@@ -154,7 +154,7 @@ service:
             gatus.home-operations.com/enabled: "true"
 ```
 
-Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — that path is not a component at all, and is documented in `03_networking.md`. Never apply both to one app. ([ADR-0014](../adr/0014-pocket-id-tinyauth-over-authentik.md))
+Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — that path is not a component at all, and is documented in `networking.md`. Never apply both to one app. ([ADR-0014](../adr/0014-pocket-id-tinyauth-over-authentik.md))
 
 ### zeroscaler — scale-to-zero via native HPA + prometheus-adapter
 
@@ -224,7 +224,7 @@ Every namespace. Creates a Flux `Provider` pointing at `alertmanager-operated.ob
 
 ### secrets — the cluster-secrets Secret
 
-Every namespace. Creates the `cluster-secrets` ExternalSecret, which is what makes `substituteFrom: cluster-secrets` resolve in that namespace. Keys: `SECRET_DOMAIN`, `CEAPP_DOMAIN`, `TIMEZONE`, `TAILSCALE_MAGICDNS`, `KOPIA_BUCKET`, drawn from three aKeyless paths (`/kubernetes/cluster-secrets`, `/network/tailscale/operator`, `/cloud-providers/b2-creds`). See `05_secrets.md`.
+Every namespace. Creates the `cluster-secrets` ExternalSecret, which is what makes `substituteFrom: cluster-secrets` resolve in that namespace. Keys: `SECRET_DOMAIN`, `CEAPP_DOMAIN`, `TIMEZONE`, `TAILSCALE_MAGICDNS`, `KOPIA_BUCKET`, drawn from three aKeyless paths (`/kubernetes/cluster-secrets`, `/network/tailscale/operator`, `/cloud-providers/b2-creds`). See `secrets.md`.
 
 ### kopiur/secret — the Kopia repository password
 

@@ -41,16 +41,16 @@ Use these terms exactly. They are the repo's vocabulary — synonyms drift.
 
 **Read the relevant file before touching code.** Don't grep READMEs.
 
-| File                   | Read when…                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------------ |
-| `01_nodes.md`          | Scheduling a pod, adding node selectors/tolerations, GPU workloads, storage class choice by node |
-| `02_apps_inventory.md` | Checking if an app exists, finding its namespace, understanding what's deployed                  |
-| `03_networking.md`     | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS                      |
-| `04_storage.md`        | Adding a PVC, wiring kopiur backup, connecting to CNPG, choosing a storage class                 |
-| `05_secrets.md`        | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars      |
-| `06_components.md`     | Adding kopiur/cnpg/auth/zeroscaler to an app — exact `ks.yaml` stanzas                           |
-| `07_docker_hosts.md`   | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps                            |
-| `08_interactions.md`   | Infra migrations, removing/replacing a component, something works alone but fails in context     |
+| File              | Read when…                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| `nodes.md`        | Scheduling a pod, adding node selectors/tolerations, GPU workloads, storage class choice by node |
+| `apps.md`         | Checking if an app exists, finding its namespace, understanding what's deployed                  |
+| `networking.md`   | Adding ingress (HTTPRoute), enabling SSO, configuring Gatus monitoring, DNS                      |
+| `storage.md`      | Adding a PVC, wiring kopiur backup, connecting to CNPG, choosing a storage class                 |
+| `secrets.md`      | Creating an ExternalSecret, adding aKeyless credentials, understanding cluster-secrets vars      |
+| `components.md`   | Adding kopiur/cnpg/auth/zeroscaler to an app — exact `ks.yaml` stanzas                           |
+| `docker-hosts.md` | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps                            |
+| `teardown.md`     | Removing or replacing infrastructure — an operator, a CRD-owning chart, a metrics provider       |
 
 Writing or reviewing a `ks.yaml`? That's ADR-0002, not a context file.
 

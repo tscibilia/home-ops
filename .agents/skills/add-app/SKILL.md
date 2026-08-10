@@ -520,9 +520,9 @@ After generating all manifests:
 
 1. **Add to namespace kustomization**: Append `- ./{APP_NAME}/ks.yaml` to `kubernetes/apps/{NAMESPACE}/kustomization.yaml` under `resources:`. Keep alphabetical order.
 
-    If the user typed a namespace that does not exist yet, that file also needs its `components:` block — `../../components/alerts` and `../../components/secrets` are mandatory in every namespace, plus `../../components/kopiur/secret` if the app uses kopiur. These are namespace components; they never go in `ks.yaml`. See `docs/context/06_components.md`.
+    If the user typed a namespace that does not exist yet, that file also needs its `components:` block — `../../components/alerts` and `../../components/secrets` are mandatory in every namespace, plus `../../components/kopiur/secret` if the app uses kopiur. These are namespace components; they never go in `ks.yaml`. See `docs/context/components.md`.
 
-2. **Regenerate the inventory**: Run `just docs generate` so the new app appears in `docs/context/02_apps_inventory.md` with the right `[flags]`. Never hand-edit that list. Add the app's `_(description)_` by hand afterwards if it needs one — descriptions survive regeneration.
+2. **Regenerate the inventory**: Run `just docs generate` so the new app appears in `docs/context/apps.md` with the right `[flags]`. Never hand-edit that list. Add the app's `_(description)_` by hand afterwards if it needs one — descriptions survive regeneration.
 
 3. **Print summary**: List all created files and a short description of what was configured.
 

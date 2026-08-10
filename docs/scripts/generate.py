@@ -142,10 +142,10 @@ def stacks_render(host: str):
 # --------------------------------------------------------------------------
 
 BLOCKS = [
-    ("02_apps_inventory.md", "apps", apps_keep, apps_render, apps_keys),
-    ("07_docker_hosts.md", "stacks:truenas", stacks_keep, stacks_render("truenas"), stacks_keys("truenas")),
-    ("07_docker_hosts.md", "stacks:clonenas", stacks_keep, stacks_render("clonenas"), stacks_keys("clonenas")),
-    ("07_docker_hosts.md", "stacks:vps", stacks_keep, stacks_render("vps"), stacks_keys("vps")),
+    ("apps.md", "apps", apps_keep, apps_render, apps_keys),
+    ("docker-hosts.md", "stacks:truenas", stacks_keep, stacks_render("truenas"), stacks_keys("truenas")),
+    ("docker-hosts.md", "stacks:clonenas", stacks_keep, stacks_render("clonenas"), stacks_keys("clonenas")),
+    ("docker-hosts.md", "stacks:vps", stacks_keep, stacks_render("vps"), stacks_keys("vps")),
 ]
 
 

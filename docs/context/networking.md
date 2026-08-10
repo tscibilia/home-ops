@@ -66,19 +66,19 @@ spec:
             issuerUrl: MYAPP_OIDC_ISSUER_URL
 ```
 
-Requires `dependsOn: {name: pocket-id, namespace: security}` in `ks.yaml`. Available groups: `id-admin`, `id-home`, `id-family`, `id-friends`, `id-users`. See `05_secrets.md` for the companion `PushSecret` that backs the generated credentials up to aKeyless.
+Requires `dependsOn: {name: pocket-id, namespace: security}` in `ks.yaml`. Available groups: `id-admin`, `id-home`, `id-family`, `id-friends`, `id-users`. See `secrets.md` for the companion `PushSecret` that backs the generated credentials up to aKeyless.
 
 ### Forward auth (apps with no OIDC support)
 
 The `auth` app component, one for both gateways — there is no internal/external split. It sends ext-auth to `tinyauth.security:3000` via a `SecurityPolicy`, and it changes how the app is monitored.
 
-Full stanza, substitution vars and the required Gatus annotation swap: `06_components.md` → `auth`.
+Full stanza, substitution vars and the required Gatus annotation swap: `components.md` → `auth`.
 
 ## Gatus Health Monitoring
 
 The `gatus-sidecar` runs with `--auto-httproute --enable-httproute --enable-service`. **No annotation or action is needed** — it auto-discovers every HTTPRoute automatically.
 
-**Exception — apps using the `auth` component:** the tinyauth redirect means the route never returns 200, so monitoring has to move from the route to the service. The annotations are in `06_components.md` → `auth`.
+**Exception — apps using the `auth` component:** the tinyauth redirect means the route never returns 200, so monitoring has to move from the route to the service. The annotations are in `components.md` → `auth`.
 
 ## DNS
 

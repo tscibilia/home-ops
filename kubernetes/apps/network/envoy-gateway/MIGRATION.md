@@ -10,7 +10,7 @@ Migration reference from nginx Ingress to Envoy Gateway with Gateway API.
 > forward-auth sections below describe Authentik and the since-removed
 > `components/auth/{internal,external}`. The cluster now uses pocket-id +
 > tinyauth behind a single `components/auth`. For current patterns see
-> `docs/context/03_networking.md` and `docs/context/06_components.md`.
+> `docs/context/networking.md` and `docs/context/components.md`.
 
 ## Architecture Comparison
 

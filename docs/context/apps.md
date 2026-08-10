@@ -6,8 +6,8 @@
 - **kustomization.yaml must include the new app:** When adding a new app, its `ks.yaml` path must be added to `kubernetes/apps/{namespace}/kustomization.yaml` or Flux will never reconcile it.
 - **Component flags listed here:** Each app's entry notes which app components it uses (kopiur, cnpg, zeroscaler, auth). Check before assuming.
 - **App components go in ks.yaml:** The four per-app components (`auth`, `cnpg`, `kopiur/backup`, `zeroscaler`) live in `spec.components` of the Flux Kustomization (`ks.yaml`), never in the app's `kustomization.yaml`.
-- **Namespace components are not listed here:** `alerts`, `secrets` and `kopiur/secret` are declared once per namespace in `kubernetes/apps/{ns}/kustomization.yaml` and apply to every app in it. The `[flags]` below track app components only — see `06_components.md`.
-- **`[auth]` vs `[oidc]`:** `[auth]` = the `components/auth` component (tinyauth forward auth). `[oidc]` = a `PocketIDOIDCClient` CR in the app dir (native OIDC, no component). They are alternatives, not companions — see `03_networking.md`.
+- **Namespace components are not listed here:** `alerts`, `secrets` and `kopiur/secret` are declared once per namespace in `kubernetes/apps/{ns}/kustomization.yaml` and apply to every app in it. The `[flags]` below track app components only — see `components.md`.
+- **`[auth]` vs `[oidc]`:** `[auth]` = the `components/auth` component (tinyauth forward auth). `[oidc]` = a `PocketIDOIDCClient` CR in the app dir (native OIDC, no component). They are alternatives, not companions — see `networking.md`.
 - **Forward-auth apps skip Gatus route monitoring:** Apps using the `auth` component sit behind a tinyauth redirect which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
 
 Full list by namespace. The source of truth is `kubernetes/apps/`; the list below is rendered from it by `just docs inventory` and checked by `just docs check`. Don't hand-edit it — the one exception is the `_(description)_` after an app name, which is hand-written and preserved across regenerations.

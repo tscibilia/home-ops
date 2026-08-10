@@ -96,6 +96,11 @@ Before requesting a commit, ensure:
 - **Constraint**: The agent must NOT attempt to commit directly (GPG restriction).
 - **Handoff**: Provide a complete, formatted commit message for user review.
 
+## Tooling Quirks
+
+- **Bash cwd resets per call**: The working directory resets between every invocation. Never assume `cd` persisted — use absolute paths.
+- **Read tracks files by absolute path**: The same file read from the repo root and from a worktree are two different tracked entries. Re-read after switching contexts.
+
 ## Troubleshooting
 
 - **Flux/GitOps**: `kubectl edit` is ephemeral; always use `git`. Check failures: `mise && kubectl get ks -A | grep -v True`.
