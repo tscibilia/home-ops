@@ -1,0 +1,35 @@
+- [Map — glossary & routing](/CONTEXT.md)
+
+- **Cluster Context**
+    - [Apps Inventory](/docs/context/apps.md)
+    - [Kustomize Components](/docs/context/components.md)
+    - [Docker Hosts](/docs/context/docker-hosts.md)
+    - [Networking](/docs/context/networking.md)
+    - [Cluster Nodes](/docs/context/nodes.md)
+    - [Secrets](/docs/context/secrets.md)
+    - [Storage](/docs/context/storage.md)
+    - [Teardown & Replacement](/docs/context/teardown.md)
+
+- **Cluster ADRs**
+    - [Follow onedr0p's cluster-template and his home-ops patterns](/docs/adr/0001-follow-onedr0p-cluster-template.md)
+    - [Flux repository conventions](/docs/adr/0002-flux-repository-conventions.md)
+    - [External Secrets Operator with aKeyless, replacing SOPS](/docs/adr/0003-external-secrets-akeyless-over-sops.md)
+    - [CloudNativePG for PostgreSQL](/docs/adr/0004-cloudnativepg-for-postgresql.md)
+    - [VolSync for PVC backup](/docs/adr/0005-volsync-for-pvc-backup.md)
+    - [Authentik for SSO](/docs/adr/0006-authentik-for-sso.md)
+    - [KEDA for scale-to-zero](/docs/adr/0007-keda-for-scale-to-zero.md)
+    - [Envoy Gateway over ingress-nginx](/docs/adr/0008-envoy-gateway-over-ingress-nginx.md)
+    - [Pangolin for external ingress](/docs/adr/0009-pangolin-for-external-ingress.md)
+    - [zeroscaler (native HPA + prometheus-adapter) over KEDA](/docs/adr/0010-zeroscaler-over-keda.md)
+    - [Separate pgvector cluster for vector workloads](/docs/adr/0011-pgvector-cluster-split.md)
+    - [konflate (flate) over flux-local for local rendering](/docs/adr/0012-konflate-over-flux-local.md)
+    - [kopiur over VolSync for PVC backup](/docs/adr/0013-kopiur-over-volsync.md)
+    - [pocket-id and tinyauth over Authentik](/docs/adr/0014-pocket-id-tinyauth-over-authentik.md)
+    - [towonel over Pangolin for public ingress](/docs/adr/0015-towonel-over-pangolin.md)
+
+- **For agents**
+    - [Domain Docs](/docs/agents/domain.md)
+    - [Issue tracker: GitHub](/docs/agents/issue-tracker.md)
+    - [Triage Labels](/docs/agents/triage-labels.md)
+
+- [Worklog](/docs/WORKLOG.md)

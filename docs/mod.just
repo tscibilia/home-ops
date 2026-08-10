@@ -10,13 +10,13 @@ scripts_dir := justfile_dir() + '/docs/scripts'
 default:
     just -l docs
 
-[doc('Render the generated sections of docs/context/ from the repo')]
+[doc('Render the generated docs from the repo — docs/context/ sections and _sidebar.md')]
 [script]
 generate:
     just check-tools python3
     python3 "{{ scripts_dir }}/generate.py"
 
-[doc('Validate docs/context/ against the repo — generated sections and named identifiers')]
+[doc('Validate the docs against the repo — generated output and named identifiers')]
 [no-exit-message]
 [script]
 test:
