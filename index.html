@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Documentation for the home-ops cluster" />
+    <title>home-ops docs</title>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@5/dist/themes/core.min.css" />
+  </head>
+  <body>
+    <div id="app">Loading…</div>
+    <script>
+      window.$docsify = {
+        name: 'home-ops',
+        repo: 'tscibilia/home-ops',
+
+        // CONTEXT.md is the map, so it is the front page — not the showcase README.
+        homepage: 'CONTEXT.md',
+
+        // Resolve links the way a filesystem does, so `docs/adr/x.md` from
+        // CONTEXT.md and `../adr/x.md` from docs/context/ both work as written.
+        // Nothing in the docs is authored for this site.
+        relativePath: true,
+
+        // The trade-off of relativePath: docsify also resolves sidebar links
+        // against the current page, and looks for _sidebar.md in the current
+        // directory. Absolute links in _sidebar.md handle the first (see
+        // docs/scripts/generate.py); this alias handles the second.
+        loadSidebar: true,
+        alias: {
+          '/.*/_sidebar.md': '/_sidebar.md',
+        },
+
+        subMaxLevel: 2,
+        maxLevel: 3,
+        auto2top: true,
+
+        search: {
+          depth: 3,
+          placeholder: 'Search the docs…',
+          noData: 'No matches.',
+        },
+      };
+    </script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@5"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@5/dist/plugins/search.min.js"></script>
+  </body>
+</html>

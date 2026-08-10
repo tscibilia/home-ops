@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""Render the generated sections of docs/context/ from the repo itself.
+"""Render the generated documentation from the repo itself.
 
-Each block is delimited by BEGIN/END markers. Prose outside the markers is never
-touched, and hand-written text *inside* a block is preserved across runs, keyed
-by the row it belongs to — so the enumeration stays true to disk while the
-editorial voice stays human.
+Two kinds of output:
 
-That hand-written text lives nowhere else, so wiping a block would destroy it.
-Before writing, each block is compared against the last committed version: if a
-row that still exists on disk has lost its prose, the run stops unless --force.
+Blocks, spliced into docs/context/ between BEGIN/END markers. Prose outside the
+markers is never touched, and hand-written text *inside* a block is preserved
+across runs, keyed by the row it belongs to — so the enumeration stays true to
+disk while the editorial voice stays human. That text lives nowhere else, so
+wiping a block would destroy it: before writing, each block is compared against
+the last committed version, and if a row that still exists on disk has lost its
+prose the run stops unless --force. Add one by appending to BLOCKS.
 
-Add a block by appending to BLOCKS. Everything else is shared.
+Whole files, rewritten outright. _sidebar.md is the docsify navigation and has
+no hand-written content at all — every label is read from a file's H1 — so
+there is nothing to preserve and no guard around it.
 """
 
 from __future__ import annotations
@@ -138,6 +141,45 @@ def stacks_render(host: str):
 
 
 # --------------------------------------------------------------------------
+# sidebar — _sidebar.md, the docsify navigation
+# --------------------------------------------------------------------------
+
+SIDEBAR = ROOT / "_sidebar.md"
+SIDEBAR_SECTIONS = [
+    ("Cluster Context", "context"),
+    ("Cluster ADRs", "adr"),
+    ("For agents", "agents"),
+]
+
+
+def heading(path: Path) -> str:
+    for line in path.read_text().splitlines():
+        if line.startswith("# "):
+            return line[2:].strip()
+    sys.exit(f"{path.relative_to(ROOT)}: no H1 to label it with in the sidebar")
+
+
+def sidebar_render() -> str:
+    """Links are absolute on purpose. docsify runs with relativePath enabled so
+    that the ../adr/ links written inside docs/context/ resolve untouched — but
+    that also resolves sidebar links against whichever page is open, so a
+    root-relative nav compounds into /docs/docs/docs/… on every click. A leading
+    slash opts out. docs/README.md is deliberately absent: it introduces the
+    directory to someone browsing GitHub, and its links point at directories,
+    which docsify cannot render.
+    """
+    out = ["- [Map — glossary & routing](/CONTEXT.md)"]
+    for label, sub in SIDEBAR_SECTIONS:
+        out += ["", f"- **{label}**"]
+        for path in sorted((ROOT / "docs" / sub).glob("*.md")):
+            # Four spaces, because oxfmt reindents nested list items to four on
+            # commit and would otherwise rewrite this file into permanent staleness.
+            out.append(f"    - [{heading(path)}](/docs/{sub}/{path.name})")
+    out += ["", "- [Worklog](/docs/WORKLOG.md)"]
+    return "\n".join(out) + "\n"
+
+
+# --------------------------------------------------------------------------
 # registry
 # --------------------------------------------------------------------------
 
@@ -241,6 +283,23 @@ def main() -> int:
         else:
             path.write_text(updated)
             print(f"wrote docs/context/{filename}")
+
+    # Wholly generated, so it is simply compared and overwritten.
+    want = sidebar_render()
+    current = SIDEBAR.read_text() if SIDEBAR.exists() else ""
+    if current == want:
+        print("ok    _sidebar.md")
+    elif args.check:
+        stale = True
+        print("\n".join(difflib.unified_diff(
+            current.split("\n"), want.split("\n"),
+            fromfile="committed/_sidebar.md", tofile="disk/_sidebar.md",
+            lineterm="",
+        )))
+        print("stale _sidebar.md")
+    else:
+        SIDEBAR.write_text(want)
+        print("wrote _sidebar.md")
 
     if stale:
         print("\nRun `just docs generate` to update.")

@@ -24,6 +24,8 @@ Three rules, and they're the whole contract:
 
 **Some sections are generated.** Anything between `<!-- BEGIN GENERATED: … -->` markers is written by [`scripts/generate.py`](scripts/generate.py) from the repo itself — don't hand-edit inside them. Hand-written prose _inside_ a generated block is preserved across regeneration, keyed by row.
 
+The same script writes `_sidebar.md` at the repo root — the navigation for the [published docs site](https://tscibilia.github.io/home-ops/), labelled from each file's H1. That one is generated whole, so anything typed into it is lost on the next run. Adding an ADR or a context file puts it in the nav automatically; nothing lists the pages by hand.
+
 ```sh
 just docs generate   # rewrite the generated sections
 just docs test       # gate: sections in sync, and every identifier named in the docs still resolves
