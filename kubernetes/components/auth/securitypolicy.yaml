@@ -24,6 +24,7 @@ spec:
       headersToBackend:
         - Location
         - Set-Cookie
+        - Remote-User
   targetRefs:
     - group: "${EXT_AUTH_GROUP:-gateway.networking.k8s.io}"
       kind: "${EXT_AUTH_KIND:-HTTPRoute}"

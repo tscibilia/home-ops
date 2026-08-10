@@ -145,7 +145,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - fluent-bit
 - gatus _(health monitoring)_ [cnpg]
 - grafana-operator _(Grafana operator + instance)_ [cnpg, oidc]
-- guacamole _(remote desktop)_ [cnpg, oidc]
+- guacamole _(remote desktop)_ [cnpg, auth, oidc]
 - karma _(alertmanager UI)_
 - kite [cnpg, oidc]
 - kromgo

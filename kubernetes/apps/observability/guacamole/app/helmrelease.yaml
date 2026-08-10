@@ -53,7 +53,12 @@ spec:
             env:
               GUACAMOLE_HOME: /guacamole
               WEBAPP_CONTEXT: ROOT
-              EXTENSION_PRIORITY: "openid, postgresql, ban"
+              EXTENSION_PRIORITY: "header, postgresql, ban"
+              # pocket-id rejects the openid ext's implicit flow. Disabled (secret
+              # stays mounted) in favour of tinyauth asserting Remote-User, until
+              # GUACAMOLE-2258 / guacamole-client#1219 lands auth-code flow.
+              OPENID_ENABLED: "false"
+              HTTP_AUTH_HEADER: Remote-User
             envFrom:
               - secretRef:
                   name: guacamole-secret
@@ -77,11 +82,15 @@ spec:
     service:
       app:
         controller: *app
+        annotations:
+          gatus.home-operations.com/enabled: "true"
         ports:
           http:
             port: &port 8080
     route:
       app:
+        annotations:
+          gatus.home-operations.com/enabled: "false"
         hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal

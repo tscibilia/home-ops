@@ -22,6 +22,7 @@ metadata:
   name: &app guacamole
 spec:
   components:
+    - ../../../../components/auth
     - ../../../../components/cnpg
   dependsOn:
     - name: secret-stores
