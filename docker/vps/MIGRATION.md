@@ -7,7 +7,7 @@ passthrough over iroh QUIC) for public ingress.
 
 ✅ Migration completed August 2026
 
-Model: Opus 5 | Context: [████████░░░░░░░░] 477k/1.0M (48%) | Cost: $227.65
+Model: Opus 5 | Context: [████████░░░░░░░░] 477k/1.0M (48%) | Cost: $227.65
 
 The live architecture, stack list and secret map are in [`README.md`](README.md).
 This document covers why the move happened, how it was sequenced, and what went
