@@ -9,6 +9,11 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"; }
 
 cd "$WORK_DIR" || { log "ERROR: Cannot cd to $WORK_DIR"; exit 1; }
 
+# Check Docker access before fetching. Without it the fetch still rewrites the
+# files, the rebuild then fails, and the next run reports UNCHANGED and skips
+# the rebuild - leaving updated files and a stale container.
+docker info >/dev/null 2>&1 || { log "ERROR: no Docker access - re-run with sudo"; exit 1; }
+
 CHANGED=0
 
 fetch_and_compare() {
