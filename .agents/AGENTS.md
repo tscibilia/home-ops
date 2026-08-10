@@ -1,62 +1,31 @@
 # AGENTS.md
 
-This file provides guidance to AI agents when working in this repository.
-
 ## Project Overview
 
 Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-metal nodes with Rook Ceph.
 **Stack:** Talos Linux → Kubernetes → Flux CD → Helm/Kustomize
 **Server-side rendering:** `flate` (konflate) — replaces `flux-local` for dry-run validation.
-**Layout:** `/kubernetes/` (apps, talos, bootstrap), `/docker/` (server configs), `docs/` (agent reference docs).
 
-## Karpathy Skills
+## Standing Rules
 
-**Behavioral guidelines to reduce common LLM coding mistakes. Bias toward caution over speed.**
+**Karpathy guidelines govern every change** — full text `.agents/skills/karpathy-guidelines/SKILL.md`:
 
-### 1. Think Before Coding
+1. **Think before coding** — state assumptions; if unclear, stop and ask; don't pick silently between readings.
+2. **Simplicity first** — minimum code that solves it; nothing speculative.
+3. **Surgical changes** — touch only what you must; no adjacent cleanup; match existing style.
+4. **Goal-driven** — state plan as `[step] → verify: [check]`; every changed line traces to the request.
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+Report concisely — sacrifice grammar for the sake of concision.
 
-- State assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them; don't pick silently.
-- If a simpler approach exists, push back when warranted.
-- If something is unclear, stop. Name what's confusing and ask.
+**Skill config:**
 
-### 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features, abstractions, or configurability beyond what was asked.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-- Ask: "Would a senior engineer say this is overcomplicated?"
-
-### 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor working code. Match existing style.
-- When changes create orphans: remove imports/variables/funcs that _your_ changes made unused.
-- Do not remove pre-existing dead code unless asked.
-- Every changed line should trace directly to the user's request.
-
-### 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-- Transform tasks into verifiable goals (e.g., "Fix bug" → "Write failing test, then make it pass").
-- For multi-step tasks, state a brief plan:
-    1. [Step] → verify: [check]
-    2. [Step] → verify: [check]
-
-## Pocock Skills (Human in the Loop Communication)
-
-- When reporting information to me, be extremely concise and sacrifice grammar for the sake of concision.
+- **Domain docs** — single-context: `docs/context/` (state), `docs/adr/` (decisions). See `docs/agents/domain.md`.
+- **Issue tracker** — GitHub Issues on `tscibilia/home-ops`, via `gh`. See `docs/agents/issue-tracker.md`.
+- **Triage labels** — five canonical roles, default label strings. See `docs/agents/triage-labels.md`.
 
 ## Task Runner & Workflow
 
-`just` modules: `bootstrap`, `kube`, `talos`.
+`just` modules: `bootstrap`, `kube`, `talos`, `ansible`. Using `just <module-name>` will list available commands.
 
 **`just kube` (most used):**
 
@@ -70,63 +39,37 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 
 - `flate test all` — validate all Kustomizations, HelmReleases, sources
 - `flate build all` — render full cluster to YAML
-- `just kube registry-auth` — one-time (per machine) OCI credentials for the private `ocharted` chart proxy; required before the first `flate` run, see Troubleshooting
+- `just kube registry-auth` — one-time per machine; required before the first `flate` run (see Troubleshooting)
 
 **Workflow:**
 
-1. New app: use `add-app` skill
+1. New app: follow `.agents/skills/add-app/SKILL.md`
 2. Secrets: aKeyless → `externalsecret.yaml`
 3. Provide human in the loop with commit message
 4. Docs: update the affected `docs/context/` file(s) in the same change
-
-**`just talos`:** `apply-node <node>`, `upgrade-node <node>/upgrade-k8s <version>`
 
 ## Architecture & Structure
 
 **Monorepo Layout:**
 
-```
-docker                        # Server configs (unraid, truenas, ai3090)
-docs                          # Agent reference docs
-├── context                   # Topic reference files (read before touching that area)
-├── adr                       # Architecture decision records — why, not how
-├── agents                    # Skill config (issue tracker, triage labels, domain docs)
-└── WORKLOG.md                # In Progress / Known Issues / Blocked / Resolved
-kubernetes                    # K8s cluster
-├── apps                      # Applications organized by namespace
-│   ├── default               # General purpose self-hosted applications
-│   ├── ...
-│   └── kopiur-system        # Kopiur for PVC backup and restore
-├── bootstrap                 # Directory to bootstrap Talos nodes
-│   ├── cnpg                  # CNPG patches applied during cluster bootstrap
-│   ├── helmfile              # Chart sources resolved from app OCIRepositories
-│   ├── kustomize             # Bootstrap resources (secrets template)
-│   ├── scripts               # Bootstrap helper scripts
-│   └── mod.just              # .justfile Bootstrap module
-├── components                # Reusable Kustomize components for apps
-├── flux                      # Flux CD system configuration
-├── talos                     # Talos node OS configurations
-│   ├── nodes                 # Talos node-specific configuration overrides
-│   ├── machineconfig.yaml.j2 # Jinja2 template for base Talos machine config
-│   ├── mod.just              # .justfile Talos module
-│   └── schematic.yaml.j2     # Talos image factory schematic template
-└── mod.just                  # .justfile Kubernetes module
+```text
+docker/                       # Server configs (unraid, truenas, vps)
+docs/                         # context/ (state) · adr/ (decisions) · agents/ (skill config) · WORKLOG.md
+kubernetes/
+├── apps/{namespace}/{app}/   # see Apps below
+├── bootstrap/                # cnpg/ patches, kustomize/ secrets template, scripts/
+│   └── helmfile/             # chart sources resolved from app OCIRepositories
+├── components/               # reusable Kustomize components
+├── flux/                     # Flux CD system config
+└── talos/                    # nodes/ overrides; *.yaml.j2 render machineconfig + schematic
 ```
 
-_(For detailed references, prioritize reading the relevant sub-directory's `README.md`, e.g., `kubernetes/bootstrap/cnpg/README.md`)_
+_(For sub-directory specifics not covered by `docs/context/`, read that directory's `README.md`, e.g. `kubernetes/bootstrap/cnpg/README.md`.)_
 
 **Apps:** `kubernetes/apps/{namespace}/{app-name}/`
 
 - `app/` (kustomization, helmrelease, ocirepository, externalsecret)
 - `ks.yaml` (Flux Kustomization entry point: defines `dependsOn`, `substitutions`, `components`)
-
-**Components (`/kubernetes/components/`):** `alerts/`, `auth/`, `cnpg/`, `kopiur/`, `secrets/`, `zeroscaler/`.
-
-**Conventions:**
-
-- YAML anchors (`&app` → `*app`)
-- `configMapGenerator` for embedded files
-- Always declare `dependsOn` in `ks.yaml`
 
 **Storage Classes:**
 
@@ -148,6 +91,7 @@ Targeted reference docs in `docs/context/`. **Read the relevant file(s) before t
 | `06_components.md`       | Adding kopiur/cnpg/auth/zeroscaler to an app — exact ks.yaml stanzas                             |
 | `07_flux_conventions.md` | Writing or reviewing a ks.yaml, dependsOn chains, YAML anchor pattern, configMapGenerator        |
 | `08_docker_hosts.md`     | Working on TrueNAS/Unraid/VPS docker-compose services, doco-cd GitOps                            |
+| `09_interactions.md`     | Infra migrations, removing/replacing a component, something works alone but fails in context     |
 
 ## Commit Protocol
 
@@ -165,21 +109,3 @@ Before requesting a commit, ensure:
 - **CNPG**: Use `-rw` endpoint for app connections. Check health: `kubectl get cluster -n database`.
 - **Kopiur**: Restore by editing the `Restore` CR's `spec.offset` in the app namespace (0 = latest snapshot).
 - **`flate` fails with `basic credential not found`**: charts served by the private `ocharted` proxy (`oci://ocharted.${SECRET_DOMAIN}/…`) need OCI auth. The OCIRepositories carry no `secretRef` on purpose — ocharted's `auth.bypassNetworks` exempts in-cluster Flux, but a workstation is outside that CIDR. Fix: `just kube registry-auth`, which pulls `/kubernetes/ocharted` from aKeyless into `~/.config/flate/registry.json` (`FLATE_REGISTRY_CONFIG`, set in `.mise.toml`). Not a manifest bug — never "fix" it by editing the OCIRepositories.
-
-## Active Work
-
-Check `docs/WORKLOG.md` for: **In Progress**, **Known Issues**, **Blocked**, or **Resolved**.
-
-## Agent skills
-
-### Issue tracker
-
-Issues live in the `tscibilia/home-ops` GitHub Issues, driven by the `gh` CLI. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-The five canonical triage roles, using their default label strings. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: reference docs in `docs/context/`, decision records in `docs/adr/` (no root `CONTEXT.md` yet). See `docs/agents/domain.md`.
