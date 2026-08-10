@@ -17,13 +17,14 @@
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
-- [ ] ⚠️ **Guacamole:** OpenID ext only supports implicit flow (`response_type=id_token`), pocket-id rejects it with `unsupported_response_type` - **needs auth-code-flow support upstream, or front it with ext-auth instead**
+- [ ] ⚠️ **Guacamole:** OpenID ext only supports implicit flow (`response_type=id_token`), pocket-id rejects it with `unsupported_response_type` - (see upstream issue [#1200](https://issues.apache.org/jira/browse/GUACAMOLE-1200))
 - [ ] ⚠️ **ComfyUI:** not working due to single gpu and single model loaded via `llmkube`
 
 ## ⛔ Blocked
 
 `- ⛔ **App name** - blocking factor (waiting for X) - **note**`
 
+- ⛔ **Guacamole:** OpenID with auth-code-flow & PKCE (see proposed PR [#1219](https://redirect.github.com/apache/guacamole-client/pull/1219))
 - ⛔ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely - **upstream confirmed fix in 1.30.x**
 - ⛔ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
 - ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
