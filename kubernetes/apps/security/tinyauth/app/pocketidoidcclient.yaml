@@ -8,6 +8,7 @@ spec:
   name: Tinyauth
   callbackUrls:
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/oauth/callback/pocketid"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: true
   allowedUserGroups:
     - name: id-admin
