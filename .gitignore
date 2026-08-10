@@ -23,6 +23,7 @@ talosconfig
 # Private
 .git/
 .private/
+.scratch/
 mise.lock
 # Misc.
 /data/

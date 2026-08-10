@@ -12,9 +12,10 @@ Like ADR-0001, this is a **living record**: the `Status` column changes as indiv
 | Convention                                                                                      | Rationale                                                                                                                                                                                                                                                                                                       | Status   |
 | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | Routes are inline in the HelmRelease `values.route` block, not standalone `HTTPRoute` manifests | One file per app to read, and the chart already templates the route. A standalone `httproute.yaml` is used only where the chart can't express it — no route support in the chart (`flux-webhook` on `flux-instance`, `kopiur`, `grafana-operator`), or path-level auth (`kube-prometheus-stack`'s remote-write) | accepted |
-| All components go in `ks.yaml` `spec.components`, never the app's `kustomization.yaml`          | Components need `postBuild` substitution, which only the Flux Kustomization provides                                                                                                                                                                                                                            | accepted |
+| App components go in `ks.yaml` `spec.components`, never the app's `kustomization.yaml`          | They need `postBuild` substitution, which only the Flux Kustomization provides. These are `auth`, `cnpg`, `kopiur/backup`, `zeroscaler`                                                                                                                                                                         | accepted |
+| Namespace components go in `kubernetes/apps/{ns}/kustomization.yaml` under `components:`        | They take no substitutions and apply to every app in the namespace, so there is nothing per-app to declare. These are `alerts`, `alerts/github-status`, `secrets`, `kopiur/secret`                                                                                                                              | accepted |
 | `dependsOn` is always declared, and references Kustomization names — not HelmRelease names      | They are different objects; the failure is silent and reconciliation-ordering bugs are expensive to diagnose                                                                                                                                                                                                    | accepted |
-| `APP: *app` is always set in `postBuild.substitute`, via a YAML anchor on `metadata.name`       | Every component depends on `${APP}`; the anchor keeps one source for the name                                                                                                                                                                                                                                   | accepted |
+| `APP: *app` is always set in `postBuild.substitute`, via a YAML anchor on `metadata.name`       | Every app component depends on `${APP}`; the anchor keeps one source for the name                                                                                                                                                                                                                               | accepted |
 | `substituteFrom: cluster-secrets` on apps that consume a cluster-wide var                       | Most apps need `${SECRET_DOMAIN}` for their route, so it's the common case — but it is not unconditional. An app referencing no cluster-secrets var doesn't declare it. `${TIMEZONE}` is now rarely needed: `k8tz` injects timezone at admission                                                                | accepted |
 | `kustomize.toolkit.fluxcd.io/substitute: disabled` on generated ConfigMaps                      | Config files legitimately contain `${...}`; without this, Flux mangles them                                                                                                                                                                                                                                     | accepted |
 | `# renovate:` comments only where no manager auto-detects the version                           | The flux/helm-values/kubernetes managers already scan all `.yaml`/`.yml`/`.j2`; redundant comments drift                                                                                                                                                                                                        | accepted |
@@ -87,13 +88,19 @@ spec:
 
 ## Namespace kustomization.yaml
 
-After creating `ks.yaml`, add it to the namespace index or Flux will never reconcile it:
+After creating `ks.yaml`, add it to the namespace index or Flux will never reconcile it. The index also carries the namespace components — the ones that apply to every app in the namespace and take no substitutions:
 
 ```yaml
 # kubernetes/apps/{namespace}/kustomization.yaml
 resources:
     - ./myapp/ks.yaml
+components:
+    - ../../components/alerts
+    - ../../components/secrets
+    - ../../components/kopiur/secret # only where the namespace has kopiur-backed apps
 ```
+
+App components (`auth`, `cnpg`, `kopiur/backup`, `zeroscaler`) go in the app's own `ks.yaml` instead — see `docs/context/06_components.md`.
 
 ## HelmRelease schema
 

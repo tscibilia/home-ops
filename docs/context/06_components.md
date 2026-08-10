@@ -4,13 +4,21 @@
 
 - **zeroscaler requires a prometheus-adapter metric:** Adding the `zeroscaler` component to `ks.yaml` is not enough — the app also needs a custom metric entry in the `prometheus-adapter` ConfigMap. Component without metric = scaling never triggers, silently.
 - **cnpg creates a CronJob:** The `cnpg` component creates a Secret AND an init CronJob in the app's namespace. Verify the namespace before applying.
-- **Update 02_apps_inventory.md:** When adding or removing a component from an app, update the app's entry in `02_apps_inventory.md`.
+- **Update 02_apps_inventory.md:** When adding or removing an app component, update the app's entry in `02_apps_inventory.md`.
+- **Placement is not interchangeable:** An app component in a namespace `kustomization.yaml` applies to every app in the namespace; a namespace component in a `ks.yaml` is missing the substitutions it never had. Check which kind you are adding before you add it.
 
-Components live in `kubernetes/components/`. Add them to `spec.components` in the Flux Kustomization (`ks.yaml`). All components — including `auth` — go in ks.yaml, never in the app's `kustomization.yaml`.
+Components live in `kubernetes/components/`. They come in two kinds, and the difference is where they are declared:
 
-Available: `alerts/`, `auth/`, `cnpg/`, `kopiur/{backup,secret}`, `secrets/`, `zeroscaler/`.
+| Kind                    | Declared in                               | Configured by             | Components                                                   |
+| ----------------------- | ----------------------------------------- | ------------------------- | ------------------------------------------------------------ |
+| **app component**       | `ks.yaml` → `spec.components`             | `postBuild.substitute`    | `auth`, `cnpg`, `kopiur/backup`, `zeroscaler`                |
+| **namespace component** | `kubernetes/apps/{ns}/kustomization.yaml` | nothing — no per-app vars | `alerts`, `alerts/github-status`, `secrets`, `kopiur/secret` |
 
-## kopiur — PVC backup to NFS (clonenas) via Kopia
+Neither kind ever goes in an app's own `app/kustomization.yaml`.
+
+## App components
+
+### kopiur/backup — PVC backup to NFS (clonenas) via Kopia
 
 Uses `kopiur.home-operations.com` CRDs (SnapshotPolicy, SnapshotSchedule, Restore) with a `ClusterRepository` pointing to NFS on `clonenas.internal`. ([ADR-0013](../adr/0013-kopiur-over-volsync.md))
 
@@ -29,11 +37,11 @@ dependsOn:
       namespace: kopiur-system
 ```
 
-A separate `kopiur/secret` component distributes the `kopiur-nas-secret` (Kopia repo password from aKeyless `/kubernetes/kopiur`) per namespace — not added per-app; the cluster-level setup handles it.
+The repository password comes from the `kopiur/secret` namespace component — see below. Do not add it per app.
 
 See `04_storage.md` for all Kopiur vars and restore command.
 
-## cnpg — PostgreSQL user secret + init cronjob
+### cnpg — PostgreSQL user secret + init cronjob
 
 ```yaml
 # ks.yaml
@@ -51,7 +59,7 @@ dependsOn:
 
 Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a CronJob for DB init.
 
-## auth — tinyauth forward auth
+### auth — tinyauth forward auth
 
 One component for **both** gateways — there is no internal/external split. Add to the **Flux Kustomization (`ks.yaml`)** `spec.components` (not the app's `kustomization.yaml`):
 
@@ -76,7 +84,7 @@ Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC
 
 Forward-auth apps also need the Gatus route/service annotation swap — see `03_networking.md`.
 
-## zeroscaler — scale-to-zero via native HPA + prometheus-adapter
+### zeroscaler — scale-to-zero via native HPA + prometheus-adapter
 
 Generic HPA component driven by Prometheus `probe_success` metric. ([ADR-0010](../adr/0010-zeroscaler-over-keda.md))
 
@@ -119,3 +127,35 @@ No `dependsOn` on observability — the HPA uses the external metrics API served
     - `nfs-bkup` → `jobName: nfs_bkup_probe` → `clonenas.internal:2049`
 
 For a custom HPA targeting a different deployment in the same app (e.g., immich's `immich-server`), don't use the component — add an explicit `horizontalpodautoscaler.yaml` in `app/` with the same `probe_success` + `job: nfs_probe` selector pattern.
+
+## Namespace components
+
+Declared once per namespace, alongside the `resources:` list of `ks.yaml` paths. They take no substitutions and never appear in a `ks.yaml`.
+
+```yaml
+# kubernetes/apps/{namespace}/kustomization.yaml
+components:
+    - ../../components/alerts
+    - ../../components/secrets
+    - ../../components/kopiur/secret # only where the namespace has kopiur-backed apps
+```
+
+**Creating a new namespace:** `alerts` and `secrets` are not optional — every namespace has both. Omitting `secrets` is the usual cause of `${SECRET_DOMAIN}` failing to substitute for a new app.
+
+### alerts — Flux failure notifications
+
+All 17 namespaces. Creates a Flux `Provider` pointing at `alertmanager-operated.observability.svc.cluster.local:9093` and an `Alert` at `eventSeverity: error` covering every Flux kind (FluxInstance, GitRepository, HelmRelease, HelmRepository, Kustomization, OCIRepository). Carries an `exclusionList` for known-noisy errors (GitHub lookup failures, TCP dial timeouts, socket waits).
+
+### alerts/github-status — commit status notifications
+
+`flux-system` only, and added as its own entry — it is deliberately commented out of the parent `alerts` component because it hit GitHub secondary rate limits when applied namespace-wide.
+
+### secrets — the cluster-secrets Secret
+
+All 17 namespaces. Creates the `cluster-secrets` ExternalSecret, which is what makes `substituteFrom: cluster-secrets` resolve in that namespace. Keys: `SECRET_DOMAIN`, `CEAPP_DOMAIN`, `TIMEZONE`, `TAILSCALE_MAGICDNS`, `KOPIA_BUCKET`, drawn from three aKeyless paths (`/kubernetes/cluster-secrets`, `/network/tailscale/operator`, `/cloud-providers/b2-creds`). See `05_secrets.md`.
+
+### kopiur/secret — the Kopia repository password
+
+Namespaces with kopiur-backed apps only: `ai`, `database`, `default`, `home-automation`, `kopiur-system`, `media`, `observability`, `security`. Creates `kopiur-nas-secret` (`KOPIA_PASSWORD`) so the movers in that namespace can open the repository.
+
+⚠️ The aKeyless key it reads is `/kubernetes/volsync`, not `/kubernetes/kopiur` — a leftover from before [ADR-0013](../adr/0013-kopiur-over-volsync.md). Renaming it means updating the secret in aKeyless and the component together.
