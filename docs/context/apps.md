@@ -10,7 +10,7 @@
 - **`[auth]` vs `[oidc]`:** `[auth]` = the `components/auth` component (tinyauth forward auth). `[oidc]` = a `PocketIDOIDCClient` CR in the app dir (native OIDC, no component). They are alternatives, not companions — see `networking.md`.
 - **Forward-auth apps skip Gatus route monitoring:** Apps using the `auth` component sit behind a tinyauth redirect which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
 
-Full list by namespace. The source of truth is `kubernetes/apps/`; the list below is rendered from it by `just docs inventory` and checked by `just docs check`. Don't hand-edit it — the one exception is the `_(description)_` after an app name, which is hand-written and preserved across regenerations.
+Full list by namespace. The source of truth is `kubernetes/apps/`; the list below is rendered from it by `just docs generate` and checked by `just docs test`. Don't hand-edit it — the one exception is the `_(description)_` after an app name, which is hand-written and preserved across regenerations.
 
 <!-- BEGIN GENERATED: apps -->
 

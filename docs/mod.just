@@ -16,9 +16,14 @@ generate:
     just check-tools python3
     python3 "{{ scripts_dir }}/generate.py"
 
-[doc('Fail if any generated docs section is stale')]
+[doc('Validate docs/context/ against the repo — generated sections and named identifiers')]
 [no-exit-message]
 [script]
-check:
+test:
     just check-tools python3
-    python3 "{{ scripts_dir }}/generate.py" --check
+    # Run both gates before failing — they need different fixes, so reporting
+    # only the first would hide the second until the next run.
+    rc=0
+    python3 "{{ scripts_dir }}/generate.py" --check || rc=1
+    python3 "{{ scripts_dir }}/verify.py" || rc=1
+    exit "$rc"

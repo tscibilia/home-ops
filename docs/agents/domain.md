@@ -57,6 +57,13 @@ Do not add a third living record. If something needs continuous updating, it is 
 
 `docs/context/` is only useful while it's true. When a change makes one of those files wrong, fix it in the same change.
 
+`just docs test` enforces the part of that a machine can judge, and lefthook runs it pre-commit. It gates two things:
+
+- **Generated sections** — the marker-delimited blocks (the app list, the docker stack tables) must match the repo. `just docs generate` rewrites them. Hand-written prose inside a block is preserved across runs, and the generator refuses to write if it would be lost.
+- **Named identifiers** — every component, storage class, CNPG cluster, probe jobName, substitution default and aKeyless path the docs name must still resolve. When a file names something deliberately to say it is _wrong_, suppress that one token with `<!-- verify-ignore: <check> <token> -->`.
+
+Neither gate reads prose, and neither can tell you a sentence has become misleading. Prefer wording that cannot go stale: say "every namespace" rather than "all 17 namespaces", and name a thing rather than counting things. A fact that must be exact belongs in an identifier the verifier can check.
+
 ## Use the glossary's vocabulary
 
 When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids. If the concept you need isn't in defined yet, that's a signal — either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it).

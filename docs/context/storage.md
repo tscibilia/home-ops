@@ -7,12 +7,14 @@
 
 ## Storage Classes
 
-| Class              | Backend                                      | Use case                                                              |
-| ------------------ | -------------------------------------------- | --------------------------------------------------------------------- |
-| `ceph-ssd`         | Rook Ceph (default)                          | All persistent app workloads                                          |
-| `openebs-hostpath` | Local node NVMe (`/var/mnt/local-hostpath`)  | CNPG, log DBs, actions-runner — node-local, no replication            |
-| `local-hdd`        | Static PV, ai3090 HDD (`/var/mnt/local-hdd`) | ai3090-only bulk storage — comfyui workspace; no dynamic provisioning |
-| `nfs-media`        | External NFS (TrueNAS)                       | Media library (Plex, \*arr stack)                                     |
+| Class              | Backend                                                              | Use case                                                              |
+| ------------------ | -------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `ceph-ssd`         | Rook Ceph (default)                                                  | All persistent app workloads                                          |
+| `openebs-hostpath` | Local node NVMe (`/var/mnt/local-hostpath`)                          | CNPG, log DBs, actions-runner — node-local, no replication            |
+| `local-hdd`        | Static PV, ai3090 HDD (`/var/mnt/local-hdd`)                         | ai3090-only bulk storage — comfyui workspace; no dynamic provisioning |
+| `nfs-share`        | External NFS via csi-driver-nfs (TrueNAS `/mnt/nas/data/shares/k8s`) | General shared storage between apps                                   |
+
+The media library is **not** a storage class. Media apps mount it directly as a `type: nfs` volume in the HelmRelease — `server: truenas.internal`, `path: /mnt/nas/data/media` — with no PVC involved.
 
 ## Kopiur (PVC Backup/Restore via Kopia)
 
@@ -22,9 +24,9 @@ Backing up an app's PVC, the substitution vars, and the restore procedure are al
 
 ## CNPG (PostgreSQL)
 
-**Backups:** Two layers — pgdumps (via `cnpg` component CronJob) to NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/postgres`), and continuous WAL archival via barman-cloud to Backblaze B2.
+**Backups:** layered — pgdumps (via `cnpg` component CronJob) to NFS on `clonenas.internal` (`/mnt/vault/backups/kubernetes/postgres`), and continuous WAL archival via barman-cloud to Backblaze B2.
 
-Two clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-postgresql.md), [ADR-0011](../adr/0011-pgvector-cluster-split.md)):
+Clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-postgresql.md), [ADR-0011](../adr/0011-pgvector-cluster-split.md)):
 
 | Cluster            | Purpose                | PG Version         | Notes                                         |
 | ------------------ | ---------------------- | ------------------ | --------------------------------------------- |

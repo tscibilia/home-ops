@@ -27,7 +27,7 @@ Path: `docker/truenas/`
 
 <!-- END GENERATED: stacks:truenas -->
 
-NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
+NAS role: primary storage. Exports the media library (mounted directly by media apps) and the share backing the `nfs-share` storage class.
 
 ### clonenas
 

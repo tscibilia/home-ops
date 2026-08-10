@@ -47,7 +47,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 2. Secrets: aKeyless → `externalsecret.yaml`
 3. Provide human in the loop with commit message
 4. Docs: update the affected `docs/context/` file(s) in the same change. If the change involved a decision — a trade-off with real alternatives that's costly to reverse — add an ADR instead of writing the rationale into a context file.
-5. Generated docs: adding, removing or renaming an app or a docker stack changes a generated section. Run `just docs generate`; `just docs check` fails when it's stale.
+5. Generated docs: adding, removing or renaming an app or a docker stack changes a generated section. Run `just docs generate`. `just docs test` runs both gates — the generated sections and the identifiers — and lefthook runs it pre-commit.
 
 ## Architecture & Structure
 
@@ -77,7 +77,7 @@ _(For sub-directory specifics not covered by `docs/context/`, read that director
 
 - `ceph-ssd` (default) — Rook Ceph, all persistent workloads
 - `openebs-hostpath` — local node storage (CNPG, logs, actions-runner)
-- `nfs-media` — external NFS for media library
+- `nfs-share` — external NFS (csi-driver-nfs) for shared storage; the media library is mounted as a direct `type: nfs` volume, not via a class
 
 ## Reference Docs
 

@@ -9,10 +9,10 @@
 
 Components live in `kubernetes/components/`. They come in two kinds, and the difference is where they are declared:
 
-| Kind                    | Declared in                               | Configured by             | Components                                                   |
-| ----------------------- | ----------------------------------------- | ------------------------- | ------------------------------------------------------------ |
-| **app component**       | `ks.yaml` → `spec.components`             | `postBuild.substitute`    | `auth`, `cnpg`, `kopiur/backup`, `zeroscaler`                |
-| **namespace component** | `kubernetes/apps/{ns}/kustomization.yaml` | nothing — no per-app vars | `alerts`, `alerts/github-status`, `secrets`, `kopiur/secret` |
+| Kind                    | Declared in                               | Configured by             | Components                                    |
+| ----------------------- | ----------------------------------------- | ------------------------- | --------------------------------------------- |
+| **app component**       | `ks.yaml` → `spec.components`             | `postBuild.substitute`    | `auth`, `cnpg`, `kopiur/backup`, `zeroscaler` |
+| **namespace component** | `kubernetes/apps/{ns}/kustomization.yaml` | nothing — no per-app vars | `alerts`, `secrets`, `kopiur/secret`          |
 
 Neither kind ever goes in an app's own `app/kustomization.yaml`.
 
@@ -87,6 +87,8 @@ Creates three resources in the app's namespace:
 | `${APP}-pguser-secret` | ExternalSecret | App credentials — `host`, `ro_host`, `port`, `user`, `password`, `db`, `uri`, `dsn` |
 | `${APP}-initdb-secret` | ExternalSecret | `INIT_POSTGRES_*` vars for the init container                                       |
 | `${APP}-pg-backups`    | CronJob        | pgdump to NFS on clonenas, `5 */4 * * *`                                            |
+
+`PG_VER` (default `17`) selects the `postgres-backup-local` image tag for that CronJob — override it only if the app's cluster runs a different major version.
 
 The component stops at credentials. The app's HelmRelease has to run the init container that creates the role and database:
 
@@ -218,9 +220,7 @@ components:
 
 Every namespace. Creates a Flux `Provider` pointing at `alertmanager-operated.observability.svc.cluster.local:9093` and an `Alert` at `eventSeverity: error` covering every Flux kind (FluxInstance, GitRepository, HelmRelease, HelmRepository, Kustomization, OCIRepository). Carries an `exclusionList` for known-noisy errors (GitHub lookup failures, TCP dial timeouts, socket waits).
 
-### alerts/github-status — commit status notifications
-
-`flux-system` only, and added as its own entry — it is deliberately commented out of the parent `alerts` component because it hit GitHub secondary rate limits when applied namespace-wide.
+`components/alerts/github-status/` sits beside it but is **not** a component — it is `kind: Kustomization`, commented out of the parent `alerts` component after hitting GitHub secondary rate limits, and pulled in by `flux-system` alone under `resources:`, not `components:`.
 
 ### secrets — the cluster-secrets Secret
 
@@ -231,3 +231,4 @@ Every namespace. Creates the `cluster-secrets` ExternalSecret, which is what mak
 Only namespaces containing kopiur-backed apps. Creates `kopiur-nas-secret` (`KOPIA_PASSWORD`) so the movers in that namespace can open the repository.
 
 ⚠️ The aKeyless key it reads is `/kubernetes/volsync`, not `/kubernetes/kopiur` — a leftover from before [ADR-0013](../adr/0013-kopiur-over-volsync.md). Renaming it means updating the secret in aKeyless and the component together.
+<!-- verify-ignore: akeyless /kubernetes/kopiur -->  named deliberately above as the path that does *not* exist

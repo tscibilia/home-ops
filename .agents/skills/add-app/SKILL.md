@@ -542,5 +542,5 @@ After generating all manifests:
 - **No Renovate annotations**: Do not add `# renovate:` comments to image tags — Renovate config handles discovery automatically.
 - **YAML anchors**: Always use `name: &app {name}` and reference as `*app` throughout.
 - **Security context**: Default to restrictive (`readOnlyRootFilesystem: true`, drop ALL capabilities). Do not add comments about relaxing these — that is follow-up troubleshooting if needed.
-- **Storage**: Default PVC storage class is `ceph-ssd` (handled by kopiur component defaults). Only override for `openebs-hostpath` or `nfs-media` if needed.
+- **Storage**: Default PVC storage class is `ceph-ssd` (handled by kopiur component defaults). Only override for `openebs-hostpath` or `nfs-share` if needed. There is no `nfs-media` class — media libraries are mounted as direct `type: nfs` volumes.
 - **No extra blank lines**: Keep YAML output compact — no unnecessary blank lines between sections.

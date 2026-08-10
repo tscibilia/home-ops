@@ -2,3 +2,9 @@
 git_url = "https://github.com/home-operations/.github"
 ref = "main"
 configs = ["lefthook.common.toml"]
+
+# Generated doc sections and the identifiers docs/context/ names must both still
+# match the repo. Runs in ~60ms, so the glob is deliberately broad.
+[pre-commit.commands.docs]
+run = "just docs test"
+glob = ["kubernetes/**", "docker/**", "docs/context/*.md"]
