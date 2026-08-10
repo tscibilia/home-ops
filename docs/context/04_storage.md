@@ -2,7 +2,7 @@
 
 ## ⚠️ Gotchas & Interactions
 
-- **CNPG endpoint suffix:** The app database connection endpoint is always `{app}-cnpg-rw`. Never use `-ro` (read replica) or the bare cluster resource name for app connections.
+- **CNPG endpoints are named after the cluster, not the app:** the `host` key is `{cluster}-rw.database.svc.cluster.local` — `pgsql-cluster-rw` or `pgvector-cluster-rw`, shared by every app on that cluster. Use the `host` key from `${APP}-pguser-secret` rather than composing a name. Never point an app at `-ro`; that is the read replica.
 - **openebs-hostpath is node-local:** Data is tied to the node. A pod rescheduling to a different node loses access to its PVC.
 
 ## Storage Classes
@@ -16,30 +16,9 @@
 
 ## Kopiur (PVC Backup/Restore via Kopia)
 
-Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.internal:/mnt/vault/backups/kubernetes/kopia`). Uses `kopiur.home-operations.com/v1alpha1` CRDs (SnapshotPolicy, SnapshotSchedule, Restore). rclone syncs the NFS repo to B2 separately. Add component `../../../../components/kopiur/backup` in `ks.yaml`. ([ADR-0013](../adr/0013-kopiur-over-volsync.md))
+Kopiur backs up PVCs via Kopia to a `ClusterRepository` on NFS (`clonenas.internal:/mnt/vault/backups/kubernetes/kopia`). Uses `kopiur.home-operations.com/v1alpha1` CRDs (SnapshotPolicy, SnapshotSchedule, Restore). rclone syncs the NFS repo to B2 separately. ([ADR-0013](../adr/0013-kopiur-over-volsync.md))
 
-### Required ks.yaml postBuild vars
-
-```yaml
-APP: *app # always required
-KOPIUR_CAPACITY: 5Gi # PVC size (default 5Gi)
-```
-
-### Optional ks.yaml postBuild vars (with defaults)
-
-| Var                    | Default              | Notes                  |
-| ---------------------- | -------------------- | ---------------------- |
-| `KOPIUR_ACCESSMODES`   | `ReadWriteOnce`      | PVC access mode        |
-| `KOPIUR_CAPACITY`      | `5Gi`                | PVC size               |
-| `KOPIUR_STORAGECLASS`  | `ceph-ssd`           | PVC storage class      |
-| `KOPIUR_SNAPSHOTCLASS` | `csi-ceph-blockpool` | VolumeSnapshotClass    |
-| `KOPIUR_CRON`          | `0 */4 * * *`        | Snapshot schedule cron |
-| `KOPIUR_PUID`          | `1000`               | mover runAsUser        |
-| `KOPIUR_PGID`          | `1000`               | mover runAsGroup       |
-
-### Restore
-
-Manually trigger a restore by editing the `Restore` CR (named `${APP}` in the app namespace) and setting its `spec.offset` to the desired number of snapshots back (0 = latest). The PVC will be re-populated via the CSI populator, then delete and recreate the pod to mount it.
+Backing up an app's PVC, the substitution vars, and the restore procedure are all in `06_components.md` → `kopiur/backup`.
 
 ## CNPG (PostgreSQL)
 
@@ -59,41 +38,6 @@ Two clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-f
 
 Secret keys (from component-generated ExternalSecret):
 
-- `host`, `ro_host`, `user`, `password`, `db`, `uri`, `dsn`
+- `host`, `ro_host`, `port`, `user`, `password`, `db`, `uri`, `dsn`
 
-### Add credentials for a new app
-
-```bash
-export APP=myapp
-PASSWORD=$(openssl rand -base64 30 | tr -dc 'A-Za-z0-9' | head -c 20)
-akeyless update-secret-val \
-  --name cnpg-users \
-  --custom-field "${APP}_postgres_username=${APP}" \
-  --custom-field "${APP}_postgres_password=${PASSWORD}"
-```
-
-### ks.yaml additions when using CNPG component
-
-```yaml
-components:
-    - ../../../../components/cnpg
-
-postBuild:
-    substitute:
-        CNPG_NAME: &postgresAppName pgsql-cluster # or pgvector-cluster
-
-healthChecks:
-    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
-      kind: &postgresKind Cluster
-      name: *postgresAppName
-      namespace: database
-healthCheckExprs:
-    - apiVersion: *postgresVersion
-      kind: *postgresKind
-      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
-      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
-
-dependsOn:
-    - name: cnpg-cluster
-      namespace: database
-```
+Connecting an app to one of these clusters — the `ks.yaml` stanza, the health checks, and the aKeyless credential the component expects — is in `06_components.md` → `cnpg`.

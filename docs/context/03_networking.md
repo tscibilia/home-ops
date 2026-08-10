@@ -70,39 +70,15 @@ Requires `dependsOn: {name: pocket-id, namespace: security}` in `ks.yaml`. Avail
 
 ### Forward auth (apps with no OIDC support)
 
-One component, used for **both** gateways — there is no internal/external split:
+The `auth` app component, one for both gateways — there is no internal/external split. It sends ext-auth to `tinyauth.security:3000` via a `SecurityPolicy`, and it changes how the app is monitored.
 
-```yaml
-# kubernetes/apps/{ns}/{app}/ks.yaml
-spec:
-    components:
-        - ../../../../components/auth
-```
-
-Creates a `SecurityPolicy` sending ext-auth to `tinyauth.security:3000`. It targets the HTTPRoute named `${APP}`; override with `EXT_AUTH_TARGET` / `EXT_AUTH_KIND` / `EXT_AUTH_GROUP` in `postBuild.substitute`. See `06_components.md`.
+Full stanza, substitution vars and the required Gatus annotation swap: `06_components.md` → `auth`.
 
 ## Gatus Health Monitoring
 
 The `gatus-sidecar` runs with `--auto-httproute --enable-httproute --enable-service`. **No annotation or action is needed** — it auto-discovers every HTTPRoute automatically.
 
-**Exception — apps using the `auth` component (tinyauth forward auth):** the auth redirect means the route will never return 200. You must:
-
-1. Disable route monitoring: `gatus.home-operations.com/enabled: "false"` on the route
-2. Enable service monitoring: `gatus.home-operations.com/enabled: "true"` on the service
-
-```yaml
-# HelmRelease values — forward-auth app pattern
-route:
-  app:
-    annotations:
-      gatus.home-operations.com/enabled: "false"
-    ...
-service:
-  app:
-    annotations:
-      gatus.home-operations.com/enabled: "true"
-    ...
-```
+**Exception — apps using the `auth` component:** the tinyauth redirect means the route never returns 200, so monitoring has to move from the route to the service. The annotations are in `06_components.md` → `auth`.
 
 ## DNS
 

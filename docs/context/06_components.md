@@ -3,7 +3,7 @@
 ## ⚠️ Gotchas & Interactions
 
 - **zeroscaler requires a prometheus-adapter metric:** Adding the `zeroscaler` component to `ks.yaml` is not enough — the app also needs a custom metric entry in the `prometheus-adapter` ConfigMap. Component without metric = scaling never triggers, silently.
-- **cnpg creates a CronJob:** The `cnpg` component creates a Secret AND an init CronJob in the app's namespace. Verify the namespace before applying.
+- **cnpg does not create the database:** the component only supplies the credentials. The app's HelmRelease must declare the `postgres-init` initContainer that actually creates the role and database — adding the component alone leaves the app starting against a database that does not exist.
 - **Update 02_apps_inventory.md:** When adding or removing an app component, update the app's entry in `02_apps_inventory.md`.
 - **Placement is not interchangeable:** An app component in a namespace `kustomization.yaml` applies to every app in the namespace; a namespace component in a `ks.yaml` is missing the substitutions it never had. Check which kind you are adding before you add it.
 
@@ -15,6 +15,8 @@ Components live in `kubernetes/components/`. They come in two kinds, and the dif
 | **namespace component** | `kubernetes/apps/{ns}/kustomization.yaml` | nothing — no per-app vars | `alerts`, `alerts/github-status`, `secrets`, `kopiur/secret` |
 
 Neither kind ever goes in an app's own `app/kustomization.yaml`.
+
+Each section below is complete: everything a component needs in a `ks.yaml` is stated here, not split across topic files. [ADR-0002](../adr/0002-flux-repository-conventions.md) owns the _shape_ of a `ks.yaml`; this file owns what each component _needs_ in one.
 
 ## App components
 
@@ -29,7 +31,7 @@ components:
 postBuild:
     substitute:
         APP: *app
-        KOPIUR_CAPACITY: 5Gi # optional; see 04_storage.md for full var table
+        KOPIUR_CAPACITY: 5Gi
 dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -37,11 +39,23 @@ dependsOn:
       namespace: kopiur-system
 ```
 
+`APP` is the only required substitution. The rest have defaults:
+
+| Var                    | Default              | Purpose                |
+| ---------------------- | -------------------- | ---------------------- |
+| `KOPIUR_ACCESSMODES`   | `ReadWriteOnce`      | PVC access mode        |
+| `KOPIUR_CAPACITY`      | `5Gi`                | PVC size               |
+| `KOPIUR_STORAGECLASS`  | `ceph-ssd`           | PVC storage class      |
+| `KOPIUR_SNAPSHOTCLASS` | `csi-ceph-blockpool` | VolumeSnapshotClass    |
+| `KOPIUR_CRON`          | `0 */4 * * *`        | Snapshot schedule cron |
+| `KOPIUR_PUID`          | `1000`               | mover runAsUser        |
+| `KOPIUR_PGID`          | `1000`               | mover runAsGroup       |
+
 The repository password comes from the `kopiur/secret` namespace component — see below. Do not add it per app.
 
-See `04_storage.md` for all Kopiur vars and restore command.
+**Restore:** edit the `Restore` CR (named `${APP}`, in the app's namespace) and set `spec.offset` to the number of snapshots back you want (0 = latest). The PVC is re-populated via the CSI populator; then delete and recreate the pod to mount it.
 
-### cnpg — PostgreSQL user secret + init cronjob
+### cnpg — PostgreSQL credentials + pgdump CronJob
 
 ```yaml
 # ks.yaml
@@ -50,14 +64,58 @@ components:
 postBuild:
     substitute:
         APP: *app
-        CNPG_NAME: &postgresAppName pgsql-cluster # or immich17
-healthChecks: [...] # see 04_storage.md for full block
+        CNPG_NAME: &postgresAppName pgsql-cluster # or pgvector-cluster
+healthChecks:
+    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
+      kind: &postgresKind Cluster
+      name: *postgresAppName
+      namespace: database
+healthCheckExprs:
+    - apiVersion: *postgresVersion
+      kind: *postgresKind
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
 dependsOn:
     - name: cnpg-cluster
       namespace: database
 ```
 
-Creates: `${APP}-pguser-secret` (host, port, user, password, db, uri, dsn) + a CronJob for DB init.
+Creates three resources in the app's namespace:
+
+| Resource               | Kind           | Purpose                                                                             |
+| ---------------------- | -------------- | ----------------------------------------------------------------------------------- |
+| `${APP}-pguser-secret` | ExternalSecret | App credentials — `host`, `ro_host`, `port`, `user`, `password`, `db`, `uri`, `dsn` |
+| `${APP}-initdb-secret` | ExternalSecret | `INIT_POSTGRES_*` vars for the init container                                       |
+| `${APP}-pg-backups`    | CronJob        | pgdump to NFS on clonenas, `5 */4 * * *`                                            |
+
+The component stops at credentials. The app's HelmRelease has to run the init container that creates the role and database:
+
+```yaml
+# HelmRelease values — required alongside the cnpg component
+initContainers:
+    init-db:
+        image:
+            repository: ghcr.io/home-operations/postgres-init
+            tag: # grep the repo for the tag+digest currently in use
+        envFrom:
+            - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+```
+
+`CNPG_NAME` picks the cluster: `pgsql-cluster` for general apps, `pgvector-cluster` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgsql-cluster` in the component (`${CNPG_NAME:=pgsql-cluster}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `04_storage.md` says what each is for.
+
+The generated `host` is `{cluster}-rw…`, shared by every app on that cluster — apps read it from the Secret, they never compose it.
+
+The app's Postgres password is not created by the component. Add it to aKeyless first, or the generated Secret comes up empty:
+
+```bash
+export APP=myapp
+PASSWORD=$(openssl rand -base64 30 | tr -dc 'A-Za-z0-9' | head -c 20)
+akeyless update-secret-val \
+  --name cnpg-users \
+  --custom-field "${APP}_postgres_username=${APP}" \
+  --custom-field "${APP}_postgres_password=${PASSWORD}"
+```
 
 ### auth — tinyauth forward auth
 
@@ -72,6 +130,8 @@ spec:
 
 Creates a `SecurityPolicy` routing ext-auth to `tinyauth.security:3000`, targeting the HTTPRoute named `${APP}`.
 
+No `dependsOn` — the SecurityPolicy resolves tinyauth at request time, not at reconcile time. Apps using this component depend only on `secret-stores` (and `kopiur` if they back up).
+
 **Substitution variables:**
 
 | Var                  | Default                     | Purpose                      |
@@ -80,9 +140,21 @@ Creates a `SecurityPolicy` routing ext-auth to `tinyauth.security:3000`, targeti
 | `${EXT_AUTH_KIND}`   | `HTTPRoute`                 | Target kind (e.g. `Gateway`) |
 | `${EXT_AUTH_GROUP}`  | `gateway.networking.k8s.io` | Target API group             |
 
-Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — see `03_networking.md`. Never apply both to one app. ([ADR-0014](../adr/0014-pocket-id-tinyauth-over-authentik.md))
+**Gatus annotations must be swapped.** The tinyauth redirect means the route never returns 200, so route monitoring has to move to the service — otherwise the app shows permanently down:
 
-Forward-auth apps also need the Gatus route/service annotation swap — see `03_networking.md`.
+```yaml
+# HelmRelease values
+route:
+    app:
+        annotations:
+            gatus.home-operations.com/enabled: "false"
+service:
+    app:
+        annotations:
+            gatus.home-operations.com/enabled: "true"
+```
+
+Use this **only** for apps that cannot do OIDC themselves. Apps with native OIDC get a `PocketIDOIDCClient` CR instead and no component — that path is not a component at all, and is documented in `03_networking.md`. Never apply both to one app. ([ADR-0014](../adr/0014-pocket-id-tinyauth-over-authentik.md))
 
 ### zeroscaler — scale-to-zero via native HPA + prometheus-adapter
 
