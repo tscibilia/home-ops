@@ -10,7 +10,9 @@
 - **`[auth]` vs `[oidc]`:** `[auth]` = the `components/auth` component (tinyauth forward auth). `[oidc]` = a `PocketIDOIDCClient` CR in the app dir (native OIDC, no component). They are alternatives, not companions — see `03_networking.md`.
 - **Forward-auth apps skip Gatus route monitoring:** Apps using the `auth` component sit behind a tinyauth redirect which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
 
-Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for quick lookup.
+Full list by namespace. The source of truth is `kubernetes/apps/`; the list below is rendered from it by `just docs inventory` and checked by `just docs check`. Don't hand-edit it — the one exception is the `_(description)_` after an app name, which is hand-written and preserved across regenerations.
+
+<!-- BEGIN GENERATED: apps -->
 
 ## actions-runner-system
 
@@ -46,10 +48,10 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - immich _(photos)_ [cnpg, oidc]
 - komga _(comics/manga)_ [kopiur, zeroscaler, oidc]
 - mealie _(recipes)_ [kopiur, cnpg, oidc]
-- pairdrop
+- pairdrop _(airdrop alternative)_
 - radicale _(CalDAV/CardDAV)_ [kopiur]
 - rustfs _(S3-compatible object store)_ [kopiur, oidc]
-- searxng
+- searxng _(metasearch engine)_
 - smtp-relay
 - spoolman _(filament tracker)_ [kopiur, auth]
 - thelounge _(IRC)_ [kopiur]
@@ -57,14 +59,14 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 ## external-secrets
 
-- external-secrets _(operator)_
+- external-secrets
 - secret-stores _(ClusterSecretStore → akeyless)_
 
 ## flux-system
 
 - flux-instance
 - flux-operator
-- konflate _(local manifest rendering, replaces flux-local)_
+- konflate _(local manifest rendering)_
 
 ## home-automation
 
@@ -75,12 +77,17 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - otbr _(OpenThread Border Router)_ [kopiur]
 - zwave [kopiur]
 
+## kopiur-system
+
+- b2-sync _(kopia sync-to rclone CronJob to B2)_
+- kopiur _(PVC backup/restore operator)_
+
 ## kube-system
 
 - cilium _(CNI/eBPF)_
 - coredns
 - csi-driver-nfs
-- descheduler
+- descheduler _(k8s eviction rules)_
 - generic-device-plugin _(TUN/DRI device exposure DaemonSet)_
 - intel-gpu-resource-driver
 - k8tz _(timezone injection admission controller)_
@@ -96,20 +103,20 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - agregarr _(home media aggregator dashboard)_ [kopiur]
 - autobrr _(torrent automation)_ [kopiur, zeroscaler, oidc]
 - bazarr _(subtitles)_ [kopiur, auth, zeroscaler]
-- flaresolverr
+- flaresolverr _(solves cloudflare captcha)_
 - hometube _(yt-dlp UI)_ [kopiur, auth, zeroscaler]
 - imagemaid _(Plex image cleanup)_
 - jellyfin [kopiur, zeroscaler]
 - kometa _(Plex metadata)_ [kopiur]
-- maintainerr [kopiur]
+- maintainerr _(media deletion rules)_ [kopiur]
 - plex [kopiur, zeroscaler]
 - prowlarr _(indexer manager)_ [kopiur, auth]
 - qbittorrent [kopiur, zeroscaler]
-- qui _(Plex request UI)_ [kopiur, zeroscaler, oidc]
+- qui _(qbittorrent UI)_ [kopiur, zeroscaler, oidc]
 - radarr [kopiur, auth, zeroscaler]
-- recyclarr [kopiur]
+- recyclarr _(auto-sync TRaSH Guides)_ [kopiur]
 - seanime _(anime library)_ [kopiur, zeroscaler]
-- seerr _(Overseerr fork)_ [kopiur]
+- seerr _(Plex request UI)_ [kopiur]
 - sonarr [kopiur, auth, zeroscaler]
 - tracearr _(Plex/Jellyfin tracker)_ [cnpg]
 
@@ -121,8 +128,8 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 - external-dns
 - greenlight _(custom UniFi network status app)_ [auth]
 - multus
-- towonel-agent _(VPS tunnel ingress via iroh QUIC — see ADR-0015)_
 - tailscale
+- towonel-agent _(VPS tunnel ingress via iroh QUIC — see ADR-0015)_
 - unifi-dns
 
 ## observability
@@ -153,21 +160,18 @@ Full list by namespace. Source of truth is `kubernetes/apps/`; this file is for 
 
 - openebs _(local hostpath CSI)_
 
-## security
-
-- pocket-id _(OIDC identity provider — cluster IdP, at `id.${SECRET_DOMAIN}`; operator + instance + user groups)_ [cnpg, kopiur, oidc]
-- tinyauth _(forward-auth proxy backing `components/auth`, at `auth.${SECRET_DOMAIN}`)_ [oidc]
-
 ## rook-ceph
 
-- rook-ceph _(Ceph cluster + operator)_
 - ceph-csi-drivers _(Ceph-CSI Driver/OperatorConfig CRs + driver SAs/RBAC; required since rook v1.20)_
+- rook-ceph _(Ceph cluster + operator)_
+
+## security
+
+- pocket-id _(OIDC identity provider)_ [kopiur, cnpg]
+- tinyauth _(forward-auth proxy)_ [oidc]
 
 ## system-upgrade
 
 - tuppr _(Talos upgrade controller)_
 
-## kopiur-system
-
-- kopiur _(PVC backup/restore operator + ClusterRepository)_
-- b2-sync _(kopia sync-to rclone CronJob to B2)_
+<!-- END GENERATED: apps -->

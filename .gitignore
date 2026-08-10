@@ -33,5 +33,7 @@ node-compile-cache/
 .pytest_cache/
 .task/
 .venv/
+__pycache__/
+*.pyc
 .DS_Store
 Thumbs.db

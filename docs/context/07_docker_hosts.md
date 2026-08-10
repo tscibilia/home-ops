@@ -17,11 +17,15 @@ Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each
 
 Path: `docker/truenas/`
 
+<!-- BEGIN GENERATED: stacks:truenas -->
+
 | #   | Service                   | Compose file                       |
 | --- | ------------------------- | ---------------------------------- |
 | 01  | tailscale                 | `01-tailscale/docker-compose.yaml` |
 | 02  | scrutiny (collector)      | `02-scrutiny/docker-compose.yaml`  |
 | 03  | node-exporter, fluent-bit | `03-exporters/docker-compose.yaml` |
+
+<!-- END GENERATED: stacks:truenas -->
 
 NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
 
@@ -29,17 +33,23 @@ NAS role: primary storage, NFS exports for media (`nfs-media` storage class).
 
 Path: `docker/clonenas/`
 
+<!-- BEGIN GENERATED: stacks:clonenas -->
+
 | #   | Service                               | Compose file                       |
 | --- | ------------------------------------- | ---------------------------------- |
 | 01  | matchbox                              | `01-matchbox/docker-compose.yaml`  |
 | 02  | scrutiny (collector)                  | `02-scrutiny/docker-compose.yaml`  |
 | 03  | node-exporter, fluent-bit, nut-server | `03-exporters/docker-compose.yaml` |
 
+<!-- END GENERATED: stacks:clonenas -->
+
 clonenas role: backup NAS (pools: `vault`, `media`). sysadmin home: `/mnt/vault/sysadmin`. Ansible: `ansible/clonenas/playbook.yaml`.
 
 ### vps
 
 Path: `docker/vps/`
+
+<!-- BEGIN GENERATED: stacks:vps -->
 
 | #   | Service                                     | Compose file                           |
 | --- | ------------------------------------------- | -------------------------------------- |
@@ -49,6 +59,8 @@ Path: `docker/vps/`
 | 04  | unifi                                       | `04-unifi/docker-compose.yaml`         |
 | 05  | node-exporter, fluent-bit, prometheus-agent | `05-observability/docker-compose.yaml` |
 | 06  | unifi-backup (restic→B2), ofelia scheduler  | `06-unfbkup/docker-compose.yaml`       |
+
+<!-- END GENERATED: stacks:vps -->
 
 VPS role: towonel hub/edge ingress gateway (DNS-only → VPS:443 → SNI split → towonel tunnel → in-cluster `envoy-external`, which terminates TLS), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `02-towonel/` and `04-unifi/` stacks via its own git clone of the repo. ([ADR-0015](../adr/0015-towonel-over-pangolin.md))
 

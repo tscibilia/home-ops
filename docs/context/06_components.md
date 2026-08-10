@@ -4,7 +4,7 @@
 
 - **zeroscaler requires a prometheus-adapter metric:** Adding the `zeroscaler` component to `ks.yaml` is not enough — the app also needs a custom metric entry in the `prometheus-adapter` ConfigMap. Component without metric = scaling never triggers, silently.
 - **cnpg does not create the database:** the component only supplies the credentials. The app's HelmRelease must declare the `postgres-init` initContainer that actually creates the role and database — adding the component alone leaves the app starting against a database that does not exist.
-- **Update 02_apps_inventory.md:** When adding or removing an app component, update the app's entry in `02_apps_inventory.md`.
+- **Regenerate the inventory:** Adding or removing an app component changes the app's `[flags]` in `02_apps_inventory.md`. Run `just docs generate` — that list is rendered from disk, not hand-edited.
 - **Placement is not interchangeable:** An app component in a namespace `kustomization.yaml` applies to every app in the namespace; a namespace component in a `ks.yaml` is missing the substitutions it never had. Check which kind you are adding before you add it.
 
 Components live in `kubernetes/components/`. They come in two kinds, and the difference is where they are declared:
@@ -216,7 +216,7 @@ components:
 
 ### alerts — Flux failure notifications
 
-All 17 namespaces. Creates a Flux `Provider` pointing at `alertmanager-operated.observability.svc.cluster.local:9093` and an `Alert` at `eventSeverity: error` covering every Flux kind (FluxInstance, GitRepository, HelmRelease, HelmRepository, Kustomization, OCIRepository). Carries an `exclusionList` for known-noisy errors (GitHub lookup failures, TCP dial timeouts, socket waits).
+Every namespace. Creates a Flux `Provider` pointing at `alertmanager-operated.observability.svc.cluster.local:9093` and an `Alert` at `eventSeverity: error` covering every Flux kind (FluxInstance, GitRepository, HelmRelease, HelmRepository, Kustomization, OCIRepository). Carries an `exclusionList` for known-noisy errors (GitHub lookup failures, TCP dial timeouts, socket waits).
 
 ### alerts/github-status — commit status notifications
 
@@ -224,10 +224,10 @@ All 17 namespaces. Creates a Flux `Provider` pointing at `alertmanager-operated.
 
 ### secrets — the cluster-secrets Secret
 
-All 17 namespaces. Creates the `cluster-secrets` ExternalSecret, which is what makes `substituteFrom: cluster-secrets` resolve in that namespace. Keys: `SECRET_DOMAIN`, `CEAPP_DOMAIN`, `TIMEZONE`, `TAILSCALE_MAGICDNS`, `KOPIA_BUCKET`, drawn from three aKeyless paths (`/kubernetes/cluster-secrets`, `/network/tailscale/operator`, `/cloud-providers/b2-creds`). See `05_secrets.md`.
+Every namespace. Creates the `cluster-secrets` ExternalSecret, which is what makes `substituteFrom: cluster-secrets` resolve in that namespace. Keys: `SECRET_DOMAIN`, `CEAPP_DOMAIN`, `TIMEZONE`, `TAILSCALE_MAGICDNS`, `KOPIA_BUCKET`, drawn from three aKeyless paths (`/kubernetes/cluster-secrets`, `/network/tailscale/operator`, `/cloud-providers/b2-creds`). See `05_secrets.md`.
 
 ### kopiur/secret — the Kopia repository password
 
-Namespaces with kopiur-backed apps only: `ai`, `database`, `default`, `home-automation`, `kopiur-system`, `media`, `observability`, `security`. Creates `kopiur-nas-secret` (`KOPIA_PASSWORD`) so the movers in that namespace can open the repository.
+Only namespaces containing kopiur-backed apps. Creates `kopiur-nas-secret` (`KOPIA_PASSWORD`) so the movers in that namespace can open the repository.
 
 ⚠️ The aKeyless key it reads is `/kubernetes/volsync`, not `/kubernetes/kopiur` — a leftover from before [ADR-0013](../adr/0013-kopiur-over-volsync.md). Renaming it means updating the secret in aKeyless and the component together.

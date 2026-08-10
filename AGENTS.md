@@ -25,7 +25,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 
 ## Task Runner & Workflow
 
-`just` modules: `bootstrap`, `kube`, `talos`, `ansible`. Using `just <module-name>` will list available commands.
+`just` modules: `bootstrap`, `kube`, `talos`, `ansible`, `docs`. Using `just <module-name>` will list available commands.
 
 **`just kube` (most used):**
 
@@ -47,6 +47,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 2. Secrets: aKeyless → `externalsecret.yaml`
 3. Provide human in the loop with commit message
 4. Docs: update the affected `docs/context/` file(s) in the same change. If the change involved a decision — a trade-off with real alternatives that's costly to reverse — add an ADR instead of writing the rationale into a context file.
+5. Generated docs: adding, removing or renaming an app or a docker stack changes a generated section. Run `just docs generate`; `just docs check` fails when it's stale.
 
 ## Architecture & Structure
 
@@ -55,7 +56,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 ```text
 CONTEXT.md                    # Map: glossary · state routing · ADR index — read first
 docker/                       # Server configs (unraid, truenas, vps)
-docs/                         # context/ (state) · adr/ (decisions) · agents/ (skill config) · WORKLOG.md
+docs/                         # context/ (state) · adr/ (decisions) · agents/ (skill config) · scripts/ (doc generators) · WORKLOG.md
 kubernetes/
 ├── apps/{namespace}/{app}/   # see Apps below
 ├── bootstrap/                # cnpg/ patches, kustomize/ secrets template, scripts/

@@ -7,19 +7,23 @@ set script-interpreter := ['bash', '-euo', 'pipefail']
 set shell := ['bash', '-euo', 'pipefail', '-c']
 
 # Ansible Recipes
-[group: 'Ansible']
+[group('Ansible')]
 mod ansible "ansible"
 
 # Bootstrap Recipes
-[group: 'Bootstrap']
+[group('Bootstrap')]
 mod bootstrap "kubernetes/bootstrap"
 
+# Docs Recipes
+[group('Docs')]
+mod docs "docs"
+
 # Kubernetes Recipes
-[group: 'Kubernetes']
+[group('Kubernetes')]
 mod kube "kubernetes"
 
 # Talos Recipes
-[group: 'Talos']
+[group('Talos')]
 mod talos "kubernetes/talos"
 
 [private]
