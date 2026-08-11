@@ -7,7 +7,7 @@ data:
     providers:
       litellm:
         api: http://litellm.ai.svc.cluster.local:4000/v1
-        key_env: LITELLM_API_KEY
+        api_key: "$${LITELLM_API_KEY}"
         models:
           qwen-local:
             context_length: 148480
@@ -114,5 +114,5 @@ data:
     web:
       search_backend: searxng
   env: |-
-    LITELLM_API_KEY={{ .LITELLM_MASTER_KEY }}
+    LITELLM_API_KEY={{ .LITELLM_HERMES_AGENTKEY }}
     SECRET_DOMAIN={{ .SECRET_DOMAIN }}
