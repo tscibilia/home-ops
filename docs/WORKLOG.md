@@ -17,14 +17,12 @@
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
-- [ ] ⚠️ **Guacamole:** OpenID ext only supports implicit flow (`response_type=id_token`), pocket-id rejects it with `unsupported_response_type` - (see upstream issue [#1200](https://issues.apache.org/jira/browse/GUACAMOLE-1200))
 - [ ] ⚠️ **ComfyUI:** not working due to single gpu and single model loaded via `llmkube`
 
 ## ⛔ Blocked
 
 `- ⛔ **App name** - blocking factor (waiting for X) - **note**`
 
-- ⛔ **Guacamole:** OpenID with auth-code-flow & PKCE (see proposed PR [#1219](https://redirect.github.com/apache/guacamole-client/pull/1219))
 - ⛔ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely - **upstream confirmed fix in 1.30.x**
 - ⛔ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
 - ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
@@ -33,6 +31,7 @@
 
 `Descending order, newest on top`
 
+- ✅ switch guacamole to termix - **2026-08-10** (see commit [c108ba9](https://github.com/tscibilia/home-ops/commit/c108ba9))
 - ✅ switch pangolin to towonel - **2026-08-08** (see PRs [#3265](https://github.com/tscibilia/home-ops/pull/3265) thru [#3272](https://github.com/tscibilia/home-ops/pull/3272)) resolves issue [#2733](https://github.com/tscibilia/home-ops/issues/2733)
 - ✅ drop boxbox for FBQ - **2026-08-06** (see commit [6910641](https://github.com/tscibilia/home-ops/commit/6910641))
 - ✅ switch to pocketID/tinyauth - **2026-08-05** (see PR [#3233](https://github.com/tscibilia/home-ops/pull/3233)) due to an upstream plex issues [authentik#24613](https://redirect.github.com/goauthentik/authentik/issues/24613) & [authentik#24774](https://redirect.github.com/goauthentik/authentik/issues/24774), let's not depend on them
@@ -100,3 +99,4 @@
 - ❌ Synology snmp-exporter too many scrape errors - **2026-02-23 Not Planned, disabled [7f0150f7]**
 - ❌ Migrate vaultwarden to postgres (See [#1212](https://github.com/tscibilia/home-ops/issues/1212)) - **2025-12-01 Not Planned, sqlite is acceptable <10 users**
 - ❌ Migrate unifi from aws to cluster (See issue [#802](https://github.com/tscibilia/home-ops/issues/802)) - **2025-11-17 Failed due to UDP & Cloudflare, added to VPS**
+- ❌ Guacamole's OpenID ext only supports implicit flow (`response_type=id_token`), pocket-id rejects it with `unsupported_response_type` - (see upstream issue [#1200](https://issues.apache.org/jira/browse/GUACAMOLE-1200)) PR for updated auth extension pending (see [#1219](https://redirect.github.com/apache/guacamole-client/pull/1219)) - **2026-08-10 Switched to Termix**

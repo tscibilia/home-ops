@@ -145,7 +145,6 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - fluent-bit
 - gatus _(health monitoring)_ [cnpg]
 - grafana-operator _(Grafana operator + instance)_ [cnpg, oidc]
-- guacamole _(remote desktop)_ [cnpg, auth, oidc]
 - karma _(alertmanager UI)_
 - kite [cnpg, oidc]
 - kromgo
@@ -153,7 +152,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - prometheus-adapter _(external-metrics API for HPA)_
 - scrutiny _(SMART disk monitoring)_ [kopiur]
 - silence-operator
-- termix [kopiur, oidc]
+- termix _(remote SSH and RDP console)_ [kopiur, oidc]
 - unpoller _(UniFi metrics)_
 - victoria-logs [auth]
 

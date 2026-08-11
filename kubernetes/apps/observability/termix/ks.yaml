@@ -37,7 +37,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: rdp2
+      GATUS_SUBDOMAIN: rdp
       KOPIUR_CAPACITY: 2Gi
     substituteFrom:
       - kind: Secret

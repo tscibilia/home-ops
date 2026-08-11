@@ -66,9 +66,9 @@ My Kubernetes cluster is a hyper-converged cluster deployed with [Talos](https:/
 - [kopiur](https://github.com/home-operations/kopiur): Backup and recovery of persistent volume claims.
 - [nvidia-device-plugin](https://github.com/NVIDIA/k8s-device-plugin): Provides nvidia.com/gpu resource to pods.
 - [openebs](https://github.com/openebs/openebs): CNI for ephemeral local storage.
-- [pangolin](https://github.com/fosrl/pangolin): Enables Pangolin's Zero Trust Access via VPS.
 - [rook](https://github.com/rook/rook): Distributed block storage for peristent storage.
 - [spegel](https://github.com/spegel-org/spegel): Stateless cluster local OCI registry mirror.
+- [towonel](https://codeberg.org/towonel/towonel): Self-hosted Zero Trust Tunnel via VPS.
 - [tuppr](https://github.com/home-operations/tuppr): Automatic Talos and Kubernetes upgrades.
 - [unifi-dns](https://github.com/kashalls/external-dns-unifi-webhook): External-DNS Webhook to manage UniFi DNS Records.
 
