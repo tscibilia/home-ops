@@ -38,5 +38,15 @@
       matchPackageNames: ["docker.io/mcuadros/ofelia"],
       allowedVersions: "/^0\\./",
     },
+    {
+      description: "Resolve Immich from GitHub releases (paging 40k+ GHCR tags intermittently 429s, failing the lookup)",
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "ghcr.io/immich-app/immich-server",
+        "ghcr.io/immich-app/immich-machine-learning",
+      ],
+      overrideDatasource: "github-releases",
+      overridePackageName: "immich-app/immich",
+    },
   ],
 }

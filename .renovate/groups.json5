@@ -53,14 +53,6 @@
       minimumGroupSize: 2,
     },
     {
-      description: "Guacamole Group",
-      groupName: "guacamole",
-      matchDatasources: ["docker"],
-      matchPackagePatterns: ["guacamole"],
-      group: { commitMessageTopic: "{{{groupName}}} group" },
-      minimumGroupSize: 2,
-    },
-    {
       description: "Immich Group",
       groupName: "Immich",
       matchDatasources: ["docker"],
