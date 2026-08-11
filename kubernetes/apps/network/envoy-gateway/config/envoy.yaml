@@ -22,7 +22,7 @@ spec:
               matchLabelKeys:
                 - pod-template-hash
         container:
-          imageRepository: mirror.gcr.io/envoyproxy/envoy
+          image: mirror.gcr.io/envoyproxy/envoy:distroless-v1.39.0
           resources:
             requests:
               cpu: 100m
