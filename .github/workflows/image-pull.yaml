@@ -47,12 +47,24 @@ jobs:
           tool_versions: |
             github:home-operations/flate 0.4.8
 
+      - name: Setup Registry Auth
+        env:
+          OCHARTED_USERNAME: ${{ secrets.OCHARTED_USERNAME }}
+          OCHARTED_PASSWORD: ${{ secrets.OCHARTED_PASSWORD }}
+        run: |
+          host="$(grep -rhoE 'oci://ocharted\.[^/]+' ./kubernetes/apps | sed 's|oci://||' | sort -u | head -1)"
+          if [[ -z "$host" ]]; then echo "No ocharted host found in OCIRepository urls" && exit 1; fi
+          mkdir -p "$(dirname "$FLATE_REGISTRY_CONFIG")"
+          umask 077
+          jq -n --arg host "$host" \
+            --arg auth "$(printf '%s:%s' "$OCHARTED_USERNAME" "$OCHARTED_PASSWORD" | base64 -w0)" \
+            '{auths: {($host): {auth: $auth}}}' > "$FLATE_REGISTRY_CONFIG"
+
       - name: Extract Images
         id: extract
         run: |
-          echo 'images<<EOF' >> $GITHUB_OUTPUT
-          flate diff images -p ./kubernetes/flux/cluster -o json >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          images="$(flate diff images -p ./kubernetes/flux/cluster -o json)"
+          printf 'images<<EOF\n%s\nEOF\n' "$images" >> "$GITHUB_OUTPUT"
 
   pull:
     if: ${{ needs.extract.outputs.images != '[]' }}
