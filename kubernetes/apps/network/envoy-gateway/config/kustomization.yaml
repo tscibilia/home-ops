@@ -6,4 +6,4 @@ namespace: network
 resources:
   - ./envoy.yaml
   - ./grafanadashboard.yaml
-  - ./observability.yaml
+  - ./podmonitor.yaml
