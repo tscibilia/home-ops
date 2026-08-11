@@ -93,7 +93,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - k8tz _(timezone injection admission controller)_
 - metrics-server
 - nvidia-device-plugin
-- ocharted _(private OCI chart proxy — workstations need `just kube registry-auth`)_
+- ocharted _(private OCI chart proxy)_
 - reloader
 - snapshot-controller
 - spegel _(OCI mirror)_
