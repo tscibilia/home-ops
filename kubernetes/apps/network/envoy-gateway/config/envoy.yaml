@@ -184,7 +184,9 @@ spec:
     initialStreamWindowSize: 2Mi
     initialConnectionWindowSize: 32Mi
     onInvalidMessage: TerminateStream
-  http3: {}
+  # No http3. Envoy has no PROXY protocol support on QUIC/UDP listeners
+  # (envoyproxy/envoy#36881, closed not_planned), so a QUIC listener alongside
+  # proxyProtocol is rejected and freezes at its last good config. See ADR-0016.
   targetSelectors:
     - group: gateway.networking.k8s.io
       kind: Gateway

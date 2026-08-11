@@ -83,6 +83,7 @@ Read the ADRs touching the area you're about to work in. Don't re-litigate a rec
 | [0013](docs/adr/0013-kopiur-over-volsync.md)                 | kopiur over VolSync for PVC backup                          | 2026-07-05 | accepted                |
 | [0014](docs/adr/0014-pocket-id-tinyauth-over-authentik.md)   | pocket-id and tinyauth over Authentik                       | 2026-08-05 | accepted                |
 | [0015](docs/adr/0015-towonel-over-pangolin.md)               | towonel over Pangolin for public ingress                    | 2026-08-08 | accepted                |
+| [0016](docs/adr/0016-no-http3-on-envoy-gateways.md)          | No HTTP/3 on the Envoy gateways                             | 2026-08-10 | accepted                |
 
 **0005, 0006, 0007 and 0009 are reconstructed** — written after the fact from the commits that removed them, not from contemporaneous notes. Each says so. Trust their consequences more than their rationale.
 

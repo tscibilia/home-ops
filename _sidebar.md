@@ -26,6 +26,7 @@
     - [kopiur over VolSync for PVC backup](/docs/adr/0013-kopiur-over-volsync.md)
     - [pocket-id and tinyauth over Authentik](/docs/adr/0014-pocket-id-tinyauth-over-authentik.md)
     - [towonel over Pangolin for public ingress](/docs/adr/0015-towonel-over-pangolin.md)
+    - [No HTTP/3 on the Envoy gateways](/docs/adr/0016-no-http3-on-envoy-gateways.md)
 
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)
