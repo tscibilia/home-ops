@@ -51,7 +51,7 @@ jobs:
           ai_api_format: openai
           ai_model: deepseek-v4-flash-free
           ai_api_key: ${{ secrets.LITELLM_API_KEY }}
-          ai_max_tokens: "1048576"
+          ai_max_tokens: "131072"
           ai_temperature: "0.1"
           ai_primary_retries: "3"
           ai_primary_retry_delay_sec: "5"
