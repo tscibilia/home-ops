@@ -153,6 +153,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - prometheus-adapter _(external-metrics API for HPA)_
 - scrutiny _(SMART disk monitoring)_ [kopiur]
 - silence-operator
+- termix [kopiur, oidc]
 - unpoller _(UniFi metrics)_
 - victoria-logs [auth]
 

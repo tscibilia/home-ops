@@ -21,5 +21,6 @@ resources:
   - ./prometheus-adapter/ks.yaml
   - ./scrutiny/ks.yaml
   - ./silence-operator/ks.yaml
+  - ./termix/ks.yaml
   - ./unpoller/ks.yaml
   - ./victoria-logs/ks.yaml

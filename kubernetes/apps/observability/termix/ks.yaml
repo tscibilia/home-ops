@@ -1,0 +1,51 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app termix-guacd
+spec:
+  interval: 1h
+  path: ./kubernetes/apps/observability/termix/guacd
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: observability
+  wait: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app termix
+spec:
+  components:
+    - ../../../../components/kopiur/backup
+  dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
+    - name: kopiur
+      namespace: kopiur-system
+    - name: termix-guacd
+      namespace: observability
+    - name: pocket-id
+      namespace: security
+  interval: 1h
+  path: ./kubernetes/apps/observability/termix/app
+  postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: rdp2
+      KOPIUR_CAPACITY: 2Gi
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: observability
+  wait: false

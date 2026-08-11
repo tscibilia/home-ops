@@ -1,0 +1,25 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/pocketid.internal/pocketidoidcclient_v1alpha1.json
+apiVersion: pocketid.internal/v1alpha1
+kind: PocketIDOIDCClient
+metadata:
+  name: termix
+spec:
+  name: Termix
+  callbackUrls:
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/users/oidc/callback"
+  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
+  logo:
+    logoUrl: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/termix.webp"
+  pkceEnabled: false
+  allowedUserGroups:
+    - name: id-admin
+      namespace: security
+    - name: id-home
+      namespace: security
+  secret:
+    enabled: true
+    name: termix-oidc-secret
+    keys:
+      clientID: OIDC_CLIENT_ID
+      clientSecret: OIDC_CLIENT_SECRET

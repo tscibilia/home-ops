@@ -1,0 +1,76 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app termix
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/lukegus/termix
+              tag: release-2.6.1@sha256:7d7b9e7c86107f21c824b4a7f0b47d626214754117b18dc46364851a8c42c17e
+            env:
+              PORT: &port 8080
+              ENABLE_GUACAMOLE: "true"
+              GUACD_HOST: termix-guacd.observability.svc.cluster.local
+              GUACD_PORT: "4822"
+              OIDC_AUTHORIZATION_URL: "https://id.${SECRET_DOMAIN}/authorize"
+              OIDC_TOKEN_URL: "https://id.${SECRET_DOMAIN}/api/oidc/token"
+              OIDC_ISSUER_URL: "https://id.${SECRET_DOMAIN}"
+              OIDC_USERINFO_URL: "https://id.${SECRET_DOMAIN}/api/oidc/userinfo"
+              OIDC_NAME_PATH: display_name
+            envFrom:
+              - secretRef:
+                  name: termix-oidc-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              runAsNonRoot: true
+              runAsUser: &uid 1000
+              runAsGroup: *uid
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: *uid
+        runAsGroup: *uid
+        fsGroup: *uid
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /app/data
