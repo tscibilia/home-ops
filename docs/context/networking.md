@@ -1,5 +1,7 @@
 # Networking
 
+**When to use:** ingress, httproute, dns, sso, gatus, gateway, envoy, hostname, tinyauth, pocket-id
+
 ## ⚠️ Gotchas & Interactions
 
 - **DNS source partitioning:** `external-dns` writes to Cloudflare; `unifi-dns` writes to UniFi LAN. The `service` source is UniFi-only. Gateway annotations create split-horizon LAN entries — not a Cloudflare conflict.

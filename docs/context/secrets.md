@@ -1,5 +1,7 @@
 # Secrets
 
+**When to use:** secret, externalsecret, akeyless, credential, pushsecret, cluster-secrets
+
 ## ⚠️ Gotchas & Interactions
 
 - **aKeyless path:** `/{namespace}/{app}` — most secrets are stored as a single static secret with multiple key/value pairs. Wrong path = silent empty secret, no error logged.

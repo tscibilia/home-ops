@@ -1,5 +1,7 @@
 # Kustomize Components
 
+**When to use:** component, zeroscaler, hpa, cnpg, auth, kopiur backup, ks.yaml components
+
 ## ⚠️ Gotchas & Interactions
 
 - **zeroscaler requires a prometheus-adapter metric:** Adding the `zeroscaler` component to `ks.yaml` is not enough — the app also needs a custom metric entry in the `prometheus-adapter` ConfigMap. Component without metric = scaling never triggers, silently.
