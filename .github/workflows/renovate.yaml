@@ -99,7 +99,7 @@ jobs:
             }
           RENOVATE_HOST_RULES: |
             [
-              {"hostType": "docker", "matchHost": "ghcr.io", "username": "${{ github.actor }}", "password": "${{ secrets.GHCR_PAT }}"},
+              {"hostType": "docker", "matchHost": "ghcr.io", "username": "${{ github.repository_owner }}", "password": "${{ secrets.GHCR_PAT }}"},
               {"hostType": "docker", "matchHost": "ocharted.${{ secrets.SECRET_DOMAIN }}", "username": "{{ secrets.OCHARTED_USERNAME }}", "password": "{{ secrets.OCHARTED_PASSWORD }}"}
             ]
         with:
