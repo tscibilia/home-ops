@@ -26,7 +26,10 @@ jobs:
     name: AI PR Review
     if: ${{ github.event.pull_request.user.login == 'kube-skywalker[bot]' && !github.event.pull_request.draft }}
     runs-on: ${{ github.event.repository.name }}-runner
-    timeout-minutes: 15
+    # Backstop only — must exceed the action's own budgets, or a long review is
+    # killed with nothing published. Worst case is planning (120s) + tool loop
+    # (600s) + final review call (600s) = 22m, plus checkout and preflight.
+    timeout-minutes: 25
     permissions:
       contents: read
       pull-requests: write
