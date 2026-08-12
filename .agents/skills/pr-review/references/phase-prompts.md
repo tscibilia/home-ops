@@ -16,14 +16,21 @@ not the git diff.
 Repo: home-ops (Talos + Flux + Helm/Kustomize). Renderer: flate (konflate).
 
 TASKS
-1. Identify the merge-base:
-     git merge-base HEAD origin/main
-2. Render both sides to separate trees:
-     git stash list  # note any local state before switching
+1. Render the head side from the current working tree, exactly as it stands:
      mise exec -- flate build all > /tmp/pr-${PR_ID}-head.yaml
-     git checkout <merge-base> -- kubernetes/
-     mise exec -- flate build all > /tmp/pr-${PR_ID}-base.yaml
-     git checkout HEAD -- kubernetes/
+2. Render the base side in a throwaway detached worktree. Never mutate the
+   working tree to do this — `PR_ID=local-changes` reviews *uncommitted* edits,
+   and a `git checkout <ref> -- kubernetes/` would overwrite the very work under
+   review and corrupt any phase running concurrently:
+     base=$(git merge-base HEAD origin/main)
+     tmp=$(mktemp -d)
+     git worktree add --detach "$tmp" "$base"
+     (cd "$tmp" && mise exec -- flate build all) > /tmp/pr-${PR_ID}-base.yaml
+     git worktree remove --force "$tmp"
+   Both flags are load-bearing: `--detach` because the merge-base is normally
+   also checked out as `main` in another worktree and a branch checkout would be
+   refused, and `--force` on remove because rendering leaves an untracked
+   `.venv/` behind in the temp worktree.
    If `flate build all` fails with "basic credential not found", run
    `just kube registry-auth` first — private ocharted charts need OCI auth from a
    workstation. That is not a manifest bug; never "fix" it by editing OCIRepositories.
@@ -160,11 +167,14 @@ OUTPUT to .agents/pr-review/pr-${PR_ID}/phase-5-validation.md:
 
 # Phase 5: Validation
 **Completed:** [timestamp]
-| Check | Result | Detail |
-|-------|--------|--------|
-| flate test all | pass/fail | |
-| shellcheck | pass/fail/n-a | |
-| just docs test | pass/fail | |
+| Severity | Check | Result | Detail |
+|----------|-------|--------|--------|
+| | flate test all | pass/fail | |
+| | shellcheck | pass/fail/n-a | |
+| | just docs test | pass/fail | |
+
+Severity uses the same four words as every other phase: `blocker` for a failing
+check, `info` for one that passed or was skipped.
 ## Failures
 Quoted output, one block per failure.
 ```
