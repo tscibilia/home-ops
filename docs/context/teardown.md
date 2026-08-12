@@ -1,7 +1,5 @@
 # Teardown & Replacement
 
-**When to use:** remove, replace, teardown, migrate, apiservice, crd, conflict, operator
-
 Read this before removing or replacing cluster infrastructure — an operator, a CRD-owning chart, a metrics provider. Everything here is a trap that only appears on the way _out_, when the thing being removed leaves state behind that blocks its successor.
 
 **What belongs here:** a fact about removing or swapping infrastructure that no single subsystem owns. If the fact is about _using_ a thing, it belongs in that thing's file — `components.md`, `storage.md`, `networking.md`. If it only bites during teardown, it belongs here.

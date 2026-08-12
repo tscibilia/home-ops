@@ -1,7 +1,5 @@
 # Apps Inventory
 
-**When to use:** app, new app, add app, namespace, deployed, inventory, helmrelease, chart, image
-
 ## ⚠️ Gotchas & Interactions
 
 - **Namespace = directory name:** Verify the `targetNamespace` in the app's `ks.yaml` before referencing it in manifests.

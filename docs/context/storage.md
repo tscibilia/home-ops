@@ -1,7 +1,5 @@
 # Storage
 
-**When to use:** pvc, storage class, ceph, openebs, nfs, kopiur, volsync, cnpg, postgres, backup, claim
-
 ## ⚠️ Gotchas & Interactions
 
 - **CNPG endpoints are named after the cluster, not the app:** the `host` key is `{cluster}-rw.database.svc.cluster.local` — `pgsql-cluster-rw` or `pgvector-cluster-rw`, shared by every app on that cluster. Use the `host` key from `${APP}-pguser-secret` rather than composing a name. Never point an app at `-ro`; that is the read replica.

@@ -1,7 +1,5 @@
 # Docker Hosts
 
-**When to use:** docker, compose, truenas, unraid, clonenas, vps, doco-cd, stack
-
 ## ⚠️ Gotchas & Interactions
 
 - **aKeyless secret format:** Use JSON format (`{"key":"value"}`) for secrets with multiple key/value pairs. Use text format for single-value secrets. Wrong format = secret parsed incorrectly at runtime.
