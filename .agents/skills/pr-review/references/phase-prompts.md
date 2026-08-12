@@ -34,8 +34,20 @@ TASKS
    If `flate build all` fails with "basic credential not found", run
    `just kube registry-auth` first — private ocharted charts need OCI auth from a
    workstation. That is not a manifest bug; never "fix" it by editing OCIRepositories.
-3. Diff base vs head. Report every changed resource, not just the obviously
-   related ones.
+3. Diff base vs head THROUGH FILES. Each render is ~118,000 lines; reading
+   either one, or an unfiltered diff, into your context will exhaust it and
+   force a compaction loop. Never `cat` these files. Write the diff to disk,
+   then read only summaries and targeted extracts:
+     diff -u /tmp/pr-${PR_ID}-base.yaml /tmp/pr-${PR_ID}-head.yaml \
+       > /tmp/pr-${PR_ID}.diff || true
+     wc -l < /tmp/pr-${PR_ID}.diff                       # size first
+     grep -cE '^[+-][^+-]' /tmp/pr-${PR_ID}.diff         # changed lines
+     grep -E '^[+-] *(kind|name|namespace|image|apiVersion):' \
+       /tmp/pr-${PR_ID}.diff | sort | uniq -c | sort -rn | head -40
+   If the changed-line count is under ~200, reading the whole `.diff` is fine.
+   Above that, stay with greps scoped to the fields in step 4 and quote only
+   the lines you actually cite. Report every changed resource — but derive
+   that list from the greps, not by reading the renders.
 4. Flag specifically — these are the failures release notes omit:
    - renamed or removed Helm values keys (a value silently stops applying)
    - changed securityContext runAsUser/fsGroup (existing PVC data becomes unreadable)

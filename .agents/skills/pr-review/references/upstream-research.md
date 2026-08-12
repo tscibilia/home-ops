@@ -1,5 +1,17 @@
 # Upstream research method
 
+> **Read [`.agents/pr-review-instructions.md`](../../../pr-review-instructions.md)
+> first — it is authoritative.** That file is the CI reviewer's prompt and the
+> single source of truth for this repo's review judgement: the severity
+> vocabulary, the impact-assessment rules (when to escalate a finding, not only
+> when to dismiss one), the prohibition on asserting an unverified upgrade
+> mechanism, and the repo conventions that must never be reported as problems.
+>
+> This file adds only the breadcrumb-following method below. Where the two
+> appear to differ, that file wins. Do not restate its rules here — an earlier
+> duplicate of them drifted out of sync and produced a wrong `Approve` on a
+> PostgreSQL major-version upgrade.
+
 Changelogs live at the source, not at the wrapper. A Docker image bump from v1.2 to
 v1.3 might re-wrap an upstream tool that jumped 4.0 → 5.0; the meaningful changelog
 is the upstream one.

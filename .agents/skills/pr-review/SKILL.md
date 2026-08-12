@@ -22,6 +22,25 @@ compatibility: >-
 Five focused phases over a PR or local diff. Each phase is independent and writes
 its own report, so they can run in parallel or one after another.
 
+## Hard boundaries
+
+**This review is local. Never publish it.** Do not post a comment, submit a
+review, approve, request changes, apply a label, or edit the PR body or title.
+No `gh pr review`, no `gh pr comment`, no `gh api` write of any kind. A separate
+CI reviewer owns everything published to GitHub; a second voice posting there is
+noise at best and a contradictory verdict at worst. Your output is the files
+under `.agents/pr-review/pr-<id>/` plus what you say to the person who asked.
+
+**Read-only on the repository and the cluster.** Do not edit tracked files, do
+not commit, and run nothing that mutates cluster state.
+
+**Judgement rules live in
+[`.agents/pr-review-instructions.md`](../../pr-review-instructions.md).** Read it
+before reaching a recommendation. It is authoritative for the severity
+vocabulary, for when to escalate a finding rather than dismiss it, and for the
+rule that an unverified upgrade mechanism cannot be approved. This skill governs
+_how to gather_ evidence; that file governs _how to judge_ it.
+
 ## Why this exists
 
 Release notes are not a reliable breaking-change signal. A chart can rename a
