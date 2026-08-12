@@ -38,6 +38,51 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Preflight — required tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${HOME}/.local/bin"
+          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+          export PATH="${HOME}/.local/bin:${PATH}"
+
+          missing=()
+          for t in gh curl git python3 jq; do
+            command -v "$t" >/dev/null 2>&1 || missing+=("$t")
+          done
+
+          if [[ ${#missing[@]} -eq 0 ]]; then
+            echo "All required tools present."
+            exit 0
+          fi
+          echo "Missing: ${missing[*]}"
+
+          for t in "${missing[@]}"; do
+            case "$t" in
+              jq)
+                arch=$(uname -m)
+                case "$arch" in
+                  x86_64) jqarch=amd64 ;;
+                  aarch64) jqarch=arm64 ;;
+                  *) echo "::error::unsupported arch for jq: $arch"; exit 1 ;;
+                esac
+                curl -fsSL -o "${HOME}/.local/bin/jq" \
+                  "https://github.com/jqlang/jq/releases/latest/download/jq-linux-${jqarch}"
+                chmod +x "${HOME}/.local/bin/jq"
+                ;;
+              *)
+                echo "::error::${t} is missing and cannot be installed rootlessly here."
+                echo "::error::Add it to the runner image, or run this job in a job container."
+                exit 1
+                ;;
+            esac
+          done
+
+          for t in gh curl git python3 jq; do
+            command -v "$t" >/dev/null 2>&1 || { echo "::error::${t} still missing"; exit 1; }
+          done
+          echo "Preflight OK."
+
       - name: AI PR Review
         uses: misospace/pr-reviewer-action@99e7764a4906f94d99c249231d2016c3cda8997e # v2.2.0
         env:
