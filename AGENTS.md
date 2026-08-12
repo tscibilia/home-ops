@@ -23,6 +23,29 @@ Report concisely — sacrifice grammar for the sake of concision.
 - **Issue tracker** — GitHub Issues on `tscibilia/home-ops`, via `gh`. See `docs/agents/issue-tracker.md`.
 - **Triage labels** — five canonical roles, default label strings. See `docs/agents/triage-labels.md`.
 
+**Skill catalog** — `.agents/skills/`, one `SKILL.md` per directory:
+
+| Skill                 | Use when                                   |
+| --------------------- | ------------------------------------------ |
+| `add-app`             | Adding a new application to the cluster    |
+| `karpathy-guidelines` | Full text of the four standing rules above |
+| `pr-review`           | Reviewing a PR or local diff before merge  |
+
+**Memory** — this repo uses memini (MCP) for cross-session memory: decisions and
+their reasons, root causes, conventions, environment quirks. Consult it before
+work that may have history. Harnesses without memini should treat `CONTEXT.md`,
+`docs/context/` and `docs/adr/` as the authoritative substitute — memory is a
+convenience layer over those, never the only home for a fact.
+
+**Safety tiers:**
+
+- **Always:** read-only inspection, local validation, formatting, linting
+  (`flate test all`, `flate build`, `just docs test`).
+- **Ask first:** any git push, applying to the live cluster (`just kube apply-ks`,
+  `flux reconcile`, `talos apply`), deleting resources.
+- **Never:** commit directly (GPG restriction — hand the user a commit message),
+  commit secrets, decode or print Kubernetes secret values, edit `docs/adr/`.
+
 ## Task Runner & Workflow
 
 `just` modules: `bootstrap`, `kube`, `talos`, `ansible`, `docs`. Using `just <module-name>` will list available commands.

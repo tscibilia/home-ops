@@ -1,5 +1,7 @@
 # Domain Docs
 
+**When to use:** domain docs, context routing, adr index, where does this doc go
+
 How the engineering skills should consume this repo's domain documentation when exploring the codebase.
 
 ## Before exploring, read these

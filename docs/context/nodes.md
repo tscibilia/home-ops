@@ -1,5 +1,7 @@
 # Cluster Nodes
 
+**When to use:** talos, node, ai3090, toleration, nodeSelector, gpu, scheduling, hardware
+
 ## ⚠️ Gotchas & Interactions
 
 - **ai3090 GPU toleration required:** Any pod targeting ai3090 must include `tolerations: [{key: "nvidia.com/gpu", operator: "Exists", effect: "NoSchedule"}]` — there is no fallback node; the pod will be unschedulable without it.

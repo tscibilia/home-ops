@@ -1,5 +1,7 @@
 # Issue tracker: GitHub
 
+**When to use:** issue, github issues, gh issue, tracker, bug report, feature request
+
 Issues and specs for this repo live as GitHub issues. Use the `gh` CLI for all operations.
 
 ## Conventions
