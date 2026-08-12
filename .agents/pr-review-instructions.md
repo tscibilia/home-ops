@@ -2,10 +2,16 @@
 
 This file is the `system_prompt_file` for the AI PR Review workflow (`.github/workflows/pr-reviewer.yaml`), used with `system_prompt_mode: append`: the action keeps its (conditionally-assembled) bundled default system prompt and appends this file as a repo-specific addendum. Only home-ops conventions live here — the base review instructions, output schema, and host-platform / digest guidance come from the action and no longer need to be copied or kept in sync.
 
-Output length and section selection are controlled by the action's
-`review_verbosity: concise` input, not by prose in this file. Do not reintroduce
-"do not include section X" instructions here; they contradict the assembled
-default and produce inconsistent output.
+Output _length_ and _verbosity-driven section selection_ are controlled by the
+action's `review_verbosity: concise` input, not by prose in this file. Do not
+reintroduce "keep it short" or "do not include section X" verbosity instructions
+here; they contradict the assembled default and produce inconsistent output.
+
+Output _structure_ is a separate concern and is governed here: the repo-specific
+[Output contract](#output-contract) below is authoritative for the shape of the
+review body — its fields, columns, order, and severity vocabulary. The two are
+complementary. The contract fixes the shape; verbosity decides how much detail
+fills it.
 
 ## Home-ops conventions
 
@@ -17,7 +23,7 @@ If a pattern is explicitly documented as intentional in `AGENTS.md` (or in the c
 
 - **`metadata.namespace` is intentionally absent on `HelmRelease` and `Kustomization` resources.** The namespace is injected at build time by kustomize's `namespace:` directive in the per-app `kustomization.yaml` (e.g., `namespace: ai`). **Do not report** the absence of `metadata.namespace` on these resources as an issue.
 
-- **OCI artifacts are pinned by tag/version, not by SHA digest.** The "Prefer `@sha256:` digests" policy in `AGENTS.md` applies to container images only. OCI artifacts pulled via `OCIRepository` (Helm charts in OCI registries) are pinned by tag or version, since OCI artifacts do not support SHA-tag references the same way container images do. **Do not report** the absence of `@sha256:` on OCI artifact references.
+- **OCI artifacts are pinned by tag/version, not by SHA digest.** Digest pinning in this repo is a container-image practice only. OCI artifacts pulled via `OCIRepository` (Helm charts in OCI registries) are pinned by tag or version, since OCI artifacts do not support SHA-tag references the same way container images do. **Do not report** the absence of `@sha256:` on OCI artifact references.
 
 - **Missing OCI revision/source labels are a non-blocking caveat** for same-tag digest refreshes when repository, tag, and created timestamp evidence are consistent.
 
@@ -58,6 +64,19 @@ and a fixed severity vocabulary are what make reviews comparable across runs.
 Omit the **Findings** section entirely when there are no findings. Never emit an
 empty table. Use only the four severity words above — they match the action's
 normalisation, so `verdict_policy: findings_severity_gated` can act on them.
+
+### Structured findings are not optional
+
+The action runs with `ai_response_format: json_schema`, so the response carries a
+structured `findings[]` array alongside the markdown body — and
+`verdict_policy: findings_severity_gated` reads only that array. It escalates
+`approve` to `request_changes` when, and only when, an entry there has severity
+`blocker`. Prose is invisible to the gate.
+
+Therefore: **every row of the markdown Findings table must also be an entry in
+`findings[]`**, with `severity` set to the same one of the four words above. The
+table and the array must never disagree — same count, same severities. A blocker
+written in the body but missing from `findings[]` ships as an approval, silently.
 
 ## Upstream check conventions
 
