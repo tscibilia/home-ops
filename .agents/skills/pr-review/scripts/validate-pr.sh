@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Validate the current working tree: renders every Kustomization and HelmRelease,
 # then shellchecks touched shell scripts. Read-only — never touches the cluster.
+# Source: https://github.com/Tanguille/cluster/blob/main/.agents/skills/pr-review/scripts/validate-pr.sh
 set -euo pipefail
 
 repo_root="$(git rev-parse --show-toplevel)"

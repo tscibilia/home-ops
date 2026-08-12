@@ -15,6 +15,12 @@ URL = os.environ["KONFLATE_MCP_URL"]
 PR = os.environ.get("PR_NUMBER", "").strip()
 SID = None
 
+# URL is the MCP endpoint the job calls — in-cluster, so it never leaves the
+# cluster and skips the edge entirely. Findings still cite a link a human can
+# click, so the browsable base comes from KONFLATE_PUBLIC_URL when it is set.
+PUBLIC_URL = os.environ.get("KONFLATE_PUBLIC_URL", "").strip() or URL
+PUBLIC_URL = PUBLIC_URL.rstrip("/").removesuffix("/mcp")
+
 def _emit(findings, severity="info"):
     print(json.dumps({"severity": severity, "findings": findings}))
     sys.exit(0)
@@ -77,7 +83,7 @@ def main():
         _emit([])
 
     findings = []
-    src = f"{URL}/#/pr/{PR}"
+    src = f"{PUBLIC_URL}/#/pr/{PR}"
 
     # konflate returns a plain sentinel when there's no usable diff yet —
     # PR not tracked ("No pull request #N is tracked.") or render still pending
