@@ -28,10 +28,14 @@ Backing up an app's PVC, the substitution vars, and the restore procedure are al
 
 Clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-postgresql.md), [ADR-0011](../adr/0011-pgvector-cluster-split.md)):
 
-| Cluster            | Purpose                | PG Version         | Notes                                         |
-| ------------------ | ---------------------- | ------------------ | --------------------------------------------- |
-| `pgsql-cluster`    | All general apps       | PG17               | Default                                       |
-| `pgvector-cluster` | Immich + pgvector apps | PG17 + vectorchord | Shared cluster for apps needing vector search |
+| Cluster            | Purpose                | Notes                                                           |
+| ------------------ | ---------------------- | --------------------------------------------------------------- |
+| `pgsql-cluster`    | All general apps       | Default                                                         |
+| `pgvector-cluster` | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord |
+
+The PostgreSQL major version is not recorded here — it is whatever `imageName`
+says in each cluster's manifest under `kubernetes/apps/database/cnpg/`. Renovate
+bumps that, so a version written here would be stale the day it changes.
 
 **Connection endpoints:**
 

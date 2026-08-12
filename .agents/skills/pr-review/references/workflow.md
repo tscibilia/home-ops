@@ -63,6 +63,7 @@ untracked files separately in the aggregate — an untracked file that a
 | Blast radius    | `<N added · N changed · N removed>`      |
 | Upstream        | <breaking changes, or "none found">      |
 | Repo impact     | <what this repo consumes, or "none">     |
+| Reversibility   | <how this is undone if it misbehaves>    |
 
 ## Findings
 

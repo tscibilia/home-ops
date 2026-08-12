@@ -79,12 +79,43 @@ Research upstream breaking changes for this PR.
 Follow the method in .agents/skills/pr-review/references/upstream-research.md
 exactly, including its budget order. Read that file first.
 
+NEVER FETCH HTML PAGES. A GitHub releases page is hundreds of KB of markup
+wrapping a few KB of notes; fetching a handful will exhaust your context and
+strand this phase mid-research. Use the API, extract the field you need, and
+keep the raw body out of your context:
+
+  # release notes for ONE tag — markdown only, not a web page
+  gh api repos/<owner>/<repo>/releases/tags/<tag> --jq '.body' \
+    > /tmp/pr-${PR_ID}-<tag>.md
+  wc -c < /tmp/pr-${PR_ID}-<tag>.md
+  grep -inE 'break|deprecat|remov|renam|migrat|drop|require|incompat|manual' \
+    /tmp/pr-${PR_ID}-<tag>.md | head -30
+
+  # the whole span in one call, titles first — then fetch only the interesting tags
+  gh api "repos/<owner>/<repo>/releases?per_page=20" \
+    --jq '.[] | "\(.tag_name)\t\(.name)"'
+
+  # no releases? scan commit subjects instead of reading diffs
+  gh api "repos/<owner>/<repo>/compare/<old>...<new>" \
+    --jq '.commits[].commit.message' | cut -c1-120 \
+    | grep -inE 'break|deprecat|remov|renam|migrat|drop|require'
+
+Read a release body in full only when the keyword grep hit something. If a
+project publishes notes only on a docs site with no API, say so in "Not found"
+rather than pulling the page — an unread source is a smaller problem than a
+dead phase.
+
 TASKS
 1. Identify what is upgraded and whether it wraps another component.
-2. Research the full version span for both wrapper and inner component.
+2. Research the full version span for both wrapper and inner component. Start
+   from the tag list, then open only the tags whose titles or keyword greps
+   suggest something breaking. Do not read every release body in the span.
 3. Map each finding onto what this repo actually consumes — grep kubernetes/ for
    the changed surface before calling anything actionable.
 4. State explicitly what you could not find. Never fabricate a changelog.
+5. If you are running short of context, stop researching and write the report
+   with what you have, marking the rest under "Not found". A partial phase that
+   reports its own gaps is useful; a phase that dies mid-fetch is not.
 
 OUTPUT to .agents/pr-review/pr-${PR_ID}/phase-2-upstream.md:
 

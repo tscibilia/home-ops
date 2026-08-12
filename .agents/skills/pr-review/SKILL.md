@@ -34,6 +34,15 @@ under `.agents/pr-review/pr-<id>/` plus what you say to the person who asked.
 **Read-only on the repository and the cluster.** Do not edit tracked files, do
 not commit, and run nothing that mutates cluster state.
 
+**Never read unbounded output into your context.** This is the rule that decides
+whether a review finishes. A full cluster render is ~118,000 lines and a GitHub
+releases page is hundreds of KB of markup — a couple of those and the phase dies
+in a compaction loop with nothing written. Always: redirect to a file, check its
+size, then extract only what you cite (`wc`, `grep -c`, scoped `grep`, `--jq`).
+Prefer an API returning a single field over a page you must parse. If context
+runs short, write the report you can support and list the rest under "Not found"
+— a phase that reports its own gaps is useful, one that dies mid-fetch is not.
+
 **Judgement rules live in
 [`.agents/pr-review-instructions.md`](../../pr-review-instructions.md).** Read it
 before reaching a recommendation. It is authoritative for the severity
