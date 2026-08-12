@@ -2,6 +2,17 @@
 
 This file is the `system_prompt_file` for the AI PR Review workflow (`.github/workflows/pr-reviewer.yaml`), used with `system_prompt_mode: append`: the action keeps its (conditionally-assembled) bundled default system prompt and appends this file as a repo-specific addendum. Only home-ops conventions live here — the base review instructions, output schema, and host-platform / digest guidance come from the action and no longer need to be copied or kept in sync.
 
+Output _length_ and _verbosity-driven section selection_ are controlled by the
+action's `review_verbosity: concise` input, not by prose in this file. Do not
+reintroduce "keep it short" or "do not include section X" verbosity instructions
+here; they contradict the assembled default and produce inconsistent output.
+
+Output _structure_ is a separate concern and is governed here: the repo-specific
+[Output contract](#output-contract) below is authoritative for the shape of the
+review body — its fields, columns, order, and severity vocabulary. The two are
+complementary. The contract fixes the shape; verbosity decides how much detail
+fills it.
+
 ## Home-ops conventions
 
 The conventions in the repository's `AGENTS.md` are authoritative for this project. Repository-specific conventions documented there override generic Kubernetes, Helm, Flux, or GitOps linting heuristics.
@@ -12,24 +23,9 @@ If a pattern is explicitly documented as intentional in `AGENTS.md` (or in the c
 
 - **`metadata.namespace` is intentionally absent on `HelmRelease` and `Kustomization` resources.** The namespace is injected at build time by kustomize's `namespace:` directive in the per-app `kustomization.yaml` (e.g., `namespace: ai`). **Do not report** the absence of `metadata.namespace` on these resources as an issue.
 
-- **OCI artifacts are pinned by tag/version, not by SHA digest.** The "Prefer `@sha256:` digests" policy in `AGENTS.md` applies to container images only. OCI artifacts pulled via `OCIRepository` (Helm charts in OCI registries) are pinned by tag or version, since OCI artifacts do not support SHA-tag references the same way container images do. **Do not report** the absence of `@sha256:` on OCI artifact references.
+- **OCI artifacts are pinned by tag/version, not by SHA digest.** Digest pinning in this repo is a container-image practice only. OCI artifacts pulled via `OCIRepository` (Helm charts in OCI registries) are pinned by tag or version, since OCI artifacts do not support SHA-tag references the same way container images do. **Do not report** the absence of `@sha256:` on OCI artifact references.
 
-### Concise Renovate reviews
-
-For all Renovate PRs, keep `review_markdown` concise. When writing the review, be extremely concise and sacrifice grammar for the sake of concision.
-
-Prefer:
-
-- short recommendation
-- changed files summary
-- non-blocking caveats (if any)
-- sources consulted (follow constraint rules)
-
-**Do not include** separate Standards Compliance, Linked Issue Fit, Evidence Provider Findings, Tool Harness Findings, or Unknowns sections unless they contain an actual warning or blocker.
-
-**Do not include** internal planner/tool-harness diagnostics such as missing `requests[]` unless they affect the recommendation.
-
-Missing OCI revision/source labels are a non-blocking caveat for same-tag digest refreshes when repository, tag, and created timestamp evidence are consistent.
+- **Missing OCI revision/source labels are a non-blocking caveat** for same-tag digest refreshes when repository, tag, and created timestamp evidence are consistent.
 
 ### Konflate rendered-diff tools
 
@@ -39,6 +35,48 @@ A Konflate MCP server is configured. Konflate renders Helm charts and Kustomizat
 - `mcp__konflate__get_pr_diff` — pass the current PR `number`. The full rendered manifest diff (Kubernetes YAML at PR head vs merge-base). Use it when the raw git diff hides the real change — e.g. a HelmRelease version bump or a one-line `values` change that fans out across many resources.
 
 **Konflate signals in the review:** surface cautions as caveats or blockers by severity; treat render failures as blockers (the manifests may not apply cleanly). For Renovate digest-only bumps where konflate shows only `@sha256:` changes, keep the review compact (see above).
+
+## Output contract
+
+Every review body uses exactly this shape, regardless of verdict. Fixed columns
+and a fixed severity vocabulary are what make reviews comparable across runs.
+
+```markdown
+**Recommendation:** <Approve|Request changes> — <one clause>
+
+| Field           | Value                                               |
+| --------------- | --------------------------------------------------- |
+| Change          | `<artifact>` `<old>` → `<new>`                      |
+| Inner component | `<upstream>` `<old>` → `<new>`, or `n/a`            |
+| Blast radius    | `<N added · N changed · N removed>` (konflate)      |
+| Upstream        | <breaking changes across the span, or "none found"> |
+| Repo impact     | <what this repo actually consumes, or "none">       |
+
+**Findings**
+
+| Severity                          | Area                                          | Detail         |
+| --------------------------------- | --------------------------------------------- | -------------- |
+| blocker \| major \| minor \| info | upstream \| security \| correctness \| config | <one sentence> |
+
+**Sources:** <links, github.com rewritten to redirect.github.com>
+```
+
+Omit the **Findings** section entirely when there are no findings. Never emit an
+empty table. Use only the four severity words above — they match the action's
+normalisation, so `verdict_policy: findings_severity_gated` can act on them.
+
+### Structured findings are not optional
+
+The action runs with `ai_response_format: json_schema`, so the response carries a
+structured `findings[]` array alongside the markdown body — and
+`verdict_policy: findings_severity_gated` reads only that array. It escalates
+`approve` to `request_changes` when, and only when, an entry there has severity
+`blocker`. Prose is invisible to the gate.
+
+Therefore: **every row of the markdown Findings table must also be an entry in
+`findings[]`**, with `severity` set to the same one of the four words above. The
+table and the array must never disagree — same count, same severities. A blocker
+written in the body but missing from `findings[]` ships as an approval, silently.
 
 ## Upstream check conventions
 
@@ -72,19 +110,23 @@ Follow breadcrumbs systematically. When one source is a dead end, try the next:
 
 Do not stop at the first source. Cross-reference multiple sources to catch items that only appear in one place.
 
+**When the budget is short, work this order and stop where it ends.** A truncated
+run then still carries its highest-value findings:
+
+1. `mcp__konflate__get_pr_summary` — blast radius and caution lint.
+2. Identify the inner component and its version span (wrapper vs upstream).
+3. Release notes for **every** version in the span, not just the newest.
+4. `mcp__konflate__get_pr_diff` when the raw git diff hides the real change.
+5. Grep this repo for what it actually consumes of the changed surface.
+6. Remaining breadcrumbs: CHANGELOG/UPGRADING, docs sites, commit-message keyword
+   scan, registry metadata, web search.
+
+Steps 1–3 are mandatory; 4–6 are best-effort. State explicitly when a step was
+skipped for budget rather than implying full coverage.
+
 ### 3. Assess Impact
 
 Read the files in this repository that reference or consume the upgraded component. Map each finding from the research step against what this repository actually uses. A breaking change that affects a feature we don't use is not actionable.
-
-### 4. Submitting the review
-
-Submit your concise review as a single GitHub PR review. Your review should **skip the noise** and **only flag things that actually matter: breaking changes, security holes, correctness bugs.** There is no need to report on things that achieve the expected correctness.
-
-**If there are breaking changes or deprecations that affect this repo**:
-Use `gh pr review --request-changes` with a structured body.
-
-**If the upgrade is safe** (no actionable findings):
-Use `gh pr review --approve` with a brief summary.
 
 ## Constraints
 

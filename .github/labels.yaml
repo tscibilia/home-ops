@@ -35,6 +35,8 @@
 - name: type/major
   color: "f6412d"
 # Uncategorized
+- name: ai-review
+  color: "5319e7"
 - name: community
   color: "370fb2"
 - name: hold

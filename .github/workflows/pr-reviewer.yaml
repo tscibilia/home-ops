@@ -25,7 +25,7 @@ jobs:
   review:
     name: AI PR Review
     if: ${{ github.event.pull_request.user.login == 'kube-skywalker[bot]' && !github.event.pull_request.draft }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.repository.name }}-runner
     timeout-minutes: 15
     permissions:
       contents: read
@@ -38,6 +38,51 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Preflight — required tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${HOME}/.local/bin"
+          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+          export PATH="${HOME}/.local/bin:${PATH}"
+
+          missing=()
+          for t in gh curl git python3 jq; do
+            command -v "$t" >/dev/null 2>&1 || missing+=("$t")
+          done
+
+          if [[ ${#missing[@]} -eq 0 ]]; then
+            echo "All required tools present."
+            exit 0
+          fi
+          echo "Missing: ${missing[*]}"
+
+          for t in "${missing[@]}"; do
+            case "$t" in
+              jq)
+                arch=$(uname -m)
+                case "$arch" in
+                  x86_64) jqarch=amd64 ;;
+                  aarch64) jqarch=arm64 ;;
+                  *) echo "::error::unsupported arch for jq: $arch"; exit 1 ;;
+                esac
+                curl -fsSL -o "${HOME}/.local/bin/jq" \
+                  "https://github.com/jqlang/jq/releases/latest/download/jq-linux-${jqarch}"
+                chmod +x "${HOME}/.local/bin/jq"
+                ;;
+              *)
+                echo "::error::${t} is missing and cannot be installed rootlessly here."
+                echo "::error::Add it to the runner image, or run this job in a job container."
+                exit 1
+                ;;
+            esac
+          done
+
+          for t in gh curl git python3 jq; do
+            command -v "$t" >/dev/null 2>&1 || { echo "::error::${t} still missing"; exit 1; }
+          done
+          echo "Preflight OK."
+
       - name: AI PR Review
         uses: misospace/pr-reviewer-action@99e7764a4906f94d99c249231d2016c3cda8997e # v2.2.0
         env:
@@ -47,24 +92,27 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           allow_approve: "true"
           allowed_source_hosts: github.com,api.github.com,gitlab.com,registry.terraform.io,artifacthub.io,codeberg.org,actualbudget.org
-          ai_base_url: ${{ secrets.LITELLM_BASE_URL }}
+          ai_base_url: http://litellm.ai.svc.cluster.local:4000/v1
           ai_api_format: openai
-          ai_model: deepseek-v4-flash-free
+          ai_model: laguna-s-2-1
           ai_api_key: ${{ secrets.LITELLM_API_KEY }}
-          ai_max_tokens: "131072"
+          ai_max_tokens: "32768"
           ai_temperature: "0.1"
           ai_primary_retries: "3"
           ai_primary_retry_delay_sec: "5"
           ai_connect_timeout_sec: "15"
           ai_request_timeout_sec: "600"
           ai_stream: "true"
-          ai_fallback_base_url: ${{ secrets.LITELLM_BASE_URL }}
+          ai_fallback_base_url: http://litellm.ai.svc.cluster.local:4000/v1
           ai_fallback_api_format: openai
           ai_fallback_model: qwen-local
           ai_fallback_api_key: ${{ secrets.LITELLM_API_KEY }}
+          review_verbosity: concise
+          ai_response_format: json_schema
+          verdict_policy: findings_severity_gated
           evidence_providers_file: .github/konflate-evidence.json
           inline_findings: "true"
-          on_model_failure: notice
+          on_model_failure: fail
           required_check_validation_mode: warn
           review_scope: auto
           rereview_label: ai-review
@@ -72,8 +120,10 @@ jobs:
           system_prompt_file: .agents/pr-review-instructions.md
           system_prompt_mode: append
           tool_mode: native_loop
-          tool_max_requests: "10"
+          tool_max_requests: "16"
           tool_max_rounds: "5"
+          tool_loop_summarize: "true"
+          tool_loop_summarize_max_tokens: "512"
           tool_loop_wall_clock_sec: "600"
           tool_request_timeout_sec: "60"
           tool_max_response_bytes: "32000"
