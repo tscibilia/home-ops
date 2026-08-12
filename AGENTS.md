@@ -41,10 +41,13 @@ convenience layer over those, never the only home for a fact.
 
 - **Always:** read-only inspection, local validation, formatting, linting
   (`flate test all`, `flate build`, `just docs test`).
-- **Ask first:** any git push, applying to the live cluster (`just kube apply-ks`,
-  `flux reconcile`, `talos apply`), deleting resources.
+- **Ask first:** any git push, anything that touches the live cluster —
+  `just kube apply-ks`, `just kube sync`, `just kube reconcile-ks`,
+  `just kube reconcile-hr`, `just kube restart-ks`, `just kube restart-hr`,
+  `flux reconcile`, `talos apply` — deleting resources.
 - **Never:** commit directly (GPG restriction — hand the user a commit message),
-  commit secrets, decode or print Kubernetes secret values, edit `docs/adr/`.
+  commit secrets, decode or print Kubernetes secret values, edit existing ADRs in
+  `docs/adr/` — supersede them instead; adding a new ADR is fine.
 
 ## Task Runner & Workflow
 
