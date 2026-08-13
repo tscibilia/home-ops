@@ -64,6 +64,12 @@ jobs:
             - name: "/kubernetes/ocharted"
               output-name: "OCHARTED_PASSWORD"
               key: "OCHARTED_PASSWORD"
+            - name: "/kubernetes/github"
+              output-name: "GHCR_TOKEN"
+              key: "GHCR_TOKEN"
+            - name: "/kubernetes/cluster-secrets"
+              output-name: "SECRET_DOMAIN"
+              key: "SECRET_DOMAIN"
 
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -101,8 +107,8 @@ jobs:
             }
           RENOVATE_HOST_RULES: |
             [
-              {"hostType": "docker", "matchHost": "ghcr.io", "username": "${{ github.repository_owner }}", "password": "${{ secrets.GHCR_PAT }}"},
-              {"hostType": "docker", "matchHost": "ocharted.${{ secrets.SECRET_DOMAIN }}", "username": "{{ secrets.OCHARTED_USERNAME }}", "password": "{{ secrets.OCHARTED_PASSWORD }}"}
+              {"hostType": "docker", "matchHost": "ghcr.io", "username": "${{ github.repository_owner }}", "password": "${{ steps.load-secrets.outputs.GHCR_TOKEN }}"},
+              {"hostType": "docker", "matchHost": "ocharted.${{ steps.load-secrets.outputs.SECRET_DOMAIN }}", "username": "{{ secrets.OCHARTED_USERNAME }}", "password": "{{ secrets.OCHARTED_PASSWORD }}"}
             ]
         with:
           token: ${{ steps.app-token.outputs.token }}
