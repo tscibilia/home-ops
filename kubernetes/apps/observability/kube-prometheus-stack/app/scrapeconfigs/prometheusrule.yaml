@@ -21,8 +21,10 @@ spec:
             description: "node-exporter on {{ $labels.instance }} is unreachable. The host may be offline."
         # Needs a cluster of lines, not one: `rate(...) > 0` stayed above zero
         # for a full 5m window after a single log line.
+        # `>= 3`, not `> 2`: increase() extrapolates the partial window, so two
+        # lines score 2.14 at a 1m scrape and would page.
         - alert: RemoteContainerLogErrors
-          expr: increase(log_metric_counter_container_log_errors_total[15m]) > 2
+          expr: increase(log_metric_counter_container_log_errors_total[15m]) >= 3
           for: 5m
           labels:
             severity: warning
