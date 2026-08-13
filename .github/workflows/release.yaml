@@ -14,7 +14,32 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write # GitHub OIDC token, consumed by the aKeyless jwt auth method
     steps:
+      - name: Load Secrets
+        id: load-secrets
+        uses: akeyless-community/akeyless-github-action@77df7e17cf658874c41f90731210e1b6c93bdfa0 # v1.1.8
+        with:
+          access-id: ${{ vars.AKEYLESS_ACCESS_ID }}
+          access-type: jwt
+          static-secrets: |
+            - name: "/kubernetes/actions-runner"
+              output-name: "BOT_APP_ID"
+              key: "ACTIONS_RUNNER_APP_ID"
+            - name: "/kubernetes/actions-runner"
+              output-name: "BOT_APP_PRIVATE_KEY"
+              key: "ACTIONS_RUNNER_PRIVATE_KEY"
+
+      - name: Generate Token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ steps.load-secrets.outputs.BOT_APP_ID }}
+          private-key: ${{ steps.load-secrets.outputs.BOT_APP_PRIVATE_KEY }}
+          permission-contents: write
+
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -32,12 +57,12 @@ jobs:
         id: calver
         uses: mirceanton/action-calver-release@e34e40c96ed4998c9a0adb0c8d3d821b49d789a3 # 2025.11.4
         with:
-          github-token: ${{ secrets.PAT_WORKFLOW }}
+          github-token: ${{ steps.app-token.outputs.token }}
           dry-run: true
 
       - name: Create Release
         env:
-          GH_TOKEN: ${{ secrets.PAT_WORKFLOW }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           RELEASE_TAG: ${{ steps.calver.outputs.release-tag }}
           RELEASE_NOTES: ${{ steps.release-notes.outputs.release-notes }}
         run: |

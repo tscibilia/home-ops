@@ -31,9 +31,26 @@ jobs:
     needs: filter
     name: Image Pull - Extract Images
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # GitHub OIDC token, consumed by the aKeyless jwt auth method
     outputs:
       images: ${{ steps.extract.outputs.images }}
     steps:
+      - name: Load Secrets
+        id: load-secrets
+        uses: akeyless-community/akeyless-github-action@77df7e17cf658874c41f90731210e1b6c93bdfa0 # v1.1.8
+        with:
+          access-id: ${{ vars.AKEYLESS_ACCESS_ID }}
+          access-type: jwt
+          static-secrets: |
+            - name: "/kubernetes/ocharted"
+              output-name: "OCHARTED_USERNAME"
+              key: "OCHARTED_USERNAME"
+            - name: "/kubernetes/ocharted"
+              output-name: "OCHARTED_PASSWORD"
+              key: "OCHARTED_PASSWORD"
+
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -49,8 +66,8 @@ jobs:
 
       - name: Setup Registry Auth
         env:
-          OCHARTED_USERNAME: ${{ secrets.OCHARTED_USERNAME }}
-          OCHARTED_PASSWORD: ${{ secrets.OCHARTED_PASSWORD }}
+          OCHARTED_USERNAME: ${{ steps.load-secrets.outputs.OCHARTED_USERNAME }}
+          OCHARTED_PASSWORD: ${{ steps.load-secrets.outputs.OCHARTED_PASSWORD }}
         run: |
           host="$(grep -rhoE 'oci://ocharted\.[^/]+' ./kubernetes/apps | sed 's|oci://||' | sort -u | head -1)"
           if [[ -z "$host" ]]; then echo "No ocharted host found in OCIRepository urls" && exit 1; fi
