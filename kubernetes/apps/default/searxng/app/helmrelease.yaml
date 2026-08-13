@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -67,7 +67,7 @@ spec:
               readOnlyRootFilesystem: true
               capabilities:
                 drop: ["ALL"]
-                add: ["CHOWN", "SETGID" ,"SETUID", "DAC_OVERRIDE"]
+                add: ["CHOWN", "SETGID", "SETUID", "DAC_OVERRIDE"]
     defaultPodOptions:
       automountServiceAccountToken: false
       enableServiceLinks: false

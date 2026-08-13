@@ -54,6 +54,7 @@ spec:
           configMap:
             name: ts-ai3090-node-serve
 ---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/configmap_v1.json
 apiVersion: v1
 kind: ConfigMap
 metadata:

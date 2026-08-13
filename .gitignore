@@ -20,6 +20,8 @@ talosconfig
 !.agents/settings.json
 !.agents/plugins/
 !.agents/skills/
+# convenience symlink -> .agents/superpowers
+.superpowers
 # Private
 .git/
 .private/
