@@ -23,14 +23,14 @@
 
 `- ⛔ **App name** - blocking factor (waiting for X) - **note**`
 
-- ⛔ **CNPG** upstream bug summarized in issue #2301 causes `scheduledBackups` to get stuck infinitely - **upstream confirmed fix in 1.30.x**
-- ⛔ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37**
+- ⛔ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37** - also see issue [#3345](https://github.com/tscibilia/home-ops/issues/3345)
 - ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
 
 ## ✅ Resolved
 
 `Descending order, newest on top`
 
+- ✅ CNPG upstream bug fixed in 1.30.x- **2026-08-13** (see issue #2301 causes `scheduledBackups` to get stuck infinitely)
 - ✅ switch guacamole to termix - **2026-08-10** (see commit [c108ba9](https://github.com/tscibilia/home-ops/commit/c108ba9))
 - ✅ switch pangolin to towonel - **2026-08-08** (see PRs [#3265](https://github.com/tscibilia/home-ops/pull/3265) thru [#3272](https://github.com/tscibilia/home-ops/pull/3272)) resolves issue [#2733](https://github.com/tscibilia/home-ops/issues/2733)
 - ✅ drop boxbox for FBQ - **2026-08-06** (see commit [6910641](https://github.com/tscibilia/home-ops/commit/6910641))
