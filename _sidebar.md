@@ -27,6 +27,7 @@
     - [pocket-id and tinyauth over Authentik](/docs/adr/0014-pocket-id-tinyauth-over-authentik.md)
     - [towonel over Pangolin for public ingress](/docs/adr/0015-towonel-over-pangolin.md)
     - [No HTTP/3 on the Envoy gateways](/docs/adr/0016-no-http3-on-envoy-gateways.md)
+    - [aKeyless GitHub Action for CI secrets, replacing GitHub repository secrets](/docs/adr/0017-akeyless-github-action-for-ci-secrets.md)
 
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)
