@@ -42,33 +42,35 @@ jobs:
     name: Renovate
     runs-on: ubuntu-latest
     permissions:
+      id-token: write # GitHub OIDC token, consumed by the aKeyless jwt auth method
       packages: read
     steps:
-      # Reovate rejects the digest update branch, throwing `state: "yellow" ... 422 → abort` and not completing the run.
-      # - name: Load Secrets
-      #   id: load-secrets
-      #   uses: akeyless-community/akeyless-github-action@7cb3f935c655c794feb9d0488f05acdca85d68e2 # v1.1.6
-      #   with:
-      #     access-id: ${{ secrets.AKEYLESS_ACCESS_ID }}
-      #     access-key: ${{ secrets.AKEYLESS_ACCESS_KEY }}
-      #     access-type: access_key
-      #     static-secrets: |
-      #       - name: "/kubernetes/actions-runner"
-      #         output-name: "runner-app-id"
-      #         key: "ACTIONS_RUNNER_APP_ID"
-      #       - name: "/kubernetes/actions-runner"
-      #         output-name: "runner-private-key"
-      #         key: "ACTIONS_RUNNER_PRIVATE_KEY"
+      - name: Load Secrets
+        id: load-secrets
+        uses: akeyless-community/akeyless-github-action@77df7e17cf658874c41f90731210e1b6c93bdfa0 # v1.1.8
+        with:
+          access-id: ${{ vars.AKEYLESS_ACCESS_ID }}
+          access-type: jwt
+          static-secrets: |
+            - name: "/kubernetes/actions-runner"
+              output-name: "BOT_APP_ID"
+              key: "ACTIONS_RUNNER_APP_ID"
+            - name: "/kubernetes/actions-runner"
+              output-name: "BOT_APP_PRIVATE_KEY"
+              key: "ACTIONS_RUNNER_PRIVATE_KEY"
+            - name: "/kubernetes/ocharted"
+              output-name: "OCHARTED_USERNAME"
+              key: "OCHARTED_USERNAME"
+            - name: "/kubernetes/ocharted"
+              output-name: "OCHARTED_PASSWORD"
+              key: "OCHARTED_PASSWORD"
 
       - name: Generate Token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          # Settings for aKeyless - Load Secrets step
-          # client-id: ${{ steps.load-secrets.outputs.runner-app-id }}
-          # private-key: ${{ steps.load-secrets.outputs.runner-private-key }}
-          client-id: ${{ secrets.BOT_APP_ID }}
-          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+          client-id: ${{ steps.load-secrets.outputs.BOT_APP_ID }}
+          private-key: ${{ steps.load-secrets.outputs.BOT_APP_PRIVATE_KEY }}
           permission-checks: write
           permission-contents: write
           permission-issues: write
@@ -94,8 +96,8 @@ jobs:
           RENOVATE_PLATFORM_COMMIT: true
           RENOVATE_SECRETS: |-
             {
-              "OCHARTED_USERNAME": "${{ secrets.OCHARTED_USERNAME }}",
-              "OCHARTED_PASSWORD": "${{ secrets.OCHARTED_PASSWORD }}"
+              "OCHARTED_USERNAME": "${{ steps.load-secrets.outputs.OCHARTED_USERNAME }}",
+              "OCHARTED_PASSWORD": "${{ steps.load-secrets.outputs.OCHARTED_PASSWORD }}"
             }
           RENOVATE_HOST_RULES: |
             [
