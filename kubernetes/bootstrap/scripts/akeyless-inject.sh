@@ -51,7 +51,9 @@ set -Eeuo pipefail
 #     Returns: The value of "TOKEN" from the nested JSON secret
 #
 # Notes:
-#   - The script processes input line by line and replaces ALL ak:// references
+#   - The script processes the whole input at once and replaces ALL ak:// references
+#   - Secret values may span multiple lines (PEM keys, certificates)
+#   - Each distinct secret is fetched once; hits and misses are both memoized
 #   - Failed secret lookups will cause the script to exit with an error
 #   - Set LOG_LEVEL environment variable to control verbosity (debug/info/warn/error)
 #   - Strips carriage returns (\r) for cross-platform compatibility
@@ -67,6 +69,7 @@ if [[ ! -f "$COMMON_LIB" ]]; then
   exit 1
 fi
 
+# shellcheck source=kubernetes/bootstrap/scripts/lib/common.sh
 source "$COMMON_LIB"
 
 # Ensure required CLIs are present, common.sh will exit on failure
@@ -80,7 +83,32 @@ if [[ ! -f "$input_file" && "$input_file" != "/dev/stdin" ]]; then
   exit 1
 fi
 
-# Resolve ak:// references
+# Memoized lookups. Cached entries are prefixed: "H" = hit, "M" = miss.
+declare -A secret_cache=()
+
+# Fetch one secret by exact name. Sets FETCHED, returns 1 if the name does not exist.
+fetch_secret() {
+  local name="$1"
+
+  if [[ -n "${secret_cache[$name]+set}" ]]; then
+    local cached="${secret_cache[$name]}"
+    log debug "Cache hit" "name=$name"
+    [[ "${cached:0:1}" == "H" ]] || return 1
+    FETCHED="${cached:1}"
+    return 0
+  fi
+
+  # 2>/dev/null, not 2>&1: CLI diagnostics must never land inside the secret value
+  if FETCHED=$(akeyless get-secret-value --name "$name" 2>/dev/null); then
+    secret_cache["$name"]="H${FETCHED}"
+    return 0
+  fi
+
+  secret_cache["$name"]="M"
+  return 1
+}
+
+# Resolve one ak:// reference. Sets RESOLVED.
 resolve_secret() {
   local ref="$1"
   local path="${ref#ak://}"   # strip scheme
@@ -91,10 +119,9 @@ resolve_secret() {
   log debug "Resolving secret reference" "ref=$ref" "path=$path"
 
   # Try as full path first (plain text or nested secret)
-  local secret_value
-  if secret_value=$(akeyless get-secret-value --name "$path" 2>&1); then
+  if fetch_secret "$path"; then
     log debug "Resolved as full-path secret" "name=$path"
-    printf '%s' "$secret_value"
+    RESOLVED="$FETCHED"
     return 0
   fi
 
@@ -106,10 +133,10 @@ resolve_secret() {
     log debug "Attempting JSON field extraction" "name=$secret_name" "key=$json_key"
 
     # Fetch secret
-    local secret_json
-    if ! secret_json=$(akeyless get-secret-value --name "$secret_name" 2>&1); then
+    if ! fetch_secret "$secret_name"; then
       log error "Failed to fetch secret from Akeyless" "name=$secret_name"
     fi
+    local secret_json="$FETCHED"
 
     # Validate key exists
     if ! echo "$secret_json" | jq -e "has(\"$json_key\")" > /dev/null 2>&1; then
@@ -117,11 +144,10 @@ resolve_secret() {
     fi
 
     # Extract value
-    if ! secret_value=$(echo "$secret_json" | jq -r ".\"$json_key\"" 2>&1); then
+    if ! RESOLVED=$(echo "$secret_json" | jq -r ".\"$json_key\"" 2>/dev/null); then
       log error "Failed to extract key from secret" "name=$secret_name" "key=$json_key"
     fi
 
-    printf '%s' "$secret_value"
     return 0
   fi
 
@@ -129,22 +155,22 @@ resolve_secret() {
   log error "Secret not found" "name=$path"
 }
 
-# Process input line by line
-while IFS= read -r line || [[ -n "$line" ]]; do
-  # Match ak:// tokens (alphanumeric, slashes, dots, hyphens, underscores)
-  while [[ "$line" =~ (ak://[a-zA-Z0-9/_.-]+) ]]; do
-    token="${BASH_REMATCH[1]}"
+# Process the whole input at once so multi-line secret values survive substitution
+content=$(cat "$input_file")
 
-    log debug "Found token"
+# Match ak:// tokens (alphanumeric, slashes, dots, hyphens, underscores)
+while [[ "$content" =~ (ak://[a-zA-Z0-9/_.-]+) ]]; do
+  token="${BASH_REMATCH[1]}"
 
-    # Resolve the secret
-    secret_value=$(resolve_secret "$token")
+  log debug "Found token"
 
-    log debug "Replacing token with" "$token"
+  # Resolve the secret
+  resolve_secret "$token"
 
-    # Replace token with value
-    line="${line/"$token"/"$secret_value"}"
-  done
+  log debug "Replacing token with" "$token"
 
-  echo "$line"
-done < "$input_file"
+  # First occurrence only, then rescan. Repeats are free: the fetch is cached.
+  content="${content/"$token"/"$RESOLVED"}"
+done
+
+printf '%s\n' "$content"
