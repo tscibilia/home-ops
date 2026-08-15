@@ -1,30 +1,4 @@
 ---
-# Areas
-- name: area/bootstrap
-  color: "0e8a16"
-- name: area/github
-  color: "0e8a16"
-- name: area/kubernetes
-  color: "0e8a16"
-- name: area/renovate
-  color: "0e8a16"
-- name: area/scripts
-  color: "0e8a16"
-- name: area/talos
-  color: "0e8a16"
-- name: area/taskfile
-  color: "0e8a16"
-# Renovate Types
-- name: renovate/container
-  color: "027fa0"
-- name: renovate/github-action
-  color: "027fa0"
-- name: renovate/grafana-dashboard
-  color: "027fa0"
-- name: renovate/github-release
-  color: "027fa0"
-- name: renovate/helm
-  color: "027fa0"
 # Semantic Types
 - name: type/digest
   color: "ffeC19"
@@ -37,7 +11,21 @@
 # Uncategorized
 - name: ai-review
   color: "5319e7"
-- name: community
-  color: "370fb2"
 - name: hold
   color: "ee0701"
+# Triage
+- name: needs-triage
+  color: "d876e3"
+  description: Maintainer needs to evaluate this issue
+- name: needs-info
+  color: "d4c5f9"
+  description: Waiting on reporter for more information
+- name: ready-for-agent
+  color: "1d76db"
+  description: Fully specified, ready for an AFK agent
+- name: ready-for-human
+  color: "fbca04"
+  description: Requires human implementation
+- name: wontfix
+  color: "ffffff"
+  description: Will not be actioned
