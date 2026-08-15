@@ -24,12 +24,20 @@ concurrency:
 jobs:
   review:
     name: AI PR Review
-    if: ${{ github.event.pull_request.user.login == 'kube-skywalker[bot]' && !github.event.pull_request.draft }}
+    # `labeled` fires on every Renovate type/* label too; the action treats those
+    # as a no-op, so filter them here rather than burn a runner slot on them.
+    if: >-
+      ${{ github.event.pull_request.user.login == 'kube-skywalker[bot]'
+      && !github.event.pull_request.draft
+      && (github.event.action != 'labeled' || github.event.label.name == 'ai-review') }}
     runs-on: ${{ github.event.repository.name }}-runner
     # Backstop only — must exceed the action's own budgets, or a long review is
     # killed with nothing published. Worst case is planning (120s) + tool loop
-    # (600s) + final review call (600s) = 22m, plus checkout and preflight.
-    timeout-minutes: 25
+    # (600s) + primary review call (2 × 300s) + fallback call (2 × 300s, a
+    # fixed budget the action does not expose) = 32m, plus checkout and
+    # preflight. Every ai_*_timeout_sec and ai_primary_retries change below has
+    # to be re-checked against this number.
+    timeout-minutes: 35
     permissions:
       contents: read
       id-token: write # GitHub OIDC token, consumed by the aKeyless jwt auth method
@@ -122,15 +130,21 @@ jobs:
           ai_api_key: ${{ steps.load-secrets.outputs.LITELLM_API_KEY }}
           ai_max_tokens: "32768"
           ai_temperature: "0.1"
-          ai_primary_retries: "3"
+          # A healthy review finishes the whole job in 2–15m, so a single call
+          # past 300s is hung, not slow. Retries were starving the fallback:
+          # 3 × 600s alone overran the job timeout and nothing was published.
+          # This is a total attempt count, not extra attempts on top of one.
+          ai_primary_retries: "2"
           ai_primary_retry_delay_sec: "5"
           ai_connect_timeout_sec: "15"
-          ai_request_timeout_sec: "600"
+          ai_request_timeout_sec: "300"
           ai_stream: "true"
           ai_fallback_base_url: http://litellm.ai.svc.cluster.local:4000/v1
           ai_fallback_api_format: openai
           ai_fallback_model: qwen-local
           ai_fallback_api_key: ${{ steps.load-secrets.outputs.LITELLM_API_KEY }}
+          ai_fallback_request_timeout_sec: "300"
+          ai_fallback_connect_timeout_sec: "15"
           review_verbosity: concise
           ai_response_format: json_schema
           verdict_policy: findings_severity_gated
