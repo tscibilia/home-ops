@@ -57,6 +57,10 @@ services:
     image: ghcr.io/tscibilia/akeyless-proxy:0.0.1@sha256:1da58e8c7d5475a51bf1a8c7ed3877bb513fcca6b2b4b7c4e4dc4214e0ed2cde
     container_name: akeyless-proxy
     restart: unless-stopped
+    # The image runs as `nobody`. Compose bind-mounts the secret files with
+    # their host permissions (0600 sysadmin:sysadmin), so the container must
+    # run as the host user that owns them or it exits on PermissionError.
+    user: "3000:3000"
     networks:
       - doco-cd
     expose:
