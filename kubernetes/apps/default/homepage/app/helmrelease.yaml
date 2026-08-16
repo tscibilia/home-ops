@@ -24,6 +24,11 @@ spec:
               HOMEPAGE_AUTH_ENABLED: true
               HOMEPAGE_EXTERNAL_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
               HOMEPAGE_OIDC_SCOPE: "openid profile email groups"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secrets"
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
             resources:
               requests:
                 cpu: 20m

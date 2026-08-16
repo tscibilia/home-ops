@@ -21,4 +21,4 @@ spec:
     keys:
       clientID: HOMEPAGE_OIDC_CLIENT_ID
       clientSecret: HOMEPAGE_OIDC_CLIENT_SECRET
-      discoveryUrl: HOMEPAGE_OIDC_DISCOVERY_URL
+      issuerUrl: HOMEPAGE_OIDC_ISSUER
