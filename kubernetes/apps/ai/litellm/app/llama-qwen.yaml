@@ -95,8 +95,10 @@ spec:
     - --repeat-penalty
     - "1.0"
     - --mmap
+    # preserve_thinking replays every prior turn's trace; with Qwen3.8's xhigh
+    # default that compounds until the window is gone. Callers override per request.
     - --chat-template-kwargs
-    - '{"preserve_thinking":true}'
+    - '{"reasoning_effort":"medium"}'
   probeOverrides:
     startup:
       httpGet:

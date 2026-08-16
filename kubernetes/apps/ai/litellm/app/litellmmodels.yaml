@@ -18,7 +18,7 @@ spec:
   info:
     mode: chat
     maxTokens: 32768
-    maxInputTokens: 163840 # must track llama-qwen InferenceService contextSize
+    maxInputTokens: 131072 # contextSize 163840 minus maxOutputTokens; llama.cpp counts both against one pool
     maxOutputTokens: 32768
     supportsFunctionCalling: true
     supportsVision: true
