@@ -190,22 +190,6 @@
             group: ubuntu
             mode: "0644"
 
-        - name: doco-cd | Copy Dockerfile
-          ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/Dockerfile
-            dest: "{{ dococd_config_dir }}/Dockerfile"
-            owner: ubuntu
-            group: ubuntu
-            mode: "0644"
-
-        - name: doco-cd | Copy proxy.py
-          ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/proxy.py
-            dest: "{{ dococd_config_dir }}/proxy.py"
-            owner: ubuntu
-            group: ubuntu
-            mode: "0644"
-
         - name: doco-cd | Copy cron-update.sh
           ansible.builtin.copy:
             src: ../../docker/vps/.doco-cd/cron-update.sh
@@ -244,9 +228,6 @@
             project_src: "{{ dococd_config_dir }}"
             files:
               - docker-compose.app.yaml
-            # Not `always`: rebuilding orphans the running image and the
-            # next run fails with "No such image".
-            build: policy
             pull: always
             state: present
           when: not ansible_check_mode

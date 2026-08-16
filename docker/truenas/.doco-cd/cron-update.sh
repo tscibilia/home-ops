@@ -2,7 +2,7 @@
 # Self-update script for doco-cd + akeyless-proxy
 # 1. Fetches each file from GitHub with `curl -sf` — aborts entirely if GitHub is unreachable
 # 2. Compares SHA256 hashes against local copies
-# 3. Only runs `docker compose up -d --build --force-recreate` if at least one file changed
+# 3. Only runs `docker compose up -d --pull always --force-recreate` if at least one file changed
 # 4. Logs with timestamps to ~/.config/doco-cd/update.log
 
 set -euo pipefail
@@ -46,12 +46,10 @@ fetch_and_compare() {
 }
 
 fetch_and_compare "docker-compose.app.yaml"
-fetch_and_compare "Dockerfile"
-fetch_and_compare "proxy.py"
 
 if [ "$CHANGED" -eq 1 ]; then
-  log "Rebuilding and restarting doco-cd stack..."
-  docker compose -f "$WORK_DIR/docker-compose.app.yaml" up -d --build --force-recreate
+  log "Pulling images and restarting doco-cd stack..."
+  docker compose -f "$WORK_DIR/docker-compose.app.yaml" up -d --pull always --force-recreate
   log "Done."
 else
   log "No changes — nothing to do."

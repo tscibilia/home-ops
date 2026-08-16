@@ -1,7 +1,7 @@
 ---
 # This file is not managed by doco-cd because it can't manage itself.
-# A cron job on TrueNAS pulls `docker-compose.app.yaml` and `Dockerfile`
-# from GitHub, compares hashes, and rebuilds only when something changed.
+# A cron job on TrueNAS pulls `docker-compose.app.yaml` from GitHub, compares
+# hashes, and pulls + recreates only when it changed.
 
 secrets:
   gh_token:
@@ -52,9 +52,10 @@ services:
       - gh_token
 
   akeyless-proxy:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # PROXY_KEEPALIVE is deliberately unset: this host resolves one or two
+    # secrets per deploy, and the idle timeout would log a false error on
+    # every connection. See akeyless-proxy ADR-0003.
+    image: ghcr.io/tscibilia/akeyless-proxy:0.0.1@sha256:1da58e8c7d5475a51bf1a8c7ed3877bb513fcca6b2b4b7c4e4dc4214e0ed2cde
     container_name: akeyless-proxy
     restart: unless-stopped
     networks:
