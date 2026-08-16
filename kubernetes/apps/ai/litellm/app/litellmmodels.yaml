@@ -13,7 +13,9 @@ spec:
       name: litellm-secret
       key: LLAMA_API_KEY
     additional:
-      maxParallelRequests: 1
+      # Keys under `additional` are copied into litellm_params VERBATIM
+      # expects snake_case, operator only camelCases its own typed fields
+      max_parallel_requests: 1
     dropParams: true
   info:
     mode: chat
@@ -35,9 +37,8 @@ kind: LiteLLMModel
 metadata:
   name: &name qwen-local-fast
 spec:
-  # Same llama-qwen server as qwen-local — no extra VRAM. Only the request body
-  # differs: thinking off plus the model card's instruct sampler row. Switching
-  # is a model-picker change, not a restart.
+  # Same llama-qwen as qwen-local — model-picker change, not a restart.
+  # Only difference: thinking off plus the model's instruct sampler row.
   modelName: *name
   params:
     model: openai/Qwen3.8-27B
@@ -123,10 +124,10 @@ spec:
       name: litellm-secret
       key: OPENROUTER_API_KEY
     additional:
-      extraBody:
+      extra_body:
         provider:
           order: ["deepinfra"]
-          allowFallbacks: false
+          allow_fallbacks: false
   info:
     mode: chat
     maxTokens: 131072
@@ -185,6 +186,7 @@ spec:
     maxOutputTokens: 131072
     supportsFunctionCalling: true
     supportsPromptCaching: true
+    supportsVision: true
     extra:
       inputCostPerToken: 0.0000003000
       cacheCreationInputTokenCost: 0.0000000600
