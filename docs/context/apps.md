@@ -44,7 +44,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - cetranscript _(CE Transcript — custom app)_ [cnpg]
 - filebrowser _(NFS file share/drive UI)_ [kopiur, oidc]
 - homebox _(inventory)_ [kopiur, cnpg, oidc]
-- homepage _(dashboard)_
+- homepage _(dashboard)_ [oidc]
 - immich _(photos)_ [cnpg, oidc]
 - komga _(comics/manga)_ [kopiur, zeroscaler, oidc]
 - mealie _(recipes)_ [kopiur, cnpg, oidc]
