@@ -18,6 +18,7 @@
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
 - [ ] ⚠️ **ComfyUI:** not working due to single gpu and single model loaded via `llmkube`
+- [ ] ⚠️ **opencode:** v1 ignores `disable-model-invocation`, (see issue [#621](https://redirect.github.com/mattpocock/skills/issues/621)) - **wrapped as commands; drop them once v2 reads `metadata.opencode/autoinvoke`**
 
 ## ⛔ Blocked
 
