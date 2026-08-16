@@ -33,6 +33,47 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
+  name: &name qwen-local-fast
+spec:
+  # Same llama-qwen server as qwen-local — no extra VRAM. Only the request body
+  # differs: thinking off plus the model card's instruct sampler row. Switching
+  # is a model-picker change, not a restart.
+  modelName: *name
+  params:
+    model: openai/Qwen3.8-27B
+    apiBase: http://llama-qwen.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: LLAMA_API_KEY
+    additional:
+      maxParallelRequests: 1
+      extraBody:
+        # dropParams strips a top-level reasoning_effort, but chatTemplateKwargs
+        # reaches llama.cpp intact — verified 2026-08-16.
+        chatTemplateKwargs:
+          enableThinking: false
+        temperature: 0.7
+        topP: 0.80
+        presencePenalty: 1.5
+    dropParams: true
+  info:
+    mode: chat
+    maxTokens: 32768
+    maxInputTokens: 131072 # contextSize 163840 minus maxOutputTokens; llama.cpp counts both against one pool
+    maxOutputTokens: 32768
+    supportsFunctionCalling: true
+    supportsVision: true
+    extra:
+      supports_reasoning: false
+      inputCostPerToken: 0.0000001250
+      cacheCreationInputTokenCost: 0.0000001250
+      cacheReadInputTokenCost: 0.0000000125
+      outputCostPerToken: 0.0000004999
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
   name: &name memini-embed
 spec:
   modelName: *name
