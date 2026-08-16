@@ -38,12 +38,10 @@ fetch_and_compare() {
 }
 
 fetch_and_compare "docker-compose.app.yaml"
-fetch_and_compare "Dockerfile"
-fetch_and_compare "proxy.py"
 
 if [ "$CHANGED" -eq 1 ]; then
-  log "Rebuilding and restarting doco-cd stack..."
-  docker compose -f "$WORK_DIR/docker-compose.app.yaml" up -d --build --force-recreate
+  log "Pulling images and restarting doco-cd stack..."
+  docker compose -f "$WORK_DIR/docker-compose.app.yaml" up -d --pull always --force-recreate
   log "Done."
 else
   log "No changes — nothing to do."

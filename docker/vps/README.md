@@ -128,7 +128,8 @@ went live in git without reaching the running process.
 agent to pull `https://github.com/tscibilia/home-ops.git` (main) every hour
 and apply every `docker-compose.yaml` found under `docker/vps/`. Secrets are
 injected at deploy time by the aKeyless HTTP proxy running alongside doco-cd
-(see [`.doco-cd/proxy.py`](.doco-cd/proxy.py)).
+(image [`ghcr.io/tscibilia/akeyless-proxy`](https://github.com/tscibilia/akeyless-proxy),
+pinned by digest in [`.doco-cd/docker-compose.app.yaml`](.doco-cd/docker-compose.app.yaml)).
 
 The agent also reconciles on `unhealthy` and `die` container events — a
 crashed container triggers an immediate re-apply without waiting for the

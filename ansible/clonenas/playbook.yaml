@@ -45,20 +45,6 @@
         owner: sysadmin
         unsafe_writes: true
 
-    - name: doco-cd | Copy Dockerfile
-      ansible.builtin.copy:
-        src: ../../docker/clonenas/.doco-cd/Dockerfile
-        dest: "{{ dococd_config_dir }}/Dockerfile"
-        owner: sysadmin
-        unsafe_writes: true
-
-    - name: doco-cd | Copy proxy.py
-      ansible.builtin.copy:
-        src: ../../docker/clonenas/.doco-cd/proxy.py
-        dest: "{{ dococd_config_dir }}/proxy.py"
-        owner: sysadmin
-        unsafe_writes: true
-
     - name: doco-cd | Copy cron-update.sh
       ansible.builtin.copy:
         src: ../../docker/clonenas/.doco-cd/cron-update.sh
@@ -180,7 +166,7 @@
     - name: doco-cd | Run docker-compose
       ansible.builtin.shell: >-
         docker compose -f {{ dococd_config_dir }}/docker-compose.app.yaml
-        up -d --build --pull always
+        up -d --pull always
       when: not ansible_check_mode
 
     - name: doco-cd | Wait for akeyless-proxy healthy

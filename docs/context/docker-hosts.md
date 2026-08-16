@@ -72,7 +72,9 @@ Services are numbered (`01-`, `02-`) for apply order. To add a service: create a
 
 ## aKeyless on Docker Hosts
 
-VPS uses an aKeyless proxy sidecar (`proxy.py`) + doco-cd webhook secret provider. Secrets are injected as environment variables for `${VAR}` substitution in compose files.
+VPS, truenas and clonenas each run an aKeyless proxy sidecar + doco-cd webhook secret provider. Secrets are injected as environment variables for `${VAR}` substitution in compose files.
+
+The sidecar image is [`tscibilia/akeyless-proxy`](https://github.com/tscibilia/akeyless-proxy) — a separate repo, pinned by digest in each host's `.doco-cd/docker-compose.app.yaml`. Hosts no longer build it; there is no per-host `Dockerfile` or `proxy.py`. VPS sets `PROXY_KEEPALIVE: "1"` (high secret volume); the two NAS hosts deliberately leave it unset (low volume — the idle timeout logs a false error per connection).
 
 **Secret mapping lives in `docker/vps/.doco-cd.yaml`** — `external_secrets` section. This is the ONLY place to declare which env vars map to which aKeyless paths. Compose files just use `${VAR}` in `environment:`. If an env var is missing at runtime, check `.doco-cd.yaml` first.
 

@@ -54,9 +54,7 @@ services:
       - gh_token
 
   akeyless-proxy:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/tscibilia/akeyless-proxy:0.0.1@sha256:1da58e8c7d5475a51bf1a8c7ed3877bb513fcca6b2b4b7c4e4dc4214e0ed2cde
     container_name: akeyless-proxy
     restart: unless-stopped
     expose:
@@ -64,6 +62,9 @@ services:
     environment:
       AKEYLESS_ACCESS_ID_FILE: /run/secrets/akeyless_access_id
       AKEYLESS_ACCESS_KEY_FILE: /run/secrets/akeyless_access_key
+      # This host resolves ~20 secrets per deploy; without connection reuse the
+      # burst overflows the listen backlog. See akeyless-proxy ADR-0003.
+      PROXY_KEEPALIVE: "1"
     secrets:
       - akeyless_access_id
       - akeyless_access_key
