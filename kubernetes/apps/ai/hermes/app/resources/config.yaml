@@ -11,11 +11,9 @@ data:
         api_key: "$${LITELLM_API_KEY}"
         models:
           qwen-local:
-            context_length: 148480
+            context_length: 131072 # input budget only; llama.cpp counts prompt + output against one 163840 pool
           deepseek-v4-flash-free:
-            context_length: 1000000
-          big-pickle-free:
-            context_length: 200000
+            context_length: 200000 # free tier; the non-free model is the one that takes 1048576
           minimax-m3:
             context_length: 512000
           glm-5-2:
@@ -26,8 +24,6 @@ data:
     fallback_providers:
       - provider: litellm
         model: qwen-local
-      - provider: litellm
-        model: big-pickle-free
       - provider: litellm
         model: minimax-m3
       - provider: litellm

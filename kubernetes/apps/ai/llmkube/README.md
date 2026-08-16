@@ -18,8 +18,7 @@ memini/                     # Intel iGPU helpers, reconciled by the `memini` KS
   memini-embed.yaml  memini-rerank.yaml  memini-summary.yaml
 
 litellm/app/                # chat/vision models, reconciled by the `litellm` KS
-  llama-nvidia.yaml         # Qwen3.6-27B on RTX 3090
-  llama-vision.yaml         # Qwen3.5-9B (not in use)
+  llama-qwen.yaml           # Qwen3.8-27B on RTX 3090 (vision via mmproj)
 ```
 
 Each consuming app's own Flux Kustomization reconciles its models (`memini`,
