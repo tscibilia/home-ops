@@ -16,7 +16,6 @@ spec:
       # Keys under `additional` are copied into litellm_params VERBATIM
       # expects snake_case, operator only camelCases its own typed fields
       max_parallel_requests: 1
-    dropParams: true
   info:
     mode: chat
     maxTokens: 32768
@@ -51,13 +50,12 @@ spec:
       # expects snake_case, operator only camelCases its own typed fields
       max_parallel_requests: 1
       extra_body:
-        # drop_params strips reasoning_effort, but chat_template_kwargs reaches llama.cpp intact
+        # extra_body bypasses the proxy's drop_params, so this reaches llama.cpp intact
         chat_template_kwargs:
           enable_thinking: false
         temperature: 0.7
         top_p: 0.80
         presence_penalty: 1.5
-    dropParams: true
   info:
     mode: chat
     maxTokens: 32768
@@ -179,8 +177,6 @@ spec:
     apiKeyRef:
       name: litellm-secret
       key: OPENCODE_API_KEY
-    # Same Zen endpoint as deepseek-v4-flash-free — assumed same reasoning_effort issue.
-    dropParams: true
   info:
     mode: chat
     maxTokens: 131072
@@ -209,8 +205,6 @@ spec:
     apiKeyRef:
       name: litellm-secret
       key: OPENCODE_API_KEY
-    # Zen rejects reasoning_effort, despite supportting on models.dev; every call from hermes failed.
-    dropParams: true
   info:
     mode: chat
     maxTokens: 128000 # Non-free version supports 384000
