@@ -11,9 +11,15 @@ data:
         api_key: "$${LITELLM_API_KEY}"
         models:
           qwen-local:
-            context_length: 131072 # input budget only; llama.cpp counts prompt + output against one 163840 pool
+            context_length: 131072
+          qwen-local-fast:
+            context_length: 131072
+          kimi-k3:
+            context_length: 1048560
+          laguna-s-2-1:
+            context_length: 1048576
           deepseek-v4-flash-free:
-            context_length: 200000 # free tier; the non-free model is the one that takes 1048576
+            context_length: 200000
           minimax-m3:
             context_length: 512000
           glm-5-2:
@@ -28,6 +34,33 @@ data:
         model: minimax-m3
       - provider: litellm
         model: glm-5-2
+    # Side tasks. Default "auto" would reuse the main chat model for all of
+    # them; pinning keeps the cheap/local models on the cheap work.
+    auxiliary:
+      vision:
+        provider: custom:litellm
+        model: qwen-local-fast # supportsVision, on-node, no per-token cost
+        timeout: 60
+      web_extract:
+        provider: custom:litellm
+        model: qwen-local-fast
+        reasoning_effort: none
+      title_generation:
+        enabled: true
+        provider: custom:litellm
+        model: qwen-local-fast
+        max_concurrency: 2
+      session_search:
+        provider: custom:litellm
+        model: qwen-local-fast
+        max_concurrency: 2
+      compression:
+        provider: custom:litellm
+        model: laguna-s-2-1 # 1M input window — the aux task that reads the most
+        max_concurrency: 2
+      moa_reference:
+        provider: custom:litellm
+        timeout: 900
     agent:
       max_turns: 90
       gateway_timeout: 1800
@@ -40,12 +73,44 @@ data:
       threshold: 0.5
       target_ratio: 0.2
       protect_last_n: 20
+    # No model/provider override: children inherit the parent model.
+    delegation:
+      max_iterations: 50
+      max_concurrent_children: 3
+      max_spawn_depth: 1
+      subagent_auto_approve: false # deny, never block on stdin the gateway does not own
+    # Opt-in only — runs on /moa, never on a normal turn. References answer in
+    # private, the aggregator merges them into guidance for the main model.
+    moa:
+      default_preset: council
+      presets:
+        council:
+          enabled: true
+          reference_models:
+            - provider: custom:litellm
+              model: qwen-local
+            - provider: custom:litellm
+              model: minimax-m3
+          aggregator:
+            provider: custom:litellm
+            model: kimi-k3
+          max_tokens: 4096
     approvals:
       mode: smart
       timeout: 60
       cron_mode: deny
       mcp_reload_confirm: true
       destructive_slash_confirm: true
+      # fnmatch globs, matched before the yolo bypass. Belt; the braces are
+      # GitHub branch protection plus the fine-grained PAT scope.
+      deny:
+        - "git push*origin main*"
+        - "git push*origin master*"
+        - "git push*:main*"
+        - "git push*--force*"
+        - "git push*-f *"
+        - "gh pr merge*"
+        - "gh repo delete*"
     command_allowlist:
       - execute_code
       - "curl *$${SECRET_DOMAIN}*"
@@ -60,7 +125,36 @@ data:
       no_thread_channels: []
       history_backfill: false
       history_backfill_limit: 50
-      channel_prompts: {}
+      # Per-room operating rules, appended below SOUL.md rather than replacing it.
+      # SOUL.md is the stable (cached) prompt tier and holds personality only;
+      # the job of the room belongs here, in the context tier.
+      channel_prompts:
+        "1538717403326849044": |- # hermes-k8s
+          This room is cluster work: Tom's homelab — Talos, Kubernetes, Flux CD
+          and Rook Ceph across three bare-metal nodes. Git is truth. Anything
+          you change by hand, Flux will undo, and it will be right to.
+
+          The repo is tscibilia/home-ops. Clone or refresh it under
+          /opt/data/workspace and work from inside the clone.
+
+          Before cluster work, read AGENTS.md and CONTEXT.md from that clone.
+          They are the authority on conventions, safety tiers, the docs/context
+          routing table and the ADR index — do not restate them from memory,
+          and do not assume they were auto-loaded. Read them, then follow them.
+
+          Lead with the command you ran and what it returned. Tom reads YAML
+          fluently and does not need it explained.
+        "1538680877096247296": |- # hermes-aid — also the cron/unprompted home channel
+          This room is not cluster work. You are Tom's personal assistant
+          here: research, drafting, planning, summarising, remembering, and
+          keeping track of what he asked for last week.
+
+          There is no repo to read and no cluster to protect, so none of the
+          homelab process applies. Warmer than the ops room, still short.
+
+          Ask one clarifying question when the ask is vague; guess when it is
+          cheap to be wrong. Use memory freely — this is the room where
+          remembering him is the whole job.
       allow_mentions:
         everyone: false
         roles: false

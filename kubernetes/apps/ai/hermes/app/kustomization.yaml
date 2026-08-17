@@ -9,3 +9,11 @@ resources:
   - ./pocketidoidcclient.yaml
   - ./pushsecret.yaml
   - ./resources/config.yaml
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
+configMapGenerator:
+  - name: hermes-soul
+    files:
+      - ./resources/SOUL.md

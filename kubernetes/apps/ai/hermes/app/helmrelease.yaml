@@ -48,6 +48,9 @@ spec:
                 sed -i "s|\$${LITELLM_API_KEY}|$$LITELLM_API_KEY|g" /opt/data/config.yaml
                 sed -i "s|\$${SECRET_DOMAIN}|$$SECRET_DOMAIN|g" /opt/data/config.yaml
                 chown 10000:10000 /opt/data/config.yaml
+                # Overwrites any agent self-edit — SOUL.md is GitOps-owned.
+                cp /run/config/SOUL.md /opt/data/SOUL.md
+                chown 10000:10000 /opt/data/SOUL.md
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
@@ -108,6 +111,11 @@ spec:
               HOMEBREW_PREFIX: /opt/data/.local/homebrew
               HOMEBREW_REPOSITORY: /opt/data/.local/homebrew
               GATEWAY_ALLOW_ALL_USERS: true
+              # No ~/.gitconfig on the PVC, so `git commit` has no identity.
+              GIT_AUTHOR_NAME: &gitUser hermes
+              GIT_AUTHOR_EMAIL: &gitEmail hermes@users.noreply.github.com
+              GIT_COMMITTER_NAME: *gitUser
+              GIT_COMMITTER_EMAIL: *gitEmail
               GOPATH: /opt/data/go
               PATH: /opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               PIP_BREAK_SYSTEM_PACKAGES: "1"
@@ -261,6 +269,12 @@ spec:
         globalMounts:
           - path: /run/config/config.yaml
             subPath: config.yaml
+      soul:
+        type: configMap
+        name: hermes-soul
+        globalMounts:
+          - path: /run/config/SOUL.md
+            subPath: SOUL.md
       nfs:
         type: nfs
         server: truenas.internal
