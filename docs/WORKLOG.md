@@ -7,7 +7,6 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 
 - [ ] migrate PG17 -> PG18 (see issue [#3343](https://github.com/tscibilia/home-ops/issues/3343))
-- [ ] switch grafana dashboards from `gnetId` to `URL`
 
 ## ⚠️ Known Issues
 
@@ -31,6 +30,7 @@
 
 `Descending order, newest on top`
 
+- ✅ switch grafana dashboards from `gnetId` to `URL` (see PR [#3386](https://github.com/tscibilia/home-ops/pull/3386))
 - ✅ CNPG upstream bug fixed in 1.30.x- **2026-08-13** (see issue #2301 causes `scheduledBackups` to get stuck infinitely)
 - ✅ switch guacamole to termix - **2026-08-10** (see commit [c108ba9](https://github.com/tscibilia/home-ops/commit/c108ba9))
 - ✅ switch pangolin to towonel - **2026-08-08** (see PRs [#3265](https://github.com/tscibilia/home-ops/pull/3265) thru [#3272](https://github.com/tscibilia/home-ops/pull/3272)) resolves issue [#2733](https://github.com/tscibilia/home-ops/issues/2733)
