@@ -19,7 +19,9 @@ spec:
       type: redis
       host: os.environ/REDIS_HOST
       port: os.environ/REDIS_PORT
-    drop_params: false
+    # hermes sends reasoning_effort on every request; only qwen advertises it.
+    # Per-model dropParams lost — every non-qwen model 400s without this.
+    drop_params: true
     request_timeout: 600
     set_verbose: false
     require_auth_for_metrics_endpoint: false
