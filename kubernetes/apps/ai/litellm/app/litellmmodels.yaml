@@ -25,10 +25,10 @@ spec:
     supportsVision: true
     extra:
       supports_reasoning: true
-      inputCostPerToken: 0.0000001250
-      cacheCreationInputTokenCost: 0.0000001250
-      cacheReadInputTokenCost: 0.0000000125
-      outputCostPerToken: 0.0000004999
+      input_cost_per_token: 0.0000000120
+      cache_creation_input_token_cost: 0.0000000120
+      cache_read_input_token_cost: 0.0000000010
+      output_cost_per_token: 0.0000000500
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -65,10 +65,10 @@ spec:
     supportsVision: true
     extra:
       supports_reasoning: false
-      inputCostPerToken: 0.0000001250
-      cacheCreationInputTokenCost: 0.0000001250
-      cacheReadInputTokenCost: 0.0000000125
-      outputCostPerToken: 0.0000004999
+      input_cost_per_token: 0.0000000120
+      cache_creation_input_token_cost: 0.0000000120
+      cache_read_input_token_cost: 0.0000000010
+      output_cost_per_token: 0.0000000500
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -86,8 +86,8 @@ spec:
   info:
     mode: embedding
     extra:
-      input_cost_per_token: 0.0000000100
-      output_cost_per_token: 0.0000000000
+      input_cost_per_token: 0.0000000120
+      output_cost_per_token: 0.0000000500
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -105,8 +105,8 @@ spec:
   info:
     mode: rerank
     extra:
-      input_cost_per_token: 0.0000000100
-      output_cost_per_token: 0.0000000000
+      input_cost_per_token: 0.0000000120
+      output_cost_per_token: 0.0000000500
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -136,9 +136,10 @@ spec:
     supportsPromptCaching: true
     extra:
       supports_reasoning: true
-      inputCostPerToken: 0.0000000800
-      cacheReadInputTokenCost: 0.0000000160
-      outputCostPerToken: 0.0000001800
+      # DeepInfra via OpenRouter: $0.08 in / $0.18 out / $0.016 cached read only
+      input_cost_per_token: 0.0000000800
+      cache_read_input_token_cost: 0.0000000160
+      output_cost_per_token: 0.0000001800
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -164,10 +165,10 @@ spec:
     supportsVision: true
     extra:
       supports_reasoning: true
-      inputCostPerToken: 0.0000003000
-      cacheCreationInputTokenCost: 0.0000000600
-      cacheReadInputTokenCost: 0.0000000600
-      outputCostPerToken: 0.0000012000
+      # Zen: $0.30 in / $1.20 out / $0.06 cached read; no cached write tier
+      input_cost_per_token: 0.0000003000
+      cache_read_input_token_cost: 0.0000000600
+      output_cost_per_token: 0.0000012000
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -192,10 +193,10 @@ spec:
     supportsPromptCaching: true
     supportsVision: true
     extra:
-      inputCostPerToken: 0.0000003000
-      cacheCreationInputTokenCost: 0.0000000600
-      cacheReadInputTokenCost: 0.0000000600
-      outputCostPerToken: 0.0000015000
+      # Zen: $3.00 in / $15.00 out / $0.30 cached read; no cached write tier
+      input_cost_per_token: 0.0000030000
+      cache_read_input_token_cost: 0.0000003000
+      output_cost_per_token: 0.0000150000
       supports_reasoning: true
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
@@ -224,10 +225,9 @@ spec:
     supportsFunctionCalling: true
     supportsPromptCaching: true
     extra:
-      inputCostPerToken: 0.0000001250
-      cacheCreationInputTokenCost: 0.0000001250
-      cacheReadInputTokenCost: 0.0000000125
-      outputCostPerToken: 0.0000004999
+      input_cost_per_token: 0.0000000120
+      cache_read_input_token_cost: 0.0000000010
+      output_cost_per_token: 0.0000000500
       supports_reasoning: true
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
@@ -251,8 +251,8 @@ spec:
     supportsFunctionCalling: true
     supportsPromptCaching: true
     extra:
-      inputCostPerToken: 0.0000001250
-      cacheCreationInputTokenCost: 0.0000001250
-      cacheReadInputTokenCost: 0.0000000125
-      outputCostPerToken: 0.0000004999
+      input_cost_per_token: 0.0000000120
+      cache_creation_input_token_cost: 0.0000000120
+      cache_read_input_token_cost: 0.0000000010
+      output_cost_per_token: 0.0000000500
       supports_reasoning: true
