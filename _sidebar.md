@@ -28,6 +28,8 @@
     - [towonel over Pangolin for public ingress](/docs/adr/0015-towonel-over-pangolin.md)
     - [No HTTP/3 on the Envoy gateways](/docs/adr/0016-no-http3-on-envoy-gateways.md)
     - [aKeyless GitHub Action for CI secrets, replacing GitHub repository secrets](/docs/adr/0017-akeyless-github-action-for-ci-secrets.md)
+    - [SOUL.md carries identity; per-room operating rules live in channel_prompts](/docs/adr/0018-soul-for-identity-channel-prompts-for-rules.md)
+    - [The Hermes agent opens pull requests and cannot land them](/docs/adr/0019-agent-opens-prs-cannot-land-them.md)
 
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)
