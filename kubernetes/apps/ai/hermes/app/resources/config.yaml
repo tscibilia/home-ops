@@ -200,6 +200,12 @@ data:
       cwd: /opt/data/workspace
       timeout: 180
       persistent_shell: true
+      # GITHUB_TOKEN is in _ALWAYS_STRIP_KEYS, so the terminal never sees it and
+      # both `git push` and `gh pr create` fail with no credential. This is the
+      # sanctioned opt-in that re-admits it — the PR workflow is the whole point
+      # of giving the agent a token, and the ruleset is what stops it landing.
+      env_passthrough:
+        - GITHUB_TOKEN
     toolsets:
       - hermes-cli
     web:
