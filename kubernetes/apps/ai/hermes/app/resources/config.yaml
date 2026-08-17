@@ -217,6 +217,7 @@ data:
       - hermes-cli
     web:
       search_backend: searxng
+      extract_backend: firecrawl
   env: |-
     LITELLM_API_KEY={{ .LITELLM_HERMES_AGENTKEY }}
     SECRET_DOMAIN={{ .SECRET_DOMAIN }}
