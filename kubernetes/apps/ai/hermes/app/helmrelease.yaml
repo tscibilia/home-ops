@@ -123,7 +123,13 @@ spec:
               GIT_AUTHOR_EMAIL: &gitEmail 585808+tscibilia@users.noreply.github.com
               GIT_COMMITTER_NAME: *gitUser
               GIT_COMMITTER_EMAIL: *gitEmail
-              GIT_CONFIG_COUNT: "4"
+              # Push auth. GITHUB_TOKEN is scrubbed from every shell the terminal
+              # tool spawns (_ALWAYS_STRIP_KEYS), so an env credential can never
+              # reach git. A key file can — this is the bundled github-auth
+              # skill's Option B. The same key both signs and authenticates; it
+              # is registered on the account twice, as Signing and as Auth.
+              GIT_SSH_COMMAND: ssh -i /opt/data/.ssh/hermes_signing -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new
+              GIT_CONFIG_COUNT: "5"
               GIT_CONFIG_KEY_0: gpg.format
               GIT_CONFIG_VALUE_0: ssh
               GIT_CONFIG_KEY_1: user.signingkey
@@ -132,6 +138,10 @@ spec:
               GIT_CONFIG_VALUE_2: "true"
               GIT_CONFIG_KEY_3: tag.gpgsign
               GIT_CONFIG_VALUE_3: "true"
+              # Rewrites the existing HTTPS clone and every future one onto SSH,
+              # so no re-clone and no remote surgery is needed.
+              GIT_CONFIG_KEY_4: url.git@github.com:.insteadOf
+              GIT_CONFIG_VALUE_4: https://github.com/
               GOPATH: /opt/data/go
               PATH: /opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               PIP_BREAK_SYSTEM_PACKAGES: "1"
