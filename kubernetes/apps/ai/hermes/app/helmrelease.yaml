@@ -51,6 +51,12 @@ spec:
                 # Overwrites any agent self-edit — SOUL.md is GitOps-owned.
                 cp /run/config/SOUL.md /opt/data/SOUL.md
                 chown 10000:10000 /opt/data/SOUL.md
+                # SSH commit-signing key. ssh-keygen refuses a key that is group
+                # or world readable, so 0600 is load-bearing, not hygiene.
+                mkdir -p /opt/data/.ssh
+                chmod 700 /opt/data/.ssh
+                printf '%s\n' "$$GH_HERMES_SIGNING_KEY" > /opt/data/.ssh/hermes_signing
+                chmod 600 /opt/data/.ssh/hermes_signing
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }
@@ -111,11 +117,21 @@ spec:
               HOMEBREW_PREFIX: /opt/data/.local/homebrew
               HOMEBREW_REPOSITORY: /opt/data/.local/homebrew
               GATEWAY_ALLOW_ALL_USERS: true
-              # No ~/.gitconfig on the PVC, so `git commit` has no identity.
+              # No ~/.gitconfig on the PVC, so `git commit` has no identity and no signing
+              # config. GIT_CONFIG_COUNT/KEY/VALUE supplies both without writing a file.
               GIT_AUTHOR_NAME: &gitUser hermes
-              GIT_AUTHOR_EMAIL: &gitEmail hermes@users.noreply.github.com
+              GIT_AUTHOR_EMAIL: &gitEmail 585808+tscibilia@users.noreply.github.com
               GIT_COMMITTER_NAME: *gitUser
               GIT_COMMITTER_EMAIL: *gitEmail
+              GIT_CONFIG_COUNT: "4"
+              GIT_CONFIG_KEY_0: gpg.format
+              GIT_CONFIG_VALUE_0: ssh
+              GIT_CONFIG_KEY_1: user.signingkey
+              GIT_CONFIG_VALUE_1: /opt/data/.ssh/hermes_signing
+              GIT_CONFIG_KEY_2: commit.gpgsign
+              GIT_CONFIG_VALUE_2: "true"
+              GIT_CONFIG_KEY_3: tag.gpgsign
+              GIT_CONFIG_VALUE_3: "true"
               GOPATH: /opt/data/go
               PATH: /opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
               PIP_BREAK_SYSTEM_PACKAGES: "1"
