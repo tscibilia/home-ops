@@ -5,6 +5,8 @@ kind: Model
 metadata:
   name: llama-qwen
 spec:
+  # Refer to [Cliffs](https://github.com/noonghunna/club-3090/blob/master/docs/CLIFFS.md) a/k/a/ sudden VRAM/OOM failure, for Qwen3.x on a single GPU.
+  # Refer to [Qwen3.8-27B club-3090](https://github.com/noonghunna/club-3090/blob/master/models/qwen3.8-27b/llama-cpp/compose/single/unsloth-iq4nl/q8kv.yml) for more config details.
   source: hf://unsloth/Qwen3.8-27B-GGUF
   files:
     - Qwen3.8-27B-UD-Q4_K_XL.gguf
