@@ -41,13 +41,13 @@ convenience layer over those, never the only home for a fact.
 
 - **Always:** read-only inspection, local validation, formatting, linting
   (`flate test all`, `flate build`, `just docs test`).
-- **Ask first:** any git push, anything that touches the live cluster —
-  `just kube apply-ks`, `just kube sync`, `just kube reconcile-ks`,
-  `just kube reconcile-hr`, `just kube restart-ks`, `just kube restart-hr`,
-  `flux reconcile`, `talos apply` — deleting resources.
-- **Never:** commit directly (GPG restriction — hand the user a commit message),
-  commit secrets, decode or print Kubernetes secret values, edit existing ADRs in
-  `docs/adr/` — supersede them instead; adding a new ADR is fine.
+- **Ask first:** any git push the Commit Protocol below does not cover, anything
+  that touches the live cluster — `just kube apply-ks`, `just kube sync`,
+  `just kube reconcile-ks`, `just kube reconcile-hr`, `just kube restart-ks`,
+  `just kube restart-hr`, `flux reconcile`, `talos apply` — deleting resources.
+- **Never:** push to `main`, merge a PR, commit secrets, decode or print
+  Kubernetes secret values, edit existing ADRs in `docs/adr/` — supersede them
+  instead; adding a new ADR is fine.
 
 ## Task Runner & Workflow
 
@@ -71,7 +71,7 @@ convenience layer over those, never the only home for a fact.
 
 1. New app: follow `.agents/skills/add-app/SKILL.md`
 2. Secrets: aKeyless → `externalsecret.yaml`
-3. Provide human in the loop with commit message
+3. Commits and PRs: follow the Commit Protocol below
 4. Docs: update the affected `docs/context/` file(s) in the same change. If the change involved a decision — a trade-off with real alternatives that's costly to reverse — add an ADR instead of writing the rationale into a context file.
 5. Generated docs: adding, removing or renaming an app or a docker stack changes a generated section. Run `just docs generate`. `just docs test` runs both gates — the generated sections and the identifiers — and lefthook runs it pre-commit.
 
@@ -116,11 +116,15 @@ Two rules it enforces:
 
 ## Commit Protocol
 
-Before requesting a commit, ensure:
+**`main` moves only through a PR the user reviewed.** Both paths below are review.
 
-- **Validation**: YAML files are schema-validated, linted, and formatted.
-- **Constraint**: The agent must NOT attempt to commit directly (GPG restriction).
-- **Handoff**: Provide a complete, formatted commit message for user review.
+Either path first: YAML schema-validated, linted, formatted; `just docs generate`
+if an app or docker stack was added, removed or renamed.
+
+- **Local harness** — shares the user's machine and signing key: hand over a
+  formatted commit message and stop.
+- **Remote harness** — own checkout, credentials and signing key (hermes): commit
+  on a feature branch, push it, open the PR, report the URL.
 
 ## Tooling Quirks
 
