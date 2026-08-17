@@ -13,6 +13,4 @@ spec:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
   # renovate: depName="Cert-manager-Kubernetes"
-  grafanaCom:
-    id: 20842
-    revision: 3
+  url: https://grafana.com/api/dashboards/20842/revisions/3/download

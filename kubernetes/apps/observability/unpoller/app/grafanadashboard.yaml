@@ -14,9 +14,7 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: Client Insights - Prometheus"
-  grafanaCom:
-    id: 11315
-    revision: 9
+  url: https://grafana.com/api/dashboards/11315/revisions/9/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -33,9 +31,7 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: Network Sites - Prometheus"
-  grafanaCom:
-    id: 11311
-    revision: 5
+  url: https://grafana.com/api/dashboards/11311/revisions/5/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -52,9 +48,7 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: Client DPI - Prometheus"
-  grafanaCom:
-    id: 11310
-    revision: 5
+  url: https://grafana.com/api/dashboards/11310/revisions/5/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -71,9 +65,7 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: UAP Insights - Prometheus"
-  grafanaCom:
-    id: 11314
-    revision: 10
+  url: https://grafana.com/api/dashboards/11314/revisions/10/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -90,9 +82,7 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: USW Insights - Prometheus"
-  grafanaCom:
-    id: 11312
-    revision: 9
+  url: https://grafana.com/api/dashboards/11312/revisions/9/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
 apiVersion: grafana.integreatly.org/v1beta1
@@ -109,6 +99,4 @@ spec:
       inputName: DS_PROMETHEUS
   folder: Unifi
   # renovate: depName="UniFi-Poller: USG Insights - Prometheus"
-  grafanaCom:
-    id: 11313
-    revision: 9
+  url: https://grafana.com/api/dashboards/11313/revisions/9/download
