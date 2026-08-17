@@ -20,20 +20,17 @@ data:
             context_length: 1048576
           deepseek-v4-flash-free:
             context_length: 200000
-          minimax-m3:
-            context_length: 512000
-          glm-5-2:
-            context_length: 1048560
+          deepseek-v4-flash:
+            context_length: 1048576
     model:
       default: deepseek-v4-flash-free
       provider: litellm
+    # Ordered by what each rung survives: a zen fault, then a WAN fault.
     fallback_providers:
       - provider: litellm
-        model: qwen-local
+        model: qwen-local # on-node, slow to warm
       - provider: litellm
-        model: minimax-m3
-      - provider: litellm
-        model: glm-5-2
+        model: deepseek-v4-flash
     # Side tasks. Default "auto" would reuse the main chat model for all of
     # them; pinning keeps the cheap/local models on the cheap work.
     auxiliary:
@@ -56,7 +53,7 @@ data:
         max_concurrency: 2
       compression:
         provider: custom:litellm
-        model: laguna-s-2-1 # 1M input window — the aux task that reads the most
+        model: laguna-s-2-1 # 1M input window, or deepseek-v4-flash as alt
         max_concurrency: 2
       moa_reference:
         provider: custom:litellm
@@ -90,7 +87,9 @@ data:
             - provider: custom:litellm
               model: qwen-local
             - provider: custom:litellm
-              model: minimax-m3
+              model: deepseek-v4-flash-free
+            - provider: custom:litellm
+              model: laguna-s-2-1
           aggregator:
             provider: custom:litellm
             model: kimi-k3

@@ -112,11 +112,11 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: &name glm-5-2
+  name: &name deepseek-v4-flash
 spec:
   modelName: *name
   params:
-    model: openai/glm-5.2
+    model: openai/deepseek/deepseek-v4-flash
     apiBase: https://openrouter.ai/api/v1
     apiKeyRef:
       name: litellm-secret
@@ -124,17 +124,21 @@ spec:
     additional:
       extra_body:
         provider:
+          # The cheapest host of this model; Zen ~3x this output cost and adds peak/off-peak pricing.
           order: ["deepinfra"]
           allow_fallbacks: false
   info:
     mode: chat
     maxTokens: 131072
-    maxInputTokens: 1048560
+    maxInputTokens: 1048576
     maxOutputTokens: 131072
     supportsFunctionCalling: true
     supportsPromptCaching: true
     extra:
       supports_reasoning: true
+      inputCostPerToken: 0.0000000800
+      cacheReadInputTokenCost: 0.0000000160
+      outputCostPerToken: 0.0000001800
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
@@ -145,6 +149,7 @@ spec:
   modelName: *name
   params:
     model: minimax/minimax-m3
+    # https://opencode.ai/docs/zen#pricing
     apiBase: https://opencode.ai/zen/v1
     apiKeyRef:
       name: litellm-secret
@@ -173,6 +178,7 @@ spec:
   modelName: *name
   params:
     model: openai/kimi-k3
+    # https://opencode.ai/docs/zen#pricing
     apiBase: https://opencode.ai/zen/v1
     apiKeyRef:
       name: litellm-secret
@@ -201,10 +207,15 @@ spec:
   modelName: *name
   params:
     model: openai/deepseek-v4-flash-free
+    # https://opencode.ai/docs/zen#pricing
     apiBase: https://opencode.ai/zen/v1
     apiKeyRef:
       name: litellm-secret
       key: OPENCODE_API_KEY
+    additional:
+      # Zen serves free models to its own client, all others gets 429 FreeUsageLimitError.
+      extra_headers:
+        User-Agent: opencode/1.0
   info:
     mode: chat
     maxTokens: 128000 # Non-free version supports 384000
