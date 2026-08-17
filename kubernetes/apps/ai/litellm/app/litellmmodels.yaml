@@ -256,3 +256,54 @@ spec:
       cache_read_input_token_cost: 0.0000000010
       output_cost_per_token: 0.0000000500
       supports_reasoning: true
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name qwen-image-3
+spec:
+  modelName: *name
+  params:
+    # OpenRouter serves image models over /chat/completions, not /images/generations,
+    # so mode stays `chat` — the picture comes back in message.images[].
+    model: openai/qwen/qwen-image-3
+    apiBase: https://openrouter.ai/api/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENROUTER_API_KEY
+  info:
+    mode: chat
+    maxInputTokens: 65536
+    supportsVision: true
+    extra:
+      # txt+img -> img: emits only images; $0.003 in / $0.03 out per image (fixed img cost)
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+      input_cost_per_image: 0.003
+      output_cost_per_image: 0.03
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name nano-banana-2-lite
+spec:
+  modelName: *name
+  params:
+    model: openai/google/gemini-3.1-flash-lite-image
+    apiBase: https://openrouter.ai/api/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENROUTER_API_KEY
+  info:
+    mode: chat
+    maxTokens: 66000
+    maxInputTokens: 65536
+    maxOutputTokens: 66000
+    supportsVision: true
+    extra:
+      # txt+img -> txt+img: $0.25 in / $1.50 out per 1M text tokens (avg 1K img = $0.034)
+      input_cost_per_token: 0.0000002500
+      output_cost_per_token: 0.0000015000
+      output_cost_per_image_token: 0.0000300000

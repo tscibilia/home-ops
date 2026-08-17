@@ -22,6 +22,12 @@ data:
             context_length: 200000
           deepseek-v4-flash:
             context_length: 1048576
+          # Image models. Hermes has no image-generation auxiliary task, so these
+          # are reachable only when a turn names them explicitly.
+          nano-banana-2-lite:
+            context_length: 65536
+          qwen-image-3:
+            context_length: 65536
     model:
       default: deepseek-v4-flash-free
       provider: litellm
@@ -154,6 +160,9 @@ data:
           Ask one clarifying question when the ask is vague; guess when it is
           cheap to be wrong. Use memory freely — this is the room where
           remembering him is the whole job.
+
+          To make a picture, use qwen-image-3 — it returns an image and no
+          text. Use nano-banana-2-lite only when he asks for it.
       allow_mentions:
         everyone: false
         roles: false
