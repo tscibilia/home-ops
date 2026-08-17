@@ -13,7 +13,4 @@ spec:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
   folder: Networking
-  # renovate: depName="Spegel"
-  grafanaCom:
-    id: 18089
-    revision: 1
+  url: https://grafana.com/api/dashboards/18089/revisions/1/download
