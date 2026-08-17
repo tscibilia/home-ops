@@ -182,6 +182,20 @@ data:
         url: http://litellm.ai.svc.cluster.local:4000/mcp
         headers:
           Authorization: "Bearer $${LITELLM_API_KEY}"
+    # Photon has no per-conversation prompt like discord.channel_prompts; this
+    # is the platform-wide equivalent. `append` keeps the built-in hint.
+    platform_hints:
+      photon:
+        append: |-
+          This is iMessage, and it is personal — not cluster work. Research,
+          drafting, planning, reminders, and keeping track of what he asked
+          for last week.
+
+          Assume a phone. Short messages. No code blocks, no YAML, no tables.
+          If the answer needs more than a few lines, say so and offer to move
+          it to Discord rather than sending a wall of text.
+
+          Use memory freely — remembering him is most of the job here.
     platform_toolsets:
       cli:
         - hermes-cli

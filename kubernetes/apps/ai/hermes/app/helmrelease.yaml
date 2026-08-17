@@ -132,7 +132,8 @@ spec:
               HOMEBREW_CELLAR: /opt/data/.local/homebrew/Cellar
               HOMEBREW_PREFIX: /opt/data/.local/homebrew
               HOMEBREW_REPOSITORY: /opt/data/.local/homebrew
-              GATEWAY_ALLOW_ALL_USERS: true
+              # platform-agnostic allow-all that short-circuits per-platform allowlist
+              GATEWAY_ALLOW_ALL_USERS: false
               # Must match 03-install-tools, or gh looks in the root-owned default.
               GH_CONFIG_DIR: *ghConfigDir
               # No ~/.gitconfig on the PVC, so `git commit` has no identity and no signing
