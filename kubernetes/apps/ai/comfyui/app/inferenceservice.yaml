@@ -43,6 +43,12 @@ spec:
       value: comfyui.${SECRET_DOMAIN}
     - name: CLI_ARGS
       value: ""
+    # ComfyUI-Manager pip-installs node deps into the image's site-packages,
+    # which the next swap discards. Redirect both to the PVC-backed user site.
+    - name: PIP_TARGET
+      value: &pipTarget /root/.local/lib/python3.13/site-packages
+    - name: PYTHONPATH
+      value: *pipTarget
   resources:
     gpu: 1
     cpu: "1"
