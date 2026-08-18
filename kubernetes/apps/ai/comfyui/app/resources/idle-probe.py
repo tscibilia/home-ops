@@ -24,7 +24,7 @@ COMFYUI = "http://127.0.0.1:8188"
 TIMEOUT = 5
 PORT = 9000
 MODEL_ID = "comfyui"
-UI_URL = f"https://{os.environ.get('SERVICEPORTAL_URL', 'comfyui')}"
+UI_URL = f"https://{os.environ.get('COMFYUI_URL', 'comfyui')}"
 
 
 def queued():

@@ -10,7 +10,7 @@ metadata:
 spec:
   modelRef: *app
   runtime: generic
-  image: ghcr.io/ai-dock/comfyui:v2-cuda-12.1.1-base-22.04-v0.2.7@sha256:ca4c95d4d4743d7d5683e57f5e0358fe586bc57578f66c2a844e9fa0650cc619
+  image: docker.io/yanwk/comfyui-boot:cu130-slim-v2@sha256:0887f75dc2fed5a1d89af37f2451fe5fb11883d909ef0a7bb21898a3d12a0b9e
   # replicas is deliberately unset: ModelPool/ai3090-slot owns it. Declaring it
   # here would make Flux revert the pool hourly. `default: llama-qwen`
   skipModelInit: true
@@ -31,37 +31,24 @@ spec:
   endpoint:
     port: *probePort
     type: ClusterIP
+  # The image's own CMD, with the probe started first. Its pre-start.sh hook is
+  # unusable here: it chmods the script, which fails on a read-only mount.
+  command: ["/bin/bash", "-c"]
+  args:
+    - "python3 /root/probe/idle-probe.py & exec bash /runner-scripts/entrypoint.sh"
   env:
-    - name: AUTO_UPDATE
-      value: "false"
-    - name: CF_QUICK_TUNNELS
-      value: "false"
-    - name: DIRECT_ADDRESS_GET_WAN
-      value: "true"
     - name: NVIDIA_DRIVER_CAPABILITIES
       value: compute,utility
-    - name: PROVISIONING_SCRIPT
-      value: https://raw.githubusercontent.com/ai-dock/comfyui/main/config/provisioning/flux.sh
-    - name: SERVERLESS
-      value: "false"
-    - name: SERVICEPORTAL_URL
+    - name: COMFYUI_URL
       value: comfyui.${SECRET_DOMAIN}
-    - name: WEB_ENABLE_AUTH
-      value: "false"
-    - name: WORKSPACE
-      value: /workspace
-    - name: PYTHONPATH
-      value: /workspace/.python-deps
-    - name: PIP_TARGET
-      value: /workspace/.python-deps
+    - name: CLI_ARGS
+      value: ""
   resources:
     gpu: 1
     cpu: "1"
     memory: 12Gi
   podSecurityContext:
     fsGroup: 1000
-  securityContext:
-    privileged: true
   probeOverrides:
     # /healthz answers as soon as ComfyUI does. Ready must not mean "the probe
     # is up" — the pool would hand the slot to a pod that is still loading.
@@ -70,7 +57,7 @@ spec:
         path: /healthz
         port: *probePort
       periodSeconds: 10
-      failureThreshold: 360 # first boot provisions flux weights
+      failureThreshold: 180 # first boot copies the bundle and builds custom nodes
     liveness:
       httpGet:
         path: /healthz
@@ -97,7 +84,6 @@ spec:
     - name: idle-probe
       configMap:
         name: comfyui-idle-probe
-        defaultMode: 0755 # preflight.d entries must be executable
     - name: tmp
       emptyDir: {}
     - name: dshm
@@ -107,27 +93,39 @@ spec:
         medium: Memory
         sizeLimit: 2Gi
   extraVolumeMounts:
+    # subPaths keep the weights the old /workspace tree already holds; the image
+    # copies its bundled ComfyUI around them into the rest of /root/ComfyUI.
     - name: workspace
-      mountPath: /workspace
+      mountPath: /root/ComfyUI/models
+      subPath: ComfyUI/models
+    - name: workspace
+      mountPath: /root/ComfyUI/custom_nodes
+      subPath: ComfyUI/custom_nodes
+    - name: workspace
+      mountPath: /root/ComfyUI/user
+      subPath: ComfyUI/user
+    - name: workspace
+      mountPath: /root/.cache
+      subPath: cache
+    - name: workspace
+      # Custom nodes pip-install here (PIP_USER=true), so it must outlive the pod.
+      mountPath: /root/.local
+      subPath: local
     - name: output
-      mountPath: /workspace/ComfyUI/output
+      mountPath: /root/ComfyUI/output
       subPath: output
     - name: output
-      mountPath: /workspace/ComfyUI/input
+      mountPath: /root/ComfyUI/input
       subPath: input
     - name: output
-      mountPath: /workspace/ComfyUI/workflows
+      mountPath: /root/ComfyUI/user/default/workflows
       subPath: workflows
     - name: config
-      mountPath: /workspace/ComfyUI/custom_nodes/ComfyUI-Manager/config.ini
+      mountPath: /root/ComfyUI/user/default/ComfyUI-Manager/config.ini
       subPath: config.ini
       readOnly: true
     - name: idle-probe
-      mountPath: /opt/ai-dock/bin/preflight.d/idle-probe.sh
-      subPath: idle-probe.sh
-      readOnly: true
-    - name: idle-probe
-      mountPath: /opt/ai-dock/bin/preflight.d/idle-probe.py
+      mountPath: /root/probe/idle-probe.py
       subPath: idle-probe.py
       readOnly: true
     - name: tmp

@@ -71,9 +71,9 @@ ComfyUI's weights and can exceed even that; do that one from a long-lived
 client, after which the workspace PVC makes every later wake the fast path.
 
 Draining needs an idle signal. llama.cpp gives one for free (`/slots`); the
-`generic` runtime has none, so ComfyUI ships `idle-probe.py` (a preflight.d
-script, since an InferenceService cannot run sidecars) answering the path in its
-`inference.llmkube.dev/idle-endpoint` annotation. It reports busy on any error,
+`generic` runtime has none, so ComfyUI ships `idle-probe.py`, started ahead of
+the image's own CMD (an InferenceService cannot run sidecars) and answering the
+path in its `inference.llmkube.dev/idle-endpoint` annotation. It reports busy on any error,
 so a swap is never granted over a render the probe could not see.
 
 > The router pins its proxy to one replica whenever a backend is a pool member:

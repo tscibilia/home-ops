@@ -14,7 +14,6 @@ configMapGenerator:
       - ./resources/config.ini
   - name: comfyui-idle-probe
     files:
-      - ./resources/idle-probe.sh
       - ./resources/idle-probe.py
 generatorOptions:
   disableNameSuffixHash: true
