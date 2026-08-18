@@ -8,7 +8,9 @@ spec:
   modelName: *name
   params:
     model: openai/Qwen3.8-27B
-    apiBase: http://llama-qwen.ai.svc.cluster.local:8080/v1
+    # Router, not the service: naming the model is what wakes it when comfyui
+    # holds the slot. The backend's displayName keeps `model` unchanged.
+    apiBase: http://ai3090-router-router-proxy.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
       key: LLAMA_API_KEY
@@ -41,7 +43,9 @@ spec:
   modelName: *name
   params:
     model: openai/Qwen3.8-27B
-    apiBase: http://llama-qwen.ai.svc.cluster.local:8080/v1
+    # Router, not the service: naming the model is what wakes it when comfyui
+    # holds the slot. The backend's displayName keeps `model` unchanged.
+    apiBase: http://ai3090-router-router-proxy.ai.svc.cluster.local:8080/v1
     apiKeyRef:
       name: litellm-secret
       key: LLAMA_API_KEY
@@ -69,6 +73,35 @@ spec:
       cache_creation_input_token_cost: 0.0000000120
       cache_read_input_token_cost: 0.0000000010
       output_cost_per_token: 0.0000000500
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name comfyui
+spec:
+  # Not a chat model — the wake switch for the GPU slot. Sending it anything
+  # swaps ComfyUI in; the reply carries the UI's URL.
+  modelName: *name
+  params:
+    model: openai/comfyui
+    apiBase: http://ai3090-router-router-proxy.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: LLAMA_API_KEY
+    additional:
+      max_parallel_requests: 1
+      # Must outlast a cold start: if the client gives up first the activator
+      # scales ComfyUI back to zero and the wake is lost.
+      timeout: 1800
+  info:
+    mode: chat
+    maxTokens: 512
+    maxInputTokens: 512
+    maxOutputTokens: 512
+    extra:
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1

@@ -13,18 +13,72 @@ the folder of the app that consumes it**, not under `llmkube/`:
 llmkube/                    # the operator + shared cluster infra only
   ocirepository.yaml  helmrelease.yaml  kustomization.yaml   # the operator
   servicemonitor.yaml       # one SM scrapes every InferenceService (job = service name)
+  modelpool.yaml            # ai3090-slot — spans two apps, so it lives here
+  modelrouter.yaml          # ai3090-router — activates a pool member on request
 
 memini/                     # Intel iGPU helpers, reconciled by the `memini` KS
   memini-embed.yaml  memini-rerank.yaml  memini-summary.yaml
 
 litellm/app/                # chat/vision models, reconciled by the `litellm` KS
   llama-qwen.yaml           # Qwen3.8-27B on RTX 3090 (vision via mmproj)
+
+comfyui/app/                # image/video generation, reconciled by the `comfyui` KS
+  model.yaml  inferenceservice.yaml   # runtime: generic, not llama.cpp
 ```
 
 Each consuming app's own Flux Kustomization reconciles its models (`memini`,
 `litellm` in `apps/ai/`); there is no dedicated `llmkube-models`
 Kustomization. The CRDs come from the `llmkube` operator, so those apps assume
 it's already reconciled (no explicit `dependsOn`).
+
+## The ai3090 GPU slot (`ModelPool`)
+
+`llama-qwen` and `comfyui` cannot co-reside in 24 GB, so `ModelPool/ai3090-slot`
+makes them share one exclusive slot: at most one member is Ready, and the
+incumbent is drained and unloaded (VRAM freed) before the next member loads.
+Exclusivity comes from the device plugin — **every member must request
+`resources.gpu: 1`**, or the pool cannot gate it.
+
+Swapping is `sticky`: whoever holds the slot keeps it until the other member is
+asked for. A busy incumbent is never cut off, and a swap that cannot establish
+idleness stays deferred rather than forcing.
+
+**Members must not declare `spec.replicas`.** The pool patches that field to
+claim and release the slot, so a value in git makes Flux revert the pool on
+every reconcile.
+
+### Flipping the slot
+
+The pool only _enforces_ the invariant; it never decides who should own the
+slot. That decision comes from `ModelRouter/ai3090-router`, whose activator
+scales a member up when a request names it. So the switch is a chat message:
+
+| Want      | Do                                                                                                    |
+| --------- | ----------------------------------------------------------------------------------------------------- |
+| ComfyUI   | send anything to model `comfyui` (open-webui picker, hermes, or a POST to `litellm.${SECRET_DOMAIN}`) |
+| Qwen back | nothing — the next `qwen-local` request drains ComfyUI and reloads it                                 |
+
+`defaultRouteStrategy: BackendNameMatch` is what makes naming the model route
+to that backend. ComfyUI's web UI can never trigger this itself: the activator
+only fires on an OpenAI-shaped request, which a browser page load is not. The
+`comfyui` LiteLLMModel exists purely to give that request somewhere to come
+from, and `idle-probe.py` answers it with the UI's URL.
+
+The caller must outlive the swap. A client that gives up first makes the
+activator `Deactivate` the target, undoing the wake — hence `swapBudget: 1800s`
+on the pool and `timeout: 1800` on the LiteLLMModel. First boot provisions
+ComfyUI's weights and can exceed even that; do that one from a long-lived
+client, after which the workspace PVC makes every later wake the fast path.
+
+Draining needs an idle signal. llama.cpp gives one for free (`/slots`); the
+`generic` runtime has none, so ComfyUI ships `idle-probe.py`, started ahead of
+the image's own CMD (an InferenceService cannot run sidecars) and answering the
+path in its `inference.llmkube.dev/idle-endpoint` annotation. It reports busy on any error,
+so a swap is never granted over a render the probe could not see.
+
+> The router pins its proxy to one replica whenever a backend is a pool member:
+> swaps serialize through an in-process lock, so a second replica would race it
+> and thrash the slot.
 
 ## How weights are sourced
 

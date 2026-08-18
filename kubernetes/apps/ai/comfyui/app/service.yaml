@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/service_v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: comfyui-ui
+spec:
+  # LLMKube's own Service exposes only the probe port, so the web UI needs
+  # this one. Selector copied from what the operator labels its pods with.
+  selector:
+    app: comfyui
+    inference.llmkube.dev/service: comfyui
+  ports:
+    - name: http
+      port: 8188
+      targetPort: 8188

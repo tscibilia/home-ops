@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/modelpool_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: ModelPool
+metadata:
+  name: ai3090-slot
+spec:
+  # One 3090, one resident member. The pool drains and unloads the incumbent
+  # (VRAM freed) before the next member loads; a busy incumbent is never cut off.
+  nodeSelector:
+    feature.node.kubernetes.io/pci-10de.present: "true"
+  gpu: 1
+  swapPolicy: sticky
+  # Must outlast a ComfyUI cold start: on expiry the activator gives up AND
+  # scales the target back to zero, undoing the wake.
+  swapBudget: 1800s
+  members:
+    - inferenceServiceRef:
+        name: llama-qwen
+    - inferenceServiceRef:
+        name: comfyui
+  default: llama-qwen
