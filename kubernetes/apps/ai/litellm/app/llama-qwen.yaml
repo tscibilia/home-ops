@@ -32,7 +32,8 @@ spec:
   rolloutPolicy:
     waitForIdle: true
     idleTimeoutSeconds: 3600
-  replicas: 1
+  # replicas is deliberately unset: ModelPool/ai3090-slot patches it to claim or
+  # release the GPU. Declaring it here would make Flux revert the pool hourly.
   priority: high
   runtimeClassName: nvidia
   nodeSelector:

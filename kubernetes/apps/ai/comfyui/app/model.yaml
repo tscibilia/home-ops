@@ -1,0 +1,11 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/model_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: Model
+metadata:
+  name: &app comfyui
+spec:
+  # An InferenceService is refused unless its modelRef resolves to a Ready Model.
+  # ComfyUI fetches uses (PROVISIONING_SCRIPT), so this CR points where they already live.
+  source: pvc://comfyui/ComfyUI/models
+  format: custom

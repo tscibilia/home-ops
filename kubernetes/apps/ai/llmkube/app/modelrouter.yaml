@@ -1,0 +1,28 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/modelrouter_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: ModelRouter
+metadata:
+  name: ai3090-router
+spec:
+  # Fronts ModelPool/ai3090-slot. Nothing else wakes a member: the pool only
+  # enforces the invariant, this activator decides who owns the slot.
+  backends:
+    - name: llama-qwen
+      tier: local
+      inferenceServiceRef:
+        name: llama-qwen
+      # Keeps the published model id as llama.cpp's own --alias, so litellm's
+      # `model:` line and the upstream request both stay unchanged.
+      displayName: Qwen3.8-27B
+      # Header wait, not generation time. A cold load is bounded by the pool's
+      # swapBudget instead, which this is deliberately decoupled from.
+      timeout: 5m
+    - name: comfyui
+      tier: local
+      inferenceServiceRef:
+        name: comfyui
+  # No rules needed: naming a backend routes to it, everything else lands on
+  # llama-qwen. Classification and complexity routing do not apply to one GPU.
+  defaultRouteStrategy: BackendNameMatch
+  defaultRoute: llama-qwen

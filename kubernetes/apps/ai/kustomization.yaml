@@ -9,7 +9,7 @@ components:
   - ../../components/kopiur/secret
 resources:
   - ./namespace.yaml
-  # - ./comfyui/ks.yaml
+  - ./comfyui/ks.yaml
   - ./hermes/ks.yaml
   - ./litellm/ks.yaml
   - ./llmkube/ks.yaml

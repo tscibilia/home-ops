@@ -1,0 +1,136 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/inferenceservice_v1alpha1.json
+apiVersion: inference.llmkube.dev/v1alpha1
+kind: InferenceService
+metadata:
+  name: &app comfyui
+  annotations:
+    # Runtime has no idle signal; this is how ModelPool learns it's safe to unload. Served by idle-probe.py.
+    inference.llmkube.dev/idle-endpoint: /idle
+spec:
+  modelRef: *app
+  runtime: generic
+  image: ghcr.io/ai-dock/comfyui:v2-cuda-12.1.1-base-22.04-v0.2.7@sha256:ca4c95d4d4743d7d5683e57f5e0358fe586bc57578f66c2a844e9fa0650cc619
+  # replicas is deliberately unset: ModelPool/ai3090-slot owns it. Declaring it
+  # here would make Flux revert the pool hourly. `default: llama-qwen`
+  skipModelInit: true
+  priority: normal
+  rolloutPolicy:
+    waitForIdle: true
+    idleTimeoutSeconds: 3600
+  runtimeClassName: nvidia
+  nodeSelector:
+    feature.node.kubernetes.io/pci-10de.present: "true"
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Exists
+      effect: NoSchedule
+  # The probe port, not ComfyUI's. LLMKube probes http://<podIP>:<containerPort>
+  # and cannot reach a second port, the web UI keeps 8188 and llmkube owns 9000.
+  containerPort: &probePort 9000
+  endpoint:
+    port: *probePort
+    type: ClusterIP
+  env:
+    - name: AUTO_UPDATE
+      value: "false"
+    - name: CF_QUICK_TUNNELS
+      value: "false"
+    - name: DIRECT_ADDRESS_GET_WAN
+      value: "true"
+    - name: NVIDIA_DRIVER_CAPABILITIES
+      value: compute,utility
+    - name: PROVISIONING_SCRIPT
+      value: https://raw.githubusercontent.com/ai-dock/comfyui/main/config/provisioning/flux.sh
+    - name: SERVERLESS
+      value: "false"
+    - name: SERVICEPORTAL_URL
+      value: comfyui.${SECRET_DOMAIN}
+    - name: WEB_ENABLE_AUTH
+      value: "false"
+    - name: WORKSPACE
+      value: /workspace
+    - name: PYTHONPATH
+      value: /workspace/.python-deps
+    - name: PIP_TARGET
+      value: /workspace/.python-deps
+  resources:
+    gpu: 1
+    cpu: "1"
+    memory: 12Gi
+  podSecurityContext:
+    fsGroup: 1000
+  securityContext:
+    privileged: true
+  probeOverrides:
+    # /healthz answers as soon as ComfyUI does. Ready must not mean "the probe
+    # is up" — the pool would hand the slot to a pod that is still loading.
+    startup:
+      httpGet:
+        path: /healthz
+        port: *probePort
+      periodSeconds: 10
+      failureThreshold: 360 # first boot provisions flux weights
+    liveness:
+      httpGet:
+        path: /healthz
+        port: *probePort
+      periodSeconds: 30
+      failureThreshold: 3
+    readiness:
+      httpGet:
+        path: /healthz
+        port: *probePort
+      periodSeconds: 10
+      failureThreshold: 3
+  extraVolumes:
+    - name: workspace
+      persistentVolumeClaim:
+        claimName: *app
+    - name: output
+      nfs:
+        server: truenas.internal
+        path: /mnt/nas/data/shares/comfyui
+    - name: config
+      configMap:
+        name: comfyui-configmap
+    - name: idle-probe
+      configMap:
+        name: comfyui-idle-probe
+        defaultMode: 0755 # preflight.d entries must be executable
+    - name: tmp
+      emptyDir: {}
+    - name: dshm
+      # Replaces the hostIPC the app-template deployment used: torch needs more
+      # than the 64Mi default /dev/shm, and InferenceService cannot set hostIPC.
+      emptyDir:
+        medium: Memory
+        sizeLimit: 2Gi
+  extraVolumeMounts:
+    - name: workspace
+      mountPath: /workspace
+    - name: output
+      mountPath: /workspace/ComfyUI/output
+      subPath: output
+    - name: output
+      mountPath: /workspace/ComfyUI/input
+      subPath: input
+    - name: output
+      mountPath: /workspace/ComfyUI/workflows
+      subPath: workflows
+    - name: config
+      mountPath: /workspace/ComfyUI/custom_nodes/ComfyUI-Manager/config.ini
+      subPath: config.ini
+      readOnly: true
+    - name: idle-probe
+      mountPath: /opt/ai-dock/bin/preflight.d/idle-probe.sh
+      subPath: idle-probe.sh
+      readOnly: true
+    - name: idle-probe
+      mountPath: /opt/ai-dock/bin/preflight.d/idle-probe.py
+      subPath: idle-probe.py
+      readOnly: true
+    - name: tmp
+      mountPath: /tmp
+    - name: dshm
+      mountPath: /dev/shm
