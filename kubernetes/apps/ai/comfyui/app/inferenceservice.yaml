@@ -84,6 +84,10 @@ spec:
     - name: idle-probe
       configMap:
         name: comfyui-idle-probe
+    - name: user-scripts
+      # The entrypoint unconditionally creates this dir and seeds pre-start.sh
+      # into it; /root is not writable, so without a mount here it exits 1.
+      emptyDir: {}
     - name: tmp
       emptyDir: {}
     - name: dshm
@@ -128,6 +132,8 @@ spec:
       mountPath: /root/probe/idle-probe.py
       subPath: idle-probe.py
       readOnly: true
+    - name: user-scripts
+      mountPath: /root/user-scripts
     - name: tmp
       mountPath: /tmp
     - name: dshm
