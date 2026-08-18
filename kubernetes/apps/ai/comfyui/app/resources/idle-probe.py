@@ -3,6 +3,8 @@
 
 /healthz                   200 once ComfyUI answers        -> readiness
 /idle                      200 only when its queue is empty -> safe to unload
+/metrics                   queue depth; the llmkube-models ServiceMonitor
+                           scrapes this port, so 404 here means TargetDown
 GET  /v1/models            advertises this pod as a model
 POST /v1/chat/completions  answers the wake request
 
@@ -51,6 +53,8 @@ class Probe(BaseHTTPRequestHandler):
             self.reply(*self.healthz())
         elif self.path.startswith("/idle"):
             self.reply(*self.idle())
+        elif self.path.startswith("/metrics"):
+            self.reply(200, self.metrics())
         elif self.path.startswith("/v1/models"):
             self.reply_json(200, {
                 "object": "list",
@@ -88,6 +92,23 @@ class Probe(BaseHTTPRequestHandler):
         except Exception as err:  # noqa: BLE001 - unknown state counts as busy
             return 503, f"busy (idle unknown): {err}"
         return (200, "idle") if depth == 0 else (503, f"busy: {depth} queued")
+
+    def metrics(self):
+        try:
+            depth = queued()
+        except Exception:  # noqa: BLE001 - unreachable ComfyUI is reported, not hidden
+            up, depth = 0, 0
+        else:
+            up = 1
+        return (
+            "# HELP comfyui_up ComfyUI answers its HTTP API.\n"
+            "# TYPE comfyui_up gauge\n"
+            f"comfyui_up {up}\n"
+            "# HELP comfyui_queue_depth Running plus pending prompts; the pool "
+            "defers a swap until this reaches zero.\n"
+            "# TYPE comfyui_queue_depth gauge\n"
+            f"comfyui_queue_depth {depth}\n"
+        )
 
     def completion(self, text):
         return {
