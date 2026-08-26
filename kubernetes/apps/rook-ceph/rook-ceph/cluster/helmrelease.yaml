@@ -9,17 +9,7 @@ spec:
     kind: OCIRepository
     name: *app
   interval: 1h
-  # Resolve ceph 1.19.6 issue with `ceph_pool_metadata` having duplicate label combinations
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: PrometheusRule
-              name: prometheus-ceph-rules
-            patch: |
-              - op: replace
-                path: /spec/groups/7/rules/0/expr
-                value: "(max by (cluster, pool_id) (predict_linear(ceph_pool_percent_used[2d], 3600 * 24 * 5)) * on(cluster, pool_id) group_right(name, application) max by (cluster, pool_id, name, application) (ceph_pool_metadata)) >= 95"
+  timeout: 10m
   dependsOn:
     - name: snapshot-controller
       namespace: kube-system
@@ -44,6 +34,15 @@ spec:
         ssl: false
         prometheusEndpoint: http://prometheus-operated.observability.svc.cluster.local:9090
       healthCheck:
+        # CSI keys are pinned to aes below, so these four can never clear on their
+        # own. Unmute once nodes reach kernel 7.0+ and CSI moves to aes256k.
+        muteHealthWarning:
+          AUTH_INSECURE_CLIENT_KEY_TYPE: &mute
+            policy: mute
+          AUTH_INSECURE_KEYS_ALLOWED: *mute
+          AUTH_INSECURE_KEYS_CREATABLE: *mute
+          # Surfaces transiently for 2-3h after daemon keys rotate.
+          AUTH_INSECURE_ROTATING_SERVICE_KEY_TYPE: *mute
         daemonHealth:
           mon:
             disabled: false
@@ -65,6 +64,14 @@ spec:
         osd:
           limits:
             memory: 8Gi
+      security:
+        cephx:
+          # One-shot rotation: bump keyGeneration again to rotate a second time.
+          daemon:
+            keyRotationPolicy: KeyGeneration
+            keyGeneration: 2
+          csi:
+            keyType: aes # aes256k needs kernel 7.0+; nodes are on 6.18
       storage:
         config:
           osdsPerDevice: "1"
