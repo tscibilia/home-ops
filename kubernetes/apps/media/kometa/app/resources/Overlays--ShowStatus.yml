@@ -37,20 +37,20 @@ templates:
       vertical_align: <<vertical_align>>
 
 overlays:
-############################
-#         STATUS           #
-############################
+  ############################
+  #         STATUS           #
+  ############################
 
   Airing:
-    variables: {key: airing, weight: 40, last: 14}
+    variables: { key: airing, weight: 40, last: 14 }
     template: [name: status]
     # suppress_overlays: Returning
   Returning:
-    variables: {key: returning, weight: 30}
+    variables: { key: returning, weight: 30 }
     template: [name: status]
   Canceled:
-    variables: {key: canceled, weight: 20}
+    variables: { key: canceled, weight: 20 }
     template: [name: status]
   Ended:
-    variables: {key: ended, weight: 10}
+    variables: { key: ended, weight: 10 }
     template: [name: status]

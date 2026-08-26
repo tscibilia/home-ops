@@ -11,7 +11,7 @@ templates:
       vertical_align: top
       style: compact
       standard_value: 105
-      back_color: '#00000099'
+      back_color: "#00000099"
       back_radius: 30
       back_width: 305
     conditionals:
@@ -37,9 +37,9 @@ templates:
       back_height: <<height>>
 
 overlays:
-############################
-#          AUDIO           #
-############################
+  ############################
+  #          AUDIO           #
+  ############################
   Opus:
     template:
       - name: AudioCodec
@@ -58,7 +58,7 @@ overlays:
     filters:
       - audio_track_title.regex: '(?i)\bDD[^a-z+]|(?<!e)ac3'
       - filepath.regex: '(?i)\bDD[^a-z+]|(?<!e)ac3'
-# Match DD+/E-AC3 without Atmos
+  # Match DD+/E-AC3 without Atmos
   Dolby-Digital-Plus:
     template:
       - name: AudioCodec
@@ -68,7 +68,7 @@ overlays:
     filters:
       - audio_track_title.regex: '(?i)^(?!.*(atmos))(?=.*\b([^-]DD[P+](?!A)|eac3)\b).*'
       - filepath.regex: '(?i)^(?!.*(atmos))(?=.*\b([^-]DD[P+](?!A)|eac3)\b).*'
-# Match DD+/E-AC3 Atmos
+  # Match DD+/E-AC3 Atmos
   Dolby-Digital-Plus-Atmos:
     template:
       - name: AudioCodec
@@ -106,7 +106,7 @@ overlays:
     filters:
       - audio_track_title.regex: 'dts[-. ]?x(?!\d)'
       - filepath.regex: 'dts[-. ]?x(?!\d)'
-# Match TrueHD without Atmos
+  # Match TrueHD without Atmos
   Dolby-TrueHD:
     template:
       - name: AudioCodec
@@ -126,7 +126,7 @@ overlays:
     filters:
       - audio_track_title.regex: '(?i)(?=.*\b(true[ .-]?hd))(?=.*\b(atmos(\b|\d)))'
       - filepath.regex: '(?i)(?=.*\b(true[ .-]?hd))(?=.*\b(atmos(\b|\d)))'
-# Match ATMOS (undefined), meaning it doesn't know the base audio DD+ or TrueHD
+  # Match ATMOS (undefined), meaning it doesn't know the base audio DD+ or TrueHD
   Dolby-Atmos:
     template:
       - name: AudioCodec

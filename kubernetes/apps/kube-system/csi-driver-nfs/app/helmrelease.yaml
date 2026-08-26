@@ -19,11 +19,11 @@ spec:
         server: truenas.internal
         share: /mnt/nas/data/shares/k8s
       mountOptions:
-        - nfsvers=4    # or vers=3 if your server supports NFSv3
-        - nconnect=16  # sets the number of TCP connections between the client and server
-        - hard         # forces the mount but needs addt'l flags to not cause commmands to hang
-        - noatime      # speeds up access times by eliminating access time updates
-        - timeo=600    # Wait 60 seconds before retrying.
-        - retrans=5    # Retry 5 times before reporting a failure.
+        - nfsvers=4 # or vers=3 if your server supports NFSv3
+        - nconnect=16 # sets the number of TCP connections between the client and server
+        - hard # forces the mount but needs addt'l flags to not cause commmands to hang
+        - noatime # speeds up access times by eliminating access time updates
+        - timeo=600 # Wait 60 seconds before retrying.
+        - retrans=5 # Retry 5 times before reporting a failure.
       reclaimPolicy: Delete
       volumeBindingMode: Immediate

@@ -59,7 +59,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: {drop: ["ALL"]}
+              capabilities: { drop: ["ALL"] }
         serviceAccount:
           identifier: *app
     defaultPodOptions:
@@ -103,27 +103,22 @@ spec:
           rules:
             - apiGroups: ["coordination.k8s.io"]
               resources: ["leases"]
-              verbs:
-                ["get", "list", "watch", "create", "update", "patch", "delete"]
+              verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
             - apiGroups: [""]
               resources: ["events"]
               verbs: ["create", "patch"]
             - apiGroups: [""]
               resources: ["configmaps", "pods", "services"]
-              verbs:
-                ["create", "delete", "get", "list", "patch", "update", "watch"]
+              verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
             - apiGroups: ["apps"]
               resources: ["statefulsets"]
-              verbs:
-                ["create", "delete", "get", "list", "patch", "update", "watch"]
+              verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
             - apiGroups: ["policy"]
               resources: ["poddisruptionbudgets"]
-              verbs:
-                ["create", "delete", "get", "list", "patch", "update", "watch"]
+              verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
             - apiGroups: ["dragonflydb.io"]
               resources: ["dragonflies"]
-              verbs:
-                ["create", "delete", "get", "list", "patch", "update", "watch"]
+              verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
             - apiGroups: ["dragonflydb.io"]
               resources: ["dragonflies/finalizers"]
               verbs: ["update"]
@@ -132,8 +127,7 @@ spec:
               verbs: ["get", "patch", "update"]
             - apiGroups: ["networking.k8s.io"]
               resources: ["networkpolicies"]
-              verbs:
-                ["create", "delete", "get", "list", "patch", "update", "watch"]
+              verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
           type: ClusterRole
     serviceMonitor:
       app:
@@ -155,4 +149,3 @@ spec:
                 namespace: database
               spec:
                 fallbackScrapeProtocol: PrometheusText1.0.0
-

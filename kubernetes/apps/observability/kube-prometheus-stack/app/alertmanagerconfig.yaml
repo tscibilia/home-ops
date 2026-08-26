@@ -26,7 +26,7 @@ spec:
           - name: severity
             value: critical
             matchType: =
-    groupBy:  ["alertname", "cluster", "job"]
+    groupBy: ["alertname", "cluster", "job"]
     groupInterval: 5m
     groupWait: 1m
 

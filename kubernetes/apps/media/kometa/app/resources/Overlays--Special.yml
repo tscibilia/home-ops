@@ -23,9 +23,9 @@ templates:
       vertical_align: <<vertical_align>>
 
 overlays:
-############################
-#         SPECIAL          #
-############################
+  ############################
+  #         SPECIAL          #
+  ############################
   Directors-Cut:
     template:
       - name: SpecialRelease
@@ -90,7 +90,7 @@ overlays:
     plex_all: true
     filters:
       filepath.regex:
-        - '(?i)Criterion'
+        - "(?i)Criterion"
         - '(?i)\[CC\]'
   Final-Cut:
     template:

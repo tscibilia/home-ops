@@ -53,7 +53,7 @@ spec:
       hostUsers: false
       securityContext:
         runAsNonRoot: false # Must be run as root user
-        runAsUser: 0        # Must be run as root user
+        runAsUser: 0 # Must be run as root user
         runAsGroup: 0
         fsGroup: 0
         fsGroupChangePolicy: OnRootMismatch

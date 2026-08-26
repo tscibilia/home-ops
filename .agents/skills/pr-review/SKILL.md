@@ -94,7 +94,7 @@ ADR index). Do not grep READMEs.
 | 5     | Build validation                        | `phase-5-validation.md`       |
 
 Formatting (indentation, trailing whitespace, line endings) is deliberately not a
-phase — lefthook and prettier already enforce it pre-commit, so a phase could only
+phase — lefthook and oxfmt already enforce it pre-commit, so a phase could only
 add noise or false confidence.
 
 ## Severity vocabulary

@@ -1,8 +1,7 @@
 templates:
-
-############################
-#        TEMPLATES         #
-############################
+  ############################
+  #        TEMPLATES         #
+  ############################
 
   Chart: #https://github.com/meisnate12/Plex-Meta-Manager-Configs/blob/322faad6fbbdf83a91a45f733ac8c2192f292975/meisnate12/ShowCharts.yml
     sort_title: +_1<<title>> #++++++++_<<title>>
@@ -60,120 +59,223 @@ templates:
 ############################
 
 collections:
-
-############################
-#          CHARTS          #
-############################
+  ############################
+  #          CHARTS          #
+  ############################
 
   Trending Movies:
-    template: {name: Chart, title: a-Trending, visible: false, poster: https://theposterdb.com/api/assets/204196}
+    template:
+      {
+        name: Chart,
+        title: a-Trending,
+        visible: false,
+        poster: https://theposterdb.com/api/assets/204196,
+      }
     imdb_chart: popular_movies
     collection_order: custom
   Popular Movies:
-    template: {name: Chart, title: b-Popular, visible: false, poster: https://theposterdb.com/api/assets/204194}
+    template:
+      {
+        name: Chart,
+        title: b-Popular,
+        visible: false,
+        poster: https://theposterdb.com/api/assets/204194,
+      }
     tmdb_popular: 30
     smart_label: random
 
-############################
-#         BEST OF          #
-############################
+  ############################
+  #         BEST OF          #
+  ############################
 
   Best of the 1970s:
-    template: {name: Best of, year: a70, yearGte: 1970, yearLte: 1979, poster: https://theposterdb.com/api/assets/105332}
+    template:
+      {
+        name: Best of,
+        year: a70,
+        yearGte: 1970,
+        yearLte: 1979,
+        poster: https://theposterdb.com/api/assets/105332,
+      }
   Best of the 1980s:
-    template: {name: Best of, year: a80, yearGte: 1980, yearLte: 1989, poster: https://theposterdb.com/api/assets/105333}
+    template:
+      {
+        name: Best of,
+        year: a80,
+        yearGte: 1980,
+        yearLte: 1989,
+        poster: https://theposterdb.com/api/assets/105333,
+      }
   Best of the 1990s:
-    template: {name: Best of, year: a90, yearGte: 1990, yearLte: 1999, poster: https://theposterdb.com/api/assets/448565}
+    template:
+      {
+        name: Best of,
+        year: a90,
+        yearGte: 1990,
+        yearLte: 1999,
+        poster: https://theposterdb.com/api/assets/448565,
+      }
   Best of the 2000s:
-    template: {name: Best of, year: z00, yearGte: 2000, yearLte: 2009, poster: https://i.imgur.com/a7do3gJ.jpeg}
+    template:
+      {
+        name: Best of,
+        year: z00,
+        yearGte: 2000,
+        yearLte: 2009,
+        poster: https://i.imgur.com/a7do3gJ.jpeg,
+      }
   Best of the 2010s:
-    template: {name: Best of, year: z10, yearGte: 2010, yearLte: 2019, poster: https://theposterdb.com/api/assets/398491}
+    template:
+      {
+        name: Best of,
+        year: z10,
+        yearGte: 2010,
+        yearLte: 2019,
+        poster: https://theposterdb.com/api/assets/398491,
+      }
   Best of the 2020s:
-    template: {name: Best of, year: z20, yearGte: 2020, yearLte: 2029, poster: https://theposterdb.com/api/assets/398490}
+    template:
+      {
+        name: Best of,
+        year: z20,
+        yearGte: 2020,
+        yearLte: 2029,
+        poster: https://theposterdb.com/api/assets/398490,
+      }
 
-############################
-#         STUDIOS          #
-############################
+  ############################
+  #         STUDIOS          #
+  ############################
 
   Studio Ghibli:
-    template: {name: Studio, company: 10342, poster: https://theposterdb.com/api/assets/16569}
+    template: { name: Studio, company: 10342, poster: https://theposterdb.com/api/assets/16569 }
     summary: Studio Ghibli Inc. is a Japanese animation film studio headquartered in Koganei, Tokyo. The studio is best known for its animated feature films, and has also produced several short films, television commercials, and one television film. The studio’s mascot and most recognizable symbol is the character, Totoro, a giant cat-like spirit from the 1988 classic, My Neighbor Totoro.
   DC Extended Universe:
-    template: {name: Studio, poster: https://theposterdb.com/api/assets/48242}
+    template: { name: Studio, poster: https://theposterdb.com/api/assets/48242 }
     imdb_list: https://www.imdb.com/list/ls538267100/
     summary: The DC Extended Universe (DCEU) is a series of superhero films, distributed by Warner Bros. Pictures and based on characters that appear in American comic books by DC Comics. The shared universe, much like the original DC Universe in comic books and the television programs, was established by crossing over common plot elements, settings, cast, and characters.
   Marvel Cinematic Universe:
-    template: {name: Studio, poster: https://theposterdb.com/api/assets/5912}
+    template: { name: Studio, poster: https://theposterdb.com/api/assets/5912 }
     imdb_list: https://www.imdb.com/list/ls031310794/
     summary: The Marvel Cinematic Universe (MCU) is an American media franchise and shared universe centered on a series of superhero films, independently produced by Marvel Studios and based on characters that appear in American comic books published by Marvel Comics. The franchise includes comic books, short films, television series, and digital series. The shared universe, much like the original Marvel Universe in comic books, was established by crossing over common plot elements, settings, cast, and characters. The first MCU film is Iron Man (2008), which began the films of Phase One culminating in the crossover film The Avengers (2012). Phase Two began with Iron Man 3 (2013) and concluded with Ant-Man (2015). Phase Three began with Captain America - Civil War (2016) and concluded with Spider-Man - Far From Home (2019). The first three phases in the franchise are collectively known as "The Infinity Saga". The films of Phase Four will begin with Black Widow (2021) and are set to conclude with Guardians of the Galaxy Vol. 3 (2023).
   Blue Sky Animation:
-    template: {name: Studio, company: 9383, poster: https://theposterdb.com/api/assets/38152}
+    template: { name: Studio, company: 9383, poster: https://theposterdb.com/api/assets/38152 }
     summary: Blue Sky Studios, Inc. is an American computer animation film studio based in Greenwich, Connecticut. It is a subsidiary of 20th Century Animation, a division of Disney Studios Content.
   DreamWorks:
-    template: {name: Studio, company: 521, poster: https://theposterdb.com/api/assets/8589}
+    template: { name: Studio, company: 521, poster: https://theposterdb.com/api/assets/8589 }
     summary: DreamWorks Animation LLC (also simply known as DreamWorks) is an American animation studio and a subsidiary of Universal Pictures, itself a subsidiary of Comcast's NBCUniversal. It is based in Glendale, California, and produces animated feature films, television programs, and online virtual games.
   Illumination:
-    template: {name: Studio, company: 6704, poster: https://theposterdb.com/api/assets/8158}
+    template: { name: Studio, company: 6704, poster: https://theposterdb.com/api/assets/8158 }
     summary: Illumination is an American film and animation studio founded by Chris Meledandri in 2007 and owned by Universal Pictures, a division of NBCUniversal, which is itself a division of Comcast. Meledandri produces the films, while Universal finances and distributes all the films. The studio is responsible for the Despicable Me and The Secret Life of Pets franchises and the film adaptations of Dr. Seuss’ books The Lorax and How the Grinch Stole Christmas. The Minions, characters from the Despicable Me series, are the studio's mascots.
   Pixar:
-    template: {name: Studio, company: 3, poster: https://theposterdb.com/api/assets/38226}
+    template: { name: Studio, company: 3, poster: https://theposterdb.com/api/assets/38226 }
     summary: Pixar Animation Studios, commonly known as Pixar, is an American computer animation studio based in Emeryville, California, a subsidiary of Disney Studios Content owned by The Walt Disney Company. Pixar began in 1979 as part of the Lucasfilm computer division, known as the Graphics Group, before its spin-off as a corporation on February 3, 1986, with funding from Apple co-founder Steve Jobs, who became its majority shareholder. Disney purchased Pixar in 2006 at a valuation of $7.4 billion by converting each share of Pixar stock to 2.3 shares of Disney stock, a transaction that resulted in Jobs becoming Disney's largest single shareholder at the time. Pixar is best known for its feature films technologically powered by RenderMan, the company's own implementation of the industry-standard RenderMan Interface Specification image-rendering application programming interface. Luxo Jr., a desk lamp from the studio's 1986 short film of the same name, is the studio's mascot.
   Sony Pictures Animation:
-    template: {name: Studio, company: 2251, poster: https://theposterdb.com/api/assets/131749}
+    template: { name: Studio, company: 2251, poster: https://theposterdb.com/api/assets/131749 }
     summary: Sony Pictures Animation Inc. is an American animation studio owned by Sony Entertainment's Sony Pictures Entertainment through their Motion Picture Group division and founded on May 9, 2002. The studio's films are distributed worldwide by Sony Pictures Releasing under their Columbia Pictures label, while all direct-to-video releases are released by Sony Pictures Home Entertainment.
   Walt Disney Animation Studios:
-    template: {name: Studio, poster: https://theposterdb.com/api/assets/6016}
+    template: { name: Studio, poster: https://theposterdb.com/api/assets/6016 }
     imdb_list: https://www.imdb.com/list/ls059383351/
     summary: Walt Disney Animation Studios (WDAS), sometimes shortened to Disney Animation, is an American animation studio that creates animated features and short films for The Walt Disney Company. Founded on October 16, 1923 by brothers Walt Disney and Roy O. Disney, it is one of the oldest-running animation studios in the world. It is currently organized as a division of Walt Disney Studios and is headquartered at the Roy E. Disney Animation Building at the Walt Disney Studios lot in Burbank, California.
   Walt Disney Pictures:
-    template: {name: Studio, poster: https://theposterdb.com/api/assets/16549}
+    template: { name: Studio, poster: https://theposterdb.com/api/assets/16549 }
     imdb_list: https://www.imdb.com/list/ls077114097/
     summary: Walt Disney Pictures is an American film production studio of The Walt Disney Studios, which is owned by The Walt Disney Company. The studio is the flagship producer of live-action feature films within the Walt Disney Studios unit, and is based at the Walt Disney Studios in Burbank, California. Animated films produced by Walt Disney Animation Studios and Pixar Animation Studios are also released under this brand. Walt Disney Studios Motion Pictures distributes and markets the films produced by Walt Disney Pictures.
   Warner Bros.:
-    template: {name: Studio, company: 25120, poster: https://theposterdb.com/api/assets/47604}
+    template: { name: Studio, company: 25120, poster: https://theposterdb.com/api/assets/47604 }
     summary: Warner Bros. is the third-oldest American movie studio in continuous operation, after Paramount Pictures was founded on May 8, 1912 as Famous Players Film Corporation, and Universal Studios founded on June 8, 1912. Warner Bros. incorporated on April 4, 1923.
 
-###########################
-#       COLLECTIONS       #
-###########################
+  ###########################
+  #       COLLECTIONS       #
+  ###########################
   James Bond:
-    template: {name: Movie, collection: 645, summary: 645, poster: https://theposterdb.com/api/assets/115662}
+    template:
+      {
+        name: Movie,
+        collection: 645,
+        summary: 645,
+        poster: https://theposterdb.com/api/assets/115662,
+      }
     radarr_add_missing: true
   X-Men:
-    template: {name: Movie, collection: 748, summary: 748, poster: https://theposterdb.com/api/assets/20}
+    template:
+      { name: Movie, collection: 748, summary: 748, poster: https://theposterdb.com/api/assets/20 }
   Mission Impossible:
-    template: {name: Movie, collection: 87359, summary: 87359, poster: https://theposterdb.com/api/assets/65202}
+    template:
+      {
+        name: Movie,
+        collection: 87359,
+        summary: 87359,
+        poster: https://theposterdb.com/api/assets/65202,
+      }
   Pirates of the Caribbean:
-    template: {name: Movie, collection: 295, summary: 295, poster: https://theposterdb.com/api/assets/71934}
+    template:
+      {
+        name: Movie,
+        collection: 295,
+        summary: 295,
+        poster: https://theposterdb.com/api/assets/71934,
+      }
   Jurassic Park:
-    template: {name: Movie, collection: 328, summary: 328, poster: https://theposterdb.com/api/assets/45080}
+    template:
+      {
+        name: Movie,
+        collection: 328,
+        summary: 328,
+        poster: https://theposterdb.com/api/assets/45080,
+      }
     radarr_add_missing: true
   Harry Potter:
-    template: {name: Movie, collection: 1241, summary: 1241, poster: https://theposterdb.com/api/assets/545}
+    template:
+      {
+        name: Movie,
+        collection: 1241,
+        summary: 1241,
+        poster: https://theposterdb.com/api/assets/545,
+      }
   Lord of the Rings:
-    template: {name: Movie, summary: 119, poster: https://theposterdb.com/api/assets/33509}
+    template: { name: Movie, summary: 119, poster: https://theposterdb.com/api/assets/33509 }
     imdb_list: https://www.imdb.com/list/ls566772032
   The Matrix:
-    template: {name: Movie, collection: 2344, summary: 2344, poster: https://theposterdb.com/api/assets/12041}
+    template:
+      {
+        name: Movie,
+        collection: 2344,
+        summary: 2344,
+        poster: https://theposterdb.com/api/assets/12041,
+      }
   Star Wars:
-    template: {name: Movie, collection: 10, summary: 10, poster: https://theposterdb.com/api/assets/46969}
+    template:
+      { name: Movie, collection: 10, summary: 10, poster: https://theposterdb.com/api/assets/46969 }
   Die Hard:
-    template: {name: Movie, collection: 1570, summary: 1570, poster: https://theposterdb.com/api/assets/35982}
+    template:
+      {
+        name: Movie,
+        collection: 1570,
+        summary: 1570,
+        poster: https://theposterdb.com/api/assets/35982,
+      }
   Aliens:
-    template: {name: Movie, collection: 8091, summary: 8091, poster: https://theposterdb.com/api/assets/1213}
+    template:
+      {
+        name: Movie,
+        collection: 8091,
+        summary: 8091,
+        poster: https://theposterdb.com/api/assets/1213,
+      }
     letterboxd_list: https://letterboxd.com/director525/list/aliens/
   Anorak's Almanac:
-    template: {name: Movie, poster: https://theposterdb.com/api/assets/628116}
+    template: { name: Movie, poster: https://theposterdb.com/api/assets/628116 }
     letterboxd_list: https://letterboxd.com/jonthemantis/list/ready-player-one-anoraks-almanac/
     summary: A list of all movies referenced in the book Ready Player One.
 
-############################
-#         HOLIDAYS         #
-############################
+  ############################
+  #         HOLIDAYS         #
+  ############################
 
   Christmas Movies:
     schedule: range(11/24-12/31)
-    template: {name: Holiday, poster: https://theposterdb.com/api/assets/69443}
+    template: { name: Holiday, poster: https://theposterdb.com/api/assets/69443 }
     imdb_list:
       - https://www.imdb.com/list/ls025976544/
       - https://www.imdb.com/list/ls003863000/
@@ -185,7 +287,7 @@ collections:
         - eyes wide shut
   Halloween Horror Movies:
     schedule: range(10/01-10/31)
-    template: {name: Holiday, poster: https://theposterdb.com/api/assets/51475}
+    template: { name: Holiday, poster: https://theposterdb.com/api/assets/51475 }
     letterboxd_list:
       - https://letterboxd.com/brumder/list/top-1000-horror-movies-aggregated-from-over/
     mdblist_list:
@@ -212,7 +314,7 @@ collections:
         - hotel transylvania
   Halloween Family Movies:
     schedule: range(10/01-10/31)
-    template: {name: Holiday, poster: https://theposterdb.com/api/assets/111218}
+    template: { name: Holiday, poster: https://theposterdb.com/api/assets/111218 }
     letterboxd_list:
       - https://letterboxd.com/slickspics/list/31-days-of-halloween-family-friendly-version/
     mdblist_list:
@@ -222,19 +324,18 @@ collections:
       - https://www.imdb.com/list/ls025783055/
   Thanksgiving Movies:
     schedule: range(11/01-11/25)
-    template: {name: Holiday, poster: https://theposterdb.com/api/assets/112252}
+    template: { name: Holiday, poster: https://theposterdb.com/api/assets/112252 }
     imdb_list:
       - https://www.imdb.com/list/ls000835734/
       - https://www.imdb.com/list/ls091597850/
   New Year's Eve Movies:
     schedule: range(12/26-01/05)
-    template: {name: Holiday, poster: https://i.imgur.com/YCYXhAX.png}
+    template: { name: Holiday, poster: https://i.imgur.com/YCYXhAX.png }
     imdb_list: https://www.imdb.com/list/ls066838460/
   Valentine's Day Movies:
     schedule: range(02/01-02/14)
-    template: {name: Holiday, poster: https://theposterdb.com/api/assets/219483}
+    template: { name: Holiday, poster: https://theposterdb.com/api/assets/219483 }
     imdb_list:
       - https://www.imdb.com/list/ls000094398/
       - https://www.imdb.com/list/ls057783436/
       - https://www.imdb.com/list/ls064427905/
-
