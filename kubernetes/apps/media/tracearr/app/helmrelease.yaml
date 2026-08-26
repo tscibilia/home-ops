@@ -98,5 +98,7 @@ spec:
             app:
               - path: /app/data/image-cache
                 subPath: image-cache
+              - path: /data/backup
+                subPath: backup
               - path: /tmp
                 subPath: tmp
