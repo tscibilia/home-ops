@@ -123,7 +123,7 @@ jobs:
           allow_approve: "true"
           # Exact host match, no subdomain or www fallback. Redirects are
           # re-validated per hop, so a bare domain that 301s to www needs both.
-          allowed_source_hosts: github.com,api.github.com,raw.githubusercontent.com,gitlab.com,codeberg.org,registry.terraform.io,artifacthub.io,actualbudget.org,cloudnative-pg.io,postgresql.org,www.postgresql.org,fluxcd.io,docs.cilium.io,rook.io,external-secrets.io,gateway.envoyproxy.io,kubernetes.io,kubernetes-sigs.github.io,talos.dev,www.talos.dev,bjw-s.dev,grafana.com,docs.fluentbit.io,git.erwanleboucher.dev
+          allowed_source_hosts: github.com,api.github.com,raw.githubusercontent.com,gitlab.com,codeberg.org,registry.terraform.io,artifacthub.io,actualbudget.org,cloudnative-pg.io,postgresql.org,www.postgresql.org,fluxcd.io,docs.cilium.io,rook.io,external-secrets.io,gateway.envoyproxy.io,kubernetes.io,kubernetes-sigs.github.io,talos.dev,www.talos.dev,bjw-s.dev,grafana.com,docs.fluentbit.io,git.erwanleboucher.dev,hub.docker.com
           ai_base_url: http://litellm.ai.svc.cluster.local:4000/v1
           ai_api_format: openai
           ai_model: laguna-s-2-1
