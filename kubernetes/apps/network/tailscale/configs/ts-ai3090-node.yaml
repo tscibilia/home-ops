@@ -29,8 +29,10 @@ spec:
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
-                  name: ts-ai3090-node-0
+                  name: ts-ai3090-node-authkey
                   key: authkey
+            # State secret is written by tailscaled and owned by no ExternalSecret —
+            # an ESO refresh here would clobber persist.state and reset node identity.
             - name: TS_KUBE_SECRET
               valueFrom:
                 fieldRef:
