@@ -8,7 +8,11 @@ metadata:
     cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   instances: 3
-  imageName: timescale/timescaledb-ha:pg18.4-ts2.29.2@sha256:4e576b8c339fa3413c6a6aa9cd22953b42ecf4b13f4efedacb97ce8bd1b43b30
+  imageCatalogRef:
+    apiGroup: postgresql.cnpg.io
+    kind: ImageCatalog
+    name: timescaledb
+    major: 18
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   postgresGID: 1000
