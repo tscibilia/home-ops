@@ -4,6 +4,7 @@
 
 - **ai3090 GPU toleration required:** Any pod targeting ai3090 must include `tolerations: [{key: "nvidia.com/gpu", operator: "Exists", effect: "NoSchedule"}]` — there is no fallback node; the pod will be unschedulable without it.
 - **openebs-hostpath is node-local:** If a pod using `openebs-hostpath` reschedules to a different node, the PVC data is inaccessible. Do not use for workloads that may move nodes.
+- **Kubelet image GC must stay under Ceph's threshold:** `/var` (400 GiB, `nvme0n1p4`) holds both the containerd image store and the Ceph MON store. Ceph fires `MON_DISK_LOW` at 70% used, so `imageGCHighThresholdPercent` is 60 / low 50 — raising it above 70 means kubelet never prunes and the MON warning fires instead.
 - **`local-hdd` is ai3090-only:** Static PV on the ai3090 HDD (`/var/mnt/local-hdd`), no dynamic provisioning — a pod using it is pinned to that node. See `storage.md`.
 
 ## All Nodes (base config)

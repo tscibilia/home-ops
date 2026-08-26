@@ -40,3 +40,18 @@ spec:
         cpu: 100m
       limits:
         memory: 2Gi
+    webhook:
+      # one unreachable pod blocks every kopiur CR write cluster-wide
+      replicaCount: 2
+      podDisruptionBudget:
+        enabled: true
+        minAvailable: 1
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: *app
+              app.kubernetes.io/instance: *app
+              app.kubernetes.io/component: webhook
