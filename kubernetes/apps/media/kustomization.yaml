@@ -12,6 +12,7 @@ resources:
   - ./agregarr/ks.yaml
   - ./autobrr/ks.yaml
   - ./bazarr/ks.yaml
+  - ./cleanrr/ks.yaml
   - ./flaresolverr/ks.yaml
   - ./hometube/ks.yaml
   - ./imagemaid/ks.yaml

@@ -103,6 +103,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - agregarr _(home media aggregator dashboard)_ [kopiur]
 - autobrr _(torrent automation)_ [kopiur, zeroscaler, oidc]
 - bazarr _(subtitles)_ [kopiur, auth, zeroscaler]
+- cleanrr
 - flaresolverr _(solves cloudflare captcha)_
 - hometube _(yt-dlp UI)_ [kopiur, auth, zeroscaler]
 - imagemaid _(Plex image cleanup)_
