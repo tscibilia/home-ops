@@ -10,7 +10,7 @@ spec:
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-timescale
       namespace: database
     - name: dragonfly-cluster
       namespace: database
@@ -20,7 +20,7 @@ spec:
     substitute:
       APP: *app
       GATUS_PATH: /health
-      CNPG_NAME: &postgresAppName pgsql-cluster
+      CNPG_NAME: &postgresAppName pgcluster-timescale
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
