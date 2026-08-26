@@ -39,6 +39,12 @@
       allowedVersions: "/^0\\./",
     },
     {
+      description: "Constrain prompp to 0.x (3.8.x is the same manifest digest as 0.8.x)",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/deckhouse/prompp"],
+      allowedVersions: "/^0\\./",
+    },
+    {
       description: "Resolve Immich from GitHub releases (paging 40k+ GHCR tags intermittently 429s, failing the lookup)",
       matchDatasources: ["docker"],
       matchPackageNames: [
