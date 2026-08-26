@@ -44,6 +44,8 @@ spec:
     parameters:
       max_connections: "200"
       shared_buffers: 256MB
+      # drop_chunks locks all ~4.2k library_snapshots chunks plus indexes in one transaction
+      max_locks_per_transaction: "512"
     pg_hba: ["host all all 10.42.0.0/16 scram-sha-256"]
     shared_preload_libraries: ["timescaledb"]
   resources:
