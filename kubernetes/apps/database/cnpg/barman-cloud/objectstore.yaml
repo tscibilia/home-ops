@@ -26,7 +26,7 @@ spec:
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
-  name: immich17
+  name: pgcluster-timescale
 spec:
   retentionPolicy: 7d
   configuration:
