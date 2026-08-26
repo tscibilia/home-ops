@@ -19,10 +19,10 @@
       schedule: ["before 3am on Monday"],
     },
     {
-      description: "Track FileBrowser Quantum 2.x.x-preview-x only (v2 config layout is still moving; a silent jump to stable risks a config migration)",
+      description: "Track FileBrowser Quantum 2.x.x-beta only (v2 config layout is still moving; a silent jump to stable risks a config migration, and stable/latest still resolve to the v1 line)",
       matchDatasources: ["docker"],
-      matchPackageNames: ["docker.io/gtstef/filebrowser"],
-      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-preview-(?<build>\\d+)$",
+      matchPackageNames: ["ghcr.io/gtsteffaniak/filebrowser"],
+      versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-beta$",
       allowedVersions: "/^2\\./",
     },
     {

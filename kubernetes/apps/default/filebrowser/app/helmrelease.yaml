@@ -17,11 +17,11 @@ spec:
         containers:
           app:
             image:
-              # TODO: v2 is in preview. Renovate is pinned to 2.x.x-preview-x via a regex
-              # versioning rule in .renovate/overrides.json5 — GA tags will NOT match, so
-              # the move to stable is deliberate. Drop both when v2.0.0 ships.
-              repository: docker.io/gtstef/filebrowser
-              tag: 2.0.0-preview-5@sha256:858a60fc6e742f2d4e12669074d08b242e2e670e71414aba1597caad54ed22c4
+              # TODO: v2 is in beta. Renovate is pinned to 2.x.x-beta via a regex rule in
+              # .renovate/overrides.json5 — stable/latest still resolve to v1, so matching
+              # them would downgrade. Drop both when v2.0.0 GA ships.
+              repository: ghcr.io/gtsteffaniak/filebrowser
+              tag: 2.0.2-beta@sha256:50930d29da45eed1ebe0ecbb4a86ffd1947400c1d6d496f981351bdc505f0214
             env:
               FILEBROWSER_CONFIG: /config/config.yaml
             probes:
