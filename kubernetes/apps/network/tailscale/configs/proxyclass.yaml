@@ -8,9 +8,6 @@ spec:
   statefulSet:
     pod:
       tailscaleContainer:
-        env:
-          - name: TS_DEBUG_MTU
-            value: "1280"
         resources:
           limits:
             kernel.org/tun: 1
