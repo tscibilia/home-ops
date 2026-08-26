@@ -21,6 +21,7 @@ spec:
               tag: 3.25.0@sha256:f96e37e04a5e2da56edc39d96774102599de7d7617e2cc00a49a1581b01be136
             env:
               UI_PORT: &port 80
+              TELEMETRY: off
             resources:
               requests:
                 cpu: 10m
