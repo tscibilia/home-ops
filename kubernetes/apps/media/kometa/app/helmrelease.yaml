@@ -30,11 +30,11 @@ spec:
               HOME: /tmp
             args:
               - |
-                  mkdir -p /config/overlays;
-                  mkdir -p /config/assets;
-                  mc alias set s3 https://s3.t0m.co '' '' --api S3v4;
-                  mc mirror --overwrite --remove s3/t0m-public/kometa/overlays/ /config/overlays/;
-                  mc mirror --overwrite --remove s3/t0m-public/kometa/assets/ /config/assets/
+                mkdir -p /config/overlays;
+                mkdir -p /config/assets;
+                mc alias set s3 https://s3.t0m.co '' '' --api S3v4;
+                mc mirror --overwrite --remove s3/t0m-public/kometa/overlays/ /config/overlays/;
+                mc mirror --overwrite --remove s3/t0m-public/kometa/assets/ /config/assets/
         containers:
           app:
             image:

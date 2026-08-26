@@ -78,4 +78,3 @@ spec:
           - path: /dev/zwave
       tmp:
         type: emptyDir
-

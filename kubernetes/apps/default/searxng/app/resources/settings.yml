@@ -85,4 +85,4 @@ engines:
     disabled: false
     weight: 1
   - name: brave
-    disabled: true  # getting 429s, must be disabled
+    disabled: true # getting 429s, must be disabled

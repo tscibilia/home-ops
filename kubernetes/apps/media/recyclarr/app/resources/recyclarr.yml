@@ -39,17 +39,17 @@ sonarr:
           - 1b3994c551cbb92a2c781af061f4ab44 # Scene
         assign_scores_to:
           - name: WEB-1080p (Alternative)
-          - name: '[Anime] Remux-1080p'
+          - name: "[Anime] Remux-1080p"
       - trash_ids:
           - d7c747094a7c65f4c2de083c24899e8b # Proritize Freeleech
         assign_scores_to:
           - name: WEB-1080p (Alternative)
-          - name: '[Anime] Remux-1080p'
+          - name: "[Anime] Remux-1080p"
             score: 250
       - trash_ids:
           - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
         assign_scores_to:
-          - name: '[Anime] Remux-1080p'
+          - name: "[Anime] Remux-1080p"
             score: 2000 # Require (Jap/Eng) dual audio
 
 radarr:

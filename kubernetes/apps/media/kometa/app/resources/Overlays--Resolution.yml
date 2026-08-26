@@ -49,9 +49,9 @@ templates:
       vertical_offset: <<vertical_offset>>
       vertical_align: <<vertical_align>>
 overlays:
-############################
-#       RESOLUTION         #
-############################
+  ############################
+  #       RESOLUTION         #
+  ############################
   4K-DV:
     template:
       - name: Resolution
@@ -60,7 +60,7 @@ overlays:
         opt2: dv
     plex_search:
       all:
-        resolution.regex: '(?i)2160|4k'
+        resolution.regex: "(?i)2160|4k"
     filters:
       has_dolby_vision: true
   4K-HDR:
@@ -71,7 +71,7 @@ overlays:
         opt2: hdr
     plex_search:
       all:
-        resolution.regex: '(?i)2160|4k'
+        resolution.regex: "(?i)2160|4k"
         hdr: true
   4K:
     template:
@@ -80,7 +80,7 @@ overlays:
         opt1: 4k
     plex_search:
       any:
-        resolution.regex: '(?i)2160|4k'
+        resolution.regex: "(?i)2160|4k"
   1080P-DV:
     template:
       - name: Resolution
@@ -89,7 +89,7 @@ overlays:
         opt2: dv
     plex_search:
       all:
-        resolution.regex: '(?i)1080|2k'
+        resolution.regex: "(?i)1080|2k"
     filters:
       has_dolby_vision: true
   1080P-HDR:
@@ -100,7 +100,7 @@ overlays:
         opt2: hdr
     plex_search:
       all:
-        resolution.regex: '(?i)1080|2k'
+        resolution.regex: "(?i)1080|2k"
         hdr: true
   1080P:
     template:
@@ -109,7 +109,7 @@ overlays:
         opt1: 1080p
     plex_search:
       any:
-        resolution.regex: '(?i)1080|2k'
+        resolution.regex: "(?i)1080|2k"
   720P-DV:
     template:
       - name: Resolution
@@ -118,7 +118,7 @@ overlays:
         opt2: dv
     plex_search:
       all:
-        resolution.regex: '(?i)720|hd'
+        resolution.regex: "(?i)720|hd"
     filters:
       has_dolby_vision: true
   720P-HDR:
@@ -129,7 +129,7 @@ overlays:
         opt2: hdr
     plex_search:
       all:
-        resolution.regex: '(?i)720|hd'
+        resolution.regex: "(?i)720|hd"
         hdr: true
   720P:
     template:
@@ -138,7 +138,7 @@ overlays:
         opt1: 720p
     plex_search:
       any:
-        resolution.regex: '(?i)720|hd'
+        resolution.regex: "(?i)720|hd"
   576P-DV:
     template:
       - name: Resolution
@@ -147,7 +147,7 @@ overlays:
         opt2: dv
     plex_search:
       all:
-        resolution.regex: '(?i)576'
+        resolution.regex: "(?i)576"
     filters:
       has_dolby_vision: true
   576P-HDR:
@@ -158,7 +158,7 @@ overlays:
         opt2: hdr
     plex_search:
       all:
-        resolution.regex: '(?i)576'
+        resolution.regex: "(?i)576"
         hdr: true
   576P:
     template:
@@ -167,7 +167,7 @@ overlays:
         opt1: 576p
     plex_search:
       any:
-        resolution.regex: '(?i)576'
+        resolution.regex: "(?i)576"
   480P-DV:
     template:
       - name: Resolution
@@ -176,7 +176,7 @@ overlays:
         opt2: dv
     plex_search:
       all:
-        resolution.regex: '(?i)480|sd'
+        resolution.regex: "(?i)480|sd"
     filters:
       has_dolby_vision: true
   480P-HDR:
@@ -187,7 +187,7 @@ overlays:
         opt2: hdr
     plex_search:
       all:
-        resolution.regex: '(?i)480|sd'
+        resolution.regex: "(?i)480|sd"
         hdr: true
   480P:
     template:
@@ -196,7 +196,7 @@ overlays:
         opt1: 480p
     plex_search:
       any:
-        resolution.regex: '(?i)480|sd'
+        resolution.regex: "(?i)480|sd"
   DV:
     template:
       - name: Resolution
