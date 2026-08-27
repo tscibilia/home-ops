@@ -168,7 +168,7 @@ jobs:
           tool_planning_timeout_sec: "120"
           tool_planning_max_context_bytes: "100000"
           tool_planning_max_tokens: "32000"
-          tool_allowed_gh_api_repos: "tscibilia/home-ops"
+          tool_allowed_gh_api_repos: "*"
           tool_enable_for_forks: "false"
           tool_mcp_servers: "tools=http://litellm.ai.svc.cluster.local:4000/mcp/,konflate=http://konflate.flux-system.svc.cluster.local:8080/mcp"
           tool_mcp_token: ${{ steps.load-secrets.outputs.LITELLM_API_KEY }}
