@@ -5,5 +5,6 @@ kind: Kustomization
 resources:
   - ./cluster.yaml
   - ./grafanadashboard.yaml
+  - ./objectstore.yaml
   - ./scheduledbackup.yaml
   - ./service.yaml
