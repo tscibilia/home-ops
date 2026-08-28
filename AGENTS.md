@@ -31,23 +31,13 @@ Report concisely — sacrifice grammar for the sake of concision.
 | `karpathy-guidelines` | Full text of the four standing rules above |
 | `pr-review`           | Reviewing a PR or local diff before merge  |
 
-**Memory** — this repo uses memini (MCP) for cross-session memory: decisions and
-their reasons, root causes, conventions, environment quirks. Consult it before
-work that may have history. Harnesses without memini should treat `CONTEXT.md`,
-`docs/context/` and `docs/adr/` as the authoritative substitute — memory is a
-convenience layer over those, never the only home for a fact.
+**Memory** — this repo uses memini (MCP) for cross-session memory: decisions and their reasons, root causes, conventions, environment quirks. Consult it before work that may have history. Harnesses without memini should treat `CONTEXT.md`, `docs/context/` and `docs/adr/` as the authoritative substitute — memory is a convenience layer over those, never the only home for a fact.
 
 **Safety tiers:**
 
-- **Always:** read-only inspection, local validation, formatting, linting
-  (`flate test all`, `flate build`, `just docs test`).
-- **Ask first:** any git push the Commit Protocol below does not cover, anything
-  that touches the live cluster — `just kube apply-ks`, `just kube sync`,
-  `just kube reconcile-ks`, `just kube reconcile-hr`, `just kube restart-ks`,
-  `just kube restart-hr`, `flux reconcile`, `talos apply` — deleting resources.
-- **Never:** push to `main`, merge a PR, commit secrets, decode or print
-  Kubernetes secret values, edit existing ADRs in `docs/adr/` — supersede them
-  instead; adding a new ADR is fine.
+- **Always:** read-only inspection, local validation, formatting, linting (`flate test all`, `flate build`, `just docs test`).
+- **Ask first:** any git push the Commit Protocol below does not cover, anything that touches the live cluster — `just kube apply-ks`, `just kube sync`, `just kube reconcile-ks`, `just kube reconcile-hr`, `just kube restart-ks`, `just kube restart-hr`, `flux reconcile`, `talos apply` — deleting resources.
+- **Never:** push to `main`, merge a PR, commit secrets, decode or print Kubernetes secret values, edit existing ADRs in `docs/adr/` — supersede them instead; adding a new ADR is fine.
 
 ## Task Runner & Workflow
 
@@ -118,13 +108,10 @@ Two rules it enforces:
 
 **`main` moves only through a PR the user reviewed.** Both paths below are review.
 
-Either path first: YAML schema-validated, linted, formatted; `just docs generate`
-if an app or docker stack was added, removed or renamed.
+Either path first: YAML schema-validated, linted, formatted; `just docs generate` if an app or docker stack was added, removed or renamed.
 
-- **Local harness** — shares the user's machine and signing key: hand over a
-  formatted commit message and stop.
-- **Remote harness** — own checkout, credentials and signing key (hermes): commit
-  on a feature branch, push it, open the PR, report the URL.
+- **Local harness** — shares the user's machine and signing key: hand over a formatted commit message and stop.
+- **Remote harness** — own checkout, credentials and signing key (hermes): commit on a feature branch, push it, open the PR, report the URL.
 
 ## Tooling Quirks
 
