@@ -31,7 +31,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 | `karpathy-guidelines` | Full text of the four standing rules above |
 | `pr-review`           | Reviewing a PR or local diff before merge  |
 
-**Memory** — this repo uses memini (MCP) for cross-session memory: decisions and their reasons, root causes, conventions, environment quirks. Consult it before work that may have history. Harnesses without memini should treat `CONTEXT.md`, `docs/context/` and `docs/adr/` as the authoritative substitute — memory is a convenience layer over those, never the only home for a fact.
+**Memory** — this repo uses memini (MCP) for cross-session memory: decisions and their reasons, root causes, conventions, environment quirks. Consult it before work that may have history. One-time setup: `/memini:namespace tscibilia/home-ops` pins the namespace server-side. Harnesses without memini should treat `CONTEXT.md`, `docs/context/` and `docs/adr/` as the authoritative substitute — memory is a convenience layer over those, never the only home for a fact.
 
 **Safety tiers:**
 
