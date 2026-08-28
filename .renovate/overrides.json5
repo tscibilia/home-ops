@@ -7,14 +7,14 @@
     {
       description: "Loose versioning for RustFS excluding -glibc tags",
       matchDatasources: ["docker"],
-      matchPackagePatterns: ["rustfs/rustfs"],
+      matchPackageNames: ["rustfs/rustfs"],
       versioning: "loose",
       allowedVersions: "/^\\d+\\.\\d+\\.\\d+-(alpha|beta)\\.\\d+$/",
     },
     {
       description: "Cal-commit versioning for SearXNG (weekly updates) shaped semver/calver + '-<commit-sha>'",
       matchDatasources: ["docker"],
-      matchPackagePatterns: ["ghcr.io/searxng/searxng"],
+      matchPackageNames: ["ghcr.io/searxng/searxng"],
       versioning: "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[a-f0-9]+$",
       schedule: ["before 3am on Monday"],
     },
@@ -26,11 +26,28 @@
       allowedVersions: "/^2\\./",
     },
     {
-      description: "Wait for aqua GitHub releases to fully publish before alerting",
-      matchDatasources: ["github-releases"],
+      // mise maps the aqua: backend to github-tags, so Renovate fires on a pushed tag
+      // hours before the upstream release workflow publishes the binaries
+      description: "Wait for aqua tags to settle before alerting",
+      matchDatasources: ["github-tags"],
       matchManagers: ["mise"],
-      matchDepPatterns: ["^aqua:"],
+      matchDepNames: ["/^aqua:/"],
       minimumReleaseAge: "3 days",
+    },
+    {
+      // resolve from releases so a version with no published binaries is never offered;
+      // kustomize is excluded — it tags releases "kustomize/vX.Y.Z", which extractVersion won't strip
+      description: "Resolve aqua tools from GitHub releases, not tags (cilium-cli v0.20.0 was tagged with no release)",
+      matchDatasources: ["github-tags"],
+      matchManagers: ["mise"],
+      matchDepNames: [
+        "aqua:cilium/cilium-cli",
+        "aqua:cli/cli",
+        "aqua:fluxcd/flux2",
+        "aqua:helmfile/helmfile",
+        "aqua:mitsuhiko/minijinja",
+      ],
+      overrideDatasource: "github-releases",
     },
     {
       description: "Constrain ofelia to 0.x (v3.0.8 is a stale erroneous tag from 2023)",
