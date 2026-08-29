@@ -1,0 +1,41 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app airwave
+spec:
+  components:
+    - ../../../../components/cnpg
+  dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
+    - name: cnpg-cluster
+      namespace: database
+  interval: 1h
+  path: ./kubernetes/apps/media/airwave/app
+  postBuild:
+    substitute:
+      APP: *app
+      GATUS_SUBDOMAIN: tv
+      CNPG_NAME: &postgresAppName pgsql-cluster
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  healthChecks:
+    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
+      kind: &postgresKind Cluster
+      name: *postgresAppName
+      namespace: database
+  healthCheckExprs:
+    - apiVersion: *postgresVersion
+      kind: *postgresKind
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: media
+  wait: false

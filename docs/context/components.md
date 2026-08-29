@@ -227,6 +227,8 @@ Every namespace. Creates a Flux `Provider` pointing at `alertmanager-operated.ob
 
 Every namespace. Creates the `cluster-secrets` ExternalSecret, which is what makes `substituteFrom: cluster-secrets` resolve in that namespace. Keys: `SECRET_DOMAIN`, `CEAPP_DOMAIN`, `TIMEZONE`, `TAILSCALE_MAGICDNS`, `KOPIA_BUCKET`, drawn from three aKeyless paths (`/kubernetes/cluster-secrets`, `/network/tailscale/operator`, `/cloud-providers/b2-creds`). See `secrets.md`.
 
+The same file also declares the `password10` / `password32` / `password64` `Password` generator CRs. Being namespace-scoped, they only exist where this component is applied — which is why an app references one by name rather than declaring its own. See `secrets.md`.
+
 ### kopiur/secret — the Kopia repository password
 
 Only namespaces containing kopiur-backed apps. Creates `kopiur-nas-secret` (`KOPIA_PASSWORD`) so the movers in that namespace can open the repository.

@@ -72,13 +72,36 @@ spec:
 
 Only consume `/security/pocket-id-clients` with an ExternalSecret when a _different_ app needs another app's client credentials — e.g. `kite`, whose config template renders them into a config file.
 
+## Password generators
+
+`components/secrets/externalsecret.yaml` also defines three `Password` generator CRs — `password10`, `password32`, `password64`. Because that component is applied in every namespace, all three exist everywhere and are referenced by name, never redeclared per app. All use `symbols: 0`: generated values get interpolated raw into URIs (`postgresql://`, `redis://`) where a symbol would need percent-encoding.
+
+An app seeds a credential by adding a generator entry to its own ExternalSecret's `dataFrom`, with `refreshInterval: "0"` on the spec:
+
+```yaml
+spec:
+    refreshInterval: "0" # the generator is stateless — this is the ONLY thing pinning the value
+    dataFrom:
+        - sourceRef:
+              generatorRef:
+                  apiVersion: generators.external-secrets.io/v1alpha1
+                  kind: Password
+                  name: password32
+```
+
+### Seeded CNPG passwords
+
+To avoid creating a CNPG role password by hand, pair the generator with a `PushSecret` that writes it to aKeyless. Two objects in the app's `app/` directory, both named `${APP}-pgpass` (see `media/airwave`): the generating ExternalSecret above, and a `PushSecret` with `updatePolicy: IfNotExists` targeting `/database/cnpg-users`, property `${APP}_postgres_password`.
+
+`IfNotExists` is what makes this safe to leave running: after the first write aKeyless is authoritative, and a regenerated local password can never overwrite the stored one. Everything else — `components/cnpg` and the app's own ExternalSecret — keeps reading `/database/cnpg-users` as usual, so on a first deploy those reads fail until the push lands, then recover.
+
 ## aKeyless Path Conventions
 
 | Path pattern                     | Contents                                                                                                                                                                               |
 | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/kubernetes/cluster-secrets`    | Cluster-wide vars (domain, timezone)                                                                                                                                                   |
 | `/{namespace}/{app-name}`        | App-specific secrets (e.g. `/ai/memini`, `/default/open-webui`)                                                                                                                        |
-| `/database/cnpg-users`           | CNPG user passwords (all apps share one secret, fields per-app)                                                                                                                        |
+| `/database/cnpg-users`           | CNPG user passwords (all apps share one secret, fields per-app). May be seeded by a generator + `PushSecret` — see "Seeded CNPG passwords" above.                                      |
 | `/security/pocket-id-clients`    | OIDC client credentials, `{APP}_OIDC_CLIENT_ID` / `{APP}_OIDC_CLIENT_SECRET` per app. **Written by `PushSecret`, not read by hand** — see "OIDC credentials" above.                    |
 | `/cloud-providers/b2-creds`      | Backblaze B2 (Kopiur bucket)                                                                                                                                                           |
 | `/cloud-providers/ai-apis`       | Third-party AI API keys (e.g. `FIRECRAWL_API_KEY`, used by hermes web_extract)                                                                                                         |
