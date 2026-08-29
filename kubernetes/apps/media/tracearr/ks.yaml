@@ -21,6 +21,7 @@ spec:
       APP: *app
       GATUS_PATH: /health
       CNPG_NAME: &postgresAppName pgcluster-timescale
+      PG_VER: "18"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
