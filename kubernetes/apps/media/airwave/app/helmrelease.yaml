@@ -68,11 +68,6 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
-            securityContext:
-              allowPrivilegeEscalation: false
-              # entrypoint rewrites /etc at start (localtime link, timezone, usermod)
-              readOnlyRootFilesystem: false
-              capabilities: { drop: [ALL] }
       web:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -110,11 +105,6 @@ spec:
                     path: *healthPath
                     port: *webPort
               startup: *startupProbe
-            securityContext: &buildSecurityContext
-              allowPrivilegeEscalation: false
-              # vite writes its build output inside the image at startup.
-              readOnlyRootFilesystem: false
-              capabilities: { drop: [ALL] }
       tvweb:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -152,15 +142,13 @@ spec:
                     path: *healthPath
                     port: *tvwebPort
               startup: *startupProbe
-            securityContext: *buildSecurityContext
     defaultPodOptions:
       annotations:
         # entrypoint replaces /etc/localtime; k8tz mounting it there makes the ln -snf fail
         k8tz.io/inject: "false"
       securityContext:
-        runAsNonRoot: true
-        runAsUser: *puid
-        runAsGroup: *pgid
+        # entrypoint starts as root: rewrites /etc (TZ, usermod) then gosu's to PUID/PGID
+        runAsUser: 0
         fsGroup: *pgid
         fsGroupChangePolicy: OnRootMismatch
     service:
