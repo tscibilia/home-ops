@@ -29,6 +29,7 @@ spec:
               tag: 0.12.28@sha256:bc8b79f344e2cae9d0226cc2d48b18d4c4f045bb9ca9b231703fc1b3e3fbcb3a
             env:
               CG_ROLE: server
+              TZ: &TZ "${TIMEZONE:-UTC}"
               PORT: &serverPort 3000
               BETTER_AUTH_URL: &serverUrl https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               CORS_ORIGIN: https://${GATUS_SUBDOMAIN}-admin.${SECRET_DOMAIN}
@@ -69,7 +70,8 @@ spec:
                   periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              # entrypoint rewrites /etc at start (localtime link, timezone, usermod)
+              readOnlyRootFilesystem: false
               capabilities: { drop: [ALL] }
       web:
         annotations:
@@ -79,6 +81,7 @@ spec:
             image: *image
             env:
               CG_ROLE: web
+              TZ: *TZ
               WEB_PORT: &webPort 3001
               VITE_SERVER_URL: *serverUrl
               PUID: *puid
@@ -120,6 +123,7 @@ spec:
             image: *image
             env:
               CG_ROLE: tvweb
+              TZ: *TZ
               TV_WEB_PORT: &tvwebPort 3002
               VITE_SERVER_URL: *serverUrl
               PUID: *puid
@@ -150,6 +154,9 @@ spec:
               startup: *startupProbe
             securityContext: *buildSecurityContext
     defaultPodOptions:
+      annotations:
+        # entrypoint replaces /etc/localtime; k8tz mounting it there makes the ln -snf fail
+        k8tz.io/inject: "false"
       securityContext:
         runAsNonRoot: true
         runAsUser: *puid
