@@ -35,6 +35,7 @@ spec:
               CORS_ORIGIN: https://${GATUS_SUBDOMAIN}-admin.${SECRET_DOMAIN}
               TV_APP_ORIGIN: https://${GATUS_SUBDOMAIN}web.${SECRET_DOMAIN}
               BUMPER_MUSIC_DIR: &bumperDir /data/bumper-music
+              WORKFLOW_ENABLED: 1
               PUID: &puid 1000
               PGID: &pgid 1000
               UMASK: &umask "022"
