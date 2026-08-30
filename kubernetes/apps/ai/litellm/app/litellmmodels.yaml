@@ -158,9 +158,14 @@ spec:
     additional:
       extra_body:
         provider:
-          # The cheapest host of this model; Zen ~3x this output cost and adds peak/off-peak pricing.
+          # Zen ~3x this output cost and adds peak/off-peak pricing.
           order: ["deepinfra"]
-          allow_fallbacks: false
+          # DeepInfra's shared pool 429s under load; fall back, but only to hosts
+          # at or below its rate. USD per 1M tokens, matched to info.extra below.
+          allow_fallbacks: true
+          max_price:
+            prompt: 0.09
+            completion: 0.18
   info:
     mode: chat
     maxTokens: 131072
@@ -170,8 +175,8 @@ spec:
     supportsPromptCaching: true
     extra:
       supports_reasoning: true
-      # DeepInfra via OpenRouter: $0.08 in / $0.18 out / $0.016 cached read only
-      input_cost_per_token: 0.0000000800
+      # DeepInfra via OpenRouter: $0.09 in / $0.18 out / $0.016 cached read only
+      input_cost_per_token: 0.0000000900
       cache_read_input_token_cost: 0.0000000160
       output_cost_per_token: 0.0000001800
 ---
