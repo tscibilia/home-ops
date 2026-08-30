@@ -51,7 +51,8 @@ spec:
                 cpu: 20m
                 memory: 256Mi
               limits:
-                memory: 1Gi
+                # planLineup (AI planner over ~23k episodes) OOMKilled at 1Gi
+                memory: 4Gi
             probes:
               liveness: &probes
                 enabled: true
