@@ -18,8 +18,6 @@ data:
             context_length: 1048560
           laguna-s-2-1:
             context_length: 1048576
-          deepseek-v4-flash-free:
-            context_length: 200000
           deepseek-v4-flash:
             context_length: 1048576
           # Image models. Hermes has no image-generation auxiliary task, so these
@@ -29,14 +27,14 @@ data:
           qwen-image-3:
             context_length: 65536
     model:
-      default: deepseek-v4-flash-free
+      default: deepseek-v4-flash
       provider: litellm
     # Ordered by what each rung survives: a zen fault, then a WAN fault.
     fallback_providers:
       - provider: litellm
         model: qwen-local # on-node, slow to warm
       - provider: litellm
-        model: deepseek-v4-flash
+        model: laguna-s-2-1
     # Side tasks. Default "auto" would reuse the main chat model for all of
     # them; pinning keeps the cheap/local models on the cheap work.
     auxiliary:
@@ -59,7 +57,7 @@ data:
         max_concurrency: 2
       compression:
         provider: custom:litellm
-        model: laguna-s-2-1 # 1M input window, or deepseek-v4-flash as alt
+        model: laguna-s-2-1
         max_concurrency: 2
       moa_reference:
         provider: custom:litellm
@@ -93,7 +91,7 @@ data:
             - provider: custom:litellm
               model: qwen-local
             - provider: custom:litellm
-              model: deepseek-v4-flash-free
+              model: deepseek-v4-flash
             - provider: custom:litellm
               model: laguna-s-2-1
           aggregator:
