@@ -36,6 +36,10 @@ spec:
               TV_APP_ORIGIN: https://${GATUS_SUBDOMAIN}web.${SECRET_DOMAIN}
               BUMPER_MUSIC_DIR: &bumperDir /data/bumper-music
               WORKFLOW_ENABLED: 1
+              # unset, the workflow lib falls back to a local .workflow-data dir
+              # and to localhost:$PORT (the main app) for worker callbacks
+              WORKFLOW_TARGET_WORLD: "@workflow/world-postgres"
+              WORKFLOW_LOCAL_BASE_URL: "http://127.0.0.1:3152"
               PUID: &puid 1000
               PGID: &pgid 1000
               UMASK: &umask "022"
