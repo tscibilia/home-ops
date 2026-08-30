@@ -16,12 +16,17 @@ spec:
       # `model:` line and the upstream request both stay unchanged.
       displayName: Qwen3.8-27B
       # Header wait, not generation time. A cold load is bounded by the pool's
-      # swapBudget instead, which this is deliberately decoupled from.
+      # swapBudget instead, which this is deliberately decoupled from. Matches
+      # Litellm's request_timeout (600s) so the router never aborts a generation
       timeout: 5m
     - name: comfyui
       tier: local
       inferenceServiceRef:
         name: comfyui
+  # Default response-header timeout is 120s (router-proxy defaultResponseHeaderTimeout).
+  # For non-streaming chat that caps generation at 2m; raise to litellm's budget.
+  proxy:
+    responseHeaderTimeout: 10m
   # No rules needed: naming a backend routes to it, everything else lands on
   # llama-qwen. Classification and complexity routing do not apply to one GPU.
   defaultRouteStrategy: BackendNameMatch
