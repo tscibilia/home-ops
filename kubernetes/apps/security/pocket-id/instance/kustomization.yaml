@@ -6,3 +6,4 @@ resources:
   - ./externalsecret.yaml
   - ./pocketidinstance.yaml
   - ./pocketidusergroup.yaml
+  - ./pushsecret.yaml
