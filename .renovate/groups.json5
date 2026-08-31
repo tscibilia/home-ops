@@ -153,5 +153,13 @@
       group: { commitMessageTopic: "{{{groupName}}} group" },
       minimumGroupSize: 2,
     },
+    {
+      description: "Towonel Group",
+      groupName: "towonel",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/towonel/"],
+      group: { commitMessageTopic: "{{{groupName}}} group" },
+      minimumGroupSize: 2,
+    },
   ],
 }
