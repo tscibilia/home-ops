@@ -21,7 +21,7 @@ spec:
   info:
     mode: chat
     maxTokens: 32768
-    maxInputTokens: 131072 # contextSize 163840 minus maxOutputTokens; llama.cpp counts both against one pool
+    maxInputTokens: 98304 # contextSize 131072 minus maxOutputTokens; llama.cpp counts both against one pool
     maxOutputTokens: 32768
     supportsFunctionCalling: true
     supportsVision: true
@@ -63,7 +63,7 @@ spec:
   info:
     mode: chat
     maxTokens: 32768
-    maxInputTokens: 131072 # contextSize 163840 minus maxOutputTokens; llama.cpp counts both against one pool
+    maxInputTokens: 98304 # contextSize 131072 minus maxOutputTokens; llama.cpp counts both against one pool
     maxOutputTokens: 32768
     supportsFunctionCalling: true
     supportsVision: true
