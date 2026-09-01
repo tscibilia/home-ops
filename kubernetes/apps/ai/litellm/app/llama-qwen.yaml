@@ -19,6 +19,19 @@ spec:
       enabled: true
       vendor: nvidia
       layers: 99
+# ┌─────────────────────────────────┬───────────────┬──────────────┐
+# │              Item               │ Now (Q4_K_XL) │ With Q5_K_XL │
+# ├─────────────────────────────────┼───────────────┼──────────────┤
+# │ Model weights                   │ 17.6 GB       │ 20.9 GB      │
+# ├─────────────────────────────────┼───────────────┼──────────────┤
+# │ Vision part (mmproj-F16)        │ ~1 GB         │ ~1 GB        │
+# ├─────────────────────────────────┼───────────────┼──────────────┤
+# │ KV cache (163840 context, q4_0) │ ~4 GB         │ ~4 GB        │
+# ├─────────────────────────────────┼───────────────┼──────────────┤
+# │ Scratch (flash attention)       │ ~1 GB         │ ~1 GB        │
+# ├─────────────────────────────────┼───────────────┼──────────────┤
+# │ Total                           │ ~23.6 GB ✅   │ ~26.9 GB ❌  │
+# └─────────────────────────────────┴───────────────┴──────────────┘
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/inferenceservice_v1alpha1.json
 apiVersion: inference.llmkube.dev/v1alpha1
