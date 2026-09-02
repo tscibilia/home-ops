@@ -26,7 +26,7 @@ spec:
           app:
             image: &image
               repository: ghcr.io/quixomatic/airwave
-              tag: 0.12.42@sha256:246457bf9d38da153a2a3bc8f13ceb89a1c70fd10058f44db7c555233fb01c3e
+              tag: 0.12.44@sha256:6ed24302ac823ab4cdbdb1f3f25fa7d3714496804d870514386a375c0c4959d8
             env:
               CG_ROLE: server
               TZ: &TZ "${TIMEZONE:-UTC}"
