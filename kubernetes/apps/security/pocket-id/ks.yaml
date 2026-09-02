@@ -41,6 +41,7 @@ spec:
     - name: kopiur
       namespace: kopiur-system
   interval: 1h
+  retryInterval: 5m
   path: ./kubernetes/apps/security/pocket-id/instance
   postBuild:
     substitute:

@@ -15,6 +15,7 @@ spec:
     - name: dragonfly-cluster
       namespace: database
   interval: 1h
+  retryInterval: 5m
   path: ./kubernetes/apps/default/cetranscript/app
   postBuild:
     substitute:
