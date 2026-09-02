@@ -79,7 +79,14 @@ healthCheckExprs:
 dependsOn:
     - name: cnpg-cluster
       namespace: database
+interval: 1h
+retryInterval: 5m
 ```
+
+`retryInterval` is load-bearing here. The health check marks the Kustomization failed whenever the
+cluster goes `Ready: False` — a CNPG image bump does that on every rolling restart. Flux defaults
+`retryInterval` to `interval`, so without this line the app stays failed for a full hour after the
+database recovers, and only a manual `just kube reconcile-ks` clears it sooner.
 
 Creates three resources in the app's namespace:
 

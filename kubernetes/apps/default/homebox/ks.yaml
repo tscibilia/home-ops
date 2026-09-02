@@ -18,6 +18,7 @@ spec:
     - name: pocket-id
       namespace: security
   interval: 1h
+  retryInterval: 5m
   path: ./kubernetes/apps/default/homebox/app
   postBuild:
     substitute:

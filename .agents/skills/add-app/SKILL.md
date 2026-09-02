@@ -123,6 +123,7 @@ spec:
         - name: pocket-id # if auth = OIDC (native)
           namespace: security
     interval: 1h
+    retryInterval: 5m # if cnpg
     path: ./kubernetes/apps/{NAMESPACE}/{APP_NAME}/app
     postBuild:
         substitute:
@@ -159,6 +160,7 @@ spec:
 - If GATUS_SUBDOMAIN equals the app name, omit it (the HR will use `{{ .Release.Name }}.${SECRET_DOMAIN}`).
 - If GATUS_SUBDOMAIN differs from app name, include it and use `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}` in the HR route.
 - `wait: false` for apps, `wait: true` only for infrastructure dependencies.
+- `retryInterval: 5m` only with the cnpg health check. Without it Flux falls back to `interval`, so a Kustomization failed by a database restart stays failed for a full hour.
 
 ---
 
