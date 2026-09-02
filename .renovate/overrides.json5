@@ -71,5 +71,19 @@
       overrideDatasource: "github-releases",
       overridePackageName: "immich-app/immich",
     },
+    {
+      // Tags are "pg<pgMajor>.<pgMinor>-ts<semver>". Default docker versioning cannot parse
+      description: "TimescaleDB HA uses 'pg<major>.<minor>-ts<semver>' tags",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["timescale/timescaledb-ha"],
+      versioning: "regex:^pg(?<compatibility>\\d+)\\.(?<major>\\d+)-ts(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)$",
+    },
+    {
+      description: "No digest-only PRs for TimescaleDB HA",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["timescale/timescaledb-ha"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    },
   ],
 }
