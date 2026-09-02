@@ -1,0 +1,73 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/postgresql.cnpg.io/cluster_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: &name pgcluster-default
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
+spec:
+  instances: 3
+  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  primaryUpdateStrategy: unsupervised
+  primaryUpdateMethod: switchover
+  storage:
+    size: 20Gi
+    storageClass: openebs-hostpath
+
+  # Blue/green rename of pgsql-cluster. A Cluster cannot be renamed, so this one
+  # bootstraps from blue's object store and then stays in continuous recovery,
+  # replaying blue's archived WAL until it is promoted.
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  bootstrap:
+    recovery:
+      source: blue
+
+  # Promotion (enabled: false) is irreversible -- see Task 8.
+  replica:
+    enabled: true
+    source: blue
+
+  externalClusters:
+    - name: blue
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          # read-only: the OLD cluster's prefix. Never written to.
+          barmanObjectName: pgsql-cluster
+          serverName: pgsql-cluster
+
+  superuserSecret:
+    name: cnpg-secret
+  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: 256MB
+    pg_hba:
+      - host all all 10.42.0.0/16 scram-sha-256
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 2Gi
+  monitoring:
+    enablePodMonitor: true
+  # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
+  enablePDB: true
+  # Fix for non AWS backup https://github.com/cloudnative-pg/cloudnative-pg/issues/7715#issuecomment-2935582020
+  env:
+    - name: AWS_REQUEST_CHECKSUM_CALCULATION
+      value: when_required
+    - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+      value: when_required
+    - name: TZ
+      value: ${TIMEZONE:-UTC}
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: *name
+        serverName: *name
