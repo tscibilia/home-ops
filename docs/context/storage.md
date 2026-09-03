@@ -2,7 +2,7 @@
 
 ## ⚠️ Gotchas & Interactions
 
-- **CNPG endpoints are named after the cluster, not the app:** the `host` key is `{cluster}-rw.database.svc.cluster.local` — `pgcluster-default-rw` or `pgvector-cluster-rw`, shared by every app on that cluster. Use the `host` key from `${APP}-pguser-secret` rather than composing a name. Never point an app at `-ro`; that is the read replica.
+- **CNPG endpoints are named after the cluster, not the app:** the `host` key is `{cluster}-rw.database.svc.cluster.local` — `pgcluster-default-rw` or `pgcluster-vector-rw`, shared by every app on that cluster. Use the `host` key from `${APP}-pguser-secret` rather than composing a name. Never point an app at `-ro`; that is the read replica.
 - **Ceph mutes four `AUTH_INSECURE_*` warnings on purpose:** Ceph Tentacle (v20) flags the older `aes` cephx cipher. Daemon keys (mon/mgr/osd) are rotated to `aes256k` via `security.cephx.daemon`, but CSI keys are pinned to `aes` because `aes256k` needs a host kernel of 7.0+ and the Talos nodes are below that. The remaining warnings cannot clear, so they are muted declaratively in `cephClusterSpec.healthCheck.muteHealthWarning`. Unmute — and drop `security.cephx.csi.keyType` — once the nodes reach kernel 7.0+.
 - **openebs-hostpath is node-local:** Data is tied to the node. A pod rescheduling to a different node loses access to its PVC.
 
@@ -32,7 +32,7 @@ Clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-p
 | Cluster             | Purpose                | Notes                                                           |
 | ------------------- | ---------------------- | --------------------------------------------------------------- |
 | `pgcluster-default` | All general apps       | Default                                                         |
-| `pgvector-cluster`  | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord |
+| `pgcluster-vector`  | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord |
 
 The PostgreSQL major version is not recorded here — it is whatever `imageName`
 says in each cluster's manifest under `kubernetes/apps/database/cnpg/`. Renovate

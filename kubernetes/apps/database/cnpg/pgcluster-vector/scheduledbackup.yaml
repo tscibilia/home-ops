@@ -11,7 +11,5 @@ spec:
     name: barman-cloud.cloudnative-pg.io
   # CNPG cron is 6-field (seconds first), not the 5-field Kubernetes CronJob format
   schedule: "0 0 6 * * *"
-  # A replica cluster cannot take a base backup. Un-suspended at promotion.
-  suspend: true
   immediate: true
   backupOwnerReference: self

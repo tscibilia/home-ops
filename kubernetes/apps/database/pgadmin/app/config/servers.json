@@ -15,9 +15,9 @@
       "TunnelAuthentication": 0
     },
     "2": {
-      "Name": "pgvector-cluster",
+      "Name": "pgcluster-vector",
       "Group": "Servers",
-      "Host": "pgvector-cluster-rw.database.svc.cluster.local",
+      "Host": "pgcluster-vector-rw.database.svc.cluster.local",
       "Port": 5432,
       "MaintenanceDB": "postgres",
       "Username": "postgres",

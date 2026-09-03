@@ -10,7 +10,7 @@ spec:
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: cnpg-pgvector-cluster
+    - name: cnpg-pgcluster-vector
       namespace: database
     - name: llmkube
   interval: 1h
@@ -19,7 +19,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CNPG_NAME: &postgresAppName pgvector-cluster
+      CNPG_NAME: &postgresAppName pgcluster-vector
       PG_VER: "17"
     substituteFrom:
       - kind: Secret
