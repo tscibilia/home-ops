@@ -96,7 +96,7 @@ Creates three resources in the app's namespace:
 | `${APP}-initdb-secret` | ExternalSecret | `INIT_POSTGRES_*` vars for the init container                                       |
 | `${APP}-pg-backups`    | CronJob        | pgdump to NFS on clonenas, `5 */4 * * *`                                            |
 
-`PG_VER` (default `18`) selects the `postgres-backup-local` image tag for that CronJob — override it only if the app's cluster runs a different major version. `memini` and `immich` pin `17` because they are on `pgcluster-vector`, which is still PostgreSQL 17.
+`PG_VER` (default `18`) selects the `postgres-backup-local` image tag for that CronJob — override it only if the app's cluster runs a different major version.
 
 The component stops at credentials. The app's HelmRelease has to run the init container that creates the role and database:
 

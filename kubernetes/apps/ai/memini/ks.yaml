@@ -20,7 +20,7 @@ spec:
     substitute:
       APP: *app
       CNPG_NAME: &postgresAppName pgcluster-vector
-      PG_VER: "17"
+      PG_VER: "18"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
