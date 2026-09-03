@@ -85,6 +85,7 @@ spec:
             env:
               MACHINE_LEARNING_MODEL_TTL: 0
               MACHINE_LEARNING_CACHE_FOLDER: /cache
+              HF_HOME: /cache/huggingface
             probes:
               liveness: &wrkprobes
                 enabled: true
