@@ -48,6 +48,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - immich _(photos)_ [cnpg, oidc]
 - komga _(comics/manga)_ [kopiur, zeroscaler, oidc]
 - mealie _(recipes)_ [kopiur, cnpg, oidc]
+- obsidian-couchdb _(CouchDB for Obsidian LiveSync)_ [kopiur]
 - pairdrop _(airdrop alternative)_
 - radicale _(CalDAV/CardDAV)_ [kopiur]
 - rustfs _(S3-compatible object store)_ [kopiur, oidc]
