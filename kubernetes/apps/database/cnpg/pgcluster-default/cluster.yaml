@@ -9,7 +9,7 @@ metadata:
 spec:
   instances: 3
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageName: ghcr.io/cloudnative-pg/postgresql:18
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
@@ -48,4 +48,7 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: *name
-        serverName: *name
+        # pg_upgrade resets the timeline and assigns a new system ID, so the PG18
+        # WAL stream is not continuous with the PG17 one. Sharing a serverName
+        # would put two discontinuous streams under one prefix and break restore.
+        serverName: pgcluster-default-v18
