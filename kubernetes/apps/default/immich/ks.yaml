@@ -26,7 +26,7 @@ spec:
       GATUS_SUBDOMAIN: img
       GATUS_PATH: /api/server/ping
       CNPG_NAME: &postgresAppName pgcluster-vector
-      PG_VER: "17"
+      PG_VER: "18"
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
