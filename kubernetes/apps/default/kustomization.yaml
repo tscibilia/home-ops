@@ -17,6 +17,7 @@ resources:
   - ./immich/ks.yaml
   - ./komga/ks.yaml
   - ./mealie/ks.yaml
+  - ./obsidian-couchdb/ks.yaml
   - ./pairdrop/ks.yaml
   - ./radicale/ks.yaml
   - ./rustfs/ks.yaml
