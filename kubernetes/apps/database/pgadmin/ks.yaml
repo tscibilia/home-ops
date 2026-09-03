@@ -23,7 +23,7 @@ spec:
       KOPIUR_CAPACITY: 1Gi
       KOPIUR_PUID: "5050"
       KOPIUR_PGID: "5050"
-      CNPG_NAME: &postgresAppName pgsql-cluster
+      CNPG_NAME: &postgresAppName pgcluster-default
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

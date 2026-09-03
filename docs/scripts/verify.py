@@ -100,7 +100,8 @@ def storage_classes():
 def cnpg_clusters():
     on_disk = {p.name for p in (ROOT / "kubernetes" / "apps" / "database" / "cnpg").iterdir() if p.is_dir()}
     named = set(re.findall(r"^\| `([a-z0-9-]+)`\s*\|", section("storage.md", "CNPG (PostgreSQL)"), re.M))
-    named |= set(re.findall(r"CNPG_NAME:[^\n#]*?\b([a-z0-9-]*cluster)\b", context_text()))
+    # "cluster" can lead or trail the name: pgsql-cluster, pgcluster-default.
+    named |= set(re.findall(r"CNPG_NAME:[^\n#]*?\b([a-z0-9-]*cluster[a-z0-9-]*)\b", context_text()))
     skip = ignored("cnpg")
     return [
         f"docs name CNPG cluster `{c}`, no directory under apps/database/cnpg/"

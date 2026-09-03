@@ -27,7 +27,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CNPG_NAME: &postgresAppName pgsql-cluster
+      CNPG_NAME: &postgresAppName pgcluster-default
       PG_VER: "17"
     substituteFrom:
       - kind: Secret

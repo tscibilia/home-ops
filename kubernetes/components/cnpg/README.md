@@ -2,7 +2,7 @@
 
 This component adds three things to an app: `${APP}-initdb-secret` (consumed by the `postgres-init` init container), `${APP}-pguser-secret` (host/user/password/uri/dsn), and a `${APP}-pg-backups` CronJob. All of it reads the role password from aKeyless `/database/cnpg-users`, field `${APP}_postgres_password`.
 
-`${CNPG_NAME:=pgsql-cluster}` comes from each app's `ks.yaml` `postBuild.substitute`.
+`${CNPG_NAME:=pgcluster-default}` comes from each app's `ks.yaml` `postBuild.substitute`.
 
 ### Getting the password into aKeyless
 

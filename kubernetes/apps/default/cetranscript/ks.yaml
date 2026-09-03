@@ -21,7 +21,7 @@ spec:
     substitute:
       APP: *app
       GATUS_PATH: /health
-      CNPG_NAME: &postgresAppName pgsql-cluster
+      CNPG_NAME: &postgresAppName pgcluster-default
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

@@ -46,7 +46,7 @@ spec:
   postBuild:
     substitute:
       APP: pocketid
-      CNPG_NAME: &postgresAppName pgsql-cluster
+      CNPG_NAME: &postgresAppName pgcluster-default
       GATUS_SUBDOMAIN: id
       KOPIUR_CAPACITY: 1Gi
       KOPIUR_PUID: "65534"

@@ -1,9 +1,9 @@
 {
   "Servers": {
     "1": {
-      "Name": "pgsql-cluster",
+      "Name": "pgcluster-default",
       "Group": "Servers",
-      "Host": "pgsql-cluster-rw.database.svc.cluster.local",
+      "Host": "pgcluster-default-rw.database.svc.cluster.local",
       "Port": 5432,
       "MaintenanceDB": "postgres",
       "Username": "postgres",
@@ -15,9 +15,23 @@
       "TunnelAuthentication": 0
     },
     "2": {
-      "Name": "immich17",
+      "Name": "pgvector-cluster",
       "Group": "Servers",
-      "Host": "immich17-rw.database.svc.cluster.local",
+      "Host": "pgvector-cluster-rw.database.svc.cluster.local",
+      "Port": 5432,
+      "MaintenanceDB": "postgres",
+      "Username": "postgres",
+      "SSLMode": "prefer",
+      "SSLCompression": 0,
+      "Timeout": 10,
+      "UseSSHTunnel": 0,
+      "TunnelPort": "22",
+      "TunnelAuthentication": 0
+    },
+    "3": {
+      "Name": "pgcluster-timescale",
+      "Group": "Servers",
+      "Host": "pgcluster-timescale-rw.database.svc.cluster.local",
       "Port": 5432,
       "MaintenanceDB": "postgres",
       "Username": "postgres",
