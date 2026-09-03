@@ -10,7 +10,7 @@ spec:
     name: letsencrypt-production
     kind: ClusterIssuer
   commonName: "${SECRET_DOMAIN}"
-  dnsNames: ["${SECRET_DOMAIN}", "*.${SECRET_DOMAIN}"]
+  dnsNames: ["${SECRET_DOMAIN}", "*.${SECRET_DOMAIN}", "*.s3.${SECRET_DOMAIN}"]
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/cert-manager.io/certificate_v1.json
 apiVersion: cert-manager.io/v1
