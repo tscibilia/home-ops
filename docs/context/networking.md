@@ -86,4 +86,5 @@ The `gatus-sidecar` runs with `--auto-httproute --enable-httproute --enable-serv
 ## DNS
 
 - `external-dns` manages Cloudflare DNS records automatically from HTTPRoute annotations.
+- `external-dns` does **not** create wildcard records. `*.s3.${SECRET_DOMAIN}` (rustfs virtual-hosted-style S3 addressing) is a manual Cloudflare record, pointing at the same target as `s3.${SECRET_DOMAIN}`.
 - Internal DNS: CoreDNS + `unifi-dns` for `.internal` hostnames.

@@ -97,7 +97,9 @@ spec:
       s3:
         annotations:
           gatus.home-operations.com/enabled: "false"
-        hostnames: ["${S3_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        hostnames:
+          - "${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
+          - "*.${S3_SUBDOMAIN}.${SECRET_DOMAIN}"
         parentRefs:
           - name: envoy-external
             namespace: network
