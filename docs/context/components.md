@@ -65,7 +65,7 @@ components:
 postBuild:
     substitute:
         APP: *app
-        CNPG_NAME: &postgresAppName pgcluster-default # or pgvector-cluster
+        CNPG_NAME: &postgresAppName pgcluster-default # or pgcluster-vector
 healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
@@ -96,7 +96,7 @@ Creates three resources in the app's namespace:
 | `${APP}-initdb-secret` | ExternalSecret | `INIT_POSTGRES_*` vars for the init container                                       |
 | `${APP}-pg-backups`    | CronJob        | pgdump to NFS on clonenas, `5 */4 * * *`                                            |
 
-`PG_VER` (default `18`) selects the `postgres-backup-local` image tag for that CronJob — override it only if the app's cluster runs a different major version. `memini` and `immich` pin `17` because they are on `pgvector-cluster`, which is still PostgreSQL 17.
+`PG_VER` (default `18`) selects the `postgres-backup-local` image tag for that CronJob — override it only if the app's cluster runs a different major version. `memini` and `immich` pin `17` because they are on `pgcluster-vector`, which is still PostgreSQL 17.
 
 The component stops at credentials. The app's HelmRelease has to run the init container that creates the role and database:
 
@@ -112,7 +112,7 @@ initContainers:
                   name: "{{ .Release.Name }}-initdb-secret"
 ```
 
-`CNPG_NAME` picks the cluster: `pgcluster-default` for general apps, `pgvector-cluster` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgcluster-default` in the component (`${CNPG_NAME:=pgcluster-default}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `storage.md` says what each is for.
+`CNPG_NAME` picks the cluster: `pgcluster-default` for general apps, `pgcluster-vector` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgcluster-default` in the component (`${CNPG_NAME:=pgcluster-default}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `storage.md` says what each is for.
 
 The generated `host` is `{cluster}-rw…`, shared by every app on that cluster — apps read it from the Secret, they never compose it.
 

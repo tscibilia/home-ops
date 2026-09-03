@@ -9,7 +9,7 @@ spec:
     - ../../../../components/cnpg
     # Uses separate app/horizontalpodautoscaler.yaml for immich-server
   dependsOn:
-    - name: cnpg-pgvector-cluster
+    - name: cnpg-pgcluster-vector
       namespace: database
     - name: dragonfly-cluster
       namespace: database
@@ -25,7 +25,7 @@ spec:
       APP: *app
       GATUS_SUBDOMAIN: img
       GATUS_PATH: /api/server/ping
-      CNPG_NAME: &postgresAppName pgvector-cluster
+      CNPG_NAME: &postgresAppName pgcluster-vector
       PG_VER: "17"
     substituteFrom:
       - kind: Secret
