@@ -14,6 +14,8 @@ spec:
       services:
         - hostname: "*.${SECRET_DOMAIN}"
           origin: &origin envoy-external.network.svc.cluster.local:443
+        - hostname: "*.s3.${SECRET_DOMAIN}"
+          origin: *origin
         - hostname: "*.${CEAPP_DOMAIN}"
           origin: *origin
         - hostname: "${CEAPP_DOMAIN}"
