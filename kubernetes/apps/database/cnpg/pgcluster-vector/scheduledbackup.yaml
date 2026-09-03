@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/postgresql.cnpg.io/scheduledbackup_v1.json
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pgcluster-vector-barman
+spec:
+  cluster:
+    name: pgcluster-vector
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  # CNPG cron is 6-field (seconds first), not the 5-field Kubernetes CronJob format
+  schedule: "0 0 6 * * *"
+  # A replica cluster cannot take a base backup. Un-suspended at promotion.
+  suspend: true
+  immediate: true
+  backupOwnerReference: self

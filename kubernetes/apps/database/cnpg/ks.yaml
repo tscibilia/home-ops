@@ -161,17 +161,18 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cnpg-pgvector-green
+  name: cnpg-pgcluster-vector
 spec:
   dependsOn:
     - name: cnpg-operator
     - name: cnpg-barman-cloud
-    # provides the pgvector-cluster ObjectStore this recovers from
+    # cnpg-pgvector-cluster owns the pgvector-cluster ObjectStore this recovers from.
+    # Do not delete that Kustomization before promotion.
     - name: cnpg-pgvector-cluster
     - name: openebs
       namespace: openebs-system
   interval: 1h
-  path: ./kubernetes/apps/database/cnpg/pgvector-green
+  path: ./kubernetes/apps/database/cnpg/pgcluster-vector
   postBuild:
     substituteFrom:
       - kind: Secret
