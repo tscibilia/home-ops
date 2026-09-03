@@ -39,7 +39,7 @@ spec:
   postBuild:
     substitute:
       APP: grafana
-      CNPG_NAME: &postgresAppName pgsql-cluster
+      CNPG_NAME: &postgresAppName pgcluster-default
       GATUS_SUBDOMAIN: grafana
     substituteFrom:
       - name: cluster-secrets

@@ -2,7 +2,7 @@
 
 ## ⚠️ Gotchas & Interactions
 
-- **CNPG endpoints are named after the cluster, not the app:** the `host` key is `{cluster}-rw.database.svc.cluster.local` — `pgsql-cluster-rw` or `pgvector-cluster-rw`, shared by every app on that cluster. Use the `host` key from `${APP}-pguser-secret` rather than composing a name. Never point an app at `-ro`; that is the read replica.
+- **CNPG endpoints are named after the cluster, not the app:** the `host` key is `{cluster}-rw.database.svc.cluster.local` — `pgcluster-default-rw` or `pgvector-cluster-rw`, shared by every app on that cluster. Use the `host` key from `${APP}-pguser-secret` rather than composing a name. Never point an app at `-ro`; that is the read replica.
 - **Ceph mutes four `AUTH_INSECURE_*` warnings on purpose:** Ceph Tentacle (v20) flags the older `aes` cephx cipher. Daemon keys (mon/mgr/osd) are rotated to `aes256k` via `security.cephx.daemon`, but CSI keys are pinned to `aes` because `aes256k` needs a host kernel of 7.0+ and the Talos nodes are below that. The remaining warnings cannot clear, so they are muted declaratively in `cephClusterSpec.healthCheck.muteHealthWarning`. Unmute — and drop `security.cephx.csi.keyType` — once the nodes reach kernel 7.0+.
 - **openebs-hostpath is node-local:** Data is tied to the node. A pod rescheduling to a different node loses access to its PVC.
 
@@ -29,10 +29,10 @@ Backing up an app's PVC, the substitution vars, and the restore procedure are al
 
 Clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-postgresql.md), [ADR-0011](../adr/0011-pgvector-cluster-split.md)):
 
-| Cluster            | Purpose                | Notes                                                           |
-| ------------------ | ---------------------- | --------------------------------------------------------------- |
-| `pgsql-cluster`    | All general apps       | Default                                                         |
-| `pgvector-cluster` | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord |
+| Cluster             | Purpose                | Notes                                                           |
+| ------------------- | ---------------------- | --------------------------------------------------------------- |
+| `pgcluster-default` | All general apps       | Default                                                         |
+| `pgvector-cluster`  | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord |
 
 The PostgreSQL major version is not recorded here — it is whatever `imageName`
 says in each cluster's manifest under `kubernetes/apps/database/cnpg/`. Renovate

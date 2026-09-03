@@ -65,7 +65,7 @@ components:
 postBuild:
     substitute:
         APP: *app
-        CNPG_NAME: &postgresAppName pgsql-cluster # or pgvector-cluster
+        CNPG_NAME: &postgresAppName pgcluster-default # or pgvector-cluster
 healthChecks:
     - apiVersion: &postgresVersion postgresql.cnpg.io/v1
       kind: &postgresKind Cluster
@@ -112,7 +112,7 @@ initContainers:
                   name: "{{ .Release.Name }}-initdb-secret"
 ```
 
-`CNPG_NAME` picks the cluster: `pgsql-cluster` for general apps, `pgvector-cluster` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgsql-cluster` in the component (`${CNPG_NAME:=pgsql-cluster}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `storage.md` says what each is for.
+`CNPG_NAME` picks the cluster: `pgcluster-default` for general apps, `pgvector-cluster` for apps needing vector search ([ADR-0011](../adr/0011-pgvector-cluster-split.md)). It defaults to `pgcluster-default` in the component (`${CNPG_NAME:=pgcluster-default}`) — but set it explicitly anyway, because the `healthChecks` block below needs the anchor. Both clusters live in the `database` namespace; `storage.md` says what each is for.
 
 The generated `host` is `{cluster}-rw…`, shared by every app on that cluster — apps read it from the Secret, they never compose it.
 

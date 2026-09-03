@@ -13,7 +13,5 @@ spec:
   # CNPG cron is 6-field (seconds first), not the 5-field Kubernetes CronJob format
   # Runs at ~1 AM America/New_York (6 AM UTC during EDT, 5 AM UTC during EST)
   schedule: "0 0 6 * * *"
-  # A replica cluster cannot take a base backup. Un-suspended at promotion (Task 8).
-  suspend: true
   immediate: true
   backupOwnerReference: self

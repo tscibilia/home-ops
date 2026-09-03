@@ -16,28 +16,6 @@ spec:
     size: 20Gi
     storageClass: openebs-hostpath
 
-  # Blue/green rename of pgsql-cluster. A Cluster cannot be renamed, so this one
-  # bootstraps from blue's object store and then stays in continuous recovery,
-  # replaying blue's archived WAL until it is promoted.
-  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
-  bootstrap:
-    recovery:
-      source: blue
-
-  # Promotion (enabled: false) is irreversible -- see Task 8.
-  replica:
-    enabled: true
-    source: blue
-
-  externalClusters:
-    - name: blue
-      plugin:
-        name: barman-cloud.cloudnative-pg.io
-        parameters:
-          # read-only: the OLD cluster's prefix. Never written to.
-          barmanObjectName: pgsql-cluster
-          serverName: pgsql-cluster
-
   superuserSecret:
     name: cnpg-secret
   enableSuperuserAccess: true
