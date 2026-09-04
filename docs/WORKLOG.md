@@ -6,8 +6,6 @@
 
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 
-- [ ] migrate PG17 -> PG18 (see issue [#3343](https://github.com/tscibilia/home-ops/issues/3343))
-
 ## ⚠️ Known Issues
 
 `- [ ] ⚠️ **App name** - issue (with ref) - **comment**`
@@ -16,7 +14,6 @@
 - [ ] ⚠️ **Fairtrail:** Chromium 146 crashes even when run as root (Alpine or Talos issue?) - **Likely abandoning this app**
 - [ ] ⚠️ **Donetick:** SSE realtime disconnects through Cloudflare tunnel - **consider trying again with pangolin**
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
-- [ ] ⚠️ **ComfyUI:** not working due to single gpu and single model loaded via `llmkube`
 - [ ] ⚠️ **opencode:** v1 ignores `disable-model-invocation`, (see issue [#621](https://redirect.github.com/mattpocock/skills/issues/621)) - **wrapped as commands; drop them once v2 reads `metadata.opencode/autoinvoke`**
 
 ## ⛔ Blocked
@@ -30,7 +27,9 @@
 
 `Descending order, newest on top`
 
-- ✅ switch grafana dashboards from `gnetId` to `URL` (see PR [#3386](https://github.com/tscibilia/home-ops/pull/3386))
+- ✅ migrate PG17 -> PG18 **2026-09-03** (see issue [#3343](https://github.com/tscibilia/home-ops/issues/3343))
+- ✅ comfyUI swap on single gpu via `llmkube` & `modelPool` **2026-08-18** (see PR [#3405](https://github.com/tscibilia/home-ops/pull/3405))
+- ✅ switch grafana dashboards from `gnetId` to `URL` **2026-08-17** (see PR [#3386](https://github.com/tscibilia/home-ops/pull/3386))
 - ✅ CNPG upstream bug fixed in 1.30.x- **2026-08-13** (see issue #2301 causes `scheduledBackups` to get stuck infinitely)
 - ✅ switch guacamole to termix - **2026-08-10** (see commit [c108ba9](https://github.com/tscibilia/home-ops/commit/c108ba9))
 - ✅ switch pangolin to towonel - **2026-08-08** (see PRs [#3265](https://github.com/tscibilia/home-ops/pull/3265) thru [#3272](https://github.com/tscibilia/home-ops/pull/3272)) resolves issue [#2733](https://github.com/tscibilia/home-ops/issues/2733)
