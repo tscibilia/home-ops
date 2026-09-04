@@ -96,16 +96,49 @@ def storage_classes():
     ]
 
 
+def cnpg_on_disk() -> set[str]:
+    """Directories that actually hold a CNPG Cluster, not every subdirectory.
+
+    apps/database/cnpg/ also contains app/ and barman-cloud/, which are the
+    operator and its plugin rather than clusters.
+    """
+    root = ROOT / "kubernetes" / "apps" / "database" / "cnpg"
+    found = set()
+    for d in sorted(root.iterdir()):
+        manifest = d / "cluster.yaml"
+        if d.is_dir() and manifest.exists() and re.search(r"^kind: Cluster$", manifest.read_text(), re.M):
+            found.add(d.name)
+    return found
+
+
+def cnpg_in_table() -> set[str]:
+    return set(re.findall(r"^\| `([a-z0-9-]+)`\s*\|", section("storage.md", "CNPG (PostgreSQL)"), re.M))
+
+
 @check("cnpg", "CNPG cluster names in docs exist under apps/database/cnpg/")
 def cnpg_clusters():
-    on_disk = {p.name for p in (ROOT / "kubernetes" / "apps" / "database" / "cnpg").iterdir() if p.is_dir()}
-    named = set(re.findall(r"^\| `([a-z0-9-]+)`\s*\|", section("storage.md", "CNPG (PostgreSQL)"), re.M))
+    named = cnpg_in_table()
     # "cluster" can lead or trail the name: pgsql-cluster, pgcluster-default.
     named |= set(re.findall(r"CNPG_NAME:[^\n#]*?\b([a-z0-9-]*cluster[a-z0-9-]*)\b", context_text()))
     skip = ignored("cnpg")
     return [
         f"docs name CNPG cluster `{c}`, no directory under apps/database/cnpg/"
-        for c in sorted(named - on_disk - skip)
+        for c in sorted(named - cnpg_on_disk() - skip)
+    ]
+
+
+@check("cnpg-undocumented", "every CNPG cluster on disk is listed in storage.md")
+def cnpg_clusters_documented():
+    """The reverse of the check above.
+
+    That one only proves a documented cluster exists. It says nothing about a
+    cluster that exists and was never written down, which is how
+    pgcluster-timescale stayed absent from storage.md from the day it was added.
+    """
+    skip = ignored("cnpg-undocumented")
+    return [
+        f"CNPG cluster `{c}` exists under apps/database/cnpg/, not in storage.md's table"
+        for c in sorted(cnpg_on_disk() - cnpg_in_table() - skip)
     ]
 
 
