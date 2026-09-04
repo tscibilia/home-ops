@@ -66,28 +66,29 @@ For sub-directory specifics not covered above, read that directory's `README.md`
 
 Read the ADRs touching the area you're about to work in. Don't re-litigate a recorded decision; if you think one is wrong, supersede it.
 
-| #                                                                    | Decision                                                    | Date       | Status                  |
-| -------------------------------------------------------------------- | ----------------------------------------------------------- | ---------- | ----------------------- |
-| [0001](docs/adr/0001-follow-onedr0p-cluster-template.md)             | Follow onedr0p's cluster-template and his home-ops patterns | 2025-03-24 | accepted · living table |
-| [0002](docs/adr/0002-flux-repository-conventions.md)                 | Flux repository conventions                                 | —          | accepted · living table |
-| [0003](docs/adr/0003-external-secrets-akeyless-over-sops.md)         | External Secrets Operator with aKeyless, replacing SOPS     | 2025-04-06 | accepted                |
-| [0004](docs/adr/0004-cloudnativepg-for-postgresql.md)                | CloudNativePG for PostgreSQL                                | 2025-04-21 | accepted                |
-| [0005](docs/adr/0005-volsync-for-pvc-backup.md)                      | VolSync for PVC backup                                      | 2025-04-23 | superseded by 0013      |
-| [0006](docs/adr/0006-authentik-for-sso.md)                           | Authentik for SSO                                           | 2025-05-01 | superseded by 0014      |
-| [0007](docs/adr/0007-keda-for-scale-to-zero.md)                      | KEDA for scale-to-zero                                      | 2025-06-14 | superseded by 0010      |
-| [0008](docs/adr/0008-envoy-gateway-over-ingress-nginx.md)            | Envoy Gateway over ingress-nginx                            | 2025-10-21 | accepted                |
-| [0009](docs/adr/0009-pangolin-for-external-ingress.md)               | Pangolin for external ingress                               | 2026-05-02 | superseded by 0015      |
-| [0010](docs/adr/0010-zeroscaler-over-keda.md)                        | zeroscaler (native HPA + prometheus-adapter) over KEDA      | 2026-05-17 | accepted                |
-| [0011](docs/adr/0011-pgvector-cluster-split.md)                      | Separate pgvector cluster for vector workloads              | 2026-05-21 | accepted                |
-| [0012](docs/adr/0012-konflate-over-flux-local.md)                    | konflate (flate) over flux-local                            | 2026-06-18 | accepted                |
-| [0013](docs/adr/0013-kopiur-over-volsync.md)                         | kopiur over VolSync for PVC backup                          | 2026-07-05 | accepted                |
-| [0014](docs/adr/0014-pocket-id-tinyauth-over-authentik.md)           | pocket-id and tinyauth over Authentik                       | 2026-08-05 | accepted                |
-| [0015](docs/adr/0015-towonel-over-pangolin.md)                       | towonel over Pangolin for public ingress                    | 2026-08-08 | accepted                |
-| [0016](docs/adr/0016-no-http3-on-envoy-gateways.md)                  | No HTTP/3 on the Envoy gateways                             | 2026-08-10 | accepted                |
-| [0017](docs/adr/0017-akeyless-github-action-for-ci-secrets.md)       | aKeyless GitHub Action for CI secrets, over GitHub secrets  | 2026-08-13 | accepted                |
-| [0018](docs/adr/0018-soul-for-identity-channel-prompts-for-rules.md) | SOUL.md carries identity; channel_prompts carry room rules  | 2026-08-16 | accepted                |
-| [0019](docs/adr/0019-agent-opens-prs-cannot-land-them.md)            | The Hermes agent opens pull requests and cannot land them   | 2026-08-16 | accepted                |
-| [0020](docs/adr/0020-modelpool-router-for-gpu-swapping.md)           | One GPU slot, swapped on request, arbitrated by LLMKube     | 2026-08-18 | accepted                |
+| #                                                                      | Decision                                                        | Date       | Status                  |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------- | ---------- | ----------------------- |
+| [0001](docs/adr/0001-follow-onedr0p-cluster-template.md)               | Follow onedr0p's cluster-template and his home-ops patterns     | 2025-03-24 | accepted · living table |
+| [0002](docs/adr/0002-flux-repository-conventions.md)                   | Flux repository conventions                                     | —          | accepted · living table |
+| [0003](docs/adr/0003-external-secrets-akeyless-over-sops.md)           | External Secrets Operator with aKeyless, replacing SOPS         | 2025-04-06 | accepted                |
+| [0004](docs/adr/0004-cloudnativepg-for-postgresql.md)                  | CloudNativePG for PostgreSQL                                    | 2025-04-21 | accepted                |
+| [0005](docs/adr/0005-volsync-for-pvc-backup.md)                        | VolSync for PVC backup                                          | 2025-04-23 | superseded by 0013      |
+| [0006](docs/adr/0006-authentik-for-sso.md)                             | Authentik for SSO                                               | 2025-05-01 | superseded by 0014      |
+| [0007](docs/adr/0007-keda-for-scale-to-zero.md)                        | KEDA for scale-to-zero                                          | 2025-06-14 | superseded by 0010      |
+| [0008](docs/adr/0008-envoy-gateway-over-ingress-nginx.md)              | Envoy Gateway over ingress-nginx                                | 2025-10-21 | accepted                |
+| [0009](docs/adr/0009-pangolin-for-external-ingress.md)                 | Pangolin for external ingress                                   | 2026-05-02 | superseded by 0015      |
+| [0010](docs/adr/0010-zeroscaler-over-keda.md)                          | zeroscaler (native HPA + prometheus-adapter) over KEDA          | 2026-05-17 | accepted                |
+| [0011](docs/adr/0011-pgvector-cluster-split.md)                        | Separate pgvector cluster for vector workloads                  | 2026-05-21 | accepted                |
+| [0012](docs/adr/0012-konflate-over-flux-local.md)                      | konflate (flate) over flux-local                                | 2026-06-18 | accepted                |
+| [0013](docs/adr/0013-kopiur-over-volsync.md)                           | kopiur over VolSync for PVC backup                              | 2026-07-05 | accepted                |
+| [0014](docs/adr/0014-pocket-id-tinyauth-over-authentik.md)             | pocket-id and tinyauth over Authentik                           | 2026-08-05 | accepted                |
+| [0015](docs/adr/0015-towonel-over-pangolin.md)                         | towonel over Pangolin for public ingress                        | 2026-08-08 | accepted                |
+| [0016](docs/adr/0016-no-http3-on-envoy-gateways.md)                    | No HTTP/3 on the Envoy gateways                                 | 2026-08-10 | accepted                |
+| [0017](docs/adr/0017-akeyless-github-action-for-ci-secrets.md)         | aKeyless GitHub Action for CI secrets, over GitHub secrets      | 2026-08-13 | accepted                |
+| [0018](docs/adr/0018-soul-for-identity-channel-prompts-for-rules.md)   | SOUL.md carries identity; channel_prompts carry room rules      | 2026-08-16 | accepted                |
+| [0019](docs/adr/0019-agent-opens-prs-cannot-land-them.md)              | The Hermes agent opens pull requests and cannot land them       | 2026-08-16 | accepted                |
+| [0020](docs/adr/0020-modelpool-router-for-gpu-swapping.md)             | One GPU slot, swapped on request, arbitrated by LLMKube         | 2026-08-18 | accepted                |
+| [0021](docs/adr/0021-blue-green-rename-then-in-place-major-upgrade.md) | Rename CNPG clusters by promoting a replica; upgrade separately | 2026-09-03 | accepted                |
 
 **0005, 0006, 0007 and 0009 are reconstructed** — written after the fact from the commits that removed them, not from contemporaneous notes. Each says so. Trust their consequences more than their rationale.
 
