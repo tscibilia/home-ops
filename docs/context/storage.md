@@ -29,10 +29,18 @@ Backing up an app's PVC, the substitution vars, and the restore procedure are al
 
 Clusters in the `database` namespace ([ADR-0004](../adr/0004-cloudnativepg-for-postgresql.md), [ADR-0011](../adr/0011-pgvector-cluster-split.md)):
 
-| Cluster             | Purpose                | Notes                                                           |
-| ------------------- | ---------------------- | --------------------------------------------------------------- |
-| `pgcluster-default` | All general apps       | Default                                                         |
-| `pgcluster-vector`  | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord |
+| Cluster               | Purpose                | Notes                                                            |
+| --------------------- | ---------------------- | ---------------------------------------------------------------- |
+| `pgcluster-default`   | All general apps       | Default                                                          |
+| `pgcluster-vector`    | Immich + pgvector apps | Shared cluster for apps needing vector search; adds vectorchord  |
+| `pgcluster-timescale` | tracearr               | Time-series; built from an `ImageCatalog`, not a plain image tag |
+
+`pgsql-cluster` and `pgvector-cluster` are the pre-rename names of the first two.
+They are still on disk as warm rollback copies and are deleted once the new
+clusters have soaked ([ADR-0021](../adr/0021-blue-green-rename-then-in-place-major-upgrade.md)).
+
+<!-- verify-ignore: cnpg-undocumented pgsql-cluster -->
+<!-- verify-ignore: cnpg-undocumented pgvector-cluster -->
 
 The PostgreSQL major version is not recorded here — it is whatever `imageName`
 says in each cluster's manifest under `kubernetes/apps/database/cnpg/`. Renovate
