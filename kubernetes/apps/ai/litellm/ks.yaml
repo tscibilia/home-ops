@@ -12,7 +12,7 @@ spec:
       namespace: database
     - name: secret-stores
       namespace: external-secrets
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-default
       namespace: database
     - name: litellm-operator
     - name: llmkube

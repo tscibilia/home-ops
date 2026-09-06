@@ -116,7 +116,7 @@ spec:
     dependsOn:
         - name: secret-stores
           namespace: external-secrets
-        - name: cnpg-cluster # if cnpg (CNPG_NAME=pgsql-cluster)
+        - name: cnpg-pgcluster-default # if cnpg (CNPG_NAME=pgcluster-default)
           namespace: database
         - name: kopiur # if kopiur
           namespace: kopiur-system

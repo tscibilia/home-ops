@@ -36,7 +36,7 @@ spec:
   dependsOn:
     - name: pocket-id-operator
       namespace: security
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-default
       namespace: database
     - name: kopiur
       namespace: kopiur-system

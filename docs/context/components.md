@@ -77,7 +77,7 @@ healthCheckExprs:
       failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
       current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
 dependsOn:
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-default
       namespace: database
 interval: 1h
 retryInterval: 5m

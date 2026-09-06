@@ -10,7 +10,7 @@ spec:
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-default
       namespace: database
     - name: pocket-id
       namespace: security
