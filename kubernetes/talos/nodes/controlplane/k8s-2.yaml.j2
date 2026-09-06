@@ -1,0 +1,18 @@
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: ceph0
+mtu: 1500
+addresses:
+  - address: 192.168.43.12/24
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  topology.kubernetes.io/zone: m
+  # 10c4:ea60 - Nabu Casa Home Assistant Connect ZBT-1 (Zigbee)
+  feature.node.kubernetes.io/usb-zigbee: "true"
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: k8s-2

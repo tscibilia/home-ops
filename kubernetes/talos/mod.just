@@ -16,9 +16,9 @@ apply-node node *args:
     just talos render-config "{{ node }}" | talosctl -n "{{ node }}" apply-config -f /dev/stdin {{ args }}
 
 [doc('Download Talos machine image')]
-download-image version:
+download-image version node="":
     just check-tools curl jq
-    export SCHEMATIC="$(just talos schematic-id)"
+    export SCHEMATIC="$(just talos schematic-id '{{ node }}')"
     gum spin --title "Downloading Talos {{ version }} ..." -- \
     curl -sfL --remove-on-error --retry 5 --retry-delay 5 --retry-all-errors \
         -o "{{ source_directory() }}/talos-{{ version }}-${SCHEMATIC:0:8}.iso" \
@@ -34,12 +34,12 @@ reboot-node node:
 [doc('Render Talos config for a node')]
 render-config node:
     just check-tools talosctl minijinja-cli akeyless yq gum
-    export CONTROLPLANE="$(just talos machine-controller {{ node }})"; \
-    export WORKER="$(just talos machine-worker {{ node }})"; \
-    export SCHEMATIC="$(just talos schematic-id {{ node }})"; \
+    schematic="$(just talos schematic-id '{{ node }}')"
+    if [[ -f '{{ source_directory() }}/nodes/workers/{{ node }}.yaml.j2' ]]; then role=workers; else role=controlplane; fi
     gum spin --title "Injecting secrets..." -- bash -c "\
-        talosctl machineconfig patch <(just template '{{ source_directory() }}/machineconfig.yaml.j2') \
-            -p @<(just template '{{ source_directory() }}/nodes/{{ node }}.yaml.j2')"
+        talosctl machineconfig patch <(just template '{{ source_directory() }}/cluster.yaml.j2' -D 'schematic=${schematic}') \
+            -p @<(just template '{{ source_directory() }}/${role}.yaml.j2') \
+            -p @<(just template '{{ source_directory() }}/nodes/${role}/{{ node }}.yaml.j2')"
 
 [confirm('Reset node ' + node + ' [y|N] ?')]
 [doc('Reset a single node')]
@@ -67,7 +67,7 @@ reset-cluster:
 
         just log info "Resetting $node..."
         if ! timeout 120 talosctl -n $node reset --system-labels-to-wipe EPHEMERAL,STATE,u-local-hostpath \
-             --graceful=false --reboot 2>&1; then
+              --graceful=false --reboot 2>&1; then
             just log warn "Reset on $node timed out, forcing reboot..."
             talosctl -n $node reboot --mode force 2>/dev/null || true
         fi
@@ -98,24 +98,23 @@ upgrade-k8s version:
 [doc('Upgrade Talos version on a node')]
 upgrade-node node *args:
     just check-tools talosctl
-    talosctl -n "{{ node }}" upgrade -i "$(just talos machine-image)" -m powercycle --timeout=10m {{ args }}
+    talosctl -n "{{ node }}" upgrade -i "$(just talos machine-image {{ node }})" -m powercycle --timeout=10m {{ args }}
+
+[private]
+schematic-file node="":
+    file="{{ source_directory() }}/schematic.yaml.j2"
+    if [[ -n "{{ node }}" ]]; then
+        for f in {{ source_directory() }}/nodes/*/{{ node }}.schematic.yaml.j2; do
+            [[ -f "$f" ]] && file="$f"
+        done
+    fi
+    echo "$file"
 
 [private]
 schematic-id node="":
     just check-tools curl jq minijinja-cli akeyless
-    export CONTROLPLANE="$(if [ -n "{{ node }}" ]; then just talos machine-controller "{{ node }}" || true; fi)"
-    export WORKER="$(if [ -n "{{ node }}" ]; then just talos machine-worker "{{ node }}" || true; fi)"
-    curl -sX POST --data-binary @<(just template "{{ source_directory() }}/nodes/schematic.yaml.j2") "https://factory.talos.dev/schematics" | jq -r '.id'
+    curl -sX POST --data-binary @<(just template "$(just talos schematic-file "{{ node }}")") "https://factory.talos.dev/schematics" | jq -r '.id'
 
 [private]
-machine-controller node:
-    just template "{{ source_directory() }}/nodes/{{ node }}.yaml.j2" | yq -r -e 'select(.machine) | (.machine.type == "controlplane") // ""'
-
-[private]
-machine-worker node:
-    just template "{{ source_directory() }}/nodes/{{ node }}.yaml.j2" | yq -r -e 'select(.machine) | (.machine.type == "worker") // ""'
-
-[private]
-machine-image:
-    export SCHEMATIC="$(just talos schematic-id)"
-    just template "{{ source_directory() }}/machineconfig.yaml.j2" | yq -r -e 'select(.machine) | .machine.install.image'
+machine-image node="":
+    just template "{{ source_directory() }}/cluster.yaml.j2" -D "schematic=$(just talos schematic-id '{{ node }}')" | yq -r -e 'select(.kind == "UnattendedInstallConfig") | .installer.image'

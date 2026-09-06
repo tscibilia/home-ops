@@ -1,0 +1,16 @@
+---
+apiVersion: v1alpha1
+kind: LinkConfig
+name: ceph0
+mtu: 1500
+addresses:
+  - address: 192.168.43.11/24
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  topology.kubernetes.io/zone: m
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: k8s-1

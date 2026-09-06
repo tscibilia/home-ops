@@ -1,0 +1,10 @@
+---
+machine:
+  type: worker
+  ca:
+    crt: ak://talos-m70q/MACHINE_CA_CRT
+---
+# removes the default Flannel CNI document; $patch: delete is only valid in a patch layer
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete
