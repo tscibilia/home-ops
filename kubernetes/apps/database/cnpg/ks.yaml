@@ -27,32 +27,6 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app cnpg-cluster
-spec:
-  dependsOn:
-    - name: cnpg-operator
-    - name: openebs
-      namespace: openebs-system
-  interval: 1h
-  path: ./kubernetes/apps/database/cnpg/pgsql-cluster
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: cnpg-secret
-      - kind: Secret
-        name: cluster-secrets
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: database
-  wait: true
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: &app cnpg-barman-cloud
 spec:
   dependsOn:
@@ -72,33 +46,6 @@ spec:
     namespace: flux-system
   targetNamespace: database
   wait: false
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: cnpg-pgvector-cluster
-spec:
-  dependsOn:
-    - name: cnpg-operator
-    - name: cnpg-barman-cloud
-    - name: openebs
-      namespace: openebs-system
-  interval: 1h
-  path: ./kubernetes/apps/database/cnpg/pgvector-cluster
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: cnpg-secret
-      - kind: Secret
-        name: cluster-secrets
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-    namespace: flux-system
-  targetNamespace: database
-  wait: true
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -136,9 +83,6 @@ spec:
   dependsOn:
     - name: cnpg-operator
     - name: cnpg-barman-cloud
-    # cnpg-cluster owns the pgsql-cluster ObjectStore this recovers from.
-    # Do not delete that Kustomization before promotion (Task 12).
-    - name: cnpg-cluster
     - name: openebs
       namespace: openebs-system
   interval: 1h
@@ -166,9 +110,6 @@ spec:
   dependsOn:
     - name: cnpg-operator
     - name: cnpg-barman-cloud
-    # cnpg-pgvector-cluster owns the pgvector-cluster ObjectStore this recovers from.
-    # Do not delete that Kustomization before promotion.
-    - name: cnpg-pgvector-cluster
     - name: openebs
       namespace: openebs-system
   interval: 1h
