@@ -1,0 +1,190 @@
+---
+version: v1alpha1
+machine:
+  ca:
+    crt: ak://talos-m70q/MACHINE_CA_CRT
+  features:
+    apidCheckExtKeyUsage: true
+    diskQuotaSupport: true
+    rbac: true
+  token: ak://talos-m70q/MACHINE_TOKEN
+  # Uncomment below if the tuppr upgrade complains about a mis-match in the image
+  {# nodeAnnotations:
+    tuppr.home-operations.com/factory-url: factory.talos.dev/metal-installer #}
+cluster:
+  ca:
+    crt: ak://talos-m70q/CLUSTER_CA_CRT
+  clusterName: main
+  controlPlane:
+    endpoint: https://k8s.internal:6443
+  token: ak://talos-m70q/CLUSTER_TOKEN
+---
+apiVersion: v1alpha1
+kind: LinkAliasConfig
+name: net0
+selector:
+  match: link.driver == "e1000e"
+---
+apiVersion: v1alpha1
+kind: BondConfig
+name: bond0
+links:
+  - net0
+bondMode: active-backup
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: DHCPv4Config
+name: bond0
+clientIdentifier: mac
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.107
+vlanID: 107
+parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: VLANConfig
+name: bond0.99
+vlanID: 99
+parent: bond0
+mtu: 1500
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+hostDNS:
+  enabled: true
+  forwardKubeDNSToHost: true # Requires Cilium socketLB features
+  resolveMemberNames: true
+---
+apiVersion: v1alpha1
+kind: DiscoveryServiceConfig
+name: default
+endpoint: https://discovery.talos.dev/
+---
+apiVersion: v1alpha1
+kind: DiscoveryIdentityConfig
+clusterID: ak://talos-m70q/CLUSTER_ID
+clusterSecret: ak://talos-m70q/CLUSTER_SECRET
+---
+apiVersion: v1alpha1
+kind: UnattendedInstallConfig
+installer:
+  image: factory.talos.dev/metal-installer/{{ schematic }}:v1.14.0
+provisioning:
+  diskSelector:
+    match: disk.dev_path == "/dev/nvme0n1"
+  wipe: false
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 400GiB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-hostpath
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  minSize: 50GiB
+---
+apiVersion: v1alpha1
+kind: WatchdogTimerConfig
+device: /dev/watchdog0
+timeout: 10m
+---
+apiVersion: v1alpha1
+kind: RegistryAuthConfig
+name: ghcr.io
+username: ak://kubernetes/github/GHCR_USER
+password: ak://kubernetes/github/GHCR_TOKEN
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nbd
+---
+apiVersion: v1alpha1
+kind: SysctlConfig
+params:
+  fs.inotify.max_user_instances: "8192" # increase inotify limits
+  fs.inotify.max_user_watches: "1048576" # increase inotify limits
+  net.core.default_qdisc: fq # fairqueue
+  net.core.rmem_max: "100663296" # 2.5GbE + cloudflared/quic
+  net.core.wmem_max: "100663296" # 2.5GbE + cloudflared/quic
+  net.ipv4.neigh.default.gc_thresh1: "4096" # arp cache
+  net.ipv4.neigh.default.gc_thresh2: "8192" # arp cache
+  net.ipv4.neigh.default.gc_thresh3: "16384" # arp cache
+  net.ipv4.tcp_congestion_control: bbr # 2.5GbE
+  net.ipv4.tcp_fastopen: "3" # enable syn cookies
+  net.ipv4.tcp_mtu_probing: "1" # jumbo frames + 2.5GbE
+  net.ipv4.tcp_notsent_lowat: "131072" # 2.5GbE
+  net.ipv4.tcp_rmem: 4096 87380 67108864 # 2.5GbE
+  net.ipv4.tcp_slow_start_after_idle: "0" # 2.5GbE + CEPH
+  net.ipv4.tcp_window_scaling: "1" # enable tcp window scaling
+  net.ipv4.tcp_wmem: 4096 65536 67108864 # 2.5GbE
+  sunrpc.tcp_max_slot_table_entries: "128" # nfs
+  sunrpc.tcp_slot_table_entries: "128" # nfs
+  user.max_user_namespaces: "11255" # rootless containers
+  vm.nr_hugepages: "1024" # 1GB hugepages
+---
+apiVersion: v1alpha1
+kind: EtcFileConfig
+name: nfsmount.conf
+mode: 0o644
+contents: |
+  [ NFSMount_Global_Options ]
+  nfsvers=4
+  hard=True
+  nconnect=16
+  noatime=True
+---
+apiVersion: v1alpha1
+kind: CRICustomizationConfig
+name: containerd
+content: |
+  [plugins."io.containerd.cri.v1.images"]
+    discard_unpacked_layers = true
+  [plugins."io.containerd.cri.v1.runtime"]
+    device_ownership_from_security_context = true
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  node.kubernetes.io/gpu: "true"
+  topology.kubernetes.io/region: main
+nodeIP:
+  validSubnets:
+    - 192.168.5.0/24
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+defaultRuntimeSeccompProfileEnabled: true
+image: ghcr.io/siderolabs/kubelet:v1.36.3
+config:
+  allowedUnsafeSysctls:
+    - net.ipv6.conf.*
+  featureGates:
+    ResourceHealthStatus: true # New
+  imageGCHighThresholdPercent: 60 # keep under ceph's 70% mon_data_avail_warn on /var
+  imageGCLowThresholdPercent: 50
+  imageMinimumGCAge: "2m"
+  imageMaximumGCAge: 168h
+  serializeImagePulls: false
+---
+apiVersion: v1alpha1
+kind: KubeNetworkConfig
+dnsDomain: cluster.local
+podSubnets:
+  - 10.42.0.0/16
+serviceSubnets:
+  - 10.43.0.0/16
+---
+apiVersion: v1alpha1
+kind: KubePrismConfig
+port: 7445

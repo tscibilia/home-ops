@@ -2,85 +2,83 @@
 
 ## Overview
 
-This directory manages Talos Linux node configuration for the 4-node cluster (k8s-1/2/3, ai3090).
+This directory manages the declarative [Talos Linux](https://www.talos.dev) machine configuration for the cluster,
+built from composable multi-document patches. Nothing in this directory is applied automatically; configs are
+rendered on demand and pushed to nodes with `talosctl`. node configuration for the .
+
+## Layout
+
+| Path                                    | Purpose                                                       |
+| --------------------------------------- | ------------------------------------------------------------- |
+| `cluster.yaml.j2`                       | Documents applied to every node                               |
+| `controlplane.yaml.j2`                  | Control-plane-only documents, including `machine.type`        |
+| `workers.yaml.j2`                       | Worker-only documents                                         |
+| `nodes/<role>/<node>.yaml.j2`           | Per-node documents (hostname, addresses, BGP router ID, zone) |
+| `nodes/<role>/<node>.schematic.yaml.j2` | Optional per-node schematic override                          |
+| `schematic.yaml.j2`                     | Shared [Image Factory](https://factory.talos.dev) schematic   |
+| `mod.just`                              | Recipes (`just talos ...`)                                    |
+
+## Rendering
+
+`just talos render-config <node>` builds the final machine config in three layers:
 
 ```
-kubernetes/talos/
-├── machineconfig.yaml.j2   # Base machine config template (Jinja2)
-├── mod.just                # Talos management commands
-├── nodes/
-│   ├── schematic.yaml.j2   # Node schematic (extensions + kernel args)
-│   ├── k8s-1.yaml.j2       # Control plane node overlays
-│   ├── k8s-2.yaml.j2
-│   ├── k8s-3.yaml.j2
-│   └── ai3090.yaml.j2      # Worker node overlay (NVIDIA GPU)
-└── README.md               # This file
+talosctl machineconfig patch <(cluster.yaml.j2) \
+    -p @<(controlplane.yaml.j2 | workers.yaml.j2) \
+    -p @<(nodes/<role>/<node>.yaml.j2)
 ```
+
+Each layer passes through `minijinja-cli` (strict Jinja templating; the schematic ID arrives as a `-D` define)
+and `akeyless inject` (secret resolution) before `talosctl` merges them. Later patches strategically merge into
+earlier ones: documents with the same kind/name are deep-merged, new documents are appended.
+
+Two conventions keep the layers honest:
+
+- **Directory placement is the single source of truth for a node's role.** The role patch is chosen
+  by which `nodes/<role>/` directory contains the node file, and `machine.type` is set by the role
+  patch, not the node file. A node cannot claim one role by filename and another by content.
+- **Secrets never live in this repo.** All sensitive values are `ak://<name>/.../<secret>`
+  references resolved at render time.
+
+## Schematics
+
+The schematic defines the Image Factory build (system extensions, kernel args). `just talos
+schematic-id` POSTs it to the factory and gets back a content-addressed ID, which is templated into
+the `UnattendedInstallConfig` installer image and used by `download-image` and `upgrade-node`.
+
+Resolution is per node: `nodes/<role>/<node>.schematic.yaml.j2` wins when present, otherwise the
+shared `schematic.yaml.j2` applies. Overrides are complete files, not deltas; they exist for nodes
+whose hardware diverges from the fleet. No overrides exist today.
 
 ## Commands
 
-| Command                           | Purpose                                             |
-| --------------------------------- | --------------------------------------------------- |
-| `just talos apply-node <node>`    | Render and apply config to a node (live, no reboot) |
-| `just talos render-config <node>` | Render the full config for a node (dry-run)         |
-| `just talos upgrade-node <node>`  | Upgrade Talos version on a node (reboots)           |
-| `just talos schematic-id <node>`  | Get the current factory schematic hash for a node   |
-| `just talos reboot-node <node>`   | Reboot a node (powercycle)                          |
-| `just talos machine-image`        | Get the current install image URL                   |
+| Command                           | Purpose                                                |
+| --------------------------------- | ------------------------------------------------------ |
+| `just talos apply-node <node>`    | Render and apply config to a node (live, no reboot)    |
+| `just talos render-config <node>` | Render the full config for a node (dry-run)            |
+| `just talos upgrade-node <node>`  | Upgrade Talos version on a node (reboots)              |
+| `just talos schematic-id <node>`  | Get the current factory schematic hash for a node      |
+| `just talos reboot-node <node>`   | Reboot a node (powercycle)                             |
+| `just talos machine-image <node>` | Get the install image URL for a node (schematic-aware) |
 
 ## tuppr — Automatic Upgrades
 
-[Tuppr](https://github.com/home-operations/tuppr) is the upgrade controller. It manages Talos and Kubernetes version upgrades through a `TalosUpgrade` CR. See `apps/system-upgrade/tuppr/`.
+[Tuppr](https://github.com/home-operations/tuppr) is the upgrade controller. It manages Talos and
+Kubernetes version upgrades through a `TalosUpgrade` CR. See `apps/system-upgrade/tuppr/`.
 
 To trigger a Talos upgrade:
 
-1. Bump the version in `machineconfig.yaml.j2` and `upgrades/talosupgrade.yaml`
+1. Bump the installer version in `cluster.yaml.j2` (`UnattendedInstallConfig`) and `upgrades/talosupgrade.yaml`
 2. Commit and push — Flux reconciles, tuppr picks up the change
 3. tuppr upgrades nodes one by one (controller first, workers last)
 
-## Schematic Management
+## Gotchas
 
-### What is a schematic?
-
-A schematic is a content-addressed ID (SHA256 hash) of your customization YAML — kernel args + system extensions. It's generated by the [Talos Image Factory](https://factory.talos.dev). The same input always produces the same ID.
-
-`schematic.yaml.j2` defines:
-
-- **Kernel args**: mitigation offloads, IOMMU config, GPU modesetting
-- **Extensions**: per-node type — control planes get `i915` (Intel GPU), ai3090 gets NVIDIA modules
-
-```yaml
-# The template is node-type-aware
-officialExtensions:
-  - siderolabs/intel-ucode
-  - siderolabs/mei
-  - siderolabs/nfsrahead
-  {% if ENV.CONTROLPLANE %}
-  - siderolabs/i915          # Intel GPU — control plane only
-  {% endif %}
-  {% if ENV.WORKER %}
-  - siderolabs/nonfree-kmod-nvidia
-  - siderolabs/nvidia-container-toolkit
-  {% endif %}
-```
-
-### How the install image is built
-
-`machineconfig.yaml.j2` references the schematic and Talos version:
-
-```yaml
-machine:
-    install:
-        image: factory.talos.dev/metal-installer/{{ ENV.SCHEMATIC }}:v1.13.7
-```
-
-`ENV.SCHEMATIC` is resolved at render time by `just talos schematic-id <node>`:
-
-1. Renders `schematic.yaml.j2` with the node's `CONTROLPLANE`/`WORKER` env vars
-2. POSTs to the factory API → returns the content hash
-3. Embeds it in `.machine.install.image`
-
-## Incidents
+- `machine.ca` and `cluster.ca` merge as a cert+key **unit**: a patch supplying only `key` blanks
+  `crt`. This is why `controlplane.yaml.j2` repeats the `crt` references alongside the keys.
+- Rendering a worker before `workers.yaml.j2` and `nodes/workers/` exist fails loudly. Adding the
+  first worker means creating `workers.yaml.j2` (with `machine: { type: worker }` and a `ca` block
+  carrying `crt` only) plus `nodes/workers/<node>.yaml.j2`.
 
 ### Talos v1.13.7 Upgrade Blocked — Schematic Hash Mismatch
 
@@ -89,45 +87,8 @@ machine:
 > install image `.../85b8bbd7...:v1.13.6` does not embed the runtime schematic `5c952bad...`
 
 **Root Cause:**
-Commit `71d239a8` (Jun 23) refactored two separate schematic files (`controlplane/schematic.yaml.j2`, `worker/schematic.yaml.j2`) into one combined `nodes/schematic.yaml.j2`. During the merge, the **extension list order for control planes changed**:
+Commit `71d239a8` (Jun 23) refactored two separate schematic files
+(`controlplane/schematic.yaml.j2`, `worker/schematic.yaml.j2`) into one combined `nodes/schematic.yaml.j2`.
+During the merge, the **extension list order for control planes changed**, therefore the schematic hash differed:
 
-```
-# Old (controlplane/schematic.yaml.j2)       # New (nodes/schematic.yaml.j2)
-siderolabs/i915              # i915 FIRST    siderolabs/intel-ucode    # alphabetical
-siderolabs/intel-ucode                       siderolabs/mei
-siderolabs/mei                               siderolabs/nfsrahead
-siderolabs/nfsrahead                         siderolabs/i915           # i915 LAST
-```
-
-The schematic hash is a content hash of the full YAML — list ordering matters. The old order produced `5c952bad...`; the new order produces `85b8bbd7...`. All existing nodes were installed with the old hash. Worker nodes were unaffected (already alphabetical).
-
-**Why it blocked:** tuppr's `buildTalosUpgradeImage()` reads `.machine.install.image` from the node and copies that schematic forward. After the template change, any `apply-node` wrote the new hash (`85b8bbd7...`) into the node's config while the actual on-disk install still used the old one (`5c952bad...`). tuppr saw the mismatch and refused to upgrade (reinstalling from the wrong image would wipe extensions).
-
-**The Fix:**
-
-1. Added `tuppr.home-operations.com/factory-url=factory.talos.dev/metal-installer` as `machine.nodeAnnotations` in `machineconfig.yaml.j2` — this tells tuppr to use the runtime schematic (from the running machine config) instead of the install image's schematic.
-2. Applied live via `kubectl annotate node` to all 4 nodes
-3. tuppr re-reconciled, built images using the correct runtime schematic (`5c952bad...`), and upgraded all nodes to v1.13.7
-
-**If there's a reoccurance:**
-
-- It shouldn't reoccur since the install image now matches the runtime (`5c952bad...`)
-- If it does, there's a commented-out annotation in the talos/machineconfig.yaml.j2 template via `machine.nodeAnnotations`
-- You can uncomment the annotation and `apply-node` to force tuppr to use the runtime schematic
-
-**Lesson:** When refactoring schematic templates, diff the **rendered output** (not just the Jinja2 template) — list ordering changes the content hash.
-
-## Design Notes
-
-### `apply-node` vs tuppr
-
-| Action                         | Updates config  | Updates install image | Edits in git |
-| ------------------------------ | --------------- | --------------------- | ------------ |
-| `just talos apply-node <node>` | ✅ live         | ❌                    | ✅           |
-| tuppr version bump + upgrade   | ✅ (via render) | ✅ (writes new image) | ✅           |
-
-Prefer tuppr for changes that affect extensions or kernel args. `apply-node` is fine for ephemeral config (sysctls, labels, etc.) but know that it writes the template's current schematic hash into `.machine.install.image` — if the template hash has drifted from what's running, `apply-node` perpetuates the mismatch.
-
-### `machine.nodeAnnotations`
-
-Talos v1alpha1 supports `machine.nodeAnnotations` for setting annotations on the Kubernetes Node object at boot time. This is how the factory-url override is baked in. It's the same pattern as `machine.nodeLabels` and `machine.nodeTaints`.
+**Lesson:** When refactoring schematic templates, diff the **rendered output** (not just the Jinja2 template)

@@ -1,0 +1,50 @@
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nvidia
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nvidia_uvm
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nvidia_drm
+---
+apiVersion: v1alpha1
+kind: KernelModuleConfig
+name: nvidia_modeset
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+config:
+  imageMinimumGCAge: "5m"
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+labels:
+  topology.kubernetes.io/zone: w
+  gpu.io/vendor: nvidia
+  feature.node.kubernetes.io/pci-10de.present: "true"
+taints:
+  nvidia.com/gpu: present:NoSchedule
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: ai3090
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  diskSelector:
+    match: disk.transport == "nvme"
+  maxSize: 75GiB
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: local-hdd
+provisioning:
+  diskSelector:
+    match: disk.wwid == "naa.5000c5007998081f"
+  minSize: 900GiB

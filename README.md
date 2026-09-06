@@ -129,10 +129,12 @@ This Git repository contains the following directories.
 ├── 📁 components                # re-useable kustomize components
 ├── 📁 flux                      # flux system configuration
 ├── 📁 talos                     # node OS configurations
-│   ├── 📁 nodes                 # Override configurations for individual nodes
-│   ├── 📝 machineconfig.yaml.j2 # Base configuration template for all nodes
+│   ├── 📁 nodes                 # Per-node overrides (controlplane/ + workers/)
+│   ├── 📝 cluster.yaml.j2       # Base configuration template for all nodes
+│   ├── 📝 controlplane.yaml.j2  # Control-plane role patch
+│   ├── 📝 workers.yaml.j2       # Worker role patch
 │   ├── 📝 mod.just              # .justfile Talos module
-│   └── 📝 schematic.yaml.j2     # Talos image factory schematic
+│   └── 📝 schematic.yaml.j2     # Talos image factory schematic (control-plane flavor)
 └── 📝 mod.just                  # .justfile Kubernetes module
 📝 .justfile
 📝 .mise.toml
