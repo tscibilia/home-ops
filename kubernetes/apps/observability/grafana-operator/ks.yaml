@@ -29,7 +29,7 @@ spec:
   dependsOn:
     - name: grafana-operator
       namespace: observability
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-default
       namespace: database
     - name: pocket-id
       namespace: security

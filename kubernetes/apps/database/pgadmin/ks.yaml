@@ -12,7 +12,7 @@ spec:
       namespace: external-secrets
     - name: kopiur
       namespace: kopiur-system
-    - name: cnpg-cluster
+    - name: cnpg-pgcluster-default
   interval: 1h
   retryInterval: 5m
   path: ./kubernetes/apps/database/pgadmin/app

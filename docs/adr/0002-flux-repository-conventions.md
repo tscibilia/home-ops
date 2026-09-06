@@ -81,7 +81,7 @@ spec:
 | ---------------------------------- | ---------------------------------------------------------------------------- |
 | Always (has ExternalSecret)        | `secret-stores` / `external-secrets`                                         |
 | Using kopiur component             | `secret-stores` / `external-secrets` + `kopiur` / `kopiur-system`            |
-| Using cnpg component               | `cnpg-cluster` / `database`                                                  |
+| Using cnpg component               | `cnpg-pgcluster-default` / `database`                                        |
 | Using ceph-ssd storage (no kopiur) | `rook-ceph-cluster` / `rook-ceph`                                            |
 | Using zeroscaler                   | (no extra dependsOn — HPA gracefully degrades if prometheus-adapter is down) |
 | Depends on another app (same ns)   | just `name:` without `namespace:`                                            |
