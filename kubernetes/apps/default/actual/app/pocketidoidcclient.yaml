@@ -13,7 +13,7 @@ spec:
   allowedUserGroups:
     - name: id-admin
       namespace: security
-    - name: id-home
+    - name: id-family
       namespace: security
   secret:
     enabled: true
