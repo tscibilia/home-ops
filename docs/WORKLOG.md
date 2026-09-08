@@ -20,13 +20,13 @@
 
 `- ⛔ **App name** - blocking factor (waiting for X) - **note**`
 
-- ⛔ **etcd:** noisy logging, [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - **upstream confirmed fix in 1.37** - also see issue [#3345](https://github.com/tscibilia/home-ops/issues/3345)
 - ⛔ move github to forgejo - **Unsure of decentralize bootstrap, postponed**
 
 ## ✅ Resolved
 
 `Descending order, newest on top`
 
+- ✅ etcd noisy logging (fix in v1.37) **2026-09-06** [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - also see issue [#3345](https://github.com/tscibilia/home-ops/issues/3345)
 - ✅ migrate PG17 -> PG18 **2026-09-03** (see issue [#3343](https://github.com/tscibilia/home-ops/issues/3343))
 - ✅ comfyUI swap on single gpu via `llmkube` & `modelPool` **2026-08-18** (see PR [#3405](https://github.com/tscibilia/home-ops/pull/3405))
 - ✅ switch grafana dashboards from `gnetId` to `URL` **2026-08-17** (see PR [#3386](https://github.com/tscibilia/home-ops/pull/3386))
