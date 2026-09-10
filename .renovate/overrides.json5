@@ -85,5 +85,12 @@
       matchUpdateTypes: ["digest"],
       enabled: false,
     },
+    {
+      description: "No digest-only PRs for CNPG postgresql",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/cloudnative-pg/postgresql"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    },
   ],
 }
