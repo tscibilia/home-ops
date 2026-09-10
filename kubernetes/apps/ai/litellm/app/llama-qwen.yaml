@@ -9,10 +9,10 @@ spec:
   # Refer to [Qwen3.8-27B club-3090](https://github.com/noonghunna/club-3090/blob/master/models/qwen3.8-27b/llama-cpp/compose/single/unsloth-iq4nl/q8kv.yml) for more config details.
   source: hf://unsloth/Qwen3.8-27B-GGUF
   files:
-    - Qwen3.8-27B-UD-Q4_K_S.gguf
+    - Qwen3.8-27B-UD-Q4_K_XL.gguf
   mmproj: mmproj-F16.gguf
   format: gguf
-  quantization: UD-Q4_K_S
+  quantization: UD-Q4_K_XL
   hardware:
     accelerator: cuda
     gpu:
@@ -20,24 +20,22 @@ spec:
       vendor: nvidia
       layers: 99
 # ┌─────────────────────────────────┬─────────────────┬─────────────────┬─────────────────┐
-# │              Item               │ Now (XL, q4 KV) │ XL + q8 KV¹     │ K_S + q8 KV     │
+# │              Item               │ Now (XL, q4 KV) │ K_S + q8 KV¹    │ XL + q8 KV²     │
 # ├─────────────────────────────────┼─────────────────┼─────────────────┼─────────────────┤
-# │ Context                         │ 163840          │ 163840          │ 131072          │
+# │ Context                         │ 180224          │ 131072          │ 131072          │
 # ├─────────────────────────────────┼─────────────────┼─────────────────┼─────────────────┤
-# │ Model weights                   │ 17.6 GB         │ 17.6 GB         │ 15.4 GB         │
+# │ Model weights                   │ 17.6 GB         │ 15.4 GB         │ 17.6 GB         │
 # ├─────────────────────────────────┼─────────────────┼─────────────────┼─────────────────┤
 # │ Vision part (mmproj-F16)        │ ~1 GB           │ ~1 GB           │ ~1 GB           │
 # ├─────────────────────────────────┼─────────────────┼─────────────────┼─────────────────┤
-# │ KV cache                        │ ~4 GB           │ ~4 GB + ~4 RAM  │ ~6.3 GB         │
+# │ KV cache                        │ ~4.3 GB         │ ~6.3 GB         │ ~6.3 GB         │
 # ├─────────────────────────────────┼─────────────────┼─────────────────┼─────────────────┤
 # │ Scratch (flash attention)       │ ~1 GB           │ ~1 GB           │ ~1 GB           │
 # ├─────────────────────────────────┼─────────────────┼─────────────────┼─────────────────┤
-# │ Total                           │ ~23.6 GB ✅     │ ~27.6 GB ⚠      │ ~23.7 GB ✅     │
+# │ Total                           │ ~23.9 GB ✅     │ ~23.7 GB ✅     │ ~25.9 GB ❌     │
 # └─────────────────────────────────┴─────────────────┴─────────────────┴─────────────────┘
-# ¹ q8_0 ≈ 50 KiB/token. XL at 163840 ctx exceeds VRAM by ~3.6 GiB;
-#   GGML_CUDA_ENABLE_UNIFIED_MEMORY=1 spills it to RAM at ~100 ms/token per ~2 GiB
-#   (Windows does this invisibly: System Memory Fallback, on by default).
-# Reference: https://www.youtube.com/watch?v=hg26j0erUSo
+# ¹ Previous config; kept as reference.
+# ² q8_0 ≈ 50 KiB/token. XL at full q8_0 exceeds VRAM by ~1.9 GiB.
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/inference.llmkube.dev/inferenceservice_v1alpha1.json
 apiVersion: inference.llmkube.dev/v1alpha1
@@ -64,12 +62,12 @@ spec:
   env:
     - name: NVIDIA_DRIVER_CAPABILITIES
       value: compute,utility
-  contextSize: 131072
+  contextSize: 180224
   batchSize: 2048
   uBatchSize: 512
   flashAttention: true
-  cacheTypeK: q8_0
-  cacheTypeV: q8_0
+  cacheTypeK: q4_0
+  cacheTypeV: q4_0
   jinja: true
   parallelSlots: 1
   reasoningBudget: 16384
