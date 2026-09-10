@@ -67,7 +67,7 @@ spec:
     - q8_0
     - --cache-type-v
     - q8_0
-    - --no-mmap
+    # --mmap removed — b10884+ rejects it (https://github.com/ggml-org/llama.cpp/issues/11195)
     - --sleep-idle-seconds
     - "300"
     - --alias

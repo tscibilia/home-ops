@@ -116,7 +116,7 @@ spec:
     - "0.0"
     - --repeat-penalty
     - "1.0"
-    - --mmap
+    # --mmap removed — b10884+ rejects it (https://github.com/ggml-org/llama.cpp/issues/11195)
     # preserve_thinking replays every prior turn's trace; with Qwen3.8's xhigh
     # default that compounds until the window is gone. Callers override per request.
     - --chat-template-kwargs
