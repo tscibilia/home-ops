@@ -84,7 +84,6 @@ spec:
               repository: ghcr.io/maathimself/mailflow-frontend
               tag: 3.3.0@sha256:141ad791641380e3d2a21b23f54aef23a4d48d0185959464596b9cfbab4c3e8e
             env:
-              BACKEND_URL: "{{ .Release.Name }}-web:3000"
               APP_HTTP_PORT: &webPort 80
             resources:
               requests:
