@@ -6,9 +6,10 @@ metadata:
   name: mailflow
 spec:
   name: MailFlow
-  # TODO: verify MailFlow's real OIDC callback path (routed through the frontend).
+  # Must equal MailFlow's redirect URI (derived from the provider slug `pocketid`
+  # in the UI); nginx routes /auth/oidc/ to the backend.
   callbackUrls:
-    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/auth/callback"
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/auth/oidc/pocketid/callback"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: false
   allowedUserGroups:
