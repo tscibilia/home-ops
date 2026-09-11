@@ -37,6 +37,18 @@ spec:
           - matchExpressions:
               - key: extensions.talos.dev/i915
                 operator: Exists
+  # Soft spread: prefer memini-embed and memini-rerank on different nodes, but
+  # don't block scheduling if only one is available. 3 control-plane nodes
+  # expose i915 / dri-render; ai3090 is NVIDIA-only and excluded by affinity.
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchExpressions:
+          - key: app
+            operator: In
+            values: [memini-embed, memini-rerank]
   podSecurityContext:
     # 102 = curlimages/curl curl_group GID; makes the /models emptyDir
     # writable by the model-downloader init container (we override the
