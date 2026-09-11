@@ -47,6 +47,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - homepage _(dashboard)_ [oidc]
 - immich _(photos)_ [cnpg, oidc]
 - komga _(comics/manga)_ [kopiur, zeroscaler, oidc]
+- mailflow _(mail account syncer)_ [cnpg, oidc]
 - mealie _(recipes)_ [kopiur, cnpg, oidc]
 - obsidian-couchdb _(CouchDB for Obsidian LiveSync)_ [kopiur]
 - pairdrop _(airdrop alternative)_
