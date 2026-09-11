@@ -8,3 +8,9 @@ resources:
   - ./ocirepository.yaml
   - ./pocketidoidcclient.yaml
   - ./pushsecret.yaml
+configMapGenerator:
+  - name: mailflow-nginx
+    files:
+      - ./config/default.conf
+generatorOptions:
+  disableNameSuffixHash: true
