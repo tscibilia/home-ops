@@ -65,7 +65,7 @@ spec:
   resources:
     gpu: 1
     cpu: 100m
-    memory: 5Gi
+    memory: 5.5Gi
   extraArgs:
     # Qwen3-Embedding uses last-token pooling with left padding;
     # --embedding + --pooling last exposes the OpenAI-compatible
