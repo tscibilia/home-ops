@@ -77,6 +77,8 @@ spec:
               readOnlyRootFilesystem: true
               capabilities: { drop: [ALL] }
       web:
+        annotations:
+          reloader.stakater.com/auto: "true"
         strategy: RollingUpdate
         containers:
           app:
