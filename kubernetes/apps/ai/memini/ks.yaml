@@ -12,7 +12,6 @@ spec:
       namespace: external-secrets
     - name: cnpg-pgcluster-vector
       namespace: database
-    - name: llmkube
   interval: 1h
   retryInterval: 5m
   path: ./kubernetes/apps/ai/memini/app

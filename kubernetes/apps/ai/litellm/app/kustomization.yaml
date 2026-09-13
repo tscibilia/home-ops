@@ -8,10 +8,9 @@ resources:
   - ./pushsecret.yaml
   - ./litellmproxy.yaml
   - ./litellmmodels.yaml
-  - ./llama-qwen.yaml
   - ./litellmmcpservers.yaml
   - ./mcp-secrets.yaml
-  # - ./mcp-flux-rbac.yaml
-  # - ./mcp-kubectl-rbac.yaml
   - ./mcp-talos-serviceaccount.yaml
   - ./servicemonitor.yaml
+  - ./grafanadashboard.yaml
+  - ./dashboard

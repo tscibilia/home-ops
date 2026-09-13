@@ -6,30 +6,28 @@ hand-rolled app-template HelmReleases for GPU model serving.
 
 A model is two CRs — a **`Model`** (where the weights come from + hardware
 target) and an **`InferenceService`** (the serving pod: llama.cpp args, GPU,
-probes, endpoint). The CRDs are cluster-wide, so each model's two CRs live **in
-the folder of the app that consumes it**, not under `llmkube/`:
+probes, endpoint). Llama.cpp models live together under `llmkube/models/`,
+reconciled by the dedicated `llmkube-models` Flux Kustomization:
 
 ```
-llmkube/                    # the operator + shared cluster infra only
+llmkube/
   ocirepository.yaml  helmrelease.yaml  kustomization.yaml   # the operator
-  servicemonitor.yaml       # one SM scrapes every InferenceService (job = service name)
   modelpool.yaml            # ai3090-slot — spans two apps, so it lives here
   modelrouter.yaml          # ai3090-router — activates a pool member on request
 
-memini/                     # Intel iGPU helpers, reconciled by the `memini` KS
-  memini-embed.yaml  memini-rerank.yaml  memini-summary.yaml
-
-litellm/app/                # chat/vision models, reconciled by the `litellm` KS
+llmkube/models/             # llama.cpp models, reconciled by the `llmkube-models` KS
+  servicemonitor.yaml       # one SM scrapes every InferenceService (job = service name)
   llama-qwen.yaml           # Qwen3.8-27B on RTX 3090 (vision via mmproj)
+  memini-embed.yaml         # Intel iGPU helper for memini
+  memini-rerank.yaml        # Intel iGPU helper for memini
 
 comfyui/app/                # image/video generation, reconciled by the `comfyui` KS
   model.yaml  inferenceservice.yaml   # runtime: generic, not llama.cpp
 ```
 
-Each consuming app's own Flux Kustomization reconciles its models (`memini`,
-`litellm` in `apps/ai/`); there is no dedicated `llmkube-models`
-Kustomization. The CRDs come from the `llmkube` operator, so those apps assume
-it's already reconciled (no explicit `dependsOn`).
+`llmkube-models` has `dependsOn: llmkube` (the CRDs come from the operator).
+`comfyui` keeps its CRs in its own folder: they use the `generic` runtime and
+are part of ComfyUI's deployment, not the model pool.
 
 ## The ai3090 GPU slot (`ModelPool`)
 
@@ -96,10 +94,9 @@ The `Model.spec.source` scheme decides what the operator does. Three modes:
 
 ## Adding a new model
 
-Drop the `Model` + `InferenceService` file into the **consuming app's** folder
-and add it to that app's `kustomization.yaml` — `memini/` for the Intel iGPU
-helpers, `litellm/app/` for the chat/vision models. No new folder,
-no Flux Kustomization — the operator and the app's existing Kustomization pick it up.
+Drop the `Model` + `InferenceService` file into `llmkube/models/` and add
+it to that `kustomization.yaml` — the `llmkube-models` Kustomization picks it
+up. (Exception: `comfyui`'s generic-runtime CRs stay in `comfyui/app/`.)
 
 GPU access depends on the target:
 

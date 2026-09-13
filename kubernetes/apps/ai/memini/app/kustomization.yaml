@@ -6,8 +6,6 @@ resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./ocirepository.yaml
-  - ./resources/memini-embed.yaml
-  - ./resources/memini-rerank.yaml
   - ./pushsecret.yaml
 generatorOptions:
   disableNameSuffixHash: true

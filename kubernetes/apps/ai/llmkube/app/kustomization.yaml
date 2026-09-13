@@ -7,4 +7,3 @@ resources:
   - ./modelpool.yaml
   - ./modelrouter.yaml
   - ./ocirepository.yaml
-  - ./servicemonitor.yaml
