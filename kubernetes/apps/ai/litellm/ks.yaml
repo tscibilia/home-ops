@@ -15,7 +15,6 @@ spec:
     - name: cnpg-pgcluster-default
       namespace: database
     - name: litellm-operator
-    - name: llmkube
     - name: pocket-id
       namespace: security
   # TODO: add gitops db init — operator has no initContainer support;
