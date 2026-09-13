@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: pgcluster-vector
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: "pgcluster-vector.${SECRET_DOMAIN}"
+    external-dns.kubernetes.io/hostname: "pgcluster-vector.${SECRET_DOMAIN}"
 spec:
   type: ClusterIP
   selector:
