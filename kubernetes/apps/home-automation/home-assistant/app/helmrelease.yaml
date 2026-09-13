@@ -58,7 +58,7 @@ spec:
                 memory: 2Gi
         pod:
           annotations:
-            external-dns.alpha.kubernetes.io/hostname: "{{ .Release.Name }}.internal"
+            external-dns.kubernetes.io/hostname: "{{ .Release.Name }}.internal"
             k8s.v1.cni.cncf.io/networks: |-
               [{
                 "name": "iot",

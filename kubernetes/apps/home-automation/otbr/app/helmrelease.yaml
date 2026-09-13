@@ -63,7 +63,7 @@ spec:
             feature.node.kubernetes.io/usb-zigbee: "true"
     defaultPodOptions:
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: "{{ .Release.Name }}.internal"
+        external-dns.kubernetes.io/hostname: "{{ .Release.Name }}.internal"
         k8s.v1.cni.cncf.io/networks: |
           [{
             "name": "iot",
