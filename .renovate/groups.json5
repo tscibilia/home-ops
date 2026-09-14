@@ -92,6 +92,14 @@
       minimumGroupSize: 5,
     },
     {
+      description: "Mailflow Group",
+      groupName: "mailflow",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/maathimself/mailflow/"],
+      group: { commitMessageTopic: "{{{groupName}}} group" },
+      minimumGroupSize: 2,
+    },
+    {
       description: "Nvidia Group",
       groupName: "nvidia",
       matchDatasources: ["docker"],
