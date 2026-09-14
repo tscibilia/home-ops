@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/egalitarianmonkey/hometube
-              tag: 2.12.1@sha256:d150834b0320c0f05153ba6f481178c7f087505229372f9d8c2b7187672adb1e
+              tag: 2.12.2@sha256:570c6c3b9bb856b676dcd8247b2fa212957e68913edf7e402eb96dd10c352b8c
             env:
               TMP_DOWNLOAD_FOLDER: /app/media/downloads/incomplete
               VIDEOS_FOLDER: /app/media/youtube
