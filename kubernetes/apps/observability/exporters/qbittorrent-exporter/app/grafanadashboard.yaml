@@ -12,5 +12,5 @@ spec:
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: observability
+  folder: media
   url: https://raw.githubusercontent.com/esanchezm/prometheus-qbittorrent-exporter/refs/heads/master/grafana/dashboard.json
