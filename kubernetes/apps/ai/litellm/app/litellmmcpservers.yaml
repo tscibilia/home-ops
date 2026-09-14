@@ -10,7 +10,7 @@ spec:
     allow_all_keys: true
   workload:
     # renovate: datasource=docker depName=docker.io/isokoliuk/mcp-searxng
-    image: docker.io/isokoliuk/mcp-searxng:2.2.0@sha256:b63f934ec0541e41ff8cf4756f6c4d75ab5f1ad2089996669c6b7aaff79ba1c9
+    image: docker.io/isokoliuk/mcp-searxng:2.2.0@sha256:a8514e8bf9fb03837b47702943cfe9b5c12820a89f92434f9c9947da38b2039e
     port: 8080
     env:
       - name: SEARXNG_URL
