@@ -42,6 +42,6 @@ spec:
         grafanaOperator:
           enabled: true
           allowCrossNamespaceImport: true
-          folder: "Networking"
+          folder: "networking"
           matchLabels:
-            grafana.internal/instance: grafana
+            dashboards: grafana

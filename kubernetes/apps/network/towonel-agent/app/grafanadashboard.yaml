@@ -13,6 +13,6 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
-  folder: "Networking"
+      dashboards: grafana
+  folder: "networking"
   url: https://codeberg.org/towonel/towonel/raw/tag/v1.5.2/deploy/grafana/towonel-hub.json

@@ -8,11 +8,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Networking"
+  folder: "networking"
   configMapRef:
     name: cilium-dashboard
     key: cilium-dashboard.json
@@ -26,11 +26,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Networking"
+  folder: "networking"
   configMapRef:
     name: cilium-operator-dashboard
     key: cilium-operator-dashboard.json

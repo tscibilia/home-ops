@@ -8,7 +8,7 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   # dashboard 7587 declares its input as DS_SIGNCL-PROMETHEUS; inputName must match __inputs, not our DS name
   datasources:
     - datasourceName: prometheus

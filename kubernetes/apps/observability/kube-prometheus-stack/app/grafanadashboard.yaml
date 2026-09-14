@@ -8,11 +8,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/15761/revisions/21/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -24,11 +24,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/15762/revisions/22/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -40,11 +40,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/15757/revisions/43/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -56,11 +56,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/15758/revisions/46/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -72,11 +72,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/15759/revisions/40/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -88,11 +88,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/15760/revisions/39/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -104,11 +104,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/11454/revisions/14/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -120,11 +120,11 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/1860/revisions/45/download
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/grafana.integreatly.org/grafanadashboard_v1beta1.json
@@ -136,9 +136,9 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: "Prometheus"
+  folder: "observability"
   url: https://grafana.com/api/dashboards/19105/revisions/9/download

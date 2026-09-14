@@ -6,6 +6,7 @@ metadata:
   name: &app grafana
   labels:
     grafana.internal/instance: *app
+    dashboards: *app
 spec:
   config:
     analytics:
