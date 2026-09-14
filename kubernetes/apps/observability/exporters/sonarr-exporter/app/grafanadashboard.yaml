@@ -8,9 +8,9 @@ spec:
   allowCrossNamespaceImport: true
   instanceSelector:
     matchLabels:
-      grafana.internal/instance: grafana
+      dashboards: grafana
   datasources:
     - datasourceName: prometheus
       inputName: DS_PROMETHEUS
-  folder: Exporters
+  folder: observability
   url: https://grafana.com/api/dashboards/12530/revisions/2/download
