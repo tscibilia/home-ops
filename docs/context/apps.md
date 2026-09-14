@@ -42,6 +42,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 
 - actual _(budgeting)_ [kopiur, oidc]
 - cetranscript _(CE Transcript — custom app)_ [cnpg]
+- chaski _(Radarr/Sonarr webhook → Pushover relay)_
 - filebrowser _(NFS file share/drive UI)_ [kopiur, oidc]
 - homebox _(inventory)_ [kopiur, cnpg, oidc]
 - homepage _(dashboard)_ [oidc]
