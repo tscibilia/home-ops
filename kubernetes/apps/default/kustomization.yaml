@@ -11,6 +11,7 @@ resources:
   - ./namespace.yaml
   - ./actual/ks.yaml
   - ./cetranscript/ks.yaml
+  - ./chaski/ks.yaml
   - ./filebrowser/ks.yaml
   - ./homebox/ks.yaml
   - ./homepage/ks.yaml
