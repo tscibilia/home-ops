@@ -5,6 +5,8 @@ kind: LiteLLMModel
 metadata:
   name: &name qwen-local
 spec:
+  # An open-weight dense model capable of vision and language tasks.
+  # Theoretically close to Sonnet 5, however local quants reduce its ability.
   modelName: *name
   params:
     model: openai/Qwen3.8-27B
@@ -27,6 +29,7 @@ spec:
     supportsVision: true
     extra:
       supports_reasoning: true
+      # CoreWeave via OpenRouter: $0.40 in / $3.00 out / $0.15 cached read only
       input_cost_per_token: 0.0000000120
       cache_creation_input_token_cost: 0.0000000120
       cache_read_input_token_cost: 0.0000000010
@@ -80,8 +83,8 @@ kind: LiteLLMModel
 metadata:
   name: &name comfyui
 spec:
-  # Not a chat model — the wake switch for the GPU slot. Sending it anything
-  # swaps ComfyUI in; the reply carries the UI's URL.
+  # Not a chat model — the wake switch for the GPU slot. Sending it
+  # anything swaps ComfyUI in; the reply carries the UI's URL.
   modelName: *name
   params:
     model: openai/comfyui
@@ -148,6 +151,8 @@ kind: LiteLLMModel
 metadata:
   name: &name deepseek-v4-flash
 spec:
+  # Sparse MoE model that activates 13B on output from 284B parameter backbone. This is a
+  # re-post-trained revision released 2026-07-31, and rumored to be on par with Sonnet 5.
   modelName: *name
   params:
     model: openai/deepseek/deepseek-v4-flash
@@ -164,8 +169,8 @@ spec:
           # at or below its rate. USD per 1M tokens, matched to info.extra below.
           allow_fallbacks: true
           max_price:
-            prompt: 0.09
-            completion: 0.18
+            prompt: 0.10
+            completion: 0.20
   info:
     mode: chat
     maxTokens: 131072
@@ -184,30 +189,41 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: &name minimax-m3
+  name: &name deepseek-v4.1-flash
 spec:
+  # Sparse MoE model that activates 8B parameters on input & 16B on output from 522B parameter backbone.
+  # Asymetric split, keeps per-token cost low. Released 2026-09-10, and rumored to be on par with Opus 5.
   modelName: *name
   params:
-    model: minimax/minimax-m3
-    # https://opencode.ai/docs/zen#pricing
-    apiBase: https://opencode.ai/zen/v1
+    model: openai/deepseek/deepseek-v4.1-flash
+    apiBase: https://openrouter.ai/api/v1
     apiKeyRef:
       name: litellm-secret
-      key: OPENCODE_API_KEY
+      key: OPENROUTER_API_KEY
+    additional:
+      extra_body:
+        provider:
+          order: ["morph", "deepinfra"]
+          # DeepInfra's shared pool 429s under load; fall back, but only to hosts
+          # at or below its rate. USD per 1M tokens, matched to info.extra below.
+          allow_fallbacks: true
+          max_price:
+            prompt: 0.25
+            completion: 0.70
   info:
     mode: chat
-    maxTokens: 128000
-    maxInputTokens: 512000
-    maxOutputTokens: 128000
+    maxTokens: 131072
+    maxInputTokens: 1048576
+    maxOutputTokens: 131072
     supportsFunctionCalling: true
     supportsPromptCaching: true
     supportsVision: true
     extra:
       supports_reasoning: true
-      # Zen: $0.30 in / $1.20 out / $0.06 cached read; no cached write tier
-      input_cost_per_token: 0.0000003000
-      cache_read_input_token_cost: 0.0000000600
-      output_cost_per_token: 0.0000012000
+      # DeepInfra via OpenRouter: $0.20 in / $0.60 out / $0.03 cached read only
+      input_cost_per_token: 0.0000002000
+      cache_read_input_token_cost: 0.0000000300
+      output_cost_per_token: 0.0000006000
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
