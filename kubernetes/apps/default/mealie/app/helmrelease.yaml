@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: ghcr.io/mealie-recipes/mealie
-              tag: v3.25.1@sha256:6066c29eca95a6cac640ecadf734799522f3b646ee4a714e0d13ce795d989ba2
+              tag: v3.26.0@sha256:a4d12ab3a009832cc94058345e22aea831c3e992e94783fefc1cd5a08544fe0c
             env:
               DB_ENGINE: "postgres"
               POSTGRES_DB: *app
@@ -68,6 +68,8 @@ spec:
               OPENAI_BASE_URL: "http://litellm.ai.svc.cluster.local:4000/v1"
               OPENAI_MODEL: "qwen-local"
               OPENAI_ENABLE_IMAGE_SERVICES: "true" #creating recipes via image
+              # Network Values
+              HTTP_ALLOW_LIST: "10.42.0.0/16,10.43.0.0/16" # in-cluster pod+service subnets (litellm), SSRF-blocked by default in v3.26.0
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
