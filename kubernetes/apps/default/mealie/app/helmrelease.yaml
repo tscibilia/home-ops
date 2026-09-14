@@ -68,6 +68,8 @@ spec:
               OPENAI_BASE_URL: "http://litellm.ai.svc.cluster.local:4000/v1"
               OPENAI_MODEL: "qwen-local"
               OPENAI_ENABLE_IMAGE_SERVICES: "true" #creating recipes via image
+              # Network Values
+              HTTP_ALLOW_LIST: "10.42.0.0/16,10.43.0.0/16" # in-cluster pod+service subnets (litellm), SSRF-blocked by default in v3.26.0
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
