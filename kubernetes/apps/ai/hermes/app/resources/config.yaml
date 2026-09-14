@@ -14,7 +14,7 @@ data:
             context_length: 131072
           qwen-local-fast:
             context_length: 131072
-          kimi-k3:
+          deepseek-v4.1-flash:
             context_length: 1048560
           laguna-s-2-1:
             context_length: 1048576
@@ -96,7 +96,7 @@ data:
               model: laguna-s-2-1
           aggregator:
             provider: custom:litellm
-            model: kimi-k3
+            model: deepseek-v4.1-flash
           max_tokens: 4096
     approvals:
       mode: smart
