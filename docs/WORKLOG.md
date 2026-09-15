@@ -26,8 +26,11 @@
 
 `Descending order, newest on top`
 
+- ✅ added chaski webhook notify **2026-09-14** (see PR [#3880](https://github.com/tscibilia/home-ops/pull/3880))
+- ✅ added mailflow email gateway **2026-09-10** (see PR [#3819](https://github.com/tscibilia/home-ops/pull/3819))
 - ✅ etcd noisy logging (fix in v1.37) **2026-09-06** [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - also see issue [#3345](https://github.com/tscibilia/home-ops/issues/3345)
 - ✅ migrate PG17 -> PG18 **2026-09-03** (see issue [#3343](https://github.com/tscibilia/home-ops/issues/3343))
+- ✅ added airwave for live tv **2026-08-29** (see PR [#3578](https://github.com/tscibilia/home-ops/pull/3578))
 - ✅ comfyUI swap on single gpu via `llmkube` & `modelPool` **2026-08-18** (see PR [#3405](https://github.com/tscibilia/home-ops/pull/3405))
 - ✅ switch grafana dashboards from `gnetId` to `URL` **2026-08-17** (see PR [#3386](https://github.com/tscibilia/home-ops/pull/3386))
 - ✅ CNPG upstream bug fixed in 1.30.x- **2026-08-13** (see issue #2301 causes `scheduledBackups` to get stuck infinitely)
