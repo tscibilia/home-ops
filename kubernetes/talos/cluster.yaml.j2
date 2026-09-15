@@ -72,7 +72,7 @@ clusterSecret: ak://talos-m70q/CLUSTER_SECRET
 apiVersion: v1alpha1
 kind: UnattendedInstallConfig
 installer:
-  image: factory.talos.dev/metal-installer/{{ schematic }}:v1.14.0
+  image: factory.talos.dev/metal-installer/{{ schematic }}:v1.14.1
 provisioning:
   diskSelector:
     match: disk.dev_path == "/dev/nvme0n1"
