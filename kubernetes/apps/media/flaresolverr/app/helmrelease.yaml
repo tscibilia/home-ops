@@ -29,9 +29,39 @@ spec:
                 memory: 512Mi
               limits:
                 memory: 1Gi
+          solver:
+            image:
+              repository: docker.io/alexfozor/flaresolverr
+              tag: "pr-1300@sha256:6cbd506462cc85a2ce1dfc0033e35129c21405f042eb9f136dbec88ddb1470b9"
+            command:
+              - /bin/sh
+              - -c
+            args:
+              - |
+                set -e
+                mkdir -p /tmp/aquatils
+                if [ ! -x /tmp/aquatils/solver/solver ]; then
+                  curl -fsSL -o /tmp/sb.zip "https://github.com/aquaryuo/seanime/releases/download/solver-v0.2.0/solver-browser_linux_x64.zip"
+                  python3 -c "import zipfile; zipfile.ZipFile('/tmp/sb.zip').extractall('/tmp/aquatils')"
+                  chmod +x /tmp/aquatils/solver/solver
+                fi
+                exec /tmp/aquatils/solver/solver -b 0.0.0.0:8192
+            env:
+              - name: SOLVER_ALLOW_EXTERNAL
+                value: "1"
+              - name: SOLVER_CHROME
+                value: /bin/chromium
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
     service:
       app:
         controller: *app
         ports:
           http:
             port: 8191
+          solver:
+            port: 8192
