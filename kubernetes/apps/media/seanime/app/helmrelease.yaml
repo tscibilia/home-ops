@@ -149,6 +149,10 @@ spec:
           *app :
             app:
               - path: /seanime
+              - path: /cache
+                subPath: cache
+              - path: /home/seanime/.cache
+                subPath: home-cache
       media:
         type: nfs
         server: truenas.internal
@@ -160,7 +164,3 @@ spec:
         globalMounts:
           - path: /tmp
             subPath: tmp
-          - path: /cache
-            subPath: cache
-          - path: /home/seanime/.cache
-            subPath: home-cache
