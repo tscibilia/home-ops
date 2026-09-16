@@ -65,6 +65,7 @@ spec:
             env:
               DATABASE_URL: jdbc:mariadb://localhost:3306/grimmory
               DATABASE_USERNAME: grimmory
+              OIDC_ALLOW_UNSAFE_HOSTS: "true"
               SERVER_PORT: &port 6060
             envFrom: *envFrom
             probes:
