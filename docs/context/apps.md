@@ -109,6 +109,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - bazarr _(subtitles)_ [kopiur, auth, zeroscaler]
 - cleanrr
 - flaresolverr _(solves cloudflare captcha)_
+- grimmory _(ebook library)_ [kopiur, zeroscaler, oidc]
 - hometube _(yt-dlp UI)_ [kopiur, auth, zeroscaler]
 - imagemaid _(Plex image cleanup)_
 - jellyfin [kopiur, zeroscaler]
