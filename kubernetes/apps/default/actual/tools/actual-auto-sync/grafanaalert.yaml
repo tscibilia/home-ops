@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: range
+          queryType: hits
           relativeTimeRange:
             from: 1800
             to: 0
@@ -40,7 +40,7 @@ spec:
             # Count log lines
             type: reduce
             expression: A
-            reducer: count
+            reducer: sum
 
         - refId: C
           queryType: ""
