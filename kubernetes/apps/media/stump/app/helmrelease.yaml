@@ -114,6 +114,10 @@ spec:
         globalMounts:
           - path: /data/books
             subPath: books
+          - path: /data/comics
+            subPath: comics
+          - path: /data/manga
+            subPath: manga
       tmp:
         type: emptyDir
         globalMounts:
