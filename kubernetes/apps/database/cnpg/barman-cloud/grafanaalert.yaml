@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 1800
             to: 0
@@ -26,6 +26,7 @@ spec:
             expr: |
               k_namespace_name:"database" AND k_container_name:"postgres"
               | _msg:~"Failed archiving WAL"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 
@@ -71,7 +72,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 7200
             to: 0
@@ -80,6 +81,7 @@ spec:
             expr: |
               k_namespace_name:"database" AND k_container_name:"postgres"
               | _msg:~"Error while requesting backup"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 

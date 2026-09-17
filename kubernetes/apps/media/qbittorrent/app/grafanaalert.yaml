@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 300
             to: 0
@@ -26,6 +26,7 @@ spec:
             expr: |
               app: "qbittorrent"
               | _msg:~"fast resume rejected"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 
