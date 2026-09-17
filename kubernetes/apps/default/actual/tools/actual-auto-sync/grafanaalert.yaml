@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 1800
             to: 0
@@ -27,6 +27,7 @@ spec:
             expr: |
               app: "actual-auto-sync"
               | _msg:~"Failed syncing account"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 

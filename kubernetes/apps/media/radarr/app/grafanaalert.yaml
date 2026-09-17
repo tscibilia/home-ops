@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 300
             to: 0
@@ -26,6 +26,7 @@ spec:
             expr: |
               app:~"radarr"
               | _msg:~"(?i)database is locked"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 
@@ -70,7 +71,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 300
             to: 0
@@ -79,6 +80,7 @@ spec:
             expr: |
               app:~"radarr"
               | _msg:~"(?i)database disk image is malformed"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 

@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 1800
             to: 0
@@ -26,6 +26,7 @@ spec:
             expr: |
               app:~"recyclarr"
               | _msg:~"(?i)fatal error|fatal exception"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 
@@ -70,7 +71,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: hits
+          queryType: stats
           relativeTimeRange:
             from: 1800
             to: 0
@@ -79,6 +80,7 @@ spec:
             expr: |
               app:~"recyclarr"
               | _msg:~"(?i)cannot be synced|invalid trash_id"
+              | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 
