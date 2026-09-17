@@ -112,7 +112,7 @@ spec:
         server: truenas.internal
         path: /mnt/nas/data/media
         globalMounts:
-          - path: /data
+          - path: /data/books
             subPath: books
       tmp:
         type: emptyDir
