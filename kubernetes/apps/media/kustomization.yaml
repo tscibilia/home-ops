@@ -15,7 +15,6 @@ resources:
   - ./bazarr/ks.yaml
   - ./cleanrr/ks.yaml
   - ./flaresolverr/ks.yaml
-  - ./grimmory/ks.yaml
   - ./hometube/ks.yaml
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
@@ -30,4 +29,5 @@ resources:
   - ./seanime/ks.yaml
   - ./seerr/ks.yaml
   - ./sonarr/ks.yaml
+  - ./stump/ks.yaml
   - ./tracearr/ks.yaml
