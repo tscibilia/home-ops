@@ -17,7 +17,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: range
+          queryType: hits
           relativeTimeRange:
             from: 1800
             to: 0
@@ -38,7 +38,7 @@ spec:
           model:
             type: reduce
             expression: A
-            reducer: count
+            reducer: sum
 
         - refId: C
           queryType: ""
@@ -71,7 +71,7 @@ spec:
       condition: C
       data:
         - refId: A
-          queryType: range
+          queryType: hits
           relativeTimeRange:
             from: 7200
             to: 0
@@ -92,7 +92,7 @@ spec:
           model:
             type: reduce
             expression: A
-            reducer: count
+            reducer: sum
 
         - refId: C
           queryType: ""
