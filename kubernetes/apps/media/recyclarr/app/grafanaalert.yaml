@@ -63,7 +63,7 @@ spec:
         app: recyclarr
       for: 0m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error
 
     - uid: recyclarr-sync-errors
       title: RecyclarrSyncErrors
@@ -116,4 +116,4 @@ spec:
         app: recyclarr
       for: 0m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error
