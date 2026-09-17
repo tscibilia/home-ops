@@ -67,4 +67,4 @@ spec:
         app: actual-auto-sync
       for: 0m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error

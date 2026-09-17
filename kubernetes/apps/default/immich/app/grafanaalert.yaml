@@ -63,4 +63,4 @@ spec:
         app: immich
       for: 1m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error

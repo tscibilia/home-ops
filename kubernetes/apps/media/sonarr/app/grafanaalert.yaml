@@ -63,7 +63,7 @@ spec:
         app: sonarr
       for: 5m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error
 
     - uid: sonarr-database-malformed
       title: SonarrDatabaseIsMalformed
@@ -116,4 +116,4 @@ spec:
         app: sonarr
       for: 5m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error

@@ -64,7 +64,7 @@ spec:
         app: cnpg
       for: 0m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error
 
     - uid: cnpg-barman-backup-error
       title: CnpgBarmanBackupError
@@ -118,4 +118,4 @@ spec:
         app: cnpg
       for: 0m
       noDataState: OK
-      execErrState: Alerting
+      execErrState: Error
