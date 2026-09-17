@@ -1,0 +1,120 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app stump
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      stump:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.6.0@sha256:b6d3af974df781c673d37e49bdddfa14a6f5be28b18d2cb7713f0449bea4057b
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+        containers:
+          app:
+            image:
+              repository: docker.io/aaronleopold/stump
+              tag: 0.1.7@sha256:6ebe13e0a6f6337afcebd0cc3efd46bf2bc0ad1f914253a75de57d2e133b6d34
+            env:
+              TZ: ${TIMEZONE:-UTC}
+              STUMP_CONFIG_DIR: /config
+              STUMP_PORT: &port 10801
+              STUMP_TRUST_PROXY_HEADERS: "true"
+              STUMP_OIDC_ENABLED: "true"
+              STUMP_OIDC_DISABLE_LOCAL_AUTH: "true"
+              STUMP_ENABLE_UPLOAD: "true"
+              ENABLE_KOBO_SYNC: "true"
+              ENABLE_KOREADER_SYNC: "true"
+              ENABLE_OPDS_PROGRESSION: "true"
+              STUMP_DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}-pguser-secret"
+                    key: uri
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 20m
+                memory: 128Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      config:
+        type: emptyDir
+        globalMounts:
+          - path: /config
+      media:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/media
+        globalMounts:
+          - path: /data
+            subPath: books
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

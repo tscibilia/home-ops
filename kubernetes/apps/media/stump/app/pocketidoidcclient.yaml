@@ -3,11 +3,11 @@
 apiVersion: pocketid.internal/v1alpha1
 kind: PocketIDOIDCClient
 metadata:
-  name: grimmory
+  name: stump
 spec:
-  name: Grimmory
+  name: Stump
   callbackUrls:
-    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/oauth2-callback"
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/v2/auth/oidc/callback"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: false
   allowedUserGroups:
@@ -19,8 +19,8 @@ spec:
       namespace: security
   secret:
     enabled: true
-    name: grimmory-oidc-secret
+    name: stump-oidc-secret
     keys:
-      clientID: GRIMMORY_OIDC_CLIENT_ID
-      clientSecret: GRIMMORY_OIDC_CLIENT_SECRET
-      issuerUrl: GRIMMORY_OIDC_ISSUER_URL
+      clientID: STUMP_OIDC_CLIENT_ID
+      clientSecret: STUMP_OIDC_CLIENT_SECRET
+      issuerUrl: STUMP_OIDC_ISSUER_URL
