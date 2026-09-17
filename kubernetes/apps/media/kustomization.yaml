@@ -15,6 +15,7 @@ resources:
   - ./bazarr/ks.yaml
   - ./cleanrr/ks.yaml
   - ./flaresolverr/ks.yaml
+  - ./grimmory/ks.yaml
   - ./hometube/ks.yaml
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
