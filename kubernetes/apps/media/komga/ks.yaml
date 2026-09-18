@@ -3,39 +3,28 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app stump
+  name: &app komga
 spec:
   components:
-    - ../../../../components/cnpg
     - ../../../../components/zeroscaler
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
-    - name: cnpg-pgcluster-default
-      namespace: database
+    - name: kopiur
+      namespace: kopiur-system
     - name: pocket-id
       namespace: security
   interval: 1h
-  retryInterval: 5m
-  path: ./kubernetes/apps/media/stump/app
+  path: ./kubernetes/apps/media/komga/app
   postBuild:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: read
-      CNPG_NAME: &postgresAppName pgcluster-default
+      KOPIUR_CAPACITY: 3Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
-  healthChecks:
-    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
-      kind: &postgresKind Cluster
-      name: *postgresAppName
-      namespace: database
-  healthCheckExprs:
-    - apiVersion: *postgresVersion
-      kind: *postgresKind
-      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
-      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   prune: true
   sourceRef:
     kind: GitRepository
