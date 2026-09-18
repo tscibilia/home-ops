@@ -94,7 +94,7 @@ kubernetes/apps/{namespace}/{app-name}/
 #### File templates
 
 Use these exact patterns. All templates use YAML anchors (`&app` / `*app`) per repo convention.
-**No extra blank lines** between YAML sections — keep output compact.
+**No extra blank lines** between YAML sections — keep output compact. The repo uses **2-space** YAML indentation throughout.
 
 ---
 
@@ -129,7 +129,7 @@ spec:
         substitute:
             APP: *app
             GATUS_SUBDOMAIN: { SUBDOMAIN } # omit if subdomain == app name
-            CNPG_NAME: &postgresAppName pgsql-cluster # if cnpg
+            CNPG_NAME: &postgresAppName pgcluster-default # if cnpg
             KOPIUR_CAPACITY: { CAPACITY } # if kopiur
             ZEROSCALER_JOB_NAME: nfs_bkup_probe # ONLY if Zeroscaler (clonenas backup) variant; omit for truenas default
         substituteFrom:
@@ -398,7 +398,7 @@ target:
     template:
         data:
             # TODO: verify DB env var names per app docs
-            DATABASE_HOST: "${CNPG_NAME:=pgsql-cluster}-rw.database.svc.cluster.local"
+            DATABASE_HOST: "${CNPG_NAME:=pgcluster-default}-rw.database.svc.cluster.local"
             DATABASE_PORT: "5432"
             DATABASE_NAME: "${APP}"
             DATABASE_USER: "${APP}"
@@ -411,7 +411,7 @@ dataFrom:
 If the app supports a single connection URI (e.g. gatus `DB_URI`), build it in the template:
 
 ```yaml
-DB_URI: "postgres://{{ .${APP}_postgres_password }}@${CNPG_NAME:=pgsql-cluster}-rw.database.svc.cluster.local:5432/${APP}?sslmode=disable"
+DB_URI: "postgres://{{ .${APP}_postgres_password }}@${CNPG_NAME:=pgcluster-default}-rw.database.svc.cluster.local:5432/${APP}?sslmode=disable"
 ```
 
 **Also if CNPG is selected — seed the password so there is no manual aKeyless step.** Two more objects, both named `${APP}-pgpass`. Reference: `apps/media/airwave/app/`, and `components/cnpg/README.md` for the full rationale.
