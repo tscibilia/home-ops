@@ -19,6 +19,7 @@ resources:
   - ./imagemaid/ks.yaml
   - ./jellyfin/ks.yaml
   - ./kometa/ks.yaml
+  - ./komga/ks.yaml
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
   - ./prowlarr/ks.yaml
@@ -29,5 +30,4 @@ resources:
   - ./seanime/ks.yaml
   - ./seerr/ks.yaml
   - ./sonarr/ks.yaml
-  - ./stump/ks.yaml
   - ./tracearr/ks.yaml
