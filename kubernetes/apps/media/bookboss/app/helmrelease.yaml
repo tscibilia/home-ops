@@ -104,14 +104,14 @@ spec:
       library:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/media
+        path: /mnt/nas/data/shares/bookboss
         globalMounts:
           - path: /library/books
-            subPath: books
-          - path: /library/manga
-            subPath: manga
-          - path: /library/comics
-            subPath: comics
+      bookdrop:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/media
+        globalMounts:
           - path: /library/bookdrop
             subPath: downloads/bookdrop
       tmp:
