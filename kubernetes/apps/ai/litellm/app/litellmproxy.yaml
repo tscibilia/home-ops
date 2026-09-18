@@ -31,19 +31,6 @@ spec:
     redis_port: os.environ/REDIS_PORT
     num_retries: 2
     timeout: 600
-    # llmkube's ModelRouter 404s while the ModelPool wakes the 3090, and
-    # litellm treats NotFoundError as terminal. Retry it via DefaultRetries.
-    model_group_retry_policy:
-      qwen-local:
-        DefaultRetries: 30
-        BadRequestErrorRetries: 0
-        AuthenticationErrorRetries: 0
-        ContentPolicyViolationErrorRetries: 0
-      qwen-local-fast:
-        DefaultRetries: 30
-        BadRequestErrorRetries: 0
-        AuthenticationErrorRetries: 0
-        ContentPolicyViolationErrorRetries: 0
   env:
     - name: LITELLM_LOG
       value: INFO
