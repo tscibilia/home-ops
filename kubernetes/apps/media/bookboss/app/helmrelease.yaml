@@ -32,6 +32,8 @@ spec:
               BOOKBOSS__FRONTEND__LISTEN_IP: 0.0.0.0
               BOOKBOSS__FRONTEND__LISTEN_PORT: &port 8080
               BOOKBOSS__FRONTEND__BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+              BOOKBOSS__LIBRARY__LIBRARY_PATH: /library/books
+              BOOKBOSS__IMPORT__BOOKDROP_PATH: /library/bookdrop
               BOOKBOSS__OIDC__DISCOVERY_URL: "https://id.${SECRET_DOMAIN}/.well-known/openid-configuration"
               BOOKBOSS__OIDC__BUTTON_LABEL: "Sign in with Pocket ID"
             envFrom:
