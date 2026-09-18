@@ -23,6 +23,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               app:~"recyclarr"
               | _msg:~"(?i)fatal error|fatal exception"
@@ -77,6 +78,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               app:~"recyclarr"
               | _msg:~"(?i)cannot be synced|invalid trash_id"
