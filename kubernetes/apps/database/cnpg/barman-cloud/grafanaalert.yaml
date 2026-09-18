@@ -23,6 +23,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               k_namespace_name:"database" AND k_container_name:"postgres"
               | _msg:~"Failed archiving WAL"
@@ -78,6 +79,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               k_namespace_name:"database" AND k_container_name:"postgres"
               | _msg:~"Error while requesting backup"

@@ -23,6 +23,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               app: "immich"
               | _msg:~"write against a read only replica"

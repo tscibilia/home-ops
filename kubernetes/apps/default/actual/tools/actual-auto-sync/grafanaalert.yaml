@@ -23,6 +23,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             # VictoriaLogs query syntax
             expr: |
               app: "actual-auto-sync"

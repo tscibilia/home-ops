@@ -23,6 +23,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               app:~"sonarr"
               | _msg:~"(?i)database is locked"
@@ -77,6 +78,7 @@ spec:
             to: 0
           datasourceUid: victorialogs
           model:
+            queryType: stats
             expr: |
               app:~"sonarr"
               | _msg:~"(?i)database disk image is malformed"
