@@ -34,6 +34,8 @@ spec:
               BOOKBOSS__FRONTEND__BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               BOOKBOSS__LIBRARY__LIBRARY_PATH: /library/books
               BOOKBOSS__IMPORT__BOOKDROP_PATH: /library/bookdrop
+              BOOKBOSS__IMPORT__POLL_INTERVAL_SECS: 60
+              BOOKBOSS__IMPORT__WORKER_POLL_INTERVAL_SECS: 5
               BOOKBOSS__OIDC__DISCOVERY_URL: "https://id.${SECRET_DOMAIN}/.well-known/openid-configuration"
               BOOKBOSS__OIDC__BUTTON_LABEL: "Sign in with Pocket ID"
             envFrom:
@@ -53,7 +55,7 @@ spec:
                 custom: true
                 spec: &probeSpec
                   httpGet:
-                    path: /
+                    path: /healthz
                     port: *port
                   periodSeconds: 30
                   timeoutSeconds: 5
@@ -62,6 +64,9 @@ spec:
                 <<: *probes
                 spec:
                   <<: *probeSpec
+                  httpGet:
+                    path: /readyz
+                    port: *port
                   periodSeconds: 10
               startup:
                 enabled: true
@@ -96,10 +101,6 @@ spec:
               - identifier: app
                 port: *port
     persistence:
-      tmp:
-        type: emptyDir
-        globalMounts:
-          - path: /tmp
       library:
         type: nfs
         server: truenas.internal
@@ -111,10 +112,9 @@ spec:
             subPath: manga
           - path: /library/comics
             subPath: comics
-      bookdrop:
-        type: nfs
-        server: truenas.internal
-        path: /mnt/nas/data/media
-        globalMounts:
           - path: /library/bookdrop
             subPath: downloads/bookdrop
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

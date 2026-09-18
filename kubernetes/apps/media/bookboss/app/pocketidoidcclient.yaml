@@ -7,7 +7,7 @@ metadata:
 spec:
   name: BookBoss
   callbackUrls:
-    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/auth/callback"
+    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/auth/oidc/callback"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
   pkceEnabled: false
   allowedUserGroups:
