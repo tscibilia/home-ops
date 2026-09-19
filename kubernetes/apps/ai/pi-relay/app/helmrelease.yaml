@@ -29,7 +29,7 @@ spec:
                 spec: &probeSpec
                   httpGet:
                     path: /health
-                    port: &port 3000
+                    port: &healthPort 3001
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -65,7 +65,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: *port
+            port: &port 3000
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
