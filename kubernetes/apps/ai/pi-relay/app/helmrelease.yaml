@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: docker.io/jacobmoura7/remote-pi-relay
-              tag: v0.3.1@sha256:7255159041fe32b02a30ba2e09a671fa00783f24c217750cbdf74c5f8b77a7b6
+              tag: v1.0.1@sha256:318c66d0176cc9ecfd3dd8127f597e40c19a3bd06c4fa5b0379d79f6b8b17c54
             env:
               REMOTEPI_RELAY_PORT: "3000"
               RUST_LOG: info
