@@ -20,6 +20,7 @@ talosconfig
 !.agents/settings.json
 !.agents/plugins/
 !.agents/skills/
+.omp/
 .pi/
 .unlazy/
 # convenience symlink -> .agents/superpowers
