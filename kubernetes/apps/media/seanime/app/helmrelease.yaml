@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/ju1-js/seanime
-              tag: v3.10.2-hwaccel@sha256:b1706700b3d0322ad5e4c8f271db5ade576ab0b68203e5aab7c2a0054dfd7d7a
+              tag: v3.10.3-hwaccel@sha256:3f2e8f250c5db02d95b81665f17319710a99a9ae44d13dd7e7ef26edc94aaa06
             command:
               - /bin/sh
               - -c
