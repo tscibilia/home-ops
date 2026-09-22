@@ -5,11 +5,11 @@
   vulnerabilityAlerts: false,
   packageRules: [
     {
-      description: "Loose versioning for RustFS excluding -glibc tags",
+      description: "Loose versioning for RustFS, stable tags only (excludes -glibc and -preview variants)",
       matchDatasources: ["docker"],
       matchPackageNames: ["rustfs/rustfs"],
       versioning: "loose",
-      allowedVersions: "/^\\d+\\.\\d+\\.\\d+-(alpha|beta)\\.\\d+$/",
+      allowedVersions: "/^\\d+\\.\\d+\\.\\d+$/",
     },
     {
       description: "Cal-commit versioning for SearXNG (weekly updates) shaped semver/calver + '-<commit-sha>'",
