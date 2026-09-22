@@ -33,7 +33,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/bookorbit
-              tag: komga-api-test@sha256:fb8fab476cdc3f8fa804635c06507b357f537b6e52136ebf985d71d45b6ee81f
+              tag: komga-api-test@sha256:282eec496a260151e08fddf3e7877799b6685d756b9107663a0320e276035ef3
             env:
               APP_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               CLIENT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
