@@ -66,6 +66,12 @@ spec:
           - name: envoy-internal
             namespace: network
     persistence:
+      tmp:
+        type: emptyDir
+      tempfiles:
+        type: emptyDir
+        globalMounts:
+          - path: /app/api/temp_files
       cache:
         existingClaim: *app
         globalMounts:
