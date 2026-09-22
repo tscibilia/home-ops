@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
+  "mcpServers": {
+    "memini": {
+      "type": "http",
+      "url": "https://memini.t0m.co/mcp",
+      "headers": {
+        "Authorization": "Bearer ${MEMINI_API_KEY}",
+        "X-Memini-Namespace": "tscibilia/home-ops"
+      }
+    }
+  }
+}
