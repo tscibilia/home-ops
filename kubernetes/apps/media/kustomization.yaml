@@ -13,6 +13,7 @@ resources:
   - ./airwave/ks.yaml
   - ./autobrr/ks.yaml
   - ./bazarr/ks.yaml
+  - ./bookorbit/ks.yaml
   - ./cleanrr/ks.yaml
   - ./flaresolverr/ks.yaml
   - ./hometube/ks.yaml

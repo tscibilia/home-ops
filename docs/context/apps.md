@@ -107,6 +107,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - airwave [cnpg]
 - autobrr _(torrent automation)_ [kopiur, zeroscaler, oidc]
 - bazarr _(subtitles)_ [kopiur, auth, zeroscaler]
+- bookorbit [cnpg, zeroscaler]
 - cleanrr
 - flaresolverr _(solves cloudflare captcha)_
 - hometube _(yt-dlp UI)_ [kopiur, auth, zeroscaler]
