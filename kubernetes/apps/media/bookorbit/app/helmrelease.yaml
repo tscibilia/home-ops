@@ -32,8 +32,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/tscibilia/bookorbit-komga
-              tag: bo-748-test@sha256:c8746f6ee2fca00551919247a0b86756d59c8bc13e49b3e9a79ed3c803005c09
+              repository: ghcr.io/tscibilia/bookorbit
+              tag: latest@sha256:d2956df0cb19c9671991b1f5105dd07b1bf4be29bb5f723e5d91b750a5dcd8a4
             env:
               APP_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               CLIENT_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"

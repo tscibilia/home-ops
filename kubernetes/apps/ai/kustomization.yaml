@@ -11,6 +11,7 @@ resources:
   - ./namespace.yaml
   - ./comfyui/ks.yaml
   - ./hermes/ks.yaml
+  - ./kokoro/ks.yaml
   - ./litellm/ks.yaml
   - ./llmkube/ks.yaml
   - ./memini/ks.yaml
