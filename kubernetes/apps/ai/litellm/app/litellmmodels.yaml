@@ -208,8 +208,8 @@ spec:
           # at or below its rate. USD per 1M tokens, matched to info.extra below.
           allow_fallbacks: true
           max_price:
-            prompt: 0.25
-            completion: 0.70
+            prompt: 0.20
+            completion: 0.60
   info:
     mode: chat
     maxTokens: 131072
