@@ -16,7 +16,7 @@ services:
     device_cgroup_rules:
       - "b 8:* r" # /dev/sda+ (SATA/SAS, major 8)
     environment:
-      COLLECTOR_API_ENDPOINT: http://scrutiny.internal:8080
+      COLLECTOR_API_ENDPOINT: http://scrutiny.internal
       COLLECTOR_HOST_ID: clonenas
 
 networks:
