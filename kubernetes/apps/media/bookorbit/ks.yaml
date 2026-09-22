@@ -8,11 +8,14 @@ spec:
   components:
     - ../../../../components/cnpg
     - ../../../../components/zeroscaler
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
     - name: cnpg-pgcluster-vector
       namespace: database
+    - name: kopiur
+      namespace: kopiur-system
   interval: 1h
   retryInterval: 5m
   path: ./kubernetes/apps/media/bookorbit/app
@@ -20,6 +23,7 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: *app
+      KOPIUR_CAPACITY: 5Gi
       CNPG_NAME: &postgresAppName pgcluster-vector
     substituteFrom:
       - kind: Secret

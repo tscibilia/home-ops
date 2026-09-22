@@ -107,13 +107,19 @@ spec:
           *app :
             01-init-db:
               - path: /initdb
+      data:
+        existingClaim: *app
+        advancedMounts:
+          *app :
+            app:
+              - path: /data
       library:
         type: nfs
         server: truenas.internal
         path: /mnt/nas/data/shares/bookorbit
         advancedMounts:
           *app :
-            *app :
+            app:
               - path: /library/books
       tmp:
         type: emptyDir
