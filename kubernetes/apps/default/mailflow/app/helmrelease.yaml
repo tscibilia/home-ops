@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maathimself/mailflow-backend
-              tag: 3.5.2@sha256:99988cca7d090f9ee6a30a2f5b4c8b232b0c36c4f7c54176b071885b480a1d17
+              tag: 3.5.3@sha256:0cdd730754bf9ea69ffe2416e7fae931a83ad6c55b2fa6bb0badc7d6fdffe936
             env:
               NODE_ENV: production
               PORT: &apiPort 3000
@@ -84,7 +84,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maathimself/mailflow-frontend
-              tag: 3.5.2@sha256:a5da34ddc523bb25ba8b20a936fbc817a962f1b0d22eab413714038c14eec734
+              tag: 3.5.3@sha256:1551db4488c15eca65e51697a8030d8174f931248c8f2d2d66b273974b4194b1
             env:
               APP_HTTP_PORT: &webPort 80
             resources:
