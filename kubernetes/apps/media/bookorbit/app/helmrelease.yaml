@@ -40,6 +40,7 @@ spec:
               NODE_ENV: production
               NODE_MAX_OLD_SPACE_SIZE: 2048
               OIDC_ALLOW_LOCAL_ISSUERS: true
+              DISABLE_LOCAL_AUTH: true
               PORT: &port 3000
             envFrom:
               - secretRef:
