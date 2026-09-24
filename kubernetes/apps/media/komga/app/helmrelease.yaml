@@ -72,8 +72,8 @@ spec:
         server: truenas.internal
         path: /mnt/nas/data/media
         globalMounts:
-          - path: /data/calibre
-            subPath: books
+          - path: /data/books
+            subPath: calibre
           - path: /data/comics
             subPath: comics
           - path: /data/manga
