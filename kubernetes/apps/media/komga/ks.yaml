@@ -20,7 +20,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: read
+      GATUS_SUBDOMAIN: rdr
       KOPIUR_CAPACITY: 3Gi
     substituteFrom:
       - kind: Secret
