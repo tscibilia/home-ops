@@ -116,11 +116,12 @@ spec:
       library:
         type: nfs
         server: truenas.internal
-        path: /mnt/nas/data/shares/bookorbit
+        path: /mnt/nas/data/media
         advancedMounts:
           *app :
             app:
               - path: /library
+                subPath: books
       tmp:
         type: emptyDir
         globalMounts:
