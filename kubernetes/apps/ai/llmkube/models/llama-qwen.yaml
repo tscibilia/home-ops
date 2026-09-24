@@ -101,7 +101,7 @@ spec:
     # Host RAM for saved prompt states, not VRAM. Must stay well under the 20Gi
     # pod limit: the mmapped GGUF adds ~9Gi of (reclaimable) page cache on top.
     - --cache-ram
-    - "12288"
+    - "10240"
     - --kv-unified
     # Qwen3.8 model card, thinking row (instruct row is sent per-request by the caller)
     - --temp
