@@ -120,7 +120,7 @@ spec:
         advancedMounts:
           *app :
             app:
-              - path: /library/books
+              - path: /library
       tmp:
         type: emptyDir
         globalMounts:
