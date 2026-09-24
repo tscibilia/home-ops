@@ -121,6 +121,7 @@ spec:
           *app :
             app:
               - path: /library
+                subPath: books
       tmp:
         type: emptyDir
         globalMounts:
