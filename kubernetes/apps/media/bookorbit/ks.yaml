@@ -24,7 +24,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: rdr
+      GATUS_SUBDOMAIN: read
       KOPIUR_CAPACITY: 5Gi
       CNPG_NAME: &postgresAppName pgcluster-vector
     substituteFrom:
