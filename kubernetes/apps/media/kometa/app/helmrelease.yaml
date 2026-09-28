@@ -23,8 +23,8 @@ spec:
         initContainers:
           01-init-overlays:
             image:
-              repository: quay.io/minio/mc
-              tag: RELEASE.2025-05-21T01-59-54Z@sha256:09f93f534cde415d192bb6084dd0e0ddd1715fb602f8a922ad121fd2bf0f8b44
+              repository: docker.io/rustfs/rc
+              tag: v0.1.36@sha256:ab024bfebee49a750ce886b4c70963ccd9ddaa03f491704a90710641d7a26699
             command: ["/bin/sh", "-c"]
             env:
               HOME: /tmp
@@ -32,9 +32,9 @@ spec:
               - |
                 mkdir -p /config/overlays;
                 mkdir -p /config/assets;
-                mc alias set s3 https://s3.t0m.co '' '' --api S3v4;
-                mc mirror --overwrite --remove s3/t0m-public/kometa/overlays/ /config/overlays/;
-                mc mirror --overwrite --remove s3/t0m-public/kometa/assets/ /config/assets/
+                rc alias set s3 https://s3.t0m.co --anonymous;
+                rc mirror s3/t0m-public/kometa/overlays/ /config/overlays/ --overwrite --remove;
+                rc mirror s3/t0m-public/kometa/assets/ /config/assets/ --overwrite --remove
         containers:
           app:
             image:
