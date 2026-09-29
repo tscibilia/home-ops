@@ -115,7 +115,6 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - imagemaid _(Plex image cleanup)_
 - jellyfin [kopiur, zeroscaler]
 - kometa _(Plex metadata)_ [kopiur]
-- komga [kopiur, zeroscaler, oidc]
 - maintainerr _(media deletion rules)_ [kopiur]
 - plex [kopiur, zeroscaler]
 - prowlarr _(indexer manager)_ [kopiur, auth]
