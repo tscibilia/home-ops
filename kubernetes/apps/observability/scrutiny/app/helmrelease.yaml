@@ -33,7 +33,7 @@ spec:
           app:
             image:
               repository: ghcr.io/analogj/scrutiny
-              tag: v0.9.4-web@sha256:a566f3c2e804d2534fa8cb75f813c75a4a356a57186239ecf96eab851517ab77
+              tag: v0.9.5-web@sha256:4f2ec0c874aec7fb0da5505b8ee127a8d7ac5b9d2b0622b53cf27fb47693877c
             env:
               SCRUTINY_WEB_INFLUXDB_HOST: scrutiny-influxdb
               SCRUTINY_WEB_INFLUXDB_PORT: "8086"
