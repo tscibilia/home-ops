@@ -3,7 +3,7 @@ version: "3.8"
 
 services:
   scrutiny-collector:
-    image: ghcr.io/analogj/scrutiny:v0.9.4-collector@sha256:3f84c69d040877a521fdb92ff4bc31818bef8fb3dd52d0b796e0b76a342d7f41
+    image: ghcr.io/analogj/scrutiny:v0.9.5-collector@sha256:e55394663d4430af7dec36b1979785a2a2481b317047077eac84acb8305d583d
     container_name: scrutiny-collector
     restart: unless-stopped
     networks:
