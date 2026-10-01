@@ -32,12 +32,12 @@ jobs:
       && (github.event.action != 'labeled' || github.event.label.name == 'ai-review') }}
     runs-on: ${{ github.event.repository.name }}-runner
     # Backstop only — must exceed the action's own budgets, or a long review is
-    # killed with nothing published. Worst case is the tool loop (600s) + primary
+    # killed with nothing published. Worst case is the tool loop (900s) + primary
     # review (2 attempts × 300s) + fallback (2 attempts × 300s, a fixed budget
-    # the action does not expose) = 30m, plus checkout and preflight. Every
-    # *_timeout_sec and ai-primary-retries change below has to be re-checked
+    # the action does not expose) = 2100s (35m), plus checkout and preflight.
+    # Every *_timeout_sec and ai-primary-retries change below has to be re-checked
     # against this number.
-    timeout-minutes: 35
+    timeout-minutes: 40
     permissions:
       contents: read
       id-token: write # GitHub OIDC token, consumed by the aKeyless jwt auth method
@@ -162,11 +162,11 @@ jobs:
           system-prompt-file: .agents/pr-review-instructions.md
           system-prompt-mode: append
           tool-mode: native_loop
-          tool-max-requests: "16"
-          tool-max-rounds: "5"
+          tool-max-requests: "32"
+          tool-max-rounds: "20"
           tool-loop-summarize: "true"
           tool-loop-summarize-max-tokens: "512"
-          tool-loop-wall-clock-sec: "600"
+          tool-loop-wall-clock-sec: "900"
           tool-turn-timeout-sec: "120"
           tool-corpus-max-bytes: "100000"
           tool-max-tokens-per-turn: "32000"
