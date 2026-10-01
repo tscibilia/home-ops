@@ -92,5 +92,14 @@
       matchUpdateTypes: ["digest"],
       enabled: false,
     },
+    {
+      // mise pulls prebuilt CPython from python-build-standalone, which lags the
+      // python/cpython tag Renovate bumps to. Wait for pbs to ship the prebuild;
+      // local `compile = true` covers any remaining gap.
+      description: "Wait 28 days for python-build-standalone to ship the prebuilt CPython before bumping mise python",
+      matchManagers: ["mise"],
+      matchDepNames: ["python"],
+      minimumReleaseAge: "28 days",
+    },
   ],
 }
