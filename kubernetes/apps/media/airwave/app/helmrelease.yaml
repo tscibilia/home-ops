@@ -73,6 +73,10 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
       web:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -110,6 +114,10 @@ spec:
                     path: *healthPath
                     port: *webPort
               startup: *startupProbe
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
       tvweb:
         annotations:
           reloader.stakater.com/auto: "true"
@@ -147,13 +155,15 @@ spec:
                     path: *healthPath
                     port: *tvwebPort
               startup: *startupProbe
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
-      annotations:
-        # entrypoint replaces /etc/localtime; k8tz mounting it there makes the ln -snf fail
-        k8tz.io/inject: "false"
       securityContext:
-        # entrypoint starts as root: rewrites /etc (TZ, usermod) then gosu's to PUID/PGID
-        runAsUser: 0
+        runAsNonRoot: true
+        runAsUser: *puid
+        runAsGroup: *pgid
         fsGroup: *pgid
         fsGroupChangePolicy: OnRootMismatch
     service:
