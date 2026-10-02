@@ -75,7 +75,7 @@ spec:
                   periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
       web:
         annotations:
@@ -160,6 +160,9 @@ spec:
               readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
     defaultPodOptions:
+      annotations:
+        # TZ already set via env; k8tz injection is redundant
+        k8tz.io/inject: "false"
       securityContext:
         runAsNonRoot: true
         runAsUser: *puid
