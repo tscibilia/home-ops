@@ -58,15 +58,9 @@ spec:
                 printf '%s\n' "$$GH_HERMES_SIGNING_KEY" > /opt/data/.ssh/hermes_signing
                 chmod 600 /opt/data/.ssh/hermes_signing
                 # Multiplex scope reads .env, not os.environ.
-                touch /opt/data/.env
-                for var in DISCORD_ALLOWED_USERS; do
-                  eval "val=\$$$var"
-                  if [ -n "$$val" ]; then
-                    grep -v "^$${var}=" /opt/data/.env > /tmp/.env.tmp 2>/dev/null || true
-                    printf '%s=%s\n' "$$var" "$$val" >> /tmp/.env.tmp
-                    mv /tmp/.env.tmp /opt/data/.env
-                  fi
-                done
+                grep -v "^DISCORD_ALLOWED_USERS=" /opt/data/.env > /tmp/.env.tmp 2>/dev/null || true
+                printf '%s=%s\n' "DISCORD_ALLOWED_USERS" "$$DISCORD_ALLOWED_USERS" >> /tmp/.env.tmp
+                mv /tmp/.env.tmp /opt/data/.env
                 chown 10000:10000 /opt/data/.env
                 chmod 600 /opt/data/.env
             securityContext:
