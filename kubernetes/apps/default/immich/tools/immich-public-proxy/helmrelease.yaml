@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/alangrainger/immich-public-proxy
-              tag: 3.4.0@sha256:b442829bb99e25f39e2979bb45bb12a6db991d98a1cd90938799b84ab262692a
+              tag: 3.4.1@sha256:d29ffe35c81f784685b6e06bc8b7d62bfb654f6e6e7ef8db95bb8aa3d7122694
             env:
               PUBLIC_BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
               IMMICH_URL: http://immich-app.default.svc.cluster.local:2283
