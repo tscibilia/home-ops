@@ -1,6 +1,15 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
+    "litellm-homelab": {
+      "type": "remote",
+      "url": "https://litellm.t0m.co/mcp/",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:LITELLM_API_KEY}",
+        "x-mcp-servers": "talos_mcp,konflate_mcp,victoria_logs_mcp,sidero_mcp"
+      }
+    },
     "memini": {
       "type": "remote",
       "url": "https://memini.t0m.co/mcp",
