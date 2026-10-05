@@ -26,7 +26,7 @@ spec:
           app:
             image:
               repository: ghcr.io/connorgallopo/tracearr
-              tag: 2.6.0@sha256:7485fede9126029e40e212719a1e5985cb9e86e070211448fb600a5511acbc4d
+              tag: 2.6.2@sha256:933af2d7835b82fe8d1cf3d9fc7694500c598b8f5f724558828dbd0b068acbb9
             env:
               CORS_ORIGIN: "{{ .Release.Name }}.${SECRET_DOMAIN}"
               TRUST_PROXY: true
