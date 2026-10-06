@@ -113,7 +113,7 @@ jobs:
           echo "Preflight OK."
 
       - name: AI PR Review
-        uses: misospace/pr-reviewer-action@aa12ad9909b1ee8a5a7fe00dceeb1a8c97ab27dd # v3.1.0
+        uses: misospace/pr-reviewer-action@c86f3e94191c9078e92714b10f39deb8d3466268 # v3.2.0
         env:
           KONFLATE_MCP_URL: http://konflate.flux-system.svc.cluster.local:8080/mcp
           KONFLATE_PUBLIC_URL: https://konflate.${{ steps.load-secrets.outputs.SECRET_DOMAIN }}
