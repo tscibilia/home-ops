@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Mise - Flate
-        uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
           version: 2026.10.2 # 2026.9.3 error publishing upstream
           cache: false
@@ -100,7 +100,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Setup Mise - Talos
-        uses: jdx/mise-action@94c60b39bc2d90ab2f9bab27f38d3cc4812c1834 # v5.1.0
+        uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
           version: 2026.10.2 # 2026.9.3 error publishing upstream
           cache: false
