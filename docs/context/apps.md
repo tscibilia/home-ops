@@ -153,7 +153,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - gatus _(health monitoring)_ [cnpg]
 - grafana-operator _(Grafana operator + instance)_ [cnpg, oidc]
 - karma _(alertmanager UI)_
-- kite [cnpg, oidc]
+- kite [kopiur, cnpg, oidc]
 - kromgo
 - kube-prometheus-stack
 - prometheus-adapter _(external-metrics API for HPA)_
