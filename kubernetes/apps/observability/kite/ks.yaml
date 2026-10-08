@@ -7,6 +7,7 @@ metadata:
 spec:
   components:
     - ../../../../components/cnpg
+    - ../../../../components/kopiur/backup
   dependsOn:
     - name: secret-stores
       namespace: external-secrets
@@ -14,6 +15,8 @@ spec:
       namespace: database
     - name: pocket-id
       namespace: security
+    - name: kopiur
+      namespace: kopiur-system
   interval: 1h
   retryInterval: 5m
   path: ./kubernetes/apps/observability/kite/app
@@ -23,6 +26,7 @@ spec:
       GATUS_SUBDOMAIN: k8s
       GATUS_PATH: /healthz
       CNPG_NAME: &postgresAppName pgcluster-default
+      KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets

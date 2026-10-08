@@ -31,6 +31,7 @@ spec:
               HOST: https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}
               ENABLE_ANALYTICS: true
               KITE_CONFIG_FILE: /kite/config.yaml
+              PLUGIN_DIR: /config/plugins
               DB_TYPE: postgres
               DB_DSN:
                 valueFrom:
@@ -97,7 +98,7 @@ spec:
                 port: *port
     persistence:
       config:
-        type: emptyDir
+        existingClaim: *app
       config-files:
         type: secret
         name: "{{ .Release.Name }}-config-secret"
