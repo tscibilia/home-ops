@@ -19,23 +19,27 @@ spec:
         - refId: A
           queryType: stats
           relativeTimeRange:
-            from: 1800
+            from: 21600
             to: 0
           datasourceUid: victorialogs
           model:
             queryType: stats
-            # VictoriaLogs query syntax
+            # VictoriaLogs query syntax — alert only on runs that end failed.
+            # Transient per-attempt timeouts ("Failed syncing account …") are
+            # retried by the app and routinely recover; the strings below are
+            # logged only when all attempts (hardcoded 2) are exhausted or the
+            # whole sync cycle fails.
             expr: |
-              app: "actual-auto-sync"
-              | _msg:~"Failed syncing account"
-              | stats count() as count
+              app: "actual-auto-sync" | _msg:~"after retries"
+                | union (app: "actual-auto-sync" | _msg:~"did not complete successfully")
+                | stats count() as count
             intervalMs: 60000
             maxDataPoints: 43200
 
         - refId: B
           queryType: ""
           relativeTimeRange:
-            from: 1800
+            from: 21600
             to: 0
           datasourceUid: __expr__
           model:
@@ -47,7 +51,7 @@ spec:
         - refId: C
           queryType: ""
           relativeTimeRange:
-            from: 1800
+            from: 21600
             to: 0
           datasourceUid: __expr__
           model:
@@ -62,8 +66,8 @@ spec:
                 operator:
                   type: and
       annotations:
-        summary: "Sync error in actual-auto-sync"
-        description: "actual-auto-sync failed to sync account. Check logs for details."
+        summary: "Sync run failed in actual-auto-sync"
+        description: "An actual-auto-sync run ended in failure (all retry attempts exhausted or the sync cycle did not complete). Check logs for details."
       labels:
         severity: critical
         app: actual-auto-sync
