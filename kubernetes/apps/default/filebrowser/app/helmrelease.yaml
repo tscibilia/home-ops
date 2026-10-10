@@ -21,7 +21,7 @@ spec:
               # .renovate/overrides.json5 — stable/latest still resolve to v1, so matching
               # them would downgrade. Drop both when v2.0.0 GA ships.
               repository: ghcr.io/gtsteffaniak/filebrowser
-              tag: 2.1.0-beta@sha256:329dfca21dcd04d1430f9f190a719d9e9ecb0fb9a916d26a56cd631876aebaf1
+              tag: 2.1.1-beta@sha256:1b70f147afa66225c3784468037ad0c86ac5265ef70e095282d5335e9926071d
             env:
               FILEBROWSER_CONFIG: /config/config.yaml
             probes:
