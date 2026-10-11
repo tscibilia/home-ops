@@ -45,7 +45,7 @@ metadata:
 spec:
   modelRef: llama-qwen
   runtime: llamacpp
-  image: ghcr.io/ggml-org/llama.cpp:server-cuda-b11515@sha256:ccfd96bb2aba4ef77e3df656d713ce85bf3c6a886d7974243127c5ad66ca6d2a
+  image: ghcr.io/ggml-org/llama.cpp:server-cuda-b11552@sha256:9d835c2febd6f09a0aafb30e9c1b29a67a49923b67075993551ab4593d84491f
   rolloutPolicy:
     waitForIdle: true
     idleTimeoutSeconds: 3600
