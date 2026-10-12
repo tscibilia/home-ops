@@ -18,6 +18,7 @@
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
 - [ ] ⚠️ **opencode:** v1 ignores `disable-model-invocation`, (see issue [#621](https://redirect.github.com/mattpocock/skills/issues/621)) - **wrapped as commands; drop them once v2 reads `metadata.opencode/autoinvoke`**
 - [ ] ⚠️ **LiteLLM** getting 404 on omp without `NotFoundErrorRetries` (see upstream [#36896](https://redirect.github.com/BerriAI/litellm/issues/36896))
+- [ ] ⚠️ **llama-qwen** GPU wedges on ai3090 (CUDA crash → stuck pod → GPU "requires reset"; only fix is node reboot) - **explore graceful shutdown/terminationGracePeriod + fix VRAM headroom**
 
 ## ⛔ Blocked
 
