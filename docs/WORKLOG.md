@@ -6,6 +6,8 @@
 
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 
+- [ ] Watch [@LukeEvansTech/weekly-upstream-surveys](https://redirect.github.com/LukeEvansTech/talos-cluster/issues) for home-ops revisions
+
 ## ⚠️ Known Issues
 
 `- [ ] ⚠️ **App name** - issue (with ref) - **comment**`
