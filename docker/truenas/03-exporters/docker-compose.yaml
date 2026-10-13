@@ -64,6 +64,16 @@ configs:
           call enrich_container_name
 
       [FILTER]
+          Name grep
+          Match docker
+          # smartctl exit-code diagnostics (4=checksum, 64=error log) are
+          # routine on the SAS array and recur daily; they are not hub-
+          # communication failures. Drop them so the daily SMART scan doesn't
+          # trip RemoteContainerLogErrors, while Publish() failures
+          # (i/o timeout, dial tcp, connection refused) still count.
+          Exclude log .*smartctl (returned an error code|detected a).*
+
+      [FILTER]
           Name log_to_metrics
           Match docker
           Tag node_metrics
