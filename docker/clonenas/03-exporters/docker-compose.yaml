@@ -41,20 +41,23 @@ services:
     network_mode: host
     privileged: true
     configs:
+      # entrypoint copies /etc/nut/local/* verbatim, but appends a generated
+      # [$NAME] section to anything at /etc/nut/* -> duplicate UPS, two drivers
+      # claim the same device, upsdrvctl fails. Keep custom configs under local/.
       - source: nut_conf
         target: /etc/nut/nut.conf
         mode: 0644
       - source: ups_conf
-        target: /etc/nut/ups.conf
+        target: /etc/nut/local/ups.conf
         mode: 0644
       - source: upsd_conf
-        target: /etc/nut/upsd.conf
+        target: /etc/nut/local/upsd.conf
         mode: 0644
       - source: upsd_users
-        target: /etc/nut/upsd.users
+        target: /etc/nut/local/upsd.users
         mode: 0640
       - source: upsmon_conf
-        target: /etc/nut/upsmon.conf
+        target: /etc/nut/local/upsmon.conf
         mode: 0640
 
 volumes:
