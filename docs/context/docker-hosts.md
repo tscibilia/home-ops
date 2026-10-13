@@ -8,6 +8,7 @@
 - **Ansible on TrueNAS/clonenas — no `ansible.builtin.cron`:** TrueNAS SCALE may not honour `/etc/cron.d`. Register cron jobs via `midclt call cronjob.create` (TrueNAS API) — see the shell task pattern in `ansible/truenas/playbook.yaml`.
 - **VPS SSH:** Always use `ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal`. Port 22222, key `~/.ssh/home-ops`, user `ubuntu`.
 - **Ansible playbooks use `hosts: all`:** Run with `--limit <group>` (e.g. `--limit vps`, `--limit clonenas`) to avoid running against unintended hosts.
+- **`nut-upsd` config paths:** mount custom NUT configs at `/etc/nut/local/*`, not `/etc/nut/*` — the image's entrypoint copies `local/` verbatim but appends a generated `[$NAME]` UPS section to the latter, yielding two drivers for one USB device and a crash loop.
 
 Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each host runs a cron that pulls from this repo and applies `docker compose up -d`.
 
