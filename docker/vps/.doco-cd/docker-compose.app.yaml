@@ -11,7 +11,7 @@ secrets:
 
 services:
   doco-cd:
-    image: ghcr.io/kimdre/doco-cd:0.121.0
+    image: ghcr.io/kimdre/doco-cd:0.127.0
     container_name: doco-cd
     restart: unless-stopped
     depends_on:
@@ -44,8 +44,7 @@ services:
     healthcheck:
       test:
         - CMD
-        - /doco-cd
-        - healthcheck
+        - /healthcheck
       start_period: 15s
       interval: 30s
       timeout: 5s
