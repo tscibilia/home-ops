@@ -50,6 +50,12 @@
       sourceUrl: "https://git.erwanleboucher.dev/eleboucher/memini",
     },
     {
+      description: "Changelog URL for Seanime",
+      matchPackageNames: ["/seanime/"],
+      changelogUrl: "https://github.com/5rahim/seanime/releases",
+      sourceUrl: "https://github.com/5rahim/seanime",
+    },
+    {
       description: "Changelog URL for Spegel",
       matchPackageNames: ["/spegel/"],
       changelogUrl: "https://github.com/spegel-org/spegel/blob/main/CHANGELOG.md",
