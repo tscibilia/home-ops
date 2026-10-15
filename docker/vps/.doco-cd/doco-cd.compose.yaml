@@ -94,5 +94,7 @@ volumes:
   data:
     # MIGRATION (issue #4321): adopt the volume the cron-era container already
     # uses, so the successor starts with the existing repository cache and
-    # handover journal. Remove `external` in a follow-up commit.
+    # handover journal. An external volume defaults to the key as its name, so
+    # `name` is required to point at the existing doco-cd_data.
     external: true
+    name: doco-cd_data
