@@ -9,8 +9,9 @@
 - **VPS SSH:** Always use `ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal`. Port 22222, key `~/.ssh/home-ops`, user `ubuntu`.
 - **Ansible playbooks use `hosts: all`:** Run with `--limit <group>` (e.g. `--limit vps`, `--limit clonenas`) to avoid running against unintended hosts.
 - **`nut-upsd` config paths:** mount custom NUT configs at `/etc/nut/local/*`, not `/etc/nut/*` — the image's entrypoint copies `local/` verbatim but appends a generated `[$NAME]` UPS section to the latter, yielding two drivers for one USB device and a crash loop.
+- **doco-cd's own stack must not use a default Compose filename:** the base deploy config auto-discovers `docker/<host>` at depth 1 and doco-cd's `IgnoreDirs` does not cover hidden directories, so a file named `compose.yaml` (or `compose.yml`, `docker-compose.yml`, `docker-compose.yaml`) under `.doco-cd/` would be discovered a second time under the stack name `.doco-cd` and create a second Compose project beside the running one. The self stack is therefore `doco-cd.compose.yaml`, listed explicitly in `compose_files`.
 
-Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each host runs a cron that pulls from this repo and applies `docker compose up -d`.
+Non-Kubernetes Docker hosts managed via **doco-cd** (GitOps pull-based CD). Each host runs doco-cd, which polls this repo hourly and applies `docker compose up -d` for every numbered stack — including the stack that holds its own container, which it updates in place through a zero-downtime `scale_out` handover.
 
 ## Hosts
 
@@ -63,7 +64,7 @@ Path: `docker/vps/`
 
 <!-- END GENERATED: stacks:vps -->
 
-VPS role: towonel hub/edge ingress gateway (DNS-only → VPS:443 → SNI split → towonel tunnel → in-cluster `envoy-external`, which terminates TLS), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) owns `/opt/doco-cd/`; doco-cd owns the `02-towonel/` and `04-unifi/` stacks via its own git clone of the repo. ([ADR-0015](../adr/0015-towonel-over-pangolin.md))
+VPS role: towonel hub/edge ingress gateway (DNS-only → VPS:443 → SNI split → towonel tunnel → in-cluster `envoy-external`, which terminates TLS), UniFi controller. Ansible bootstrap (`ansible/vps/playbook.yaml`) provisions only the `/opt/doco-cd/` config directory, its three secret files, and the external `edge` network and `doco-cd_data` volume; doco-cd deploys every stack — including its own, from `docker/vps/.doco-cd/doco-cd.compose.yaml` — via its own git clone of the repo. ([ADR-0015](../adr/0015-towonel-over-pangolin.md))
 
 [`docker/vps/MIGRATION.md`](../../docker/vps/MIGRATION.md) — read before renaming a stack directory, editing an inline `configs:` block, debugging a missing certificate, changing ufw or `DOCKER-USER` rules, or touching `towonel-agent`. Traps and reasons only; the live architecture is in `docker/vps/README.md`.
 
@@ -71,11 +72,15 @@ VPS role: towonel hub/edge ingress gateway (DNS-only → VPS:443 → SNI split �
 
 Services are numbered (`01-`, `02-`) for apply order. To add a service: create a new numbered directory with `docker-compose.yaml` and commit — doco-cd polls and applies automatically.
 
+doco-cd also deploys **its own stack**, from `docker/<host>/.doco-cd/doco-cd.compose.yaml`, registered as a second deploy-config document in `docker/<host>/.doco-cd.yaml`. A bump to that file is therefore an ordinary deployment: doco-cd starts a successor container, waits for it to report healthy, then retires itself — no downtime, and no host-side cron. Nothing on the host describes the stack any more: Ansible provisions only the config directory, the secret files it mounts, and the external network and data volume.
+
+`working_dir` is relative to the **repository root**, not to `DEPLOY_CONFIG_BASE_DIR`, and the top-level `name: doco-cd` in that compose file must keep matching the `name:` of its deploy config — doco-cd recognises the stack holding its own container by the `com.docker.compose.project` and `com.docker.compose.service` labels.
+
 ## aKeyless on Docker Hosts
 
 VPS, truenas and clonenas each run an aKeyless proxy sidecar + doco-cd webhook secret provider. Secrets are injected as environment variables for `${VAR}` substitution in compose files.
 
-The sidecar image is [`tscibilia/akeyless-proxy`](https://github.com/tscibilia/akeyless-proxy) — a separate repo, pinned by digest in each host's `.doco-cd/docker-compose.app.yaml`. Hosts no longer build it; there is no per-host `Dockerfile` or `proxy.py`. VPS sets `PROXY_KEEPALIVE: "1"` (high secret volume); the two NAS hosts deliberately leave it unset (low volume — the idle timeout logs a false error per connection).
+The sidecar image is [`tscibilia/akeyless-proxy`](https://github.com/tscibilia/akeyless-proxy) — a separate repo, pinned by digest in each host's `.doco-cd/doco-cd.compose.yaml`. Hosts no longer build it; there is no per-host `Dockerfile` or `proxy.py`. VPS sets `PROXY_KEEPALIVE: "1"` (high secret volume); the two NAS hosts deliberately leave it unset (low volume — the idle timeout logs a false error per connection).
 
 **Secret mapping lives in `docker/vps/.doco-cd.yaml`** — `external_secrets` section. This is the ONLY place to declare which env vars map to which aKeyless paths. Compose files just use `${VAR}` in `environment:`. If an env var is missing at runtime, check `.doco-cd.yaml` first.
 

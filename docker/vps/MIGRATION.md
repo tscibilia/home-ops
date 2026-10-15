@@ -244,6 +244,27 @@ It polls hourly and has no force-deploy API. To reconcile immediately:
 just ansible restart-doco-cd vps
 ```
 
+### doco-cd manages its own stack
+
+The nightly `cron-update.sh` and the host-side `docker-compose.app.yaml` were
+retired on 2026-10-15. doco-cd now deploys `.doco-cd/doco-cd.compose.yaml` from
+the repository like any other stack, so a bump hands over through `scale_out`
+instead of the `--force-recreate` gap the cron caused.
+
+Two things that bite:
+
+- The container is Compose-named (`doco-cd-doco-cd-N`) and the suffix increments
+  on every self-update. Address it by label — `just ansible restart-doco-cd <host>`
+  does — never by name.
+- The file is deliberately not `compose.yaml`: auto-discovery scans `docker/vps`
+  at depth 1 without skipping `.doco-cd/`, so a default name would be discovered
+  a second time as a `.doco-cd` stack and a second Compose project would appear.
+
+If doco-cd will not start at all, recover with the upstream one-shot bootstrap
+(`docker run --rm … apply-self --bootstrap`), or deploy the file by hand from the
+checkout doco-cd already keeps on its data volume (under
+`…/doco-cd_data/_data/github.com/tscibilia/home-ops/artifacts/<sha>/docker/vps/.doco-cd/`).
+
 ### Caddy stops trying ACME and says nothing
 
 Absence of ACME log lines means backoff, not failure. After any failed cutover,

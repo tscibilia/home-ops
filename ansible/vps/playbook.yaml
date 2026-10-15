@@ -170,6 +170,11 @@
             group: "10001"
             mode: "0755"
 
+    # doco-cd deploys its own stack from the repository (issue #4321), so this
+    # block provisions only what doco-cd cannot create for itself: the config
+    # directory, the secret files its compose mounts, and the network and volume
+    # its compose declares as external. A rebuilt host needs nothing else —
+    # `docker run --rm … apply-self --bootstrap` starts the first container.
     - name: doco-cd
       become: false
       tags: doco-cd
@@ -182,29 +187,14 @@
             group: ubuntu
             mode: "0755"
 
-        - name: doco-cd | Copy docker-compose app file
-          ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/docker-compose.app.yaml
-            dest: "{{ dococd_config_dir }}/docker-compose.app.yaml"
-            owner: ubuntu
-            group: ubuntu
-            mode: "0644"
+        - name: doco-cd | Ensure edge network exists
+          community.docker.docker_network:
+            name: edge
+            state: present
 
-        - name: doco-cd | Copy cron-update.sh
-          ansible.builtin.copy:
-            src: ../../docker/vps/.doco-cd/cron-update.sh
-            dest: "{{ dococd_config_dir }}/cron-update.sh"
-            owner: ubuntu
-            group: ubuntu
-            mode: "0755"
-
-        - name: doco-cd | Install nightly update cron job
-          ansible.builtin.cron:
-            name: doco-cd stack update
-            minute: "0"
-            hour: "3"
-            job: "{{ dococd_config_dir }}/cron-update.sh"
-            user: ubuntu
+        - name: doco-cd | Ensure doco-cd_data volume exists
+          community.docker.docker_volume:
+            name: doco-cd_data
             state: present
 
         - name: doco-cd | Create secret files
@@ -223,32 +213,19 @@
             - name: akeyless_access_key
               content: "{{ doco_akeyless_access_key }}"
 
-        - name: doco-cd | Run docker-compose
-          community.docker.docker_compose_v2:
-            project_src: "{{ dococd_config_dir }}"
-            files:
-              - docker-compose.app.yaml
-            pull: always
-            state: present
-          when: not ansible_check_mode
+        - name: doco-cd | Remove the retired nightly updater
+          ansible.builtin.cron:
+            name: doco-cd stack update
+            state: absent
 
-        - name: doco-cd | Wait for akeyless-proxy healthy
-          community.docker.docker_container_info:
-            name: akeyless-proxy
-          register: proxy_info
-          until: proxy_info.container.State.Health.Status == "healthy"
-          retries: 30
-          delay: 5
-          when: not ansible_check_mode
-
-        - name: doco-cd | Wait for doco-cd healthy
-          community.docker.docker_container_info:
-            name: doco-cd
-          register: dococd_info
-          until: dococd_info.container.State.Health.Status == "healthy"
-          retries: 30
-          delay: 10
-          when: not ansible_check_mode
+        - name: doco-cd | Remove retired updater artefacts
+          ansible.builtin.file:
+            path: "{{ dococd_config_dir }}/{{ item }}"
+            state: absent
+          loop:
+            - cron-update.sh
+            - docker-compose.app.yaml
+            - update.log
 
     - name: geo-block
       become: true

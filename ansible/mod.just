@@ -84,27 +84,28 @@ check-clonenas:
 check-unraid:
     just ansible bootstrap-unraid --check
 
-[doc('Restart doco-cd container on a docker host (truenas|unraid|vps)')]
+[doc('Restart doco-cd on a docker host (vps|clonenas|truenas)')]
 [script]
 restart-doco-cd host:
     just check-tools ssh
     #!/usr/bin/env bash
     set -euo pipefail
+    # doco-cd now deploys its own stack, so Compose names the container
+    # (doco-cd-doco-cd-N) and the suffix increments on every self-update.
+    # Resolve it by label instead of by name.
+    restart='docker restart $(docker ps -q --filter label=com.docker.compose.project=doco-cd --filter label=com.docker.compose.service=doco-cd)'
     case "{{ host }}" in
       truenas)
-        ssh -i ~/.ssh/home-ops sysadmin@truenas.internal "docker restart doco-cd"
-        ;;
-      unraid)
-        ssh -i ~/.ssh/home-ops root@unraid.internal "docker restart doco-cd"
+        ssh -i ~/.ssh/home-ops sysadmin@truenas.internal "sudo sh -c '$restart'"
         ;;
       clonenas)
-        ssh -i ~/.ssh/home-ops sysadmin@clonenas.internal "docker restart doco-cd"
+        ssh -i ~/.ssh/home-ops sysadmin@clonenas.internal "$restart"
         ;;
       vps)
-        ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal "docker restart doco-cd"
+        ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal "$restart"
         ;;
       *)
-        echo "Unknown host: {{ host }}. Valid: truenas, unraid, clonenas, vps" >&2
+        echo "Unknown host: {{ host }}. Valid: vps, clonenas, truenas" >&2
         exit 1
         ;;
     esac
