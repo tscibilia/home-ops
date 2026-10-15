@@ -28,6 +28,11 @@ services:
       prometheus.job: "doco-cd"
     environment:
       LOG_LEVEL: info
+      # Required for the migration to native self-managed deployment (issue #4321):
+      # a running instance that has not advertised SELF_UPDATE_ENABLED refuses a
+      # deployment that would replace its own container.
+      SELF_UPDATE_ENABLED: "true"
+      SELF_UPDATE_STRATEGY: auto
       DEPLOY_CONFIG_BASE_DIR: ./docker/vps/
       POLL_CONFIG: |-
         - url: https://github.com/tscibilia/home-ops.git
