@@ -65,10 +65,14 @@ prune-pods:
 sync resource ns='' app='':
     just check-tools kubectl
     _annotate() {
-        kubectl -n "$1" annotate --field-manager flux-client-side-apply --overwrite {{ resource }} "$2" \
-            "force-sync=$(date +%s)" \
-            "reconcile.fluxcd.io/requestedAt=$(date +%s)" \
-            "reconcile.fluxcd.io/forceAt=$(date +%s)"
+        local ns="$1" name="$2"
+        if [ "{{ resource }}" = "es" ]; then
+            kubectl -n "$ns" annotate --overwrite externalsecret "$name" "force-sync=$(date +%s)"
+        else
+            kubectl -n "$ns" annotate --field-manager flux-client-side-apply --overwrite {{ resource }} "$name" \
+                "reconcile.fluxcd.io/requestedAt=$(date +%s)" \
+                "reconcile.fluxcd.io/forceAt=$(date +%s)"
+        fi
     }
     if [ -n "{{ ns }}" ] && [ -n "{{ app }}" ]; then
         _annotate "{{ ns }}" "{{ app }}"
@@ -96,7 +100,7 @@ restart-hr:
     just check-tools kubectl flux
     kubectl get hr --all-namespaces | grep False | awk '{print $2, $1}' | while read -r name namespace; do \
         flux suspend helmrelease "$name" -n "$namespace"; \
-        flux resume helmrelease "$name" -n "$namespace" & \
+        flux resume helmrelease "$name" -n "$namespace"; \
     done
 
 [doc('Force a Kustomization to reconcile from Source')]
@@ -117,7 +121,7 @@ restart-ks:
     just check-tools kubectl flux
     kubectl get ks --all-namespaces | grep False | awk '{print $2, $1}' | while read -r name namespace; do \
         flux suspend kustomization "$name" -n "$namespace"; \
-        flux resume kustomization "$name" -n "$namespace" & \
+        flux resume kustomization "$name" -n "$namespace"; \
     done
 
 [doc('Trigger a manual Kopiur snapshot')]

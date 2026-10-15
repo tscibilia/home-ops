@@ -10,6 +10,7 @@ nodes := `talosctl config info -o yaml | yq -r -e '([.endpoints // [], .nodes //
 default:
     just -l talos
 
+[confirm('Apply config to node ' + node + ' [y|N] ?')]
 [doc('Apply Talos config to a node')]
 apply-node node *args:
     just check-tools talosctl
@@ -54,13 +55,14 @@ reset-cluster:
 
     # Reduce Ceph replication to 1 to prevent I/O hangs during reset
     just log info "Reducing Ceph pool size to 1..."
-    kubectl -n rook-ceph exec -l app=rook-ceph-tools -- ceph osd pool set ceph-blockpool size 1 || \
+    kubectl -n rook-ceph exec deploy/rook-ceph-tools -- ceph osd pool set ceph-blockpool size 1 || \
         just log warn "Could not reduce Ceph pool size (cluster may already be wiped)"
 
     # Cordon and drain all nodes
     just log info "Cordoning and draining all nodes..."
-    kubectl get nodes -o name | xargs -I {} kubectl cordon {} 2>/dev/null || true
-    kubectl drain --ignore-daemonsets --delete-emptydir-data --force --timeout=60s $(kubectl get nodes -o name) 2>/dev/null || true
+    kubectl get nodes -o name | xargs -I {} kubectl cordon {} || true
+    kubectl drain --ignore-daemonsets --delete-emptydir-data --force --timeout=600s $(kubectl get nodes -o name) || \
+        just log warn "Drain did not complete cleanly - check pods before resetting"
 
     for node in {{ nodes }}; do
         gum confirm "Reset node $node?" --default="No" || continue

@@ -260,6 +260,25 @@ Two things that bite:
   at depth 1 without skipping `.doco-cd/`, so a default name would be discovered
   a second time as a `.doco-cd` stack and a second Compose project would appear.
 
+### A hand-deployed compose file loses its secrets
+
+Do not try to apply a stack fix by copying a compose file onto the VPS and running
+`docker compose up` there — `just ansible deploy-direct` did exactly that and was
+retired on 2026-10-15 for three independent reasons:
+
+- `/var/lib/docker` is `drwx--x--- root:root`, so the `ubuntu` user cannot even
+  traverse into the data volume, and `sudo` on the VPS wants a password.
+- The compose files interpolate `${CROWDSEC_ENROLL_KEY}`, `${TOWONEL_*}` and
+  friends, which doco-cd resolves from its aKeyless proxy **at deploy time**. A
+  hand-run `docker compose up` in the artifact directory has no such environment,
+  so the containers start with empty credentials — and there is no `.env` there
+  to pick up.
+- doco-cd redeploys the stack from git on its next poll, or immediately on a
+  `die`/`unhealthy` event, so the edit is reverted anyway.
+
+Apply a fix through git, then force the poll with
+`just ansible restart-doco-cd vps`.
+
 If doco-cd will not start at all, recover with the upstream one-shot bootstrap
 (`docker run --rm … apply-self --bootstrap`), or deploy the file by hand from the
 checkout doco-cd already keeps on its data volume (under
