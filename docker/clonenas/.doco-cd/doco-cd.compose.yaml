@@ -1,0 +1,95 @@
+---
+# doco-cd's own stack, deployed by doco-cd itself (issue #4321).
+#
+# The file name is deliberately NOT one of doco-cd's default compose_files.
+# This is to avoid autodiscovering a second Compose project.
+#
+# No container_name and no published host ports on doco-cd: either one rules
+# out the zero-downtime scale_out handover this migration exists for.
+
+name: doco-cd
+
+secrets:
+  gh_token:
+    file: /mnt/vault/sysadmin/.config/doco-cd/gh_token
+  akeyless_access_id:
+    file: /mnt/vault/sysadmin/.config/doco-cd/akeyless_access_id
+  akeyless_access_key:
+    file: /mnt/vault/sysadmin/.config/doco-cd/akeyless_access_key
+
+services:
+  doco-cd:
+    # Pinned by tag and digest so a moving tag cannot turn a restart into an
+    # unreviewed self-upgrade; Renovate bumps both together.
+    image: ghcr.io/kimdre/doco-cd:0.127.0@sha256:46f3e44106fd0f4f30bc450682038509484d9aa28916edd6039b0af45bdc1cec
+    restart: unless-stopped
+    depends_on:
+      akeyless-proxy:
+        condition: service_healthy
+    networks:
+      - doco-cd
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - data:/data
+    environment:
+      LOG_LEVEL: info
+      # Native self-updating: the running instance refuses a deployment that
+      # would replace its own container unless this is set.
+      SELF_UPDATE_ENABLED: "true"
+      SELF_UPDATE_STRATEGY: auto
+      DEPLOY_CONFIG_BASE_DIR: ./docker/clonenas/
+      POLL_CONFIG: |-
+        - url: https://github.com/tscibilia/home-ops.git
+          reference: refs/heads/main
+          interval: 3600
+      SECRET_PROVIDER: webhook
+      SECRET_PROVIDER_WEBHOOK_STORES: |
+        name: akeyless
+        version: v1
+        url: "http://akeyless-proxy:8080/secret?name={{ .remote_ref.key | urlencode }}"
+        method: GET
+        json_path: "values(@)[0]"
+      TZ: America/New_York
+    healthcheck:
+      test:
+        - CMD
+        - /healthcheck
+      start_period: 15s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - gh_token
+
+  akeyless-proxy:
+    # PROXY_KEEPALIVE is deliberately unset: this host resolves one or two
+    # secrets per deploy, and the idle timeout would log a false error on
+    # every connection. See akeyless-proxy ADR-0003.
+    image: ghcr.io/tscibilia/akeyless-proxy:0.0.1@sha256:1da58e8c7d5475a51bf1a8c7ed3877bb513fcca6b2b4b7c4e4dc4214e0ed2cde
+    container_name: akeyless-proxy
+    restart: unless-stopped
+    # The image runs as `nobody`. Compose bind-mounts the secret files with
+    # their host permissions (0600 sysadmin:sysadmin), so the container must
+    # run as the host user that owns them or it exits on PermissionError.
+    user: "3000:3000"
+    networks:
+      - doco-cd
+    expose:
+      - "8080"
+    environment:
+      AKEYLESS_ACCESS_ID_FILE: /run/secrets/akeyless_access_id
+      AKEYLESS_ACCESS_KEY_FILE: /run/secrets/akeyless_access_key
+    secrets:
+      - akeyless_access_id
+      - akeyless_access_key
+
+networks:
+  doco-cd:
+    external: true
+
+volumes:
+  data:
+    # MIGRATION (issue #4321): adopt the volume the cron-era container already
+    # uses, so the successor starts with the existing repository cache and
+    # handover journal. Remove `external` in a follow-up commit.
+    external: true

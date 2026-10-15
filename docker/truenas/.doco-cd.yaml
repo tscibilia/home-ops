@@ -14,3 +14,12 @@ force_recreate: false
 reconciliation:
   enabled: true
   events: ["unhealthy", "die"]
+
+---
+# doco-cd's own stack (issue #4321). working_dir is relative to the repository
+# root, not to DEPLOY_CONFIG_BASE_DIR. name must equal the Compose project name,
+# or the deploy creates a second doco-cd beside the running one.
+name: doco-cd
+working_dir: ./docker/truenas/.doco-cd
+compose_files: [doco-cd.compose.yaml]
+timeout: 120
