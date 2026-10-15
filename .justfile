@@ -46,6 +46,6 @@ template file *args:
 check-tools *tools:
     for tool in {{ tools }}; do \
         if ! command -v "$tool" &> /dev/null; then \
-            just log fatal "Required tool not found" "tool" "$tool" "hint" "install via mise or your package manager"; \
+            gum log -t rfc3339 -s -l fatal "Required tool not found" tool "$tool" hint "install via mise or your package manager"; \
         fi; \
     done

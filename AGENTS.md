@@ -71,7 +71,7 @@ Report concisely — sacrifice grammar for the sake of concision.
 
 ```text
 CONTEXT.md                    # Map: glossary · state routing · ADR index — read first
-docker/                       # Server configs (unraid, truenas, vps)
+docker/                       # Server configs (vps, clonenas, truenas)
 docs/                         # context/ (state) · adr/ (decisions) · agents/ (skill config) · scripts/ (doc generators) · WORKLOG.md
 kubernetes/
 ├── apps/{namespace}/{app}/   # see Apps below

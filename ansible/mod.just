@@ -55,15 +55,6 @@ bootstrap-clonenas *args:
         --private-key ~/.ssh/home-ops \
         {{ args }}
 
-[doc('Bootstrap Unraid doco-cd')]
-[script]
-bootstrap-unraid *args:
-    just check-tools ansible-playbook
-    ansible-playbook -i {{ ansible_dir }}/inventory/hosts.yaml {{ ansible_dir }}/unraid/playbook.yaml \
-        --limit unraid \
-        --private-key ~/.ssh/home-ops \
-        {{ args }}
-
 [doc('Dry-run VPS bootstrap')]
 [script]
 check-vps:
@@ -78,11 +69,6 @@ check-truenas:
 [script]
 check-clonenas:
     just ansible bootstrap-clonenas --check
-
-[doc('Dry-run Unraid bootstrap')]
-[script]
-check-unraid:
-    just ansible bootstrap-unraid --check
 
 [doc('Restart doco-cd on a docker host (vps|clonenas|truenas)')]
 [script]
@@ -128,17 +114,3 @@ unban ip:
     echo "Remaining decisions:"
     ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal \
         "docker exec crowdsec cscli decisions list"
-
-[doc('Emergency: SCP compose file directly to VPS and restart service (bypasses doco-cd/git)')]
-[script]
-deploy-direct service:
-    just check-tools ssh scp
-    #!/usr/bin/env bash
-    set -euo pipefail
-    deploy_dir="/var/lib/docker/volumes/doco-cd_data/_data/github.com/tscibilia/home-ops/docker/vps/{{ service }}"
-    scp -i ~/.ssh/home-ops -P 22222 \
-        "{{ justfile_directory() }}/docker/vps/{{ service }}/docker-compose.yaml" \
-        "ubuntu@vps.internal:/tmp/compose-deploy.yaml"
-    ssh -i ~/.ssh/home-ops -p 22222 ubuntu@vps.internal \
-        "mv /tmp/compose-deploy.yaml $deploy_dir/docker-compose.yaml && \
-         cd $deploy_dir && docker compose up -d --remove-orphans"
