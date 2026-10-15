@@ -89,4 +89,4 @@ spec:
             severity: warning
           annotations:
             summary: "doco-cd is failing to converge {{ $labels.repository }}"
-            description: "doco-cd polling or deployment is erroring, so VPS stacks are drifting from git. Check `docker logs doco-cd`."
+            description: "doco-cd polling or deployment is erroring, so VPS stacks are drifting from git. Check the agent logs with `ssh vps.internal 'docker logs $(docker ps -q --filter label=com.docker.compose.service=doco-cd)'` — the container is Compose-named and changes on every self-update."

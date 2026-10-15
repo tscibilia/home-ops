@@ -129,7 +129,7 @@ agent to pull `https://github.com/tscibilia/home-ops.git` (main) every hour
 and apply every `docker-compose.yaml` found under `docker/vps/`. Secrets are
 injected at deploy time by the aKeyless HTTP proxy running alongside doco-cd
 (image [`ghcr.io/tscibilia/akeyless-proxy`](https://github.com/tscibilia/akeyless-proxy),
-pinned by digest in [`.doco-cd/docker-compose.app.yaml`](.doco-cd/docker-compose.app.yaml)).
+pinned by digest in [`.doco-cd/doco-cd.compose.yaml`](.doco-cd/doco-cd.compose.yaml)).
 
 The agent also reconciles on `unhealthy` and `die` container events — a
 crashed container triggers an immediate re-apply without waiting for the
@@ -137,8 +137,10 @@ hourly poll.
 
 > [!IMPORTANT]
 > doco-cd has **no force-deploy API or webhook** configured. To trigger an
-> immediate reconcile, restart the agent with `docker restart doco-cd`;
-> otherwise wait up to 60 minutes for the next poll.
+> immediate reconcile, restart the agent with `just ansible restart-doco-cd vps`
+> (the container is Compose-named `doco-cd-doco-cd-N` and the suffix increments
+> on every self-update, so it is resolved by label — never by name); otherwise
+> wait up to 60 minutes for the next poll.
 
 > [!NOTE]
 > Reconciliation on `die` events means a manual `docker compose down` of a stack
@@ -146,13 +148,19 @@ hourly poll.
 > To remove a stack for good, delete its directory from this repo and let
 > `auto_discovery.delete` tear it down.
 
-> [!WARNING]
-> doco-cd's own stack lives at `/opt/doco-cd` and is **not** managed by doco-cd
-> (it cannot manage itself). It is installed by Ansible and refreshed nightly by
-> [`.doco-cd/cron-update.sh`](.doco-cd/cron-update.sh), which pulls its compose
-> file from `main` and force-recreates on any change. Edits to
-> `.doco-cd/docker-compose.app.yaml` therefore apply unattended — make sure any
-> prerequisite (such as a Docker network it references) exists on the host first.
+> [!NOTE]
+> doco-cd manages **its own stack** too: [`.doco-cd/doco-cd.compose.yaml`](.doco-cd/doco-cd.compose.yaml)
+> is deployed by doco-cd itself, so editing it hands over through `scale_out`
+> with no downtime. Only what doco-cd cannot create for itself lives outside the
+> repo — the `/opt/doco-cd/` config directory, its three secret files, and the
+> external `edge` network and `doco-cd_data` volume, all provisioned by
+> [`ansible/vps/playbook.yaml`](../../ansible/vps/playbook.yaml). There is no
+> host-side cron and no host-side compose file any more.
+>
+> The file is deliberately not named `compose.yaml`: auto-discovery scans
+> `docker/vps` at depth 1 without skipping hidden directories, so a default
+> Compose filename under `.doco-cd/` would be discovered a second time as a
+> `.doco-cd` stack. Keep it listed explicitly in `compose_files`.
 
 ## Secrets
 
