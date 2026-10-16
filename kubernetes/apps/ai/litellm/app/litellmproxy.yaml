@@ -13,6 +13,7 @@ spec:
       - opencode_contract.opencode_contract
   generalSettings:
     health_check_endpoint: /v1/health
+    disable_env_credential_login: true
   litellmSettings:
     success_callback: ["prometheus"]
     failure_callback: ["prometheus"]
