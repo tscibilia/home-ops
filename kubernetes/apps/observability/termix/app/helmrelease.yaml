@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/lukegus/termix
-              tag: 2.9.2@sha256:d64c841a560c54aa7c27b0e6bbd2fbf8b51073565040d2a6bfbc127f0a72cf1e
+              tag: 26.10.1@sha256:3b893227a5a4bb45104b7ba07a7b4520b1b5c571a27eb08a32a7ea7a203712a5
             env:
               PORT: &port 8080
               GUACD_HOST: termix-guacd.observability.svc.cluster.local
