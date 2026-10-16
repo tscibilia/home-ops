@@ -245,6 +245,12 @@ spec:
     apiKeyRef:
       name: litellm-secret
       key: OPENCODE_API_KEY
+    additional:
+      # Zen serves this model over chat completions only — /responses answers
+      # 400 ModelProtocolUnsupported — so the Responses API is bridged to a
+      # chat completion instead of being forwarded verbatim. Clients that
+      # advertise `api: openai-responses` (omp, via litellm discovery) need it.
+      use_chat_completions_api: true
   info:
     mode: chat
     maxTokens: 131072
