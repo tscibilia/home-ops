@@ -12,7 +12,7 @@ spec:
   values:
     controllers:
       *app :
-        strategy: RollingUpdate
+        strategy: Recreate
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
