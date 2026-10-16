@@ -24,8 +24,10 @@ from litellm.integrations.custom_logger import CustomLogger
 _ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 # Appended only when the caller sent no tool named `read`, so a client's own
-# toolset reaches the model unchanged. The gate ignores this schema.
-_READ_TOOL = {
+# toolset reaches the model unchanged. The gate ignores this schema. The two
+# APIs carry the same tool in different shapes: chat completions nests name and
+# parameters under `function`, the Responses API puts them beside `type`.
+_READ_TOOL_CHAT = {
     "type": "function",
     "function": {
         "name": "read",
@@ -35,6 +37,17 @@ _READ_TOOL = {
             "properties": {"path": {"type": "string"}},
             "required": ["path"],
         },
+    },
+}
+
+_READ_TOOL_RESPONSES = {
+    "type": "function",
+    "name": "read",
+    "description": "Read a file from the working directory.",
+    "parameters": {
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"],
     },
 }
 
@@ -67,18 +80,32 @@ def _gated(model: str | None) -> bool:
     return bool(model) and model in {name.strip() for name in configured.split(",") if name.strip()}
 
 
-# 1.105.1 hands the hook "acompletion" for /v1/chat/completions; the documented
-# Literal says "completion". Accept both spellings of the chat call.
-_CHAT_CALL_TYPES = {"completion", "acompletion"}
+# 1.105.1 hands the hook "acompletion" for /v1/chat/completions and "aresponses"
+# for /v1/responses; the documented Literal uses the un-prefixed spellings.
+# Accept both, and pick the tool shape that matches the API being called.
+_CALL_TYPE_TOOLS = {
+    "completion": _READ_TOOL_CHAT,
+    "acompletion": _READ_TOOL_CHAT,
+    "responses": _READ_TOOL_RESPONSES,
+    "aresponses": _READ_TOOL_RESPONSES,
+}
 
 
-def _is_chat_call(call_type) -> bool:
-    return str(getattr(call_type, "value", call_type)) in _CHAT_CALL_TYPES
+def _read_tool_for(call_type):
+    return _CALL_TYPE_TOOLS.get(str(getattr(call_type, "value", call_type)))
+
+
+def _tool_name(tool):
+    """Tool name in either shape: chat completions nests it under `function`."""
+    if not isinstance(tool, dict):
+        return None
+    return tool.get("name") or (tool.get("function") or {}).get("name")
 
 
 class OpenCodeContract(CustomLogger):
     async def async_pre_call_hook(self, user_api_key_dict, cache, data, call_type):
-        if not _is_chat_call(call_type) or not _gated(data.get("model")):
+        stub = _read_tool_for(call_type)
+        if stub is None or not _gated(data.get("model")):
             return data
 
         # Zen refuses a non-streaming body outright, so these models always
@@ -88,8 +115,8 @@ class OpenCodeContract(CustomLogger):
         tools = data.get("tools")
         if not isinstance(tools, list):
             tools = []
-        if not any(isinstance(tool, dict) and (tool.get("function") or {}).get("name") == "read" for tool in tools):
-            tools = [*tools, _READ_TOOL]
+        if not any(_tool_name(tool) == "read" for tool in tools):
+            tools = [*tools, stub]
         data["tools"] = tools
 
         session = _session_id()
