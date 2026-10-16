@@ -8,6 +8,9 @@ spec:
   # renovate: datasource=docker depName=ghcr.io/berriai/litellm
   image: ghcr.io/berriai/litellm-non_root:v1.105.1@sha256:8e010d43ed744d5f6d188dfe087ea5a7b94de1e8c297b9f7c7ba57729eff22a2
   replicas: 1
+  callbacks:
+    callbacks:
+      - opencode_contract.opencode_contract
   generalSettings:
     health_check_endpoint: /v1/health
   litellmSettings:
@@ -47,6 +50,14 @@ spec:
         secretKeyRef:
           name: litellm-pguser-secret
           key: uri
+    # The contract module is mounted from the litellm-opencode-contract
+    # ConfigMap; litellm imports it by dotted path from PYTHONPATH.
+    - name: PYTHONPATH
+      value: /opt/opencode-contract
+    # Model names whose requests get rewritten for opencode Zen's free tier.
+    # Adding a zen free model means adding its name here too.
+    - name: OPENCODE_FREE_MODELS
+      value: deepseek-v4.1-flash
   envFrom:
     - secretRef:
         name: litellm-secret
@@ -66,3 +77,11 @@ spec:
     parentRefs:
       - name: envoy-external
         namespace: network
+  volumeMounts:
+    - name: opencode-contract
+      mountPath: /opt/opencode-contract
+      readOnly: true
+  volumes:
+    - name: opencode-contract
+      configMap:
+        name: litellm-opencode-contract

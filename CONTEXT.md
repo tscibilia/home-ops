@@ -89,6 +89,7 @@ Read the ADRs touching the area you're about to work in. Don't re-litigate a rec
 | [0019](docs/adr/0019-agent-opens-prs-cannot-land-them.md)              | The Hermes agent opens pull requests and cannot land them       | 2026-08-16 | accepted                |
 | [0020](docs/adr/0020-modelpool-router-for-gpu-swapping.md)             | One GPU slot, swapped on request, arbitrated by LLMKube         | 2026-08-18 | accepted                |
 | [0021](docs/adr/0021-blue-green-rename-then-in-place-major-upgrade.md) | Rename CNPG clusters by promoting a replica; upgrade separately | 2026-09-03 | accepted                |
+| [0022](docs/adr/0022-opencode-zen-free-tier-via-litellm.md)            | Zen free tier via a litellm pre-call hook; `-paid` as fallback  | 2026-10-16 | accepted                |
 
 **0005, 0006, 0007 and 0009 are reconstructed** — written after the fact from the commits that removed them, not from contemporaneous notes. Each says so. Trust their consequences more than their rationale.
 

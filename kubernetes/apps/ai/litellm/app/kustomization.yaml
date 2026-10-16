@@ -14,3 +14,9 @@ resources:
   - ./servicemonitor.yaml
   - ./grafanadashboard.yaml
   - ./dashboard
+configMapGenerator:
+  - name: litellm-opencode-contract
+    files:
+      - ./resources/opencode_contract.py
+generatorOptions:
+  disableNameSuffixHash: true
