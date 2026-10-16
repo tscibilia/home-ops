@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: docker.io/seriouslag/actual-auto-sync
-              tag: v26.10.0.7@sha256:8ad5984c416ff71b660c194492aa349a2bbd34d352caf04b655c8bb9ea78435a
+              tag: v26.10.0.8@sha256:a7404ad281613744a97ad1d64e8138caf9b899370f4e1c66af7bdbb043bc9dc1
             env:
               ACTUAL_SERVER_URL: "http://actual.default.svc.cluster.local:5006"
               CRON_SCHEDULE: "0 7 * * *"
