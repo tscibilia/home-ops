@@ -20,14 +20,14 @@
       }
     }
   },
-  "plugin": [
-    [
-      "@eleboucher/opencode-memini@0.7.1",
-      {
+  "plugins": [
+    {
+      "package": "@eleboucher/opencode-memini-v2",
+      "options": {
         "namespace": "tscibilia/home-ops",
         "base_url": "https://memini.t0m.co/",
         "recall_budget_ms": 8000
       }
-    ]
+    }
   ]
 }
