@@ -189,10 +189,11 @@ spec:
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: &name deepseek-v4.1-flash
+  name: &name deepseek-v4.1-flash-paid
 spec:
-  # Sparse MoE model that activates 8B parameters on input & 16B on output from 522B parameter backbone.
-  # Asymetric split, keeps per-token cost low. Released 2026-09-10, and rumored to be on par with Opus 5.
+  # Paid fallback for deepseek-v4.1-flash, which rides the opencode Zen free
+  # promo instead. Same weights: sparse MoE activating 8B input / 16B output
+  # parameters from a 522B backbone, released 2026-09-10.
   modelName: *name
   params:
     model: openai/deepseek/deepseek-v4.1-flash
@@ -224,6 +225,40 @@ spec:
       input_cost_per_token: 0.0000002000
       cache_read_input_token_cost: 0.0000000300
       output_cost_per_token: 0.0000006000
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name deepseek-v4.1-flash
+spec:
+  # Free promo on opencode Zen: the same weights as deepseek-v4.1-flash-paid,
+  # zero cost while the promo runs, zero-retention. Zen gates the free tier on
+  # the client, not the key, so requests are rewritten on the way out by the
+  # opencode-contract callback — see resources/opencode_contract.py. Point
+  # clients at -paid to fall back if the promo or the gate changes.
+  modelName: *name
+  params:
+    model: openai/deepseek-v4.1-flash-free
+    # https://opencode.ai/docs/zen#pricing
+    apiBase: https://opencode.ai/zen/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENCODE_API_KEY
+  info:
+    mode: chat
+    maxTokens: 131072
+    maxInputTokens: 1048560
+    maxOutputTokens: 131072
+    supportsFunctionCalling: true
+    supportsPromptCaching: true
+    supportsVision: true
+    extra:
+      supports_reasoning: true
+      # Free while the promo runs
+      input_cost_per_token: 0.0
+      cache_read_input_token_cost: 0.0
+      output_cost_per_token: 0.0
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
 apiVersion: litellm.home-operations.com/v1alpha1
