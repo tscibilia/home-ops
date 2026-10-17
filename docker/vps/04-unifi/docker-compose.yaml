@@ -2,7 +2,7 @@ name: unifi
 
 services:
   unifi-db:
-    image: docker.io/mongo:8.3@sha256:d0c8f51bb63fb1f992f4ff05293adb3f0967aaaae32c3e5fa567907800819b3b
+    image: docker.io/mongo:8.3@sha256:0e900a3364da37b76d642b73b0bba56bd4c6c509ab470cf700436fd866bee3ff
     container_name: unifi-db
     restart: unless-stopped
     environment:
