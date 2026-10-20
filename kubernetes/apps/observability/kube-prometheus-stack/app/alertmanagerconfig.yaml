@@ -14,6 +14,13 @@ spec:
           - name: alertname
             value: InfoInhibitor
             matchType: =
+      # chart rule fires at 100MiB in use, inside this cluster's 96-213MiB
+      # idle/update-churn band; replaced by etcdDatabaseFragmented (256MiB floor)
+      - receiver: blackhole
+        matchers:
+          - name: alertname
+            value: etcdDatabaseHighFragmentationRatio
+            matchType: =
       - receiver: heartbeat
         groupWait: 0s
         repeatInterval: 2m30s
