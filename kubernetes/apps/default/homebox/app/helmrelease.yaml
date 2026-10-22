@@ -32,7 +32,7 @@ spec:
               HBOX_LOG_FORMAT: json
               HBOX_WEB_HOST: 0.0.0.0
               HBOX_WEB_PORT: &port 7745
-              HBOX_MEB_MAX_UPLOAD_SIZE: 25
+              HBOX_WEB_MAX_FILE_UPLOAD: "25"
               HBOX_DATABASE_DRIVER: postgres
               HBOX_DATABASE_SSL_MODE: disable
               HBOX_MODE: production
