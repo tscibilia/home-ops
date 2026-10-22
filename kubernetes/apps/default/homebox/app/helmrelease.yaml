@@ -107,6 +107,8 @@ spec:
               - identifier: app
                 port: *port
     persistence:
+      tmp:
+        type: emptyDir
       config:
         existingClaim: *app
         globalMounts:
