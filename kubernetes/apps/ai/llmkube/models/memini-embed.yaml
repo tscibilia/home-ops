@@ -26,7 +26,7 @@ metadata:
 spec:
   modelRef: memini-embed
   runtime: llamacpp
-  image: ghcr.io/ggml-org/llama.cpp:server-vulkan-b11804@sha256:a644fb651975d9dea49140302577a3b945993fd5efd3400bf89c7d525d03c103
+  image: ghcr.io/ggml-org/llama.cpp:server-vulkan-b11854@sha256:2716be5463dcecd02ace322f77fa0ea10b7168c5c8f0e45458b303541fca6632
   replicas: 1
   nodeSelector:
     topology.kubernetes.io/zone: m
