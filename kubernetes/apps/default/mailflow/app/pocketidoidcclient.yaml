@@ -11,6 +11,8 @@ spec:
   callbackUrls:
     - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/auth/oidc/pocketid/callback"
   launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
+  logo:
+    logoUrl: "https://cdn.jsdelivr.net/gh/selfhst/icons@main/webp/mailflow.webp"
   pkceEnabled: false
   allowedUserGroups:
     - name: id-admin
