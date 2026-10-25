@@ -13,6 +13,9 @@ spec:
     instance:
       enabled: false
     operator:
+      # homarr dashboard-icons only publishes -light variants for ~1/6 of icons; a 404
+      # dark logo makes Pocket-ID reject the whole client update (422 logo_download_failed)
+      defaultDarkLogoUrl: ""
       replicas: 1
       resources:
         requests:
