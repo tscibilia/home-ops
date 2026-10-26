@@ -79,6 +79,8 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - matter-server [kopiur]
 - mosquitto _(MQTT broker)_
 - otbr _(OpenThread Border Router)_ [kopiur]
+- piper [kopiur]
+- whisper [kopiur]
 - zwave [kopiur]
 
 ## kopiur-system
