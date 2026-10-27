@@ -5,8 +5,6 @@ kind: Kustomization
 metadata:
   name: &app openwakeword
 spec:
-  components:
-    - ../../../../components/kopiur/backup
   dependsOn:
     - name: multus-networks
       namespace: network
@@ -17,7 +15,6 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      KOPIUR_CAPACITY: 1Gi
     substituteFrom:
       - kind: Secret
         name: cluster-secrets
