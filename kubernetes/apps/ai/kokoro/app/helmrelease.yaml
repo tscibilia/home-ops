@@ -45,12 +45,73 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+          # Wyoming bridge: Home Assistant Assist speaks Wyoming only; this
+          # proxies it to the OpenAI-compatible Kokoro API over localhost.
+          bridge:
+            image:
+              repository: ghcr.io/roryeckel/wyoming_openai
+              tag: 0.8.0@sha256:2468fbe5ea50c00bff2d021d8c3e42c8f62bb43765a6f21e10d3c217fefc89aa
+            env:
+              WYOMING_URI: tcp://0.0.0.0:10200
+              TTS_OPENAI_URL: http://localhost:8880/v1
+              TTS_BACKEND: KOKORO_FASTAPI
+              TTS_MODELS: kokoro
+              TTS_STREAMING_MODELS: kokoro
+              WYOMING_LANGUAGES: en
+              WYOMING_VOICES: >-
+                af_alloy af_aoede af_bella af_heart af_jadzia af_jessica
+                af_kore af_nicole af_nova af_river af_sarah af_sky
+                af_v0 af_v0bella af_v0irulan af_v0nicole af_v0sarah af_v0sky
+                am_adam am_echo am_eric am_fenrir am_liam am_michael
+                am_onyx am_puck am_santa
+                am_v0adam am_v0gurney am_v0michael
+                bf_alice bf_emma bf_isabella bf_lily bf_v0emma bf_v0isabella
+                bm_daniel bm_fable bm_george bm_lewis bm_v0george bm_v0lewis
+                ef_dora em_alex em_santa ff_siwis
+                hf_alpha hf_beta hm_omega hm_psi
+                if_sara im_nicola
+                jf_alpha jf_gongitsune jf_nezumi jf_tebukuro jm_kumo
+                pf_dora pm_alex pm_santa
+                zf_xiaobei zf_xiaoni zf_xiaoxiao zf_xiaoyi
+                zm_yunjian zm_yunxi zm_yunxia zm_yunyang
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec: &bridgeProbe
+                  tcpSocket:
+                    port: &bridgePort 10200
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec: *bridgeProbe
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  <<: *bridgeProbe
+                  failureThreshold: 60
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: &uid 1000
+        runAsGroup: *uid
+        fsGroup: *uid
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
@@ -58,6 +119,8 @@ spec:
         ports:
           http:
             port: *port
+          wyoming:
+            port: *bridgePort
     route:
       ui:
         enabled: true

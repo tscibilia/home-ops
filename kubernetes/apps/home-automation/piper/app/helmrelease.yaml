@@ -45,9 +45,9 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: &uid 1000
+        runAsGroup: *uid
+        fsGroup: *uid
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
@@ -61,7 +61,5 @@ spec:
           - path: /data
       tmpfs:
         type: emptyDir
-        advancedMounts:
-          *app :
-            app:
-              - path: /tmp
+        globalMounts:
+          - path: /tmp
