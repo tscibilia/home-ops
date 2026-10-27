@@ -6,6 +6,7 @@ metadata:
   name: &app radarr
 spec:
   components:
+    # native OIDC is single-user; tinyauth gives group-based multi-user
     - ../../../../components/auth
     - ../../../../components/zeroscaler
     - ../../../../components/kopiur/backup
