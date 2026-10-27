@@ -10,7 +10,7 @@ metadata:
 spec:
   modelRef: *app
   runtime: generic
-  image: docker.io/yanwk/comfyui-boot:cu130-slim-v2@sha256:ff4b68547e72e6d373198478c42b4de50e0c50ce801f318fbde2d48e10d702a2
+  image: docker.io/yanwk/comfyui-boot:cu130-slim-v2@sha256:9c222bf018d44b9490a1e21f832e6555f4845ebd34c57cb2371a6fb246f99e98
   # replicas is deliberately unset: ModelPool/ai3090-slot owns it. Declaring it
   # here would make Flux revert the pool hourly. `default: llama-qwen`
   skipModelInit: true
