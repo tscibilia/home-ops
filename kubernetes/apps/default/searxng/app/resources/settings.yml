@@ -81,6 +81,9 @@ engines:
   - name: google
     disabled: false
     weight: 2
+  - name: bing
+    disabled: false
+    weight: 2
   - name: wikipedia
     disabled: false
     weight: 1
