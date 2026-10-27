@@ -23,8 +23,6 @@ spec:
               - --uri=tcp://0.0.0.0:10300
               - --model=medium-int8
               - --data-dir=/data
-            env:
-              TZ: ${TIMEZONE:-UTC}
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

@@ -74,6 +74,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 
 ## home-automation
 
+- echomuse _(Echo Dot voice assistant controller)_ [kopiur, auth]
 - esphome [kopiur]
 - home-assistant [kopiur]
 - matter-server [kopiur]

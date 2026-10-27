@@ -1,0 +1,103 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app echomuse
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/wilbowes/echomuse-controller
+              tag: 2.26.3@sha256:52e523d71ccdb43eba4717b816f7f745a363c0b469c3cb5999b0b6b7dc28fb13
+            env:
+              # Pinned to the multus IP: mDNS advertises and Dot registration
+              SERVER_IP: 192.168.107.56
+              ESPHOME_PROJECT_VERSION: "2.26.3"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: &apiPort 8768
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: { drop: ["ALL"] }
+        pod:
+          # Device (8767/8770) and satellite (16001+) ports are LAN-facing:
+          # Dots and HA dial the pod's iot IP directly, no Service needed
+          annotations:
+            external-dns.kubernetes.io/hostname: "{{ .Release.Name }}.internal"
+            k8s.v1.cni.cncf.io/networks: |
+              [{
+                "name": "iot",
+                "namespace": "network",
+                "ips": ["192.168.107.56/24"],
+                "mac": "02:7f:b4:4d:56:56"
+              }]
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: false # Image is root-only
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          api:
+            appProtocol: kubernetes.io/ws
+            port: *apiPort
+    route:
+      app:
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *apiPort
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /app/data
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          *app :
+            app:
+              - path: /tmp

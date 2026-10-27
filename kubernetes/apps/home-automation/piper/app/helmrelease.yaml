@@ -22,8 +22,6 @@ spec:
             args:
               - --voice
               - en_US-amy-medium
-            env:
-              TZ: ${TIMEZONE:-UTC}
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
