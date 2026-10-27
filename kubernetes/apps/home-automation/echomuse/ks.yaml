@@ -6,7 +6,6 @@ metadata:
   name: &app echomuse
 spec:
   components:
-    - ../../../../components/auth
     - ../../../../components/kopiur/backup
   dependsOn:
     - name: multus-networks

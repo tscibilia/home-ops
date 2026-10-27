@@ -74,11 +74,12 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 
 ## home-automation
 
-- echomuse _(Echo Dot voice assistant controller)_ [kopiur, auth]
+- echomuse _(Echo Dot voice assistant controller)_ [kopiur]
 - esphome [kopiur]
 - home-assistant [kopiur]
 - matter-server [kopiur]
 - mosquitto _(MQTT broker)_
+- openwakeword [kopiur]
 - otbr _(OpenThread Border Router)_ [kopiur]
 - piper [kopiur]
 - whisper [kopiur]
