@@ -11,3 +11,11 @@ spec:
   modelName: *name
   params:
     model: typesafe/jev-1.13-free
+  info:
+    # evaluation marks it a decision model so the system-one playground lists it
+    mode: evaluation
+    maxTokens: 131072
+    maxInputTokens: 1048560
+    maxOutputTokens: 131072
+    extra:
+      supported_endpoints: ["/v1/systemone"]
