@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: context7-mcp
+spec:
+  alias: context7_mcp
+  url: https://mcp.context7.com/mcp
+  transport: http
+  params:
+    allow_all_keys: true
+  authType: bearer_token
+  authTokenRef:
+    name: context7-mcp-secret
+    key: CONTEXT7_API_KEY

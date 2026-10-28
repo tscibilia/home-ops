@@ -1,0 +1,42 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name qwen-local-fast
+spec:
+  # Same llama-qwen as qwen-local — model-picker change, not a restart.
+  # Only difference: thinking off plus the model's instruct sampler row.
+  modelName: *name
+  params:
+    model: openai/Qwen3.8-27B
+    # Router, not the service: naming the model is what wakes it when comfyui
+    # holds the slot. The backend's displayName keeps `model` unchanged.
+    apiBase: http://ai3090-router-router-proxy.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: LLAMA_API_KEY
+    additional:
+      # Keys under `additional` are copied into litellm_params VERBATIM
+      # expects snake_case, operator only camelCases its own typed fields
+      max_parallel_requests: 1
+      extra_body:
+        # extra_body bypasses the proxy's drop_params, so this reaches llama.cpp intact
+        chat_template_kwargs:
+          enable_thinking: false
+        temperature: 0.7
+        top_p: 0.80
+        presence_penalty: 1.5
+  info:
+    mode: chat
+    maxTokens: 32768
+    maxInputTokens: 147456 # contextSize 180224 minus maxOutputTokens; llama.cpp counts both against one pool
+    maxOutputTokens: 32768
+    supportsFunctionCalling: true
+    supportsVision: true
+    extra:
+      supports_reasoning: false
+      input_cost_per_token: 0.0000000120
+      cache_creation_input_token_cost: 0.0000000120
+      cache_read_input_token_cost: 0.0000000010
+      output_cost_per_token: 0.0000000500

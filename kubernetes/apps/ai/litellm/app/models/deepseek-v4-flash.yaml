@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name deepseek-v4-flash
+spec:
+  # Sparse MoE model that activates 13B on output from 284B parameter backbone. This is a
+  # re-post-trained revision released 2026-07-31, and rumored to be on par with Sonnet 5.
+  modelName: *name
+  params:
+    model: openai/deepseek/deepseek-v4-flash-0731
+    apiBase: https://openrouter.ai/api/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENROUTER_API_KEY
+    additional:
+      extra_body:
+        provider:
+          order: ["deepinfra"]
+          # shared pool 429s under load; fall back to hosts at or below its rate.
+          allow_fallbacks: true
+          max_price:
+            prompt: 0.06
+            completion: 0.18
+  info:
+    mode: chat
+    maxTokens: 131072
+    maxInputTokens: 1048576
+    maxOutputTokens: 131072
+    supportsFunctionCalling: true
+    supportsPromptCaching: true
+    extra:
+      supports_reasoning: true
+      # DeepInfra via OpenRouter: $0.06 in / $0.18 out / $0.015 cached read only
+      input_cost_per_token: 0.0000000600
+      cache_read_input_token_cost: 0.0000000150
+      output_cost_per_token: 0.0000001800

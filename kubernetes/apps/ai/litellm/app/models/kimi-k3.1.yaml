@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name kimi-k3.1
+spec:
+  # This is a post-trained successor to Kimi K3, rumored to be on par with Fable 5.
+  modelName: *name
+  params:
+    model: openai/moonshotai/kimi-k3.1-pro
+    apiBase: https://openrouter.ai/api/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENROUTER_API_KEY
+  info:
+    mode: chat
+    maxTokens: 131072
+    maxInputTokens: 1048560
+    maxOutputTokens: 131072
+    supportsFunctionCalling: true
+    supportsPromptCaching: true
+    supportsVision: true
+    extra:
+      # OpenRouter: $2.00 in / $10.00 out / $0.20 cached read
+      input_cost_per_token: 0.0000020000
+      cache_read_input_token_cost: 0.0000002000
+      output_cost_per_token: 0.0000100000
+      supports_reasoning: true

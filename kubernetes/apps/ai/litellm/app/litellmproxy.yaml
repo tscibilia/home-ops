@@ -14,6 +14,11 @@ spec:
   generalSettings:
     health_check_endpoint: /v1/health
     disable_env_credential_login: true
+    pass_through_endpoints:
+      - path: /opencode-inference
+        target: https://opencode.ai/inference
+        headers:
+          Authorization: bearer os.environ/OPENCODE_API_KEY
   litellmSettings:
     success_callback: ["prometheus"]
     failure_callback: ["prometheus"]
@@ -56,9 +61,18 @@ spec:
     - name: PYTHONPATH
       value: /opt/opencode-contract
     # Model names whose requests get rewritten for opencode Zen's free tier.
-    # Adding a zen free model means adding its name here too.
+    # Empty = no Zen free models currently active.
     - name: OPENCODE_FREE_MODELS
-      value: deepseek-v4.1-flash
+      value: ""
+    # Jev decision model — routed through OpenCode Console's SystemOne API
+    # using the typesafe/ provider prefix with a custom api_base.
+    - name: TYPESAFE_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: litellm-secret
+          key: OPENCODE_API_KEY
+    - name: TYPESAFE_API_BASE
+      value: https://opencode.ai/inference
   envFrom:
     - secretRef:
         name: litellm-secret

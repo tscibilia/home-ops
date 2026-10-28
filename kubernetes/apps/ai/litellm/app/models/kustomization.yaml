@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.config.k8s.io/kustomization_v1beta1.json
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./qwen-local.yaml
+  - ./qwen-local-fast.yaml
+  - ./comfyui.yaml
+  - ./memini-embed.yaml
+  - ./memini-rerank.yaml
+  - ./deepseek-v4-flash.yaml
+  - ./deepseek-v4.1-flash.yaml
+  - ./kimi-k3.1.yaml
+  - ./laguna-s-2-1.yaml
+  - ./qwen-image-3.yaml
+  - ./nano-banana-2-lite.yaml
+  - ./jev-1.yaml
