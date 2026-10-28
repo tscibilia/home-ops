@@ -7,13 +7,11 @@ resources:
   - ./pocketidoidcclient.yaml
   - ./pushsecret.yaml
   - ./litellmproxy.yaml
-  - ./litellmmodels.yaml
-  - ./litellmmcpservers.yaml
-  - ./mcp-secrets.yaml
-  - ./mcp-talos-serviceaccount.yaml
   - ./servicemonitor.yaml
   - ./grafanadashboard.yaml
   - ./dashboard
+  - ./models
+  - ./mcps
 configMapGenerator:
   - name: litellm-opencode-contract
     files:

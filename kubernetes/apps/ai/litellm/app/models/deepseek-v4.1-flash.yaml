@@ -1,0 +1,40 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name deepseek-v4.1-flash
+spec:
+  # Sparse MoE model that activates 8B/in & 16B/out from 522B parameter backbone. This is a
+  # this is not the re-post-trained revision from 2026-10-17, and rumored to beat Kimi K3.
+  modelName: *name
+  params:
+    model: openai/deepseek/deepseek-v4.1-flash
+    apiBase: https://openrouter.ai/api/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENROUTER_API_KEY
+    additional:
+      extra_body:
+        provider:
+          # open-inference is cheapest at $0.002/$0.04; morph and deepinfra
+          order: ["open-inference", "morph", "deepinfra"]
+          # allow fall back at or below $0.14/$0.40
+          allow_fallbacks: true
+          max_price:
+            prompt: 0.14
+            completion: 0.40
+  info:
+    mode: chat
+    maxTokens: 131072
+    maxInputTokens: 1048576
+    maxOutputTokens: 131072
+    supportsFunctionCalling: true
+    supportsPromptCaching: true
+    supportsVision: true
+    extra:
+      supports_reasoning: true
+      # open-inference via OpenRouter: $0.002 in / $0.04 out / $0.002 cached read
+      input_cost_per_token: 0.0000000020
+      cache_read_input_token_cost: 0.0000000020
+      output_cost_per_token: 0.0000000400

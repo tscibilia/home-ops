@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: victoria-logs-mcp
+spec:
+  alias: victoria_logs_mcp
+  params:
+    allow_all_keys: true
+  workload:
+    image: ghcr.io/victoriametrics/mcp-victorialogs:latest
+    port: 8080
+    env:
+      - name: MCP_SERVER_MODE
+        value: http
+      - name: MCP_LISTEN_ADDR
+        value: :8080
+      - name: MCP_LOG_FORMAT
+        value: json
+      - name: MCP_LOG_LEVEL
+        value: info
+      - name: VL_INSTANCE_ENTRYPOINT
+        value: http://victoria-logs-server.observability.svc.cluster.local:9428

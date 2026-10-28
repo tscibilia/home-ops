@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmcpserver_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMMCPServer
+metadata:
+  name: grafana-mcp
+spec:
+  alias: grafana_mcp
+  params:
+    allow_all_keys: true
+  workload:
+    image: mcp/grafana:latest
+    port: 8080
+    args: ["-t", "streamable-http", "--address", "0.0.0.0:8080", "--allowed-hosts", "*"]
+    env:
+      - name: GRAFANA_URL
+        value: http://grafana-service.observability.svc.cluster.local:3000
+      - name: GRAFANA_SERVICE_ACCOUNT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: grafana-mcp-secret
+            key: token

@@ -1,0 +1,17 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.config.k8s.io/kustomization_v1beta1.json
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./searxng-mcp.yaml
+  - ./grafana-mcp.yaml
+  - ./victoria-logs-mcp.yaml
+  - ./sidero-mcp.yaml
+  - ./deepwiki-mcp.yaml
+  - ./context7-mcp.yaml
+  - ./github-mcp.yaml
+  - ./konflate-mcp.yaml
+  - ./talos-mcp.yaml
+  - ./ha-mcp.yaml
+  - ./mcp-secrets.yaml
+  - ./mcp-talos-serviceaccount.yaml
