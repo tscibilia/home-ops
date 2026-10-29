@@ -25,7 +25,8 @@ spec:
     substitute:
       APP: *app
       GATUS_SUBDOMAIN: read
-      KOPIUR_CAPACITY: 5Gi
+      # Read-aloud scratch: ~4x audio + 7x EPUB + 512Mi per job, folders kept 7d
+      KOPIUR_CAPACITY: 10Gi
       CNPG_NAME: &postgresAppName pgcluster-vector
     substituteFrom:
       - kind: Secret
