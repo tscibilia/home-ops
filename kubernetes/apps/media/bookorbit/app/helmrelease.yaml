@@ -42,9 +42,13 @@ spec:
               OIDC_ALLOW_LOCAL_ISSUERS: true
               DISABLE_LOCAL_AUTH: true
               PORT: &port 3000
+              READ_ALOUD_WORKER_URL: http://127.0.0.1:8787
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
+              # READ_ALOUD_WORKER_TOKEN; the worker reads the same secret
+              - secretRef:
+                  name: "{{ .Release.Name }}-readaloud-token"
             resources:
               requests:
                 cpu: 20m
@@ -72,10 +76,57 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
-            securityContext:
+            securityContext: &containerSecurityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: [ALL] }
+          read-aloud-worker:
+            image:
+              repository: ghcr.io/bookorbit/bookorbit-read-aloud-worker
+              tag: 3.6.0@sha256:4ca7f141f346365af8970809f7fb3947c309082c81b5b00cee0cdec5ed6c5f96
+            env:
+              READ_ALOUD_LIBRARY_ROOTS: /library
+              # Must equal the server's <APP_DATA_PATH>/read-aloud/jobs
+              READ_ALOUD_WORK_ROOT: /data/read-aloud/jobs
+              # The Docker image has neither CUDA nor a WebGPU driver
+              READ_ALOUD_CTC_DEVICE: cpu
+              READ_ALOUD_WORKER_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}-readaloud-token"
+                    key: READ_ALOUD_WORKER_TOKEN
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                # Inference uses every core it can see; keep it off the node's throat
+                cpu: 4
+                memory: 4Gi
+            # /health needs the bearer token, so probe the port
+            probes:
+              liveness: &workerProbes
+                enabled: true
+                custom: true
+                spec: &workerProbeSpec
+                  tcpSocket:
+                    port: 8787
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                <<: *workerProbes
+                spec:
+                  <<: *workerProbeSpec
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  <<: *workerProbeSpec
+                  failureThreshold: 30
+                  periodSeconds: 5
+            securityContext: *containerSecurityContext
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -114,6 +165,10 @@ spec:
           *app :
             app:
               - path: /data
+            # The worker sees only the server's <APP_DATA_PATH>/read-aloud
+            read-aloud-worker:
+              - path: /data/read-aloud
+                subPath: read-aloud
       library:
         type: nfs
         server: truenas.internal
@@ -123,6 +178,11 @@ spec:
             app:
               - path: /library
                 subPath: books
+            # Same path as the server; it resolves book files by those paths
+            read-aloud-worker:
+              - path: /library
+                subPath: books
+                readOnly: true
       tmp:
         type: emptyDir
         globalMounts:
