@@ -18,7 +18,9 @@
 - [ ] ⚠️ **RustFS:** authentik-Admin -> rustfsAdmin, Plex Users need a RustFS group policy for access - **AI assist**
 - [ ] ⚠️ **opencode:** v1 ignores `disable-model-invocation`, (see issue [#621](https://redirect.github.com/mattpocock/skills/issues/621)) - **wrapped as commands; drop them once v2 reads `metadata.opencode/autoinvoke`**
 - [ ] ⚠️ **LiteLLM** getting 404 on omp without `NotFoundErrorRetries` (see upstream [#36896](https://redirect.github.com/BerriAI/litellm/issues/36896))
-- [ ] ⚠️ **llama-qwen** GPU wedges on ai3090 (CUDA crash → stuck pod → GPU "requires reset"; only fix is node reboot) - **explore graceful shutdown/terminationGracePeriod + fix VRAM headroom**
+- [ ] ⚠️ **llama-qwen:** GPU wedges on ai3090 (CUDA crash → stuck pod → GPU "requires reset"; only fix is node reboot) - **explore graceful shutdown/terminationGracePeriod + fix VRAM headroom**
+- [ ] ⚠️ **bookorbit:** no audiobook creation for read-aloud sync, must use kokoro in realtime or explore [epub2tts-kokoro](https://github.com/aedocw/epub2tts-kokoro) to generate audiobooks
+- [ ] ⚠️ **bookorbit:** write-to-file issues on smb/nfs share see [bookorbit/bookorbit#1914](https://redirect.github.com/bookorbit/bookorbit/issues/1914)
 
 ## ⛔ Blocked
 
@@ -30,6 +32,9 @@
 
 `Descending order, newest on top`
 
+- ✅ added openwakeword to ha **2026-10-26** (see PR [#4591](https://github.com/tscibilia/home-ops/pull/4591))
+- ✅ added echomuse to ha **2026-10-26** (see PR [#4588](https://github.com/tscibilia/home-ops/pull/4588))
+- ✅ added whisper to ha **2026-10-26** (see PR [#4584](https://github.com/tscibilia/home-ops/pull/4584))
 - ✅ added chaski webhook notify **2026-09-14** (see PR [#3880](https://github.com/tscibilia/home-ops/pull/3880))
 - ✅ added mailflow email gateway **2026-09-10** (see PR [#3819](https://github.com/tscibilia/home-ops/pull/3819))
 - ✅ etcd noisy logging (fix in v1.37) **2026-09-06** [see upstream](https://redirect.github.com/kubernetes/kubernetes/issues/134080) - also see issue [#3345](https://github.com/tscibilia/home-ops/issues/3345)

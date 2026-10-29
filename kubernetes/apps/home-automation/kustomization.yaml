@@ -16,6 +16,5 @@ resources:
   - ./mosquitto/ks.yaml
   - ./openwakeword/ks.yaml
   - ./otbr/ks.yaml
-  - ./piper/ks.yaml
   - ./whisper/ks.yaml
   - ./zwave/ks.yaml
