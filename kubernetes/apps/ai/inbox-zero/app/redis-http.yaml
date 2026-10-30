@@ -29,7 +29,7 @@ spec:
         - name: redis-http
           # Upstream compose stack ships the same proxy in front of its Redis;
           # the app's @upstash/redis client speaks its REST dialect.
-          image: docker.io/hiett/serverless-redis-http:0.0.9@sha256:c3258d184677ed9db7861a3b6cdf8daec8d4a2022662e81126a6c45a552517df
+          image: docker.io/hiett/serverless-redis-http:0.0.10@sha256:65128347949bca511e448fd7238780d624573d74c22b79155a7563db19e9b678
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
