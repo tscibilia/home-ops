@@ -50,6 +50,12 @@ spec:
       OPENAI_COMPATIBLE_MODEL: qwen-local
       QUEUE_BACKEND: bullmq
       GOOGLE_PUBSUB_TOPIC_NAME: projects/k8s-inbox-zero/topics/inbox-zero-emails
+      # The iOS app's first attempt asks for returnUrlMode=custom-scheme, which
+      # throws without this (env.ts gives MOBILE_AUTH_ORIGIN no default, unlike
+      # DESKTOP_AUTH_ORIGIN) and surfaces as "Signin was cancelled". The
+      # app-link fallback is a dead end here: zero.${SECRET_DOMAIN} serves an
+      # empty apple-app-site-association, so universal links never open the app.
+      MOBILE_AUTH_ORIGIN: "inboxzero://"
     # Shared Dragonfly (DB 4) replaces the bundled Redis statefulsets; the chart
     # only renders redis-http alongside its own redis, so that proxy is deployed
     # separately in redis-http.yaml.
