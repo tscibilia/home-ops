@@ -3,7 +3,37 @@
   dependencyDashboardAutoclose: false,
   dependencyDashboardFooter: "This dashboard is automatically maintained by Renovate.",
   vulnerabilityAlerts: false,
+  customManagers: [
+    {
+      // inbox-zero publishes its Helm chart only inside the app repo (no OCI
+      // artifact, no index.yaml, no chart version bumps), so the chart is
+      // resolved from a GitRepository pinned to a commit. Renovate's flux
+      // manager only understands ref.tag/semver, so track main's HEAD digest
+      // with the git-refs datasource instead. The image tag in the same app
+      // moves separately as a docker digest of `latest`, which upstream builds
+      // from that same main HEAD.
+      customType: "regex",
+      description: "Track upstream inbox-zero main HEAD as the chart GitRepository commit",
+      managerFilePatterns: ["/^kubernetes\\/apps\\/ai\\/inbox-zero\\/app\\/gitrepository\\.yaml$/"],
+      matchStrings: ["commit:\\s*(?<currentDigest>[0-9a-f]{40})"],
+      currentValueTemplate: "main",
+      depNameTemplate: "elie222/inbox-zero",
+      packageNameTemplate: "https://github.com/elie222/inbox-zero",
+      datasourceTemplate: "git-refs",
+    },
+  ],
   packageRules: [
+    {
+      // The flux manager also extracts this GitRepository, but without a
+      // ref.tag it has no ref name to resolve a digest from, so it can only
+      // report an unupdatable dep. The git-refs custom manager above is the
+      // working path; suppress the duplicate.
+      description: "inbox-zero: suppress the flux manager's unupdatable GitRepository commit dep",
+      matchManagers: ["flux"],
+      matchDatasources: ["git-refs"],
+      matchPackageNames: ["https://github.com/elie222/inbox-zero.git"],
+      enabled: false,
+    },
     {
       description: "Loose versioning for RustFS, stable tags only (excludes -glibc and -preview variants)",
       matchDatasources: ["docker"],
