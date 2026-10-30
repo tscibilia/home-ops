@@ -86,6 +86,10 @@ spec:
               spec:
                 template:
                   spec:
+                    # Helm runs pre-install hooks before creating the release's
+                    # ServiceAccount, so the chart's own SA name cannot resolve
+                    # here; the hook needs no API access.
+                    serviceAccountName: default
                     initContainers:
                       - name: 01-init-db
                         image: ghcr.io/home-operations/postgres-init:18.6.0@sha256:87627baaddb0cabed4ebe033e75038e5c7b6b081c18e86514c99067179a90719
@@ -98,3 +102,17 @@ spec:
                           runAsGroup: 0
                           readOnlyRootFilesystem: false
                           allowPrivilegeEscalation: true
+          # The chart renders the cron command as an unquoted scalar containing
+          # `Authorization: Bearer $CRON_SECRET`, so YAML parses command[2] as a
+          # mapping and server-side apply rejects every CronJob, failing the
+          # install. Replace it with the same string, properly quoted.
+          - target:
+              kind: CronJob
+              labelSelector: app.kubernetes.io/component=cron
+            patch: |-
+              - op: replace
+                path: /spec/jobTemplate/spec/template/spec/containers/0/command
+                value:
+                  - sh
+                  - -ec
+                  - 'curl --fail --silent --show-error --location "$URL" -H "Authorization: Bearer $CRON_SECRET"'
