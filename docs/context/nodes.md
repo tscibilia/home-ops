@@ -4,7 +4,8 @@
 
 - **ai3090 GPU toleration required:** Any pod targeting ai3090 must include `tolerations: [{key: "nvidia.com/gpu", operator: "Exists", effect: "NoSchedule"}]` — there is no fallback node; the pod will be unschedulable without it.
 - **openebs-hostpath is node-local:** If a pod using `openebs-hostpath` reschedules to a different node, the PVC data is inaccessible. Do not use for workloads that may move nodes.
-- **Kubelet image GC must stay under Ceph's threshold:** `/var` (400 GiB, `nvme0n1p4`) holds both the containerd image store and the Ceph MON store. Ceph fires `MON_DISK_LOW` at 70% used, so `imageGCHighThresholdPercent` is 60 / low 50 — raising it above 70 means kubelet never prunes and the MON warning fires instead.
+- **Kubelet image GC must stay under Ceph's threshold:** `/var` (400 GiB, `nvme0n1p4`) holds both the containerd image store and the Ceph MON store (`/var/lib/rook/mon-*`). Ceph fires `MON_DISK_LOW` at 70% used, so `imageGCHighThresholdPercent` is 45 / low 35 — raising it above 70 means kubelet never prunes and the MON warning fires instead. 45/35 rather than 60/50 because the image store grows ~10 GB/day (Flux image bumps, ~420 cached digests vs ~180 in use) and 60% left too little room for the double image set an upgrade pull storm creates.
+- **Pod slots are the real node limit:** kubelet `maxPods` is 150 (default 110). At 110, ~240 pods over 3 schedulable nodes meant every node held ~80, so evacuating one needed 120 slots on each of the other two and new pods went `Pending` with `Too many pods`. A cordon is not an eviction signal: descheduler's `RemovePodsViolatingNodeTaints` excludes `node.kubernetes.io/unschedulable`, so cordoning one node no longer evacuates all of it onto the others.
 - **`local-hdd` is ai3090-only:** Static PV on the ai3090 HDD (`/var/mnt/local-hdd`), no dynamic provisioning — a pod using it is pinned to that node. See `storage.md`.
 
 ## All Nodes (base config)

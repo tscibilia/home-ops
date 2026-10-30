@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/gitrepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: inbox-zero
+spec:
+  interval: 24h
+  url: https://github.com/elie222/inbox-zero.git
+  # The chart is only published in the app repo (no OCI artifact, no index.yaml
+  # and no chart version bump upstream), so Flux resolves it straight from git.
+  # This tracks the HEAD commit of upstream `main`: the custom git-refs manager
+  # in .renovate/overrides.json5 bumps this digest, and the image tag in
+  # helmrelease.yaml moves independently as a docker digest of `latest` (which
+  # upstream builds from the same main HEAD). Chart files change rarely - none
+  # changed between the previous pin and this one - so the two PRs converging
+  # separately is harmless.
+  ref:
+    commit: 4dfa0daafad8dd2c2ede85152244affd651f14c9

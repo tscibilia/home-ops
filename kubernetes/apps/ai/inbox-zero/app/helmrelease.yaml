@@ -1,0 +1,100 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app inbox-zero
+spec:
+  chart:
+    spec:
+      # In-repo chart resolved from the GitRepository next to this file; there is
+      # no OCI artifact or classic Helm repo to point an OCIRepository at.
+      chart: charts/inbox-zero
+      sourceRef:
+        kind: GitRepository
+        name: *app
+  interval: 1h
+  values:
+    image:
+      repository: ghcr.io/elie222/inbox-zero
+      # Upstream publishes only `latest` (built from main HEAD) and commit
+      # tags - no versioned image tags exist past v2.25.8, and those builds
+      # predate the worker and the migrate script this deployment needs. Renovate
+      # tracks the digest of `latest`, matching the chart commit in
+      # gitrepository.yaml (org.opencontainers.image.revision = 4dfa0daa...).
+      tag: latest@sha256:663406e4b3cd742ede8e1a87db0a59524015dd285669b98b73208d0533ce59f5
+      pullPolicy: IfNotPresent
+    # App secrets are templated by the ExternalSecret in this directory.
+    existingSecret: inbox-zero-secret
+    # Same Secret also backs the chart's DATABASE_URL/DIRECT_URL projections and
+    # its pre-install migration Job.
+    externalDatabase:
+      enabled: true
+      existingSecret:
+        name: inbox-zero-secret
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: false
+    migrations:
+      enabled: true
+    # Non-secret config goes through the chart's own ConfigMap. Keys set here
+    # override the Secret via `env` > `envFrom`, which is why
+    # GOOGLE_PUBSUB_TOPIC_NAME is not read from aKeyless: it stays at the chart
+    # default until a real topic is supplied.
+    env:
+      NODE_ENV: production
+      NEXT_PUBLIC_BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
+      DEFAULT_LLMS: openai-compatible:qwen-local
+      OPENAI_COMPATIBLE_BASE_URL: http://litellm.ai.svc.cluster.local:4000/v1
+      OPENAI_COMPATIBLE_MODEL: qwen-local
+      QUEUE_BACKEND: bullmq
+    # Shared Dragonfly (DB 4) replaces the bundled Redis statefulsets; the chart
+    # only renders redis-http alongside its own redis, so that proxy is deployed
+    # separately in redis-http.yaml.
+    redis:
+      enabled: false
+    redisHttp:
+      enabled: false
+    externalRedis:
+      enabled: false
+    worker:
+      enabled: true
+    web:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 512Mi
+        limits:
+          memory: 1Gi
+  # The chart has no values hook for extra initContainers, and with
+  # externalDatabase.enabled it ships none at all - only the bundled-Postgres
+  # wait-for-postgresql. Its pre-install migration hook would therefore run
+  # against a role that does not exist yet. Patch the hook exactly the way every
+  # other cnpg app in this repo bootstraps its database: the postgres-init
+  # initContainer with the component's initdb Secret. Same technique as
+  # apps/network/tailscale/app/helmrelease.yaml and apps/database/dragonfly.
+  postRenderers:
+    - kustomize:
+        patches:
+          - patch: |-
+              apiVersion: batch/v1
+              kind: Job
+              metadata:
+                name: inbox-zero-migrate
+              spec:
+                template:
+                  spec:
+                    initContainers:
+                      - name: 01-init-db
+                        image: ghcr.io/home-operations/postgres-init:18.6.0@sha256:87627baaddb0cabed4ebe033e75038e5c7b6b081c18e86514c99067179a90719
+                        envFrom:
+                          - secretRef:
+                              name: inboxzero-initdb-secret
+                        securityContext:
+                          runAsNonRoot: false
+                          runAsUser: 0
+                          runAsGroup: 0
+                          readOnlyRootFilesystem: false
+                          allowPrivilegeEscalation: true

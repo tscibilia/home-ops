@@ -1,0 +1,47 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app inbox-zero
+spec:
+  components:
+    - ../../../../components/cnpg
+  dependsOn:
+    - name: secret-stores
+      namespace: external-secrets
+    - name: cnpg-pgcluster-default
+      namespace: database
+    - name: dragonfly-cluster
+      namespace: database
+  interval: 1h
+  retryInterval: 5m
+  path: ./kubernetes/apps/ai/inbox-zero/app
+  postBuild:
+    substitute:
+      # Deliberately hyphen-free: the cnpg component templates the role password
+      # as a Go template key ({{ .inboxzero_postgres_password }}), where a hyphen
+      # would be parsed as an operator. Also the chart's default database name.
+      APP: inboxzero
+      GATUS_SUBDOMAIN: zero
+      CNPG_NAME: &postgresAppName pgcluster-default
+    substituteFrom:
+      - kind: Secret
+        name: cluster-secrets
+  healthChecks:
+    - apiVersion: &postgresVersion postgresql.cnpg.io/v1
+      kind: &postgresKind Cluster
+      name: *postgresAppName
+      namespace: database
+  healthCheckExprs:
+    - apiVersion: *postgresVersion
+      kind: *postgresKind
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  targetNamespace: ai
+  wait: false

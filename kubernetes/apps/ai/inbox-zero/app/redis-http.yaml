@@ -1,0 +1,82 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/apps/deployment_v1.json
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inbox-zero-redis-http
+  labels:
+    app.kubernetes.io/name: inbox-zero-redis-http
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inbox-zero-redis-http
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inbox-zero-redis-http
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: redis-http
+          # Upstream compose stack ships the same proxy in front of its Redis;
+          # the app's @upstash/redis client speaks its REST dialect.
+          image: docker.io/hiett/serverless-redis-http:0.0.9@sha256:c3258d184677ed9db7861a3b6cdf8daec8d4a2022662e81126a6c45a552517df
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: SRH_MODE
+              value: env
+            - name: SRH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: inbox-zero-secret
+                  key: REDIS_HTTP_TOKEN
+            - name: SRH_CONNECTION_STRING
+              value: redis://dragonfly-cluster.database.svc.cluster.local:6379/4
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["NET_BIND_SERVICE"]
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/core/service_v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: inbox-zero-redis-http
+  labels:
+    app.kubernetes.io/name: inbox-zero-redis-http
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app.kubernetes.io/name: inbox-zero-redis-http
