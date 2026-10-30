@@ -6,6 +6,9 @@ metadata:
   name: inbox-zero
 spec:
   interval: 24h
+  # Upstream is a ~122 MB repo; the 60s default clone/checkout timeout fails with
+  # "context deadline exceeded" before the chart artifact exists.
+  timeout: 5m
   url: https://github.com/elie222/inbox-zero.git
   # The chart is only published in the app repo (no OCI artifact, no index.yaml
   # and no chart version bump upstream), so Flux resolves it straight from git.
