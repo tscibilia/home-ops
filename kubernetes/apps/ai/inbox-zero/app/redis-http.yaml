@@ -48,9 +48,10 @@ spec:
           resources:
             requests:
               cpu: 10m
-              memory: 32Mi
-            limits:
               memory: 64Mi
+            limits:
+              # BEAM release: 64Mi OOMKilled the pod within seconds.
+              memory: 512Mi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
