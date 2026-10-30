@@ -13,6 +13,8 @@ spec:
     kind: Deployment
     deschedulerPolicyAPIVersion: descheduler/v1alpha2
     deschedulerPolicy:
+      # Bound each run: a full node shed 90 pods in one pass and dumped them on the two remaining schedulable nodes
+      maxNoOfPodsToEvictPerNode: 5
       metricsProviders:
         - source: KubernetesMetrics
       profiles:
@@ -20,23 +22,35 @@ spec:
           pluginConfig:
             - name: DefaultEvictor
               args:
+                nodeFit: true # only evict when the pod fits somewhere else
                 podProtections:
                   defaultDisabled:
                     - FailedBarePods
                     - PodsWithLocalStorage
                     - SystemCriticalPods
+                  # node-local PVs cannot follow the pod: evicting these leaves it Pending
+                  extraEnabled:
+                    - PodsWithPVC
+                  config:
+                    PodsWithPVC:
+                      protectedStorageClasses:
+                        - name: openebs-hostpath
+                        - name: local-hdd
             - name: LowNodeUtilization
               args:
                 metricsUtilization:
                   source: KubernetesMetrics
+                # "underutilized" needs every metric below `thresholds`, and a node idles at ~20
+                # daemonsets + system pods (~20% of maxPods), so pods: 20 never matched.
                 thresholds:
                   cpu: 20
                   memory: 20
-                  pods: 20
+                  pods: 40
+                # a balanced node runs ~75 of 110 pods: pods: 50 marked every node overutilized
                 targetThresholds:
                   cpu: 50
                   memory: 50
-                  pods: 50
+                  pods: 70
             - name: RemoveFailedPods
               args:
                 reasons:
@@ -55,6 +69,10 @@ spec:
                 nodeAffinityType:
                   - requiredDuringSchedulingIgnoredDuringExecution
             - name: RemovePodsViolatingNodeTaints
+              args:
+                # a cordon is not a taint to evacuate: without this, cordoning k8s-1 evicted all ~90 pods at once
+                excludedTaints:
+                  - node.kubernetes.io/unschedulable
             - name: RemovePodsViolatingTopologySpreadConstraint
           plugins:
             balance:

@@ -171,8 +171,13 @@ config:
     - net.ipv6.conf.*
   featureGates:
     ResourceHealthStatus: true # New
-  imageGCHighThresholdPercent: 60 # keep under ceph's 70% mon_data_avail_warn on /var
-  imageGCLowThresholdPercent: 50
+  # 240 pods over 3 schedulable nodes: at 110 slots a node holds ~80, so evacuating one
+  # overflows the other two (80+40 > 110). 150 leaves room; the pod CIDR is a /24 per node.
+  maxPods: 150
+  # /var grows ~10GB/day of images; 60/50 let it ride to 240GB and a pull storm during cluster upgrade filled it.
+  # 45/35 caps the image store at ~190GB of the 429GB disk, leaving headroom for an upgrade's double image set.
+  imageGCHighThresholdPercent: 45
+  imageGCLowThresholdPercent: 35
   imageMinimumGCAge: "2m"
   imageMaximumGCAge: 168h
   serializeImagePulls: false
