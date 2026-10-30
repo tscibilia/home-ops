@@ -40,9 +40,8 @@ spec:
     migrations:
       enabled: true
     # Non-secret config goes through the chart's own ConfigMap. Keys set here
-    # override the Secret via `env` > `envFrom`, which is why
-    # GOOGLE_PUBSUB_TOPIC_NAME is not read from aKeyless: it stays at the chart
-    # default until a real topic is supplied.
+    # override the Secret via `env` > `envFrom`, which is why the Pub/Sub topic
+    # cannot come from aKeyless.
     env:
       NODE_ENV: production
       NEXT_PUBLIC_BASE_URL: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"
@@ -50,6 +49,7 @@ spec:
       OPENAI_COMPATIBLE_BASE_URL: http://litellm.ai.svc.cluster.local:4000/v1
       OPENAI_COMPATIBLE_MODEL: qwen-local
       QUEUE_BACKEND: bullmq
+      GOOGLE_PUBSUB_TOPIC_NAME: projects/k8s-inbox-zero/topics/inbox-zero-emails
     # Shared Dragonfly (DB 4) replaces the bundled Redis statefulsets; the chart
     # only renders redis-http alongside its own redis, so that proxy is deployed
     # separately in redis-http.yaml.
