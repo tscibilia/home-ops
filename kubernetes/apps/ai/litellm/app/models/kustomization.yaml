@@ -10,8 +10,9 @@ resources:
   - ./memini-rerank.yaml
   - ./deepseek-v4-flash.yaml
   - ./deepseek-v4.1-flash.yaml
+  - ./beam-free.yaml
   - ./kimi-k3.1.yaml
-  - ./laguna-s-2-1.yaml
   - ./qwen-image-3.yaml
   - ./nano-banana-2-lite.yaml
   - ./jev-1.yaml
+  # poolside/laguna-s-2.1 shutdown 10/31/2026

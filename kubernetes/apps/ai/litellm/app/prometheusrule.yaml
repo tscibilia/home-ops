@@ -1,0 +1,49 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/monitoring.coreos.com/prometheusrule_v1.json
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: litellm-rules
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: litellm.rules
+      rules:
+        - alert: LitellmModelRateLimited
+          expr: |
+            sum by (requested_model) (
+              increase(litellm_proxy_total_requests_metric_total{status_code="429", requested_model!=""}[5m])
+            ) > 0
+          for: 1m
+          annotations:
+            summary: >-
+              litellm model {{ $labels.requested_model }} is rate-limited
+            description: >-
+              litellm returned 429 rate-limit responses for {{ $labels.requested_model }}
+              in the last 5 minutes. Check the provider quota or switch the caller to a
+              fallback model.
+          labels:
+            severity: warning
+            app: litellm
+            model: "{{ $labels.requested_model }}"
+
+        - alert: LitellmModelForbidden
+          expr: |
+            sum by (requested_model) (
+              increase(litellm_proxy_total_requests_metric_total{status_code="403", requested_model!=""}[5m])
+            ) > 0
+          for: 1m
+          annotations:
+            summary: >-
+              litellm model {{ $labels.requested_model }} is returning 403s
+            description: >-
+              litellm returned 403 responses for {{ $labels.requested_model }} in the last
+              5 minutes. A 403 from opencode Zen means the free-tier client contract failed
+              or the promo ended; check litellm logs for FreeTierError. A 403 from another
+              provider may be an auth or permission failure.
+          labels:
+            severity: warning
+            app: litellm
+            model: "{{ $labels.requested_model }}"

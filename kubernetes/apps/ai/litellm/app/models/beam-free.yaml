@@ -1,0 +1,32 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name beam-free
+spec:
+  # Free promo on opencode Zen. The opencode_contract pre-call hook supplies
+  # the client gate; OPENCODE_FREE_MODELS in the proxy must list this name.
+  modelName: *name
+  params:
+    model: openai/beam-free
+    apiBase: https://opencode.ai/zen/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: OPENCODE_API_KEY
+    additional:
+      # Zen serves chat completions only; bridge Responses API callers down.
+      use_chat_completions_api: true
+  info:
+    mode: chat
+    maxTokens: 32768
+    maxInputTokens: 131072
+    maxOutputTokens: 32768
+    supportsFunctionCalling: true
+    supportsPromptCaching: false
+    extra:
+      supports_reasoning: false
+      # Free promo: no per-token charge.
+      input_cost_per_token: 0.0
+      output_cost_per_token: 0.0
+      cache_read_input_token_cost: 0.0
