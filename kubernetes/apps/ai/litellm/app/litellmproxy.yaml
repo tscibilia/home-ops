@@ -61,9 +61,8 @@ spec:
     - name: PYTHONPATH
       value: /opt/opencode-contract
     # Model names whose requests get rewritten for opencode Zen's free tier.
-    # Empty = no Zen free models currently active.
     - name: OPENCODE_FREE_MODELS
-      value: ""
+      value: "beam-free"
     # Jev decision model — routed through OpenCode Console's SystemOne API
     # using the typesafe/ provider prefix with a custom api_base.
     - name: TYPESAFE_API_KEY

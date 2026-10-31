@@ -8,6 +8,7 @@ resources:
   - ./pushsecret.yaml
   - ./litellmproxy.yaml
   - ./servicemonitor.yaml
+  - ./prometheusrule.yaml
   - ./grafanadashboard.yaml
   - ./dashboard
   - ./models

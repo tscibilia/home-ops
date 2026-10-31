@@ -80,8 +80,10 @@ spec:
     port: 8080
     type: ClusterIP
   extraArgs:
+    # Keep the 27B resident: a sleeping server reloads ~17.6 GB on the first
+    # voice request. The pool still evicts it when ComfyUI asks for the slot.
     - --sleep-idle-seconds
-    - "3600"
+    - "-1"
     - --alias
     - huggingface/Qwen3.8-27B
     - --cont-batching
