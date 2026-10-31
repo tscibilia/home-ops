@@ -16,7 +16,7 @@ spec:
           app:
             image:
               repository: ghcr.io/remsky/kokoro-fastapi-cpu
-              tag: v0.9.1@sha256:03334df0f6de21df0138d2896f8211c20d1d513bae865e14a695b17d647bc961
+              tag: v0.9.2@sha256:cbcc28802fb5d1eaaba8b91e38b0e872a669e85831c513cf6a29c709cbe25405
             env:
               PORT: &port 8880
             probes:
