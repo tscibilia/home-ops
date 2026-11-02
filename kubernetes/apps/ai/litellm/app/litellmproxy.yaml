@@ -8,17 +8,9 @@ spec:
   # renovate: datasource=docker depName=ghcr.io/berriai/litellm
   image: ghcr.io/berriai/litellm-non_root:v1.106.6@sha256:6363e53f135dafbf4a68fac25f77aec3f2b99be37665e8c5f623a952637c220b
   replicas: 1
-  callbacks:
-    callbacks:
-      - opencode_contract.opencode_contract
   generalSettings:
     health_check_endpoint: /v1/health
     disable_env_credential_login: true
-    pass_through_endpoints:
-      - path: /opencode-inference
-        target: https://opencode.ai/inference
-        headers:
-          Authorization: bearer os.environ/OPENCODE_API_KEY
   litellmSettings:
     success_callback: ["prometheus"]
     failure_callback: ["prometheus"]
@@ -56,22 +48,16 @@ spec:
         secretKeyRef:
           name: litellm-pguser-secret
           key: uri
-    # The contract module is mounted from the litellm-opencode-contract
-    # ConfigMap; litellm imports it by dotted path from PYTHONPATH.
-    - name: PYTHONPATH
-      value: /opt/opencode-contract
-    # Model names whose requests get rewritten for opencode Zen's free tier.
-    - name: OPENCODE_FREE_MODELS
-      value: "beam-free"
-    # Jev decision model — routed through OpenCode Console's SystemOne API
-    # using the typesafe/ provider prefix with a custom api_base.
+    # Jev decision model — TypeSafe's System One API, reached through OpenRouter.
+    # litellm's typesafe provider appends /v1/systemone to the base, so the base
+    # stops at /api to land on OpenRouter's /api/v1/systemone.
     - name: TYPESAFE_API_KEY
       valueFrom:
         secretKeyRef:
           name: litellm-secret
-          key: OPENCODE_API_KEY
+          key: OPENROUTER_API_KEY
     - name: TYPESAFE_API_BASE
-      value: https://opencode.ai/inference
+      value: https://openrouter.ai/api
   envFrom:
     - secretRef:
         name: litellm-secret
@@ -91,11 +77,3 @@ spec:
     parentRefs:
       - name: envoy-external
         namespace: network
-  volumeMounts:
-    - name: opencode-contract
-      mountPath: /opt/opencode-contract
-      readOnly: true
-  volumes:
-    - name: opencode-contract
-      configMap:
-        name: litellm-opencode-contract

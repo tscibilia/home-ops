@@ -27,7 +27,7 @@ data:
     model:
       default: deepseek-v4-flash
       provider: litellm
-    # Ordered by what each rung survives: a zen fault, then a WAN fault.
+    # Ordered by what each rung survives: a provider fault, then a WAN fault.
     fallback_providers:
       - provider: litellm
         model: qwen-local # on-node, slow to warm

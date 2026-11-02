@@ -1,6 +1,18 @@
 # Route `deepseek-v4.1-flash` through opencode Zen's free tier, with `-paid` as the fallback
 
-**Status:** accepted
+> **Superseded 2026-10-31 — dropped opencode Zen entirely.** The free lane stopped accepting
+> the hook's requests. Measured in the cluster logs: the refusal text changed on
+> 2026-10-25T17:38:43Z from "Free usage limit reached. Subscribe to OpenCode Go…" to "Free models
+> work in OpenCode (https://opencode.ai)…", and from then on every proxied call was refused while
+> the real OpenCode app still succeeded on the same service-account key. That is the vendor gate
+> tightening past what three forged fields satisfy — the "relay through a real opencode process"
+> fallback named below, which we chose not to take. The hook, its ConfigMap mount, the
+> `OPENCODE_FREE_MODELS` list, the `/opencode-inference` pass-through and the `beam-free` model are
+> deleted. The PR reviewer's primary is now `north-mini-code-free` (Cohere's free model on
+> OpenRouter), with `qwen-local` as its fallback; `deepseek-v4.1-flash` already runs on OpenRouter.
+> The ADR stays as the record of what the gate was and why it was bypassed.
+
+**Status:** superseded (2026-10-31)
 **Date:** 2026-10-16
 
 `deepseek-v4.1-flash` resolves to opencode Zen's free promo endpoint (`openai/deepseek-v4.1-flash-free` on `https://opencode.ai/zen/v1`). The OpenRouter/DeepInfra route of the same weights keeps its parameters under the new name `deepseek-v4.1-flash-paid`. Nothing routes between them automatically: falling back is a model-name change on the client.

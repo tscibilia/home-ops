@@ -5,17 +5,22 @@ kind: LiteLLMModel
 metadata:
   name: &name jev-1
 spec:
-  # Decision model via OpenCode Console (SystemOne API). Not a chat model:
-  # call it through /v1/systemone with a SystemOne body (state + questions).
-  # Free while the promo runs; normal $0.042/in $0/out.
+  # TypeSafe's System One decision model, now reached through OpenRouter instead
+  # of OpenCode Console. Not a chat model: call it through /v1/systemone with a
+  # SystemOne body (state + questions) and it answers noul/choice/score.
+  # litellm's typesafe provider appends /v1/systemone to TYPESAFE_API_BASE, so
+  # that base stops at /api to land on OpenRouter's /api/v1/systemone.
   modelName: *name
   params:
-    model: typesafe/jev-1.13-free
+    model: typesafe/jev-1.14
   info:
     # evaluation marks it a decision model so the system-one playground lists it
     mode: evaluation
-    maxTokens: 131072
-    maxInputTokens: 1048560
-    maxOutputTokens: 131072
+    maxTokens: 235929
+    maxInputTokens: 262144
+    maxOutputTokens: 235929
     extra:
       supported_endpoints: ["/v1/systemone"]
+      # OpenRouter: $0.042 in / $0 out per 1M tokens
+      input_cost_per_token: 0.000000042
+      output_cost_per_token: 0.0
