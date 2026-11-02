@@ -16,6 +16,7 @@ resources:
   - ./homebox/ks.yaml
   - ./homepage/ks.yaml
   - ./immich/ks.yaml
+  - ./kept/ks.yaml
   - ./mailflow/ks.yaml
   - ./mealie/ks.yaml
   - ./obsidian-couchdb/ks.yaml
