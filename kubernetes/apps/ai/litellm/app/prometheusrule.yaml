@@ -11,19 +11,22 @@ spec:
   groups:
     - name: litellm.rules
       rules:
+        # Failures live in litellm_deployment_failure_responses_total
+        # with the upstream code in exception_status.
         - alert: LitellmModelRateLimited
           expr: |
             sum by (requested_model) (
-              increase(litellm_proxy_total_requests_metric_total{status_code="429", requested_model!=""}[5m])
+              increase(litellm_deployment_failure_responses_total{exception_status="429", requested_model!=""}[5m])
             ) > 0
           for: 1m
           annotations:
             summary: >-
-              litellm model {{ $labels.requested_model }} is rate-limited
+              litellm model {{ $labels.requested_model }} is returning 429s
             description: >-
-              litellm returned 429 rate-limit responses for {{ $labels.requested_model }}
-              in the last 5 minutes. Check the provider quota or switch the caller to a
-              fallback model.
+              litellm returned 429 responses for {{ $labels.requested_model }} in the last
+              5 minutes. This is a provider quota/rate limit — an exhausted free-tier
+              allowance, a promo that ended, or a key that ran out of credit. Check the
+              litellm logs for the upstream message before assuming which.
           labels:
             severity: warning
             app: litellm
@@ -32,7 +35,7 @@ spec:
         - alert: LitellmModelForbidden
           expr: |
             sum by (requested_model) (
-              increase(litellm_proxy_total_requests_metric_total{status_code="403", requested_model!=""}[5m])
+              increase(litellm_deployment_failure_responses_total{exception_status="403", requested_model!=""}[5m])
             ) > 0
           for: 1m
           annotations:
@@ -40,9 +43,9 @@ spec:
               litellm model {{ $labels.requested_model }} is returning 403s
             description: >-
               litellm returned 403 responses for {{ $labels.requested_model }} in the last
-              5 minutes. A 403 from opencode Zen means the free-tier client contract failed
-              or the promo ended; check litellm logs for FreeTierError. A 403 from another
-              provider may be an auth or permission failure.
+              5 minutes. A 403 from a free-tier endpoint usually means the promo ended or
+              the client is no longer allowed on that lane; elsewhere it is an auth or
+              permission failure. Check the litellm logs for the upstream message.
           labels:
             severity: warning
             app: litellm

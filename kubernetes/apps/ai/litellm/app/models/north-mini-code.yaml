@@ -3,29 +3,28 @@
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: &name beam-free
+  name: &name north-mini-code
 spec:
-  # Free promo on opencode Zen. The opencode_contract pre-call hook supplies
-  # the client gate; OPENCODE_FREE_MODELS in the proxy must list this name.
+  # Cohere's free coding model on OpenRouter: $0 in/$0 out while the promo runs.
+  # No client contract to satisfy — a plain OpenRouter key is enough. Free endpoints
+  # are rate-limited per OpenRouter account; when the promo ends the failure is 429
   modelName: *name
   params:
-    model: openai/beam-free
-    apiBase: https://opencode.ai/zen/v1
+    model: openai/cohere/north-mini-code:free
+    apiBase: https://openrouter.ai/api/v1
     apiKeyRef:
       name: litellm-secret
-      key: OPENCODE_API_KEY
-    additional:
-      # Zen serves chat completions only; bridge Responses API callers down.
-      use_chat_completions_api: true
+      key: OPENROUTER_API_KEY
   info:
     mode: chat
     maxTokens: 32768
-    maxInputTokens: 131072
-    maxOutputTokens: 32768
+    maxInputTokens: 256000
+    maxOutputTokens: 64000
     supportsFunctionCalling: true
     supportsPromptCaching: false
+    supportsVision: false
     extra:
-      supports_reasoning: false
+      supports_reasoning: true
       # Free promo: no per-token charge.
       input_cost_per_token: 0.0
       output_cost_per_token: 0.0
