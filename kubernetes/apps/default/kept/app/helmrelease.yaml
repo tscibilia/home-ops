@@ -1,0 +1,174 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kept
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          01-init-db:
+            image:
+              repository: ghcr.io/home-operations/postgres-init
+              tag: 18.6.0@sha256:87627baaddb0cabed4ebe033e75038e5c7b6b081c18e86514c99067179a90719
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-initdb-secret"
+          # Kept's own bootstrap: the four logins and the extensions, as the superuser.
+          # The GRANT is what lets the cnpg component's pgdump CronJob read the tables —
+          # kept_owner owns them, and the ${APP} role has no table privileges of its own.
+          02-bootstrap:
+            image: &image
+              repository: ghcr.io/keptinventory/kept
+              tag: 1.14.3@sha256:a503e00f4608f4485400515fc0687042e6976312ef2ee2ace2d613f0d280aa5b
+            command: ["sh", "-c"]
+            args:
+              - kept bootstrap && psql -v ON_ERROR_STOP=1 -c 'GRANT kept_owner TO kept'
+            env:
+              PGHOST: ${CNPG_NAME}-rw.database.svc.cluster.local
+              PGPORT: "5432"
+              PGUSER: postgres
+              PGDATABASE: *app
+              PGPASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}-initdb-secret"
+                    key: INIT_POSTGRES_SUPER_PASS
+            envFrom:
+              - secretRef:
+                  name: kept-db
+          # Kept never migrates on boot; this is the one-shot `kept migrate` the chart runs
+          # as a hook. As an initContainer it runs before the server, in the same pod.
+          03-migrate:
+            image: *image
+            command: ["kept"]
+            args: ["migrate"]
+            env:
+              KEPT_OWNER_DATABASE_URL: "postgres://kept_owner:$(KEPT_DB_OWNER_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
+              KEPT_PUBLIC_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+              KEPT_SMTP_URL: smtp://smtp-relay.default.svc.cluster.local:2525
+              KEPT_SMTP_FROM: kept@mail.${SECRET_DOMAIN}
+              KEPT_DATA_DIR: /data
+              KEPT_CONFIG_DIR: /data/config
+            envFrom:
+              - secretRef:
+                  name: kept-db
+        containers:
+          app:
+            image: *image
+            env:
+              KEPT_ROLE: all
+              KEPT_PUBLIC_URL: "https://{{ .Release.Name }}.${SECRET_DOMAIN}"
+              KEPT_STORAGE: local
+              KEPT_DATA_DIR: /data
+              KEPT_CONFIG_DIR: /data/config
+              KEPT_SMTP_URL: smtp://smtp-relay.default.svc.cluster.local:2525
+              KEPT_SMTP_FROM: kept@mail.${SECRET_DOMAIN}
+              KEPT_TRUSTED_PROXIES: 10.42.0.0/16
+              KEPT_OIDC_NAME: Pocket ID
+              KEPT_OIDC_AUTOPROVISION_GROUPS: ID-Admin,ID-Home,ID-Family
+              KEPT_DB_APP_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: kept-db
+                    key: KEPT_DB_APP_PASSWORD
+              KEPT_DB_AUTH_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: kept-db
+                    key: KEPT_DB_AUTH_PASSWORD
+              KEPT_DB_SYSTEM_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: kept-db
+                    key: KEPT_DB_SYSTEM_PASSWORD
+              KEPT_DATABASE_URL: "postgres://kept_app:$(KEPT_DB_APP_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
+              KEPT_AUTH_DATABASE_URL: "postgres://kept_auth:$(KEPT_DB_AUTH_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
+              KEPT_SYSTEM_DATABASE_URL: "postgres://kept_system:$(KEPT_DB_SYSTEM_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-oidc-secret"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 384Mi
+              limits:
+                memory: 1Gi
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /healthz
+                    port: &port 8080
+                  periodSeconds: 20
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  httpGet:
+                    path: /readyz
+                    port: *port
+                  periodSeconds: 10
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  <<: *probeSpec
+                  httpGet:
+                    path: /readyz
+                    port: *port
+                  periodSeconds: 5
+                  failureThreshold: 60
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: [ALL] }
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: ${KOPIUR_PUID}
+        runAsGroup: ${KOPIUR_PGID}
+        fsGroup: ${KOPIUR_PGID}
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            path: /readyz
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
