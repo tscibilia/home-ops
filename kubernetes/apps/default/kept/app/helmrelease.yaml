@@ -75,25 +75,15 @@ spec:
               KEPT_TRUSTED_PROXIES: 10.42.0.0/16
               KEPT_OIDC_NAME: Pocket ID
               KEPT_OIDC_AUTOPROVISION_GROUPS: ID-Admin,ID-Home,ID-Family
-              KEPT_DB_APP_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: kept-db
-                    key: KEPT_DB_APP_PASSWORD
-              KEPT_DB_AUTH_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: kept-db
-                    key: KEPT_DB_AUTH_PASSWORD
-              KEPT_DB_SYSTEM_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: kept-db
-                    key: KEPT_DB_SYSTEM_PASSWORD
+              # The four passwords arrive via envFrom, not env: app-template sorts env
+              # alphabetically, and $(VAR) only expands from variables declared earlier, so
+              # KEPT_DATABASE_URL would otherwise resolve to the literal string.
               KEPT_DATABASE_URL: "postgres://kept_app:$(KEPT_DB_APP_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
               KEPT_AUTH_DATABASE_URL: "postgres://kept_auth:$(KEPT_DB_AUTH_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
               KEPT_SYSTEM_DATABASE_URL: "postgres://kept_system:$(KEPT_DB_SYSTEM_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
             envFrom:
+              - secretRef:
+                  name: kept-db
               - secretRef:
                   name: "{{ .Release.Name }}-oidc-secret"
             resources:
