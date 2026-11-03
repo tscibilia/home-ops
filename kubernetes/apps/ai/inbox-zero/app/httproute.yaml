@@ -5,8 +5,7 @@ kind: HTTPRoute
 metadata:
   name: inbox-zero
   annotations:
-    gatus.home-operations.com/endpoint: |-
-      conditions: ["[STATUS] == 200"]
+    gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
     - name: envoy-internal
