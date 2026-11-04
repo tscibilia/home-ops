@@ -84,6 +84,7 @@ spec:
               KEPT_DATABASE_URL: "postgres://kept_app:$(KEPT_DB_APP_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
               KEPT_AUTH_DATABASE_URL: "postgres://kept_auth:$(KEPT_DB_AUTH_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
               KEPT_SYSTEM_DATABASE_URL: "postgres://kept_system:$(KEPT_DB_SYSTEM_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
+              KEPT_OWNER_DATABASE_URL: "postgres://kept_owner:$(KEPT_DB_OWNER_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
             envFrom:
               - secretRef:
                   name: kept-db
