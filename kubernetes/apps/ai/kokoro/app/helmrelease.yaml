@@ -50,7 +50,7 @@ spec:
           bridge:
             image:
               repository: ghcr.io/roryeckel/wyoming_openai
-              tag: 0.8.0@sha256:2468fbe5ea50c00bff2d021d8c3e42c8f62bb43765a6f21e10d3c217fefc89aa
+              tag: 0.9.0@sha256:5becca86cc0bd2d968f2dfe90dc0fcbaf8e5df49dce57d25848eff1069e85b30
             env:
               WYOMING_URI: tcp://0.0.0.0:10200
               TTS_OPENAI_URL: http://localhost:8880/v1
