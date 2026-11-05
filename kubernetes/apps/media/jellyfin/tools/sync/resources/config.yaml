@@ -1,0 +1,23 @@
+---
+# Non-secret configuration for jellyplex-watched 9.x.
+# Credentials are injected as JPW_SERVER_TOKENS by the ExternalSecret.
+dryrun: false # v9 defaults to true; keep this explicit
+debug_level: DEBUG
+run_only_once: true
+log_file: /tmp/sync.log
+mark_file: /tmp/mark.log
+whitelist_libraries: [Movies, Shows]
+library_mappings:
+  - canonical: Shows
+    aliases:
+      - { server: plex-main, library: "TV Shows" }
+      - { server: jellyfin-main, library: Shows }
+plex:
+  - name: plex-main
+    baseurl: http://plex.media.svc.cluster.local:32400
+    sync_to: [jellyfin-main]
+    ssl_bypass: true
+jellyfin:
+  - name: jellyfin-main
+    baseurl: http://jellyfin.media.svc.cluster.local:8096
+    sync_to: [plex-main]
