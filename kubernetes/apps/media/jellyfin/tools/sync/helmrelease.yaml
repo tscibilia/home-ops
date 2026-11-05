@@ -30,17 +30,6 @@ spec:
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
-            env:
-              DEBUG_LEVEL: debug
-              DRYRUN: "False"
-              JELLYFIN_BASEURL: http://jellyfin.media.svc.cluster.local:8096
-              LIBRARY_MAPPING: '{ "Shows": "TV Shows" }'
-              LOGFILE: /tmp/sync.log
-              MARK_FILE: /tmp/mark.log
-              PLEX_BASEURL: http://plex.media.svc.cluster.local:32400
-              SSL_BYPASS: "True"
-              RUN_ONLY_ONCE: "True"
-              WHITELIST_LIBRARY: Movies,Shows
             resources:
               requests:
                 cpu: 10m
@@ -48,5 +37,14 @@ spec:
               limits:
                 memory: 512Mi
     persistence:
+      config:
+        type: configMap
+        name: jellyfin-sync-config
+        globalMounts:
+          - path: /app/config/config.yaml
+            subPath: config.yaml
+            readOnly: true
       tmp:
         type: emptyDir
+        globalMounts:
+          - path: /tmp
