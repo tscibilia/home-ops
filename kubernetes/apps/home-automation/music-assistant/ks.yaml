@@ -17,7 +17,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      GATUS_SUBDOMAIN: music
+      GATUS_SUBDOMAIN: mass
       KOPIUR_CAPACITY: 5Gi
     substituteFrom:
       - kind: Secret
