@@ -69,6 +69,8 @@ spec:
                 assetdir = '/seanime/assets'
                 TOML
                 fi
+                mkdir -p /seanime/extensions
+                cp -f /run/config/webtoons.json /seanime/extensions/webtoons.json
                 exec /app/seanime
             env:
               SEANIME_DATA_DIR: /seanime
@@ -153,6 +155,12 @@ spec:
                 subPath: cache
               - path: /home/seanime/.cache
                 subPath: home-cache
+      webtoons:
+        type: configMap
+        name: seanime-webtoons
+        globalMounts:
+          - path: /run/config/webtoons.json
+            subPath: webtoons.json
       media:
         type: nfs
         server: truenas.internal

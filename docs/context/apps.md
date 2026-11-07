@@ -127,7 +127,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - qui _(qbittorrent UI)_ [kopiur, zeroscaler, oidc]
 - radarr [kopiur, auth, zeroscaler]
 - recyclarr _(auto-sync TRaSH Guides)_ [kopiur]
-- seanime _(anime library)_ [kopiur, zeroscaler]
+- seanime _(anime library; webtoons plugin pinned via ConfigMap)_ [kopiur, zeroscaler]
 - seerr _(Plex request UI)_ [kopiur]
 - sonarr [kopiur, auth, zeroscaler]
 - tracearr _(Plex/Jellyfin tracker)_ [cnpg]
