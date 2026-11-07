@@ -6,3 +6,11 @@ resources:
   - ./helmrelease.yaml
   - ./ocirepository.yaml
   - ./resourceclaimtemplate.yaml
+configMapGenerator:
+  - name: seanime-webtoons
+    files:
+      - ./resources/webtoons.json
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
