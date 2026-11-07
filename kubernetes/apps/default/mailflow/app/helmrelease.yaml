@@ -84,7 +84,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maathimself/mailflow-frontend
-              tag: 4.3.0@sha256:9c4d84479aa0f11b7cc071d1e392357c067634806092e50e873c85990e95a4b0
+              tag: 4.3.1@sha256:3c8a42715cec8726bd370f4e724d630a4f2271ca95d25dcf92fa34956a9803f6
             env:
               APP_HTTP_PORT: &webPort 80
               BACKEND_HOST: mailflow-api.default.svc.cluster.local
