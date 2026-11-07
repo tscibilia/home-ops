@@ -81,6 +81,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - home-assistant [kopiur]
 - matter-server [kopiur]
 - mosquitto _(MQTT broker)_
+- music-assistant _(Music library manager and player bridge)_ [kopiur]
 - openwakeword
 - otbr _(OpenThread Border Router)_ [kopiur]
 - whisper [kopiur]

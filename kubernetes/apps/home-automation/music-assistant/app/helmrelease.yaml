@@ -1,0 +1,138 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app music-assistant
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          # MA auto-detects the publish IP from the default route, which is the pod's
+          # cluster interface. Seed the IOT address so players get a reachable URL.
+          seed-publish-ip:
+            image:
+              repository: ghcr.io/home-operations/busybox
+              tag: 1.38.0@sha256:ff88728f0d5fe50a9984f6cc04d7d1185590b628f29ef4e6a3ec8cae7169e0c8
+            command:
+              - sh
+              - -c
+              - |
+                [ -f /data/settings.json ] || printf '%s\n' '{"core":{"streams":{"domain":"streams","values":{"publish_ip":"192.168.107.54"}}}}' > /data/settings.json
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+        containers:
+          app:
+            image:
+              repository: ghcr.io/music-assistant/server
+              tag: 2.10.9@sha256:4ac0d5844363fbbefd6a61251df09d96cd546e05e01b8c1cc1a28803f0935e07
+            command:
+              - /usr/bin/tini
+              - -s
+              - --
+              - /usr/local/bin/entrypoint.sh
+              - --data-dir
+              - /data
+              - --cache-dir
+              - /cache
+            env:
+              LOG_LEVEL: info
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: &port 8095
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
+            resources:
+              requests:
+                cpu: 50m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+        pod:
+          annotations:
+            k8s.v1.cni.cncf.io/networks: |-
+              [{
+                "name": "iot",
+                "namespace": "network",
+                "ips": ["192.168.107.54/24"],
+                "mac": "02:7f:b4:4d:54:01"
+              }]
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: &uid 1000
+        runAsGroup: *uid
+        fsGroup: *uid
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            appProtocol: kubernetes.io/ws
+            port: *port
+          stream:
+            port: 8097
+    route:
+      app:
+        annotations:
+          gatus.home-operations.com/endpoint: |-
+            conditions: ["[STATUS] == 200"]
+        hostnames: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
+    persistence:
+      data:
+        existingClaim: *app
+        globalMounts:
+          - path: /data
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /cache
+      media:
+        type: nfs
+        server: truenas.internal
+        path: /mnt/nas/data/media
+        globalMounts:
+          - path: /media
+            readOnly: true
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

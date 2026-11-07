@@ -14,6 +14,7 @@ resources:
   - ./home-assistant/ks.yaml
   - ./matter-server/ks.yaml
   - ./mosquitto/ks.yaml
+  - ./music-assistant/ks.yaml
   - ./openwakeword/ks.yaml
   - ./otbr/ks.yaml
   - ./whisper/ks.yaml
