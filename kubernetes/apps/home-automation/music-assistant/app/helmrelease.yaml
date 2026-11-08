@@ -16,16 +16,35 @@ spec:
           reloader.stakater.com/auto: "true"
         initContainers:
           # MA auto-detects the publish IP from the default route, which is the pod's
-          # cluster interface. Seed the IOT address so players get a reachable URL.
-          seed-publish-ip:
+          # cluster interface. Seed the IOT address (players) and the external URL
+          # (auto-generated links, e.g. Spotify redirects) before the app starts.
+          seed-config:
             image:
-              repository: ghcr.io/home-operations/busybox
-              tag: 1.38.0@sha256:ff88728f0d5fe50a9984f6cc04d7d1185590b628f29ef4e6a3ec8cae7169e0c8
+              repository: ghcr.io/music-assistant/server
+              tag: 2.10.9@sha256:4ac0d5844363fbbefd6a61251df09d96cd546e05e01b8c1cc1a28803f0935e07
             command:
-              - sh
+              - /app/venv/bin/python
               - -c
               - |
-                [ -f /data/settings.json ] || printf '%s\n' '{"core":{"streams":{"domain":"streams","values":{"publish_ip":"192.168.107.54"}}}}' > /data/settings.json
+                import json, os
+                path = "/data/settings.json"
+                data = {}
+                if os.path.exists(path):
+                    with open(path) as f:
+                        data = json.load(f)
+                core = data.setdefault("core", {})
+                seed = {
+                    "streams": {"publish_ip": "192.168.107.54"},
+                    "webserver": {"base_url": "https://mass.t0m.co"},
+                }
+                for domain, values in seed.items():
+                    block = core.setdefault(domain, {})
+                    block.setdefault("domain", domain)
+                    values_block = block.setdefault("values", {})
+                    for key, value in values.items():
+                        values_block.setdefault(key, value)
+                with open(path, "w") as f:
+                    json.dump(data, f, indent=2)
             securityContext:
               runAsUser: 1000
               runAsGroup: 1000
@@ -36,9 +55,6 @@ spec:
               repository: ghcr.io/music-assistant/server
               tag: 2.10.9@sha256:4ac0d5844363fbbefd6a61251df09d96cd546e05e01b8c1cc1a28803f0935e07
             command:
-              - /usr/bin/tini
-              - -s
-              - --
               - /usr/local/bin/entrypoint.sh
               - --data-dir
               - /data
