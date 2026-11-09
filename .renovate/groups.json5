@@ -29,6 +29,15 @@
       minimumGroupSize: 2,
     },
     {
+      description: "BookOrbit Group",
+      groupName: "bookorbit",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["/bookorbit/"],
+      group: { commitMessageTopic: "{{{groupName}}} group" },
+      sourceUrl: "https://github.com/bookorbit/bookorbit",
+      minimumGroupSize: 2,
+    },
+    {
       description: "CE-Transcript Group",
       groupName: "ce-transcript",
       matchDatasources: ["docker", "aqua"],
