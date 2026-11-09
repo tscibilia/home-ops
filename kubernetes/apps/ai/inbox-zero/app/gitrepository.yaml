@@ -19,4 +19,4 @@ spec:
   # changed between the previous pin and this one - so the two PRs converging
   # separately is harmless.
   ref:
-    commit: 268c999e35330a3661a891e58bc3e96a976e062a
+    commit: e040fb7eb8778dc85112ad4cd087f88dac5b8640
