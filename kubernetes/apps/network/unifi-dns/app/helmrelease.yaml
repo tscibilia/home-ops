@@ -20,10 +20,10 @@ spec:
         env:
           - name: UNIFI_HOST
             value: https://192.168.1.1
+          - name: UNIFI_SITE
+            value: default
           - name: UNIFI_SKIP_TLS_VERIFY
             value: "true"
-          - name: UNIFI_EXTERNAL_CONTROLLER
-            value: "false"
           - name: UNIFI_API_KEY
             valueFrom:
               secretKeyRef:
