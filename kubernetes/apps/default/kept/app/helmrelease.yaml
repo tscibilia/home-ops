@@ -28,7 +28,7 @@ spec:
           02-bootstrap:
             image: &image
               repository: ghcr.io/keptinventory/kept
-              tag: 1.14.6@sha256:f2c0d4e5dcfdba7a714d94f3f0dc76772105c63147aeacbc13f344298c8eee9c
+              tag: 1.14.7@sha256:e346925dc007d16e2eaab91a20e1c5313734957acb54eeec456d40d5cf813ab3
             command: ["sh", "-c"]
             args:
               - kept bootstrap && psql -v ON_ERROR_STOP=1 -c 'GRANT kept_owner TO kept'
