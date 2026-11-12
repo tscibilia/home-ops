@@ -37,7 +37,7 @@
     {
       description: "Loose versioning for RustFS, stable tags only (excludes -glibc and -preview variants)",
       matchDatasources: ["docker"],
-      matchPackageNames: ["rustfs/rustfs"],
+      matchPackageNames: ["/rustfs\\/rustfs$/"],
       versioning: "loose",
       allowedVersions: "/^\\d+\\.\\d+\\.\\d+$/",
     },

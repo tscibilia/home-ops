@@ -50,6 +50,12 @@
       sourceUrl: "https://git.erwanleboucher.dev/eleboucher/memini",
     },
     {
+      description: "Changelog URL for RustFS",
+      matchPackageNames: ["/rustfs\\/rustfs$/"],
+      changelogUrl: "https://github.com/rustfs/rustfs/releases",
+      sourceUrl: "https://github.com/rustfs/rustfs",
+    },
+    {
       description: "Changelog URL for Seanime",
       matchPackageNames: ["/seanime/"],
       changelogUrl: "https://github.com/5rahim/seanime/releases",
