@@ -86,7 +86,8 @@ spec:
               repository: ghcr.io/maathimself/mailflow-frontend
               tag: 4.4.0@sha256:74be6c108479985214fe54ac30c14fabe64c7a80a54100f80ad2b89b45fa6f43
             env:
-              APP_HTTP_PORT: &webPort 80
+              # Envoy terminates TLS; Caddy serves plain HTTP on 80 behind it.
+              TLS_MODE: "off"
               BACKEND_HOST: mailflow-api.default.svc.cluster.local
               BACKEND_PORT: 3000
             resources:
@@ -102,7 +103,7 @@ spec:
                 spec: &probeSpec
                   httpGet:
                     path: /
-                    port: *webPort
+                    port: 80
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -116,7 +117,12 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 10
-            securityContext: *initSec
+            securityContext: &webSec
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: [ALL]
+                add: [NET_BIND_SERVICE]
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -129,7 +135,7 @@ spec:
         controller: web
         ports:
           http:
-            port: *webPort
+            port: 80
       api:
         controller: api
         ports:
@@ -144,16 +150,21 @@ spec:
         rules:
           - backendRefs:
               - identifier: web
-                port: *webPort
+                port: 80
     persistence:
       tmp:
         type: emptyDir
         globalMounts:
           - path: /tmp
-      nginx-cache:
+      caddy-data:
         type: emptyDir
         advancedMounts:
           web:
             app:
-              - path: /var/cache/nginx
-              - path: /var/run
+              - path: /data
+      caddy-config:
+        type: emptyDir
+        advancedMounts:
+          web:
+            app:
+              - path: /config
