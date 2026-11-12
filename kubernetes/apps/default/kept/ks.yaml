@@ -41,6 +41,31 @@ spec:
       kind: *postgresKind
       failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
       current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
+  patches:
+    # The cnpg component dumps as ${APP} (kept), which has no RLS policy; kept_owner has
+    # owner_all on every table, and --enable-row-security lets pg_dump read through it.
+    - target:
+        kind: CronJob
+        name: kept-pg-backups
+      patch: |
+        - op: replace
+          path: /spec/jobTemplate/spec/template/spec/containers/0/env/2
+          value:
+            name: POSTGRES_USER
+            value: kept_owner
+        - op: replace
+          path: /spec/jobTemplate/spec/template/spec/containers/0/env/3
+          value:
+            name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: kept-db
+                key: KEPT_DB_OWNER_PASSWORD
+        - op: add
+          path: /spec/jobTemplate/spec/template/spec/containers/0/env/-
+          value:
+            name: POSTGRES_EXTRA_OPTS
+            value: --enable-row-security
   prune: true
   sourceRef:
     kind: GitRepository
