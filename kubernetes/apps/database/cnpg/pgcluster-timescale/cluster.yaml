@@ -51,9 +51,9 @@ spec:
   resources:
     requests:
       cpu: 500m
-      memory: 1Gi
-    limits:
       memory: 2Gi
+    limits:
+      memory: 4Gi
   monitoring:
     enablePodMonitor: true
   # enablePDB replaces nodeMaintenanceWindow https://cloudnative-pg.io/documentation/1.26/kubernetes_upgrade/#pod-disruption-budgets
