@@ -22,7 +22,6 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 
 - comfyui
 - hermes _(AI agent gateway — Nous Research)_ [kopiur, oidc]
-- inbox-zero _(AI email assistant — Microsoft 365 mailbox triage and reply drafting, Graph API)_ [cnpg]
 - kokoro [kopiur]
 - litellm _(LLM API proxy)_ [cnpg, oidc]
 - litellm-operator
