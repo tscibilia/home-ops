@@ -32,4 +32,4 @@ patches:
         path: /spec/jobTemplate/spec/template/spec/containers/0/env/-
         value:
           name: POSTGRES_EXTRA_OPTS
-          value: --enable-row-security
+          value: --enable-row-security -Z1
