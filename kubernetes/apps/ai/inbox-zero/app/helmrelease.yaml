@@ -22,7 +22,7 @@ spec:
       # predate the worker and the migrate script this deployment needs. Renovate
       # tracks the digest of `latest`, matching the chart commit in
       # gitrepository.yaml (org.opencontainers.image.revision = 4dfa0daa...).
-      tag: latest@sha256:b983616b1a3d7ab06d12924afad5a32d9f4fb31967bb645dcdfcbcd79b10644b
+      tag: latest@sha256:43fb25f0803d8ca427b30819f46fbe3a7fc559ead24b1fa4b629b88824f74f28
       pullPolicy: IfNotPresent
     # App secrets are templated by the ExternalSecret in this directory.
     existingSecret: inbox-zero-secret
