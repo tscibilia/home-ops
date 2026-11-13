@@ -11,7 +11,7 @@ spec:
   # A different Debian release would change glibc, and glibc owns text collation,
   # so every text btree index would need a REINDEX before it could be trusted.
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
-  imageName: ghcr.io/cloudnative-pg/postgresql:18.6-standard-bookworm@sha256:cdb5c283a473507f7c597ea7e045d1a5e8efcbc4c5101aada013af9bd37ccc43
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.7-standard-bookworm@sha256:2643d7a683334dea20ba3171634f303eaf023605e709aa0f60ccc6aebf9fda18
   primaryUpdateStrategy: unsupervised
   primaryUpdateMethod: switchover
   storage:
