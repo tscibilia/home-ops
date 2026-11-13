@@ -8,3 +8,28 @@ resources:
   - ./ocirepository.yaml
   - ./pocketidoidcclient.yaml
   - ./pushsecret.yaml
+patches:
+  # The cnpg component dumps as ${APP} (kept), which has no RLS policy; kept_owner has
+  # owner_all on every table, and --enable-row-security lets pg_dump read through it.
+  # Kubernetes object overrides belong in app/kustomization.yaml, not in ks.yaml (strategic-merge)
+  - target:
+      kind: CronJob
+    patch: |
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/2
+        value:
+          name: POSTGRES_USER
+          value: kept_owner
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/3
+        value:
+          name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kept-db
+              key: KEPT_DB_OWNER_PASSWORD
+      - op: add
+        path: /spec/jobTemplate/spec/template/spec/containers/0/env/-
+        value:
+          name: POSTGRES_EXTRA_OPTS
+          value: --enable-row-security
