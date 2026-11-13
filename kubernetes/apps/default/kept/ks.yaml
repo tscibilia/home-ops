@@ -46,7 +46,6 @@ spec:
     # owner_all on every table, and --enable-row-security lets pg_dump read through it.
     - target:
         kind: CronJob
-        name: kept-pg-backups
       patch: |
         - op: replace
           path: /spec/jobTemplate/spec/template/spec/containers/0/env/2
