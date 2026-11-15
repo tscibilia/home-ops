@@ -61,7 +61,7 @@ spec:
               - --cache-dir
               - /cache
             env:
-              LOG_LEVEL: info
+              LOG_LEVEL: debug
             probes:
               liveness: &probes
                 enabled: true

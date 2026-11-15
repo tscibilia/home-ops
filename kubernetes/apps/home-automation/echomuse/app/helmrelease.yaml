@@ -23,6 +23,9 @@ spec:
               # Pinned to the multus IP: mDNS advertises and Dot registration
               SERVER_IP: 192.168.107.56
               ESPHOME_PROJECT_VERSION: "2.26.3"
+              # Reply wait before the turn is abandoned (controller default 30s, max 120s).
+              # 75s covers Music Assistant's blocking play_media path; ring dead-man is 135s.
+              EM_TTS_WAIT_TIMEOUT: "75"
             probes:
               liveness: &probes
                 enabled: true
