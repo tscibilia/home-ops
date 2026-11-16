@@ -32,6 +32,23 @@ spec:
     redis_port: os.environ/REDIS_PORT
     num_retries: 2
     timeout: 600
+    # max_parallel_requests=1 yields a synthetic 429 when local is busy;
+    # qwen-local-fast's 30s timeout covers the other group's queued request.
+    fallbacks:
+      - qwen-local: [deepseek-v4.1-flash]
+      - qwen-local-fast: [deepseek-v4.1-flash]
+      - deepseek-v4-flash: [deepseek-v4.1-flash]
+      - deepseek-v4.1-flash: [kimi-k3.1]
+    # Local 429/timeout means the single slot is saturated; retrying adds latency.
+    model_group_retry_policy:
+      qwen-local:
+        RateLimitErrorRetries: 0
+        TimeoutErrorRetries: 0
+        DefaultRetries: 0
+      qwen-local-fast:
+        RateLimitErrorRetries: 0
+        TimeoutErrorRetries: 0
+        DefaultRetries: 0
   env:
     - name: LITELLM_LOG
       value: INFO
