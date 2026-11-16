@@ -17,11 +17,12 @@ spec:
     additional:
       extra_body:
         provider:
-          order: ["deepinfra"]
-          # shared pool 429s under load; fall back to hosts at or below its rate.
+          # deepinfra ($0.06/in $0.18/out); relace ($0.07/in $0.14/out).
+          # cap admits both, so deepinfra serves first, relace on failure.
+          order: ["deepinfra", "relace"]
           allow_fallbacks: true
           max_price:
-            prompt: 0.06
+            prompt: 0.07
             completion: 0.18
   info:
     mode: chat
