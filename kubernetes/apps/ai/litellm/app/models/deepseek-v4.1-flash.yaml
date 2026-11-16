@@ -17,14 +17,14 @@ spec:
     additional:
       extra_body:
         provider:
-          # cheapest first by $/M input: morph $0.057, open-inference $0.07, deepinfra $0.098.
-          # Only deepinfra (51% off, $0.098/$0.294) satisfies the $0.14/$0.40 cap, so it serves.
-          order: ["morph", "open-inference", "deepinfra"]
-          # allow fall back at or below $0.14/$0.40
+          # deepinfra ($0.098/in $0.294/out) stays primary; fallbacks wafer/us $0.036/$0.50,
+          # relace $0.12/$0.50, river $0.0864/$0.3456. max_price filters on prompt AND completion.
+          order: ["deepinfra", "wafer/us", "relace", "river"]
+          # allow fall back at or below $0.14/$0.50
           allow_fallbacks: true
           max_price:
             prompt: 0.14
-            completion: 0.40
+            completion: 0.50
   info:
     mode: chat
     maxTokens: 131072
@@ -35,7 +35,7 @@ spec:
     supportsVision: true
     extra:
       supports_reasoning: true
-      # deepinfra via OpenRouter on -1017 (51% off): $0.098 in / $0.294 out / $0.00294 cached read
+      # deepinfra via OpenRouter on -1017: $0.098 in / $0.294 out / $0.00294 cached read
       input_cost_per_token: 0.0000000980
       cache_read_input_token_cost: 0.00000000294
       output_cost_per_token: 0.0000002940
