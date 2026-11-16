@@ -13,3 +13,4 @@ resources:
   - ./dashboard
   - ./models
   - ./mcps
+  - ./virtualkeys

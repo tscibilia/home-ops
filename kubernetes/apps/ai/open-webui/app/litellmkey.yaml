@@ -1,0 +1,30 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: open-webui
+spec:
+  proxyRef: litellm
+  keyAlias: Open-WebUI
+  secretName: litellm-key-open-webui
+  secretKey: api-key
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: litellm-key-open-webui
+spec:
+  refreshInterval: 1h
+  updatePolicy: Replace
+  secretStoreRefs:
+    - kind: ClusterSecretStore
+      name: akeyless-secret-store
+  selector:
+    secret:
+      name: litellm-key-open-webui
+  data:
+    - match:
+        secretKey: api-key
+        remoteRef:
+          remoteKey: /ai/litellm
+          property: LITELLM_OPENWEBUI_AGENTKEY

@@ -1,0 +1,33 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: pr-reviewer
+spec:
+  proxyRef: litellm
+  keyAlias: PR-Reviewer
+  secretName: litellm-key-pr-reviewer
+  secretKey: api-key
+  models:
+    - north-mini-code
+    - qwen-local
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: litellm-key-pr-reviewer
+spec:
+  refreshInterval: 1h
+  updatePolicy: Replace
+  secretStoreRefs:
+    - kind: ClusterSecretStore
+      name: akeyless-secret-store
+  selector:
+    secret:
+      name: litellm-key-pr-reviewer
+  data:
+    - match:
+        secretKey: api-key
+        remoteRef:
+          remoteKey: /ai/litellm
+          property: LITELLM_PRREVIEWER_AGENTKEY
