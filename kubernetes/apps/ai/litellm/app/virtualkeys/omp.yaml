@@ -1,0 +1,32 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: oh-my-pi
+spec:
+  proxyRef: litellm
+  keyAlias: oh-my-pi
+  secretName: litellm-key-oh-my-pi
+  secretKey: api-key
+  models:
+    - all-proxy-models
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: litellm-key-oh-my-pi
+spec:
+  refreshInterval: 1h
+  updatePolicy: Replace
+  secretStoreRefs:
+    - kind: ClusterSecretStore
+      name: akeyless-secret-store
+  selector:
+    secret:
+      name: litellm-key-oh-my-pi
+  data:
+    - match:
+        secretKey: api-key
+        remoteRef:
+          remoteKey: /ai/litellm
+          property: LITELLM_OHMYPI_AGENTKEY

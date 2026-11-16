@@ -1,0 +1,31 @@
+---
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMVirtualKey
+metadata:
+  name: mealie
+spec:
+  proxyRef: litellm
+  proxyNamespace: ai
+  keyAlias: Mealie
+  secretName: litellm-key-mealie
+  secretKey: api-key
+---
+apiVersion: external-secrets.io/v1alpha1
+kind: PushSecret
+metadata:
+  name: litellm-key-mealie
+spec:
+  refreshInterval: 1h
+  updatePolicy: Replace
+  secretStoreRefs:
+    - kind: ClusterSecretStore
+      name: akeyless-secret-store
+  selector:
+    secret:
+      name: litellm-key-mealie
+  data:
+    - match:
+        secretKey: api-key
+        remoteRef:
+          remoteKey: /ai/litellm
+          property: LITELLM_MEALIE_AGENTKEY
