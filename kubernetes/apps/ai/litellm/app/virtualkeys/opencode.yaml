@@ -29,4 +29,4 @@ spec:
         secretKey: api-key
         remoteRef:
           remoteKey: /ai/litellm
-          property: LITELLM_OPENCODE_API_KEY
+          property: LITELLM_OPENCODE_KEY
