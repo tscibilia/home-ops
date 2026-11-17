@@ -17,6 +17,8 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 
 Report concisely — sacrifice grammar for the sake of concision.
 
+**GitHub links** — cross-repo references are Markdown links to `https://redirect.github.com/<owner>/<repo>/issues/<N>` (or `/pull/<N>`), display text `owner/repo#N`. Never bare `github.com` URLs or bare `owner/repo#N`; the latter creates a public `cross-referenced` event in the upstream issue. Same-repo `#N` is fine. See `docs/agents/issue-tracker.md`.
+
 **Skill config:**
 
 - **Domain docs** — [`CONTEXT.md`](CONTEXT.md) is the map (glossary, state routing, ADR index). `docs/context/` = state, `docs/adr/` = decisions. See `docs/agents/domain.md`.
