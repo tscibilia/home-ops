@@ -2,6 +2,7 @@
 
 ## ⚠️ Gotchas & Interactions
 
+- **Agents never read secret values — metadata only.** Agents never read secret values from any store. Never decode, decrypt, unseal, or print a value from a Kubernetes Secret, Talos, aKeyless, ESO, SOPS, a cloud secret manager, or CI. Names, keys, `resourceVersion`, sync conditions, `refreshTime` and `lastRotatedAt` are metadata and safe to inspect; the value is not. To prove a rotation worked, show that the metadata moved. If a value reaches tool output anyway, say so and rotate it at the source. See `AGENTS.md` → Secret Handling.
 - **aKeyless path:** `/{namespace}/{app}` — most secrets are stored as a single static secret with multiple key/value pairs. Wrong path = silent empty secret, no error logged.
 - **cluster-secrets scope:** `cluster-secrets` variables are cluster-wide postBuild substitutions. App-specific credentials belong in a dedicated ExternalSecret, not in cluster-secrets.
 - **OIDC credentials flow the other way:** pocket-id _generates_ client credentials, so they are pushed **to** aKeyless with a `PushSecret`. Do not write an ExternalSecret that reads them — you would be reading a key nothing has written yet.
