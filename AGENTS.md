@@ -39,7 +39,16 @@ Report concisely — sacrifice grammar for the sake of concision.
 
 - **Always:** read-only inspection, local validation, formatting, linting (`flate test all`, `flate build`, `just docs test`).
 - **Ask first:** any git push the Commit Protocol below does not cover, anything that touches the live cluster — `just kube apply-ks`, `just kube sync`, `just kube reconcile-ks`, `just kube reconcile-hr`, `just kube restart-ks`, `just kube restart-hr`, `flux reconcile`, `talos apply` — deleting resources.
-- **Never:** push to `main`, merge a PR, commit secrets, decode or print Kubernetes secret values, edit existing ADRs in `docs/adr/` — supersede them instead; adding a new ADR is fine.
+- **Never:** push to `main`, merge a PR, commit secrets, decode, decrypt, unseal, or print any secret value — in Talos, Kubernetes, aKeyless, ESO, SOPS, cloud providers, CI, or any other store — edit existing ADRs in `docs/adr/` — supersede them instead; adding a new ADR is fine.
+
+## Secret Handling
+
+**Agents never read secret values.** This holds in every secret store, and in every mode — including debugging, verifying a suspected leak, or checking that a rotation worked. A value that is reachable is not therefore readable.
+
+- **Forbidden:** `kubectl get secret … -o yaml/json` value fields, `base64 -d`, `akeyless get-secret-value`, `talosctl` secret reads, ESO/ExternalSecret decryption, SOPS decryption, cloud secret-manager reads, or printing a value in any form.
+- **Allowed:** secret names, keys, labels, annotations, `resourceVersion`, `status.conditions`, `refreshTime`, `lastRotatedAt`, and object existence. Inspect secret metadata only.
+- **Prove a change without the value:** compare metadata that moves when the value changes — `resourceVersion`, refresh/rotation timestamps, sync conditions — never the value itself.
+- **If a value leaks anyway** (tool output, logs, a transcript): say so plainly, stop reading further, and rotate it at the source. Rotation is the fix; inspecting the leaked value is not.
 
 ## Task Runner & Workflow
 
