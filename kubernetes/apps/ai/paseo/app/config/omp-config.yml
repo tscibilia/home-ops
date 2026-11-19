@@ -1,0 +1,22 @@
+enabledProviders:
+  - opencode
+symbolPreset: unicode
+modelRoles:
+  task: litellm/deepseek-v4-flash
+  smol: litellm/qwen-local
+  advisor: litellm/deepseek-v4.1-flash:high
+  vision: litellm/qwen-local
+  plan: litellm/deepseek-v4.1-flash:high
+  commit: litellm/qwen-local-fast
+  default: litellm/deepseek-v4.1-flash:medium
+  web: web/searxng
+retry:
+  fallbackChains:
+    litellm/qwen-local:
+      - litellm/deepseek-v4-flash
+cycleOrder:
+  - smol
+  - slow
+hideThinkingBlock: true
+update:
+  auto: false

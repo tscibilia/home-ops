@@ -33,6 +33,8 @@
     - [One GPU slot, swapped on request, arbitrated by LLMKube](/docs/adr/0020-modelpool-router-for-gpu-swapping.md)
     - [Rename CNPG clusters by promoting a replica, upgrade them in place, never both at once](/docs/adr/0021-blue-green-rename-then-in-place-major-upgrade.md)
     - [Route `deepseek-v4.1-flash` through opencode Zen's free tier, with `-paid` as the fallback](/docs/adr/0022-opencode-zen-free-tier-via-litellm.md)
+    - [Paseo runs in-cluster as the always-on agent host](/docs/adr/0023-paseo-in-cluster-agent-host.md)
+    - [Owner-only merge exemption on `home-ops` main](/docs/adr/0024-owner-only-merge-bypass.md)
 
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)

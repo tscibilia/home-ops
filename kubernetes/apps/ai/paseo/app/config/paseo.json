@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "app": {
+    "baseUrl": "https://${APP}.${SECRET_DOMAIN}"
+  },
+  "daemon": {
+    "relay": { "enabled": true },
+    "mcp": { "enabled": false },
+    "terminalProfiles": [
+      {
+        "id": "opencode",
+        "name": "OpenCode",
+        "command": "opencode",
+        "args": ["--prompt={{{prompt}}}"],
+        "icon": "opencode"
+      },
+      {
+        "id": "omp",
+        "name": "OMP",
+        "command": "omp",
+        "args": ["{{{prompt}}}"]
+      }
+    ]
+  },
+  "worktrees": {
+    "root": "/workspace/worktrees"
+  },
+  "agents": {
+    "providers": {
+      "omp": { "enabled": true },
+      "opencode": { "enabled": true },
+      "claude": { "enabled": false },
+      "codex": { "enabled": false },
+      "copilot": { "enabled": false },
+      "pi": { "enabled": false },
+      "antigravity": { "enabled": false },
+      "muse": { "enabled": false }
+    }
+  },
+  "features": {
+    "webUi": { "enabled": true }
+  },
+  "log": {
+    "file": { "level": "info" }
+  }
+}

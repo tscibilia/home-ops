@@ -90,6 +90,8 @@ Read the ADRs touching the area you're about to work in. Don't re-litigate a rec
 | [0020](docs/adr/0020-modelpool-router-for-gpu-swapping.md)             | One GPU slot, swapped on request, arbitrated by LLMKube         | 2026-08-18 | accepted                |
 | [0021](docs/adr/0021-blue-green-rename-then-in-place-major-upgrade.md) | Rename CNPG clusters by promoting a replica; upgrade separately | 2026-09-03 | accepted                |
 | [0022](docs/adr/0022-opencode-zen-free-tier-via-litellm.md)            | Zen free tier via a litellm pre-call hook; `-paid` as fallback  | 2026-10-16 | superseded 2026-10-31   |
+| [0023](docs/adr/0023-paseo-in-cluster-agent-host.md)                   | Paseo runs in-cluster as the always-on agent host               | 2026-11-18 | accepted                |
+| [0024](docs/adr/0024-owner-only-merge-bypass.md)                       | Owner-only merge bypass on `home-ops` main                      | 2026-11-19 | accepted                |
 
 **0005, 0006, 0007 and 0009 are reconstructed** — written after the fact from the commits that removed them, not from contemporaneous notes. Each says so. Trust their consequences more than their rationale.
 

@@ -1,0 +1,14 @@
+[user]
+	name = obi-pod-kenobi
+	email = 358550823+obi-pod-kenobi@users.noreply.github.com
+	signingkey = /home/paseo/.ssh/paseo_signing
+[commit]
+	gpgsign = true
+[gpg]
+	format = ssh
+[credential]
+	helper = !gh auth git-credential
+[init]
+	defaultBranch = main
+[safe]
+	directory = *

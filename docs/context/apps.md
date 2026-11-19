@@ -28,6 +28,7 @@ Full list by namespace. The source of truth is `kubernetes/apps/`; the list belo
 - llmkube _(LLM inference orchestrator)_
 - memini _(AI memory/context — pgvector + semantic search)_ [cnpg]
 - open-webui [kopiur, oidc]
+- paseo [kopiur]
 
 ## cert-manager
 
