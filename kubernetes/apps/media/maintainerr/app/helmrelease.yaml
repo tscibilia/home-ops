@@ -22,12 +22,13 @@ spec:
             env:
               UI_PORT: &port 80
               TELEMETRY: off
+              NODE_OPTIONS: --max-old-space-size=768
             resources:
               requests:
                 cpu: 10m
                 memory: 128Mi
               limits:
-                memory: 512Mi
+                memory: 1Gi
             probes:
               liveness: &probes
                 enabled: true
