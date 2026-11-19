@@ -10,7 +10,7 @@ Paseo is a daemon plus clients: the Windows app, the Linux app, the browser UI, 
 - Run Paseo in the `ai` namespace on a `ceph-ssd` PVC. `/home/paseo` holds daemon state and is backed up by kopiur; `/workspace` holds git clones and worktrees and is not backed up.
 - Build a child image from `ghcr.io/getpaseo/paseo` in a standalone `tscibilia/containers` repo. Bake OMP (`@oh-my-pi/pi-coding-agent`), OpenCode, Bun, Node 24, Python/uv, Go, mise, and the home-ops toolset. The upstream image deliberately ships no agent CLIs.
 - Expose the daemon on `envoy-internal` at `paseo.${SECRET_DOMAIN}` with Paseo password auth, and enable the Paseo relay for off-LAN and phone use.
-- Mount the admin kubeconfig from `/kubernetes/kubeconfig` so agents can repair the cluster. Talos credentials are not mounted.
+- Mount the admin kubeconfig assembled from `/kubernetes/kubeconfig` and the `/talos-m70q` cluster CA so agents can repair the cluster. Talos credentials are not mounted.
 - Start with a blank `/workspace`; agents clone the repos they need. Work is git-mediated: uncommitted WSL edits are not visible to the pod.
 - Sign commits with a dedicated SSH signing key stored in aKeyless, registered on an `obi-pod-kenobi` machine user rather than the personal account. Push with a fine-grained PAT owned by that machine user; the branch ruleset requires a signed PR, and the bot has no ruleset bypass.
 - Let OMP's memini plugin derive the memory namespace from each repository's git remote/toplevel. Do not set `MEMINI_NAMESPACE`; the memini key's default namespace is only a fallback.
