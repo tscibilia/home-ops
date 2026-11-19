@@ -127,24 +127,22 @@ spec:
             app:
               - path: /workspace
       config:
-        type: configMap
-        name: "{{ .Release.Name }}-configmap"
+        type: projected
+        sources:
+          - configMap:
+              name: "{{ .Release.Name }}-configmap"
+          - secret:
+              name: "{{ .Release.Name }}-kubeconfig"
+              items:
+                - key: kubeconfig
+                  path: kubeconfig
+          - secret:
+              name: "{{ .Release.Name }}"
+              items:
+                - key: PASEO_SIGNING_KEY
+                  path: signing_key
         globalMounts:
           - path: /etc/paseo
-            readOnly: true
-      kubeconfig:
-        type: secret
-        name: "{{ .Release.Name }}-kubeconfig"
-        globalMounts:
-          - path: /etc/paseo/kubeconfig
-            subPath: kubeconfig
-            readOnly: true
-      signing:
-        type: secret
-        name: "{{ .Release.Name }}"
-        globalMounts:
-          - path: /etc/paseo/signing_key
-            subPath: PASEO_SIGNING_KEY
             readOnly: true
       tmp:
         type: emptyDir
