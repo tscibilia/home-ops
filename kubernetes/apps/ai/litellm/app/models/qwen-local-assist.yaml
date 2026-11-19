@@ -1,0 +1,46 @@
+---
+# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/litellm.home-operations.com/litellmmodel_v1alpha1.json
+apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMModel
+metadata:
+  name: &name qwen-local-assist
+spec:
+  # Voice-control for Home Assistant Assist. Uses llama-qwen backend and its
+  # default weights; only the sampler row and the reasoning budget differ.
+  modelName: *name
+  params:
+    model: openai/Qwen3.8-27B
+    # Router, not the service: naming the model is what wakes it when comfyui
+    # holds the slot. The backend's displayName keeps `model` unchanged.
+    apiBase: http://ai3090-router-router-proxy.ai.svc.cluster.local:8080/v1
+    apiKeyRef:
+      name: litellm-secret
+      key: LLAMA_API_KEY
+    additional:
+      # Keys under `additional` are copied into litellm_params VERBATIM
+      # expects snake_case, operator only camelCases its own typed fields
+      max_parallel_requests: 1
+      # Shares the single llama.cpp slot with the other qwen groups. Bound the
+      # queued wait so a busy slot fails the turn instead of holding the Dot.
+      timeout: 45
+      extra_body:
+        # extra_body bypasses the proxy's drop_params, so this reaches llama.cpp intact
+        chat_template_kwargs:
+          enable_thinking: true
+          reasoning_effort: low
+        temperature: 1.0
+        top_p: 0.95
+        presence_penalty: 0.0
+  info:
+    mode: chat
+    maxTokens: 32768
+    maxInputTokens: 147456 # contextSize 180224 minus maxOutputTokens; llama.cpp counts both against one pool
+    maxOutputTokens: 32768
+    supportsFunctionCalling: true
+    supportsVision: true
+    extra:
+      supports_reasoning: true
+      input_cost_per_token: 0.0000000120
+      cache_creation_input_token_cost: 0.0000000120
+      cache_read_input_token_cost: 0.0000000010
+      output_cost_per_token: 0.0000000500

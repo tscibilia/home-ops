@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ./qwen-local.yaml
   - ./qwen-local-fast.yaml
+  - ./qwen-local-assist.yaml
   - ./comfyui.yaml
   - ./memini-embed.yaml
   - ./memini-rerank.yaml
