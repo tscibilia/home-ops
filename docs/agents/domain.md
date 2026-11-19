@@ -4,7 +4,7 @@ How the engineering skills should consume this repo's domain documentation when 
 
 ## Before exploring, read these
 
-- **`AGENTS.md` → Secret Handling** — agents never read secret values from any store (Talos, Kubernetes, aKeyless, ESO, SOPS, cloud); inspect metadata only and rotate at the source after a leak.
+- **`AGENTS.md` → Secret Handling** — agents never read credential values from any store (Talos, Kubernetes, aKeyless, ESO, SOPS, cloud, CI, **and application databases or config files**); inspect metadata and non-credential columns only, and rotate at the source after a leak.
 - **`CONTEXT.md`** at the repo root — the map. Glossary, the routing table for `docs/context/`, and the ADR index. Start here.
 - **`docs/adr/`** — read the ADRs touching the area you're about to work in. `CONTEXT.md`'s index says what each covers, so you don't have to open all of them.
 - **`docs/context/`** — read the file(s) covering the scoped area you're about to touch. One file per topic, named for it; `CONTEXT.md`'s routing table says which to open.
