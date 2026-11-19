@@ -1,0 +1,152 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app paseo
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: *app
+  interval: 1h
+  values:
+    controllers:
+      *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
+        strategy: Recreate
+        pod:
+          terminationGracePeriodSeconds: 600
+        containers:
+          app:
+            image:
+              repository: ghcr.io/tscibilia/paseo
+              tag: 0.16.2@sha256:a97811f7bd00774b7a27671cb6aaff418488e7cc222e2ff9551a9631aa1f79d4
+            env:
+              PASEO_LISTEN: 0.0.0.0:6767
+              PASEO_HOSTNAMES: "{{ .Release.Name }}.${SECRET_DOMAIN}"
+              PASEO_TRUSTED_PROXIES: 10.42.0.0/16
+              PASEO_WEB_UI_ENABLED: "true"
+              PASEO_RELAY_ENABLED: "true"
+              PASEO_LOG_FILE_LEVEL: info
+              KUBECONFIG: /etc/paseo/kubeconfig
+              GIT_CONFIG_GLOBAL: /etc/paseo/gitconfig
+              GIT_AUTHOR_NAME: &gitUser obi-pod-kenobi
+              GIT_AUTHOR_EMAIL: &gitEmail 358550823+obi-pod-kenobi@users.noreply.github.com
+              GIT_COMMITTER_NAME: *gitUser
+              GIT_COMMITTER_EMAIL: *gitEmail
+              MEMINI_BASE_URL: http://memini.ai.svc.cluster.local:8080
+              LITELLM_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: litellm-key-paseo
+                    key: api-key
+              PASEO_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}"
+                    key: PASEO_PASSWORD
+              GH_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}"
+                    key: GH_TOKEN
+              MEMINI_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}"
+                    key: MEMINI_API_KEY
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /api/health
+                    port: &port 6767
+                  failureThreshold: 60
+              readiness: &health
+                enabled: true
+                custom: true
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 3
+              liveness:
+                <<: *health
+            resources:
+              requests:
+                cpu: 250m
+                memory: 512Mi
+              limits:
+                cpu: 4
+                memory: 6Gi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: "{{ .Release.Name }}-ghcr-pull"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: http
+    persistence:
+      home:
+        existingClaim: *app
+        advancedMounts:
+          *app :
+            app:
+              - path: /home/paseo
+      workspace:
+        existingClaim: "{{ .Release.Name }}-workspace"
+        advancedMounts:
+          *app :
+            app:
+              - path: /workspace
+      config:
+        type: configMap
+        name: "{{ .Release.Name }}-configmap"
+        globalMounts:
+          - path: /etc/paseo
+            readOnly: true
+      kubeconfig:
+        type: secret
+        name: "{{ .Release.Name }}-kubeconfig"
+        globalMounts:
+          - path: /etc/paseo/kubeconfig
+            subPath: kubeconfig
+            readOnly: true
+      signing:
+        type: secret
+        name: "{{ .Release.Name }}"
+        globalMounts:
+          - path: /etc/paseo/signing_key
+            subPath: PASEO_SIGNING_KEY
+            readOnly: true
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

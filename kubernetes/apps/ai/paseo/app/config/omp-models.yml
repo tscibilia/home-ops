@@ -1,0 +1,118 @@
+providers:
+  litellm:
+    baseUrl: http://litellm.ai.svc.cluster.local:4000/v1
+    api: openai-completions
+    apiKey: LITELLM_API_KEY
+    discovery:
+      type: litellm
+    models:
+      - id: qwen-local
+        name: Local/Qwen3.8-27B
+        api: openai-completions
+        reasoning: true
+        input: [text, image]
+        contextWindow: 180224
+        maxTokens: 32768
+        tokenizer: qwen3
+        cost:
+          input: 0.012
+          output: 0.05
+          cacheRead: 0.001
+          cacheWrite: 0.012
+      - id: qwen-local-fast
+        name: Local/Qwen3.8-27B (fast)
+        api: openai-completions
+        reasoning: false
+        input: [text, image]
+        contextWindow: 180224
+        maxTokens: 32768
+        tokenizer: qwen3
+        cost:
+          input: 0.012
+          output: 0.05
+          cacheRead: 0.001
+          cacheWrite: 0.012
+      - id: deepseek-v4-flash
+        name: DeepSeek V4 Flash
+        api: openai-completions
+        reasoning: true
+        input: [text]
+        contextWindow: 1048576
+        maxTokens: 131072
+        cost:
+          input: 0.06
+          output: 0.18
+          cacheRead: 0.015
+          cacheWrite: 0.0
+      - id: deepseek-v4.1-flash
+        name: DeepSeek V4.1 Flash
+        api: openai-completions
+        reasoning: true
+        input: [text, image]
+        contextWindow: 1048576
+        maxTokens: 131072
+        cost:
+          input: 0.002
+          output: 0.04
+          cacheRead: 0.002
+          cacheWrite: 0.0
+      - id: kimi-k3.1
+        name: Kimi K3.1 Pro
+        api: openai-completions
+        reasoning: true
+        input: [text, image]
+        contextWindow: 1048560
+        maxTokens: 131072
+        cost:
+          input: 2.0
+          output: 10.0
+          cacheRead: 0.2
+          cacheWrite: 0.0
+      - id: jev-1
+        name: Jev-1.13-Free (system one)
+        api: openai-completions
+        reasoning: true
+        input: [text]
+        contextWindow: 1048560
+        maxTokens: 131072
+        cost:
+          input: 0.0
+          output: 0.0
+          cacheRead: 0.0
+          cacheWrite: 0.0
+      - id: nano-banana-2-lite
+        name: Gemini 3.1 Flash Lite Image
+        api: openai-completions
+        reasoning: false
+        input: [text, image]
+        contextWindow: 65536
+        maxTokens: 66000
+        cost:
+          input: 0.25
+          output: 1.5
+          cacheRead: 0.0
+          cacheWrite: 0.0
+      - id: qwen-image-3
+        name: Qwen Image 3
+        api: openai-completions
+        reasoning: false
+        input: [text, image]
+        contextWindow: 65536
+        maxTokens: 65536
+        cost:
+          input: 0.0
+          output: 0.0
+          cacheRead: 0.0
+          cacheWrite: 0.0
+      - id: comfyui
+        name: ComfyUI (GPU wake switch)
+        api: openai-completions
+        reasoning: false
+        input: [text]
+        contextWindow: 512
+        maxTokens: 512
+        cost:
+          input: 0.0
+          output: 0.0
+          cacheRead: 0.0
+          cacheWrite: 0.0
