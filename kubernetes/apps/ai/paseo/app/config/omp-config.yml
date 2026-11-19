@@ -1,3 +1,52 @@
+# Generic secret-handling guard for every repo on this host.
+# Repo-specific rules belong in <repo>/.omp/config.yml.
+tools:
+  approval:
+    eval: prompt
+  restrictedFolders:
+    - ~/.ssh
+    - ~/.aws
+    - ~/.kube
+    - ~/.config/gh
+    - ~/.paseo
+    - /etc/paseo
+bash:
+  patterns:
+    - match: "sqlite3*"
+      approval: deny
+    - match: "* sqlite3*"
+      approval: deny
+    - match: "pg_dump*"
+      approval: deny
+    - match: "pg_restore*"
+      approval: deny
+    - match: "sops -d*"
+      approval: deny
+    - match: "sops exec-env*"
+      approval: deny
+    - match: "printenv*"
+      approval: deny
+    - match: "ps eww*"
+      approval: deny
+    - match: "cat *.env*"
+      approval: deny
+    - match: "cat *.sqlite*"
+      approval: deny
+    - match: "env"
+      approval: deny
+    - match: "psql*"
+      approval: prompt
+    - match: "aws secretsmanager get-secret-value*"
+      approval: prompt
+    - match: "gcloud secrets versions access*"
+      approval: prompt
+    - match: "vault kv get*"
+      approval: prompt
+    - match: "doppler secrets download*"
+      approval: prompt
+    - match: "op item get*"
+      approval: prompt
+# Foreign user-level config sources only. Native OMP discovery is always on
 enabledProviders:
   - opencode
 symbolPreset: unicode

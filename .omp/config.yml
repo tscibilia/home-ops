@@ -1,0 +1,18 @@
+# home-ops-specific OMP rules. Generic secret handling lives in the Paseo
+# deployment's global omp-config.yml.
+bash:
+  patterns:
+    - match: "kubectl get secret*"
+      approval: prompt
+    - match: "kubectl cp*"
+      approval: prompt
+    - match: "kubectl exec*"
+      approval: prompt
+    - match: "talosctl read*"
+      approval: deny
+    - match: "helm get values*"
+      approval: deny
+    - match: "helm get manifest*"
+      approval: deny
+    - match: "akeyless get-secret-value*"
+      approval: prompt
