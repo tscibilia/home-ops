@@ -44,17 +44,17 @@ spec:
               PASEO_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ .Release.Name }}"
+                    name: "{{ .Release.Name }}-secret"
                     key: PASEO_PASSWORD
               GH_TOKEN:
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ .Release.Name }}"
+                    name: "{{ .Release.Name }}-secret"
                     key: GH_TOKEN
               MEMINI_API_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: "{{ .Release.Name }}"
+                    name: "{{ .Release.Name }}-secret"
                     key: MEMINI_API_KEY
             probes:
               startup:
@@ -137,7 +137,7 @@ spec:
                 - key: kubeconfig
                   path: kubeconfig
           - secret:
-              name: "{{ .Release.Name }}"
+              name: "{{ .Release.Name }}-secret"
               items:
                 - key: PASEO_SIGNING_KEY
                   path: signing_key
