@@ -43,14 +43,11 @@ Report concisely — sacrifice grammar for the sake of concision.
 
 ## Secret Handling
 
-**Agents never read credential values.** This holds everywhere a credential lives and in every mode — including debugging, verifying a suspected leak, or checking that a rotation worked. A value that is reachable is not therefore readable.
+**Agents never read credential values — ever.** Not to debug, not to verify a leak, not to check that a rotation worked, not to "see the shape". A reachable value is not readable. If a value reaches output, say so in the same turn and rotate at the source; never inspect it further.
 
-- **Scope is every store, not just secret managers:** Kubernetes Secrets, Talos, aKeyless, ESO, SOPS, cloud secret managers, CI — **and application data**: SQLite/Postgres rows, config files, `.env` files, session stores, app API databases (e.g. `maintainerr.sqlite` `settings`), volume copies, and backups. An app database is a secret store the moment it holds an `apikey`, `*_token`, `*_secret`, `*_password`, or `*_api_key` column.
-- **Forbidden:** `kubectl get secret … -o yaml/json` value fields, `base64 -d`, `akeyless get-secret-value`, `talosctl` secret reads, ESO/ExternalSecret decryption, SOPS decryption, cloud secret-manager reads, `SELECT *` on an app table that stores credentials, `cat` of a whole config file or `.env`, copying a whole app database out of a pod, or printing a value in any form.
-- **Allowed:** secret names, keys, labels, annotations, `resourceVersion`, `status.conditions`, `refreshTime`, `lastRotatedAt`, object existence — and app schema: table names, column names, row counts, timestamps, and non-credential fields selected **by name**.
-- **Bulk reads are a gate, not a convenience:** before querying or copying app data, enumerate its schema, then project only the columns the question needs. Exclude every credential-looking column (`apikey`, `*_token`, `*_secret`, `*_password`, `*_api_key`) explicitly. If a single row mixes config and credentials, select the safe columns one at a time; never select the row's `*`.
-- **Prove a change without the value:** compare metadata that moves when the value changes — `resourceVersion`, refresh/rotation timestamps, sync conditions — never the value itself.
-- **If a value leaks anyway** (tool output, logs, a transcript): say so plainly, stop reading further, and rotate it at the source. Rotation is the fix; inspecting the leaked value is not.
+Per store: **metadata projection first; never retrieve; redact only inside the producing pipe.** Truncation (`head`, `cut`) is not redaction. App data and databases are a gate: schema first, columns by name, never `SELECT *`.
+
+Safe and forbidden commands per store (Kubernetes, aKeyless, SOPS, Talos, cloud managers, SQLite/Postgres, PVCs, env, logs): [`docs/context/secrets.md`](docs/context/secrets.md).
 
 ## Task Runner & Workflow
 

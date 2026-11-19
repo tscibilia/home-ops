@@ -2,10 +2,69 @@
 
 ## ⚠️ Gotchas & Interactions
 
-- **Agents never read credential values — metadata only.** Agents never read credential values from any store. Never decode, decrypt, unseal, or print a value from a Kubernetes Secret, Talos, aKeyless, ESO, SOPS, a cloud secret manager, CI — or from **application data** such as an app's SQLite/Postgres rows, a config file, or a `.env`. Never `SELECT *` a table that stores credentials (an `apikey`, `*_token`, `*_secret`, `*_password`, or `*_api_key` column makes it one), never `cat` a whole config file, never copy a whole app database out of a pod. Names, keys, `resourceVersion`, sync conditions, `refreshTime`, `lastRotatedAt`, table names, column names and non-credential fields selected by name are metadata and safe to inspect; the value is not. To prove a rotation worked, show that the metadata moved. If a value reaches tool output anyway, say so and rotate it at the source. See `AGENTS.md` → Secret Handling.
+- **Agents never read secrets or credential values — metadata only.** Never decode, decrypt, or print a value from any store, app database, config file, or `.env`. Values never reach output; if one does, say so and rotate at the source. Rules and per-store commands: [Handling Rules](#handling-rules).
 - **aKeyless path:** `/{namespace}/{app}` — most secrets are stored as a single static secret with multiple key/value pairs. Wrong path = silent empty secret, no error logged.
 - **cluster-secrets scope:** `cluster-secrets` variables are cluster-wide postBuild substitutions. App-specific credentials belong in a dedicated ExternalSecret, not in cluster-secrets.
 - **OIDC credentials flow the other way:** pocket-id _generates_ client credentials, so they are pushed **to** aKeyless with a `PushSecret`. Do not write an ExternalSecret that reads them — you would be reading a key nothing has written yet.
+
+## Handling Rules
+
+**Metadata projection first; never retrieve; redact only inside the producing pipe.** Names, keys, lengths, hashes, timestamps, existence only. Truncation (`head`, `cut`, `sed -n '1p'`) is not redaction. If a value reaches output, say so, stop, rotate at the source.
+
+### Safe commands
+
+Kubernetes — keys, lengths, hashes; never values:
+
+```bash
+kubectl -n NS get secret NAME -o json | jq '{keys:(.data|keys), bytes:(.data|map_values(length))}'
+kubectl -n NS get secret NAME -o json | jq '.metadata.annotations | keys' # values can hold data via last-applied-configuration
+kubectl -n NS get secret NAME -o json | jq -r '.metadata.annotations["reconcile.external-secrets.io/data-hash"]'
+kubectl -n NS get externalsecret NAME -o json | jq '{ready:.status.conditions, refreshTime:.status.refreshTime}'
+kubectl -n NS get secret NAME -o json | jq -e '.data | has("FIELD")' >/dev/null
+kubectl -n NS get secret NAME -o json | jq '.data | map_values("<redacted>")'
+```
+
+aKeyless:
+
+```bash
+akeyless get-secret-value --name PATH --json | jq -r 'paths(scalars) | map(tostring) | join(".")'
+akeyless get-secret-value --name PATH --json | jq -e 'to_entries[] | .value | has("FIELD")' >/dev/null
+akeyless get-secret-value --name PATH --json | jq 'walk(if type == "string" then "<redacted>" else . end)'
+akeyless describe-item --name PATH --json | jq 'del(.public_value) | del(.custom_fields[]?.value)'
+```
+
+SQL — schema and counts, never rows:
+
+```bash
+sqlite3 DB '.tables'; sqlite3 DB '.schema TABLE'; sqlite3 DB 'select count(*) from TABLE'
+psql -c '\dt'; psql -c '\d TABLE'; psql -c 'select count(*) from TABLE'
+```
+
+Fingerprint or compare without printing (hashes are brute-forceable for low-entropy values; prefer `diff >/dev/null`):
+
+```bash
+... | jq -r '.FIELD' | sha256sum | cut -c1-12
+diff <(...) <(...) >/dev/null && echo same || echo differ
+```
+
+Secret-manager metadata: `aws secretsmanager list-secrets`/`describe-secret`, `gcloud secrets versions list`/`describe`, `vault kv list`/`metadata get`, `doppler secrets --only-names`, `op item list`.
+
+### Never use commands
+
+- **Kubernetes:** `kubectl get secret -o yaml`, `-o jsonpath='{.data.X}'`, `-o go-template`, bare `base64 -d`, `kubectl cp` out of a pod, `kubectl exec … -- env`/`printenv`/`cat`, or reading a rendered config Secret (`homepage-config`, `*-secret` mounts) — these embed live keys. `metadata.annotations` values are unsafe when `last-applied-configuration` is present; `kubectl describe secret` is safe only for operator-managed objects.
+- **aKeyless:** `get-secret-value` without a value-free projection; `… | head`, `… | cut`, `… | sed -n '1p'`; `describe-item --item-custom-fields-details` (`public_value`); raw `list-items` output.
+- **SOPS / ESO / Helm / Flux:** `sops -d`, `sops exec-env`, `sops --extract`; `helm get values`/`helm get manifest` and `kubectl get helmrelease -o yaml` where values embed credentials (Helm release Secrets hold the full rendered manifest).
+- **Talos / kubeconfig:** `talosctl read` of kubeconfigs, certs, or `/var/lib/…` secret files; `talosctl etcd snapshot`; `talosctl kubeconfig -o -`; `kubectl config view --raw`/`--flatten`.
+- **Cloud / secret managers:** `aws secretsmanager get-secret-value`, `gcloud secrets versions access`, `vault kv get`, `doppler secrets download`/`--plain`, `op item get --reveal`, GitHub Actions secret reads.
+- **App data:** `SELECT *`, `sqlite3 … '.dump'`, `pg_dump`, `COPY … TO STDOUT`, or selecting any credential-looking column (`apikey`, `*_token`, `*_secret`, `*_password`, `*_api_key`, `cookie`, `session`, `jwt`, `private_key`, `webhook`, `dsn`) — even when the row also holds config the question needs.
+- **Files / PVCs / backups:** `cat` of a whole config, `.env`, or app DB; `tar`/`rsync`/`kubectl cp` of a volume, database, backup, or snapshot out of a pod; mounting a PVC elsewhere to read it.
+- **Process / env / shell:** `env`, `printenv`, `export -p`, `ps eww`, `/proc/*/environ`/`cmdline`, shell history, `--value "$SECRET"` in argv (visible in `ps` and history), `set -x`/`bash -x` around secret-bearing commands.
+- **Logs / capture:** grepping logs for credential literals or dumping matching lines (app logs, `kubectl logs -p`, VictoriaLogs output); packet captures of authenticated traffic.
+- **Failure paths:** unvalidated filters (`grep`, `sed`) that pass input through, `head -c`/`cut` "truncation", `jq -R`, and any projection placed after the raw value already reached the terminal.
+
+**Bulk reads are a gate.** Enumerate schema first, project only the columns the question needs, exclude credential columns explicitly. A row that mixes config and credentials is read column-by-column, never `*`.
+
+**Prove a change without the value.** Prefer metadata that moves: `resourceVersion`, `data-hash`, refresh/rotation timestamps, status conditions, byte lengths. Hashing or `diff >/dev/null` is a fallback, not a licence.
 
 ## Secret Store
 

@@ -55,8 +55,6 @@
       "mcp__plugin_context-mode_context-mode__ctx_execute_file"
     ],
     "deny": [
-      "Write(/home/tscibilia/home-ops/CLAUDE.md)",
-      "Write(/home/tscibilia/home-ops/.agents/AGENTS.md)",
       "Bash(rm *)",
       "Bash(del *)",
       "Bash(rmdir *)",
@@ -65,7 +63,8 @@
       "Bash(sudo *)",
       "Bash(git push --force *)",
       "Bash(git reset --hard *)",
-      "Bash(git clean *)"
+      "Bash(git clean *)",
+      "Bash(*sqlite*)"
     ],
     "ask": ["Bash(git commit *)", "Bash(git push *)"]
   },
