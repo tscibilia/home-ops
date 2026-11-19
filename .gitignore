@@ -10,26 +10,29 @@
 /github-deploy.key
 /github-deploy.key.pub
 /github-push-token.txt
+
 # Kubernetes
 kubeconfig
 talosconfig
+
 # AI Agents
-.claude/
 .agents/*
 !.agents/*.md
-!.agents/settings.json
 !.agents/plugins/
 !.agents/skills/
-.omp/
+.claude/
 .pi/
 .unlazy/
+
 # convenience symlink -> .agents/superpowers
 .superpowers
+
 # Private
 .git/
 .private/
 .scratch/
 mise.lock
+
 # Misc.
 /data/
 graphify-out/

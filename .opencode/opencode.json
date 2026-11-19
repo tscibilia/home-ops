@@ -1,5 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "shell", "resource": "kubectl get secret*", "effect": "ask" },
+    { "action": "shell", "resource": "kubectl cp*", "effect": "ask" },
+    { "action": "shell", "resource": "kubectl exec*", "effect": "ask" },
+    { "action": "shell", "resource": "talosctl read*", "effect": "deny" },
+    { "action": "shell", "resource": "helm get values*", "effect": "deny" },
+    { "action": "shell", "resource": "helm get manifest*", "effect": "deny" },
+    { "action": "shell", "resource": "akeyless get-secret-value*", "effect": "ask" }
+  ],
   "mcp": {
     "litellm-homelab": {
       "type": "remote",
