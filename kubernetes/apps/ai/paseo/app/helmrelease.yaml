@@ -30,6 +30,7 @@ spec:
               PASEO_RELAY_ENABLED: "true"
               PASEO_LOG_FILE_LEVEL: info
               KUBECONFIG: /etc/paseo/kubeconfig
+              TALOSCONFIG: /etc/paseo/talosconfig
               GIT_CONFIG_GLOBAL: /etc/paseo/gitconfig
               GIT_AUTHOR_NAME: &gitUser obi-pod-kenobi
               GIT_AUTHOR_EMAIL: &gitEmail 358550823+obi-pod-kenobi@users.noreply.github.com
