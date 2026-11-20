@@ -1,5 +1,9 @@
 {
   "worktree": {
-    "setup": ["mise trust", "mise install"]
+    "setup": [
+      "mise trust",
+      "mise install",
+      "for f in kubeconfig talosconfig; do s=\"$(git rev-parse --path-format=absolute --git-common-dir)/../$f\"; [ -e \"$s\" ] || s=\"/etc/paseo/$f\"; if [ -e \"$s\" ]; then ln -sfn \"$s\" \"$f\"; fi; done"
+    ]
   }
 }

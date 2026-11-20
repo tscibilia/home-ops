@@ -9,6 +9,7 @@
 - **Namespace components are not listed here:** `alerts`, `secrets` and `kopiur/secret` are declared once per namespace in `kubernetes/apps/{ns}/kustomization.yaml` and apply to every app in it. The `[flags]` below track app components only — see `components.md`.
 - **`[auth]` vs `[oidc]`:** `[auth]` = the `components/auth` component (tinyauth forward auth). `[oidc]` = a `PocketIDOIDCClient` CR in the app dir (native OIDC, no component). They are alternatives, not companions — see `networking.md`.
 - **Forward-auth apps skip Gatus route monitoring:** Apps using the `auth` component sit behind a tinyauth redirect which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
+- **Paseo worktrees get credentials by link:** `.mise.toml` expects `kubeconfig` and `talosconfig` at the checkout root. The `worktree.setup` hook in the tracked `paseo.json` links them from the project clone, falling back to `/etc/paseo`. A checkout without that hook entry reaches neither Kubernetes nor Talos.
 
 Full list by namespace. The source of truth is `kubernetes/apps/`; the list below is rendered from it by `just docs generate` and checked by `just docs test`. Don't hand-edit it — the one exception is the `_(description)_` after an app name, which is hand-written and preserved across regenerations.
 
