@@ -35,6 +35,7 @@
     - [Route `deepseek-v4.1-flash` through opencode Zen's free tier, with `-paid` as the fallback](/docs/adr/0022-opencode-zen-free-tier-via-litellm.md)
     - [Paseo runs in-cluster as the always-on agent host](/docs/adr/0023-paseo-in-cluster-agent-host.md)
     - [Owner-only merge exemption on `home-ops` main](/docs/adr/0024-owner-only-merge-bypass.md)
+    - [Paseo receives Talos credentials from a Talos ServiceAccount](/docs/adr/0025-paseo-talos-credentials.md)
 
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)

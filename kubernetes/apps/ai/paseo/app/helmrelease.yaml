@@ -137,6 +137,11 @@ spec:
                 - key: kubeconfig
                   path: kubeconfig
           - secret:
+              name: "{{ .Release.Name }}-talosconfig"
+              items:
+                - key: config
+                  path: talosconfig
+          - secret:
               name: "{{ .Release.Name }}-secret"
               items:
                 - key: PASEO_SIGNING_KEY

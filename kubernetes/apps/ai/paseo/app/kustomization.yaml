@@ -9,6 +9,7 @@ resources:
   - ./litellmkey.yaml
   - ./ocirepository.yaml
   - ./pvc.yaml
+  - ./talos-serviceaccount.yaml
 generatorOptions:
   disableNameSuffixHash: true
 configMapGenerator:
