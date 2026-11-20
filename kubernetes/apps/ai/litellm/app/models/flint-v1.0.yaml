@@ -3,14 +3,14 @@
 apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMModel
 metadata:
-  name: &name north-mini-code
+  name: &name flint-v1.0
 spec:
-  # Cohere's free coding model on OpenRouter: $0 in/$0 out while the promo runs.
-  # No client contract to satisfy — a plain OpenRouter key is enough. Free endpoints
-  # are rate-limited per OpenRouter account; when the promo ends the failure is 429
+  # Recursive's free coding model on OpenRouter: $0 in/$0 out. One provider
+  # serves it (Recursive itself), so the endpoint can disappear with no notice —
+  # same failure as cohere/north-mini-code:free on 2026-11-20.
   modelName: *name
   params:
-    model: openai/cohere/north-mini-code:free
+    model: openai/recursive/flint-v1.0:free
     apiBase: https://openrouter.ai/api/v1
     apiKeyRef:
       name: litellm-secret
@@ -18,8 +18,8 @@ spec:
   info:
     mode: chat
     maxTokens: 32768
-    maxInputTokens: 256000
-    maxOutputTokens: 64000
+    maxInputTokens: 262144
+    maxOutputTokens: 235929
     supportsFunctionCalling: true
     supportsPromptCaching: false
     supportsVision: false

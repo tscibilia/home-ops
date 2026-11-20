@@ -9,7 +9,7 @@ spec:
   secretName: litellm-key-pr-reviewer
   secretKey: api-key
   models:
-    - north-mini-code
+    - flint-v1.0
     - qwen-local
 ---
 apiVersion: external-secrets.io/v1alpha1

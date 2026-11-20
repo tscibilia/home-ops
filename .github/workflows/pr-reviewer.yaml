@@ -126,10 +126,10 @@ jobs:
           allowed-source-hosts: github.com,api.github.com,raw.githubusercontent.com,gitlab.com,codeberg.org,registry.terraform.io,artifacthub.io,actualbudget.org,cloudnative-pg.io,postgresql.org,www.postgresql.org,fluxcd.io,docs.cilium.io,rook.io,external-secrets.io,gateway.envoyproxy.io,kubernetes.io,kubernetes-sigs.github.io,talos.dev,www.talos.dev,bjw-s.dev,grafana.com,docs.fluentbit.io,git.erwanleboucher.dev,hub.docker.com
           ai-base-url: http://litellm.ai.svc.cluster.local:4000/v1
           ai-api-format: openai
-          # Cohere's free coding model on OpenRouter (cohere/north-mini-code:free),
-          # via litellm's north-mini-code-free. No client-contract hook: a plain
-          # OpenRouter key is enough. qwen-local below is the fallback.
-          ai-model: north-mini-code
+          # Recursive's free coding model on OpenRouter (recursive/flint-v1.0:free),
+          # via litellm's flint-v1.0. No client-contract hook: a plain OpenRouter
+          # key is enough. qwen-local below is the fallback.
+          ai-model: flint-v1.0
           ai-api-key: ${{ steps.load-secrets.outputs.LITELLM_API_KEY }}
           ai-max-tokens: "32768"
           ai-temperature: "0.1"

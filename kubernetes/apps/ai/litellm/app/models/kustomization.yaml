@@ -11,7 +11,7 @@ resources:
   - ./memini-rerank.yaml
   - ./deepseek-v4-flash.yaml
   - ./deepseek-v4.1-flash.yaml
-  - ./north-mini-code.yaml
+  - ./flint-v1.0.yaml
   - ./kimi-k3.1.yaml
   - ./qwen-image-3.yaml
   - ./nano-banana-2-lite.yaml
