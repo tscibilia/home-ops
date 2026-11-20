@@ -22,6 +22,9 @@ spec:
             image:
               repository: ghcr.io/tscibilia/paseo
               tag: 0.16.2@sha256:a97811f7bd00774b7a27671cb6aaff418488e7cc222e2ff9551a9631aa1f79d4
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secret"
             env:
               PASEO_LISTEN: 0.0.0.0:6767
               PASEO_HOSTNAMES: "{{ .Release.Name }}.${SECRET_DOMAIN}"
@@ -42,21 +45,6 @@ spec:
                   secretKeyRef:
                     name: litellm-key-paseo
                     key: api-key
-              PASEO_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Release.Name }}-secret"
-                    key: PASEO_PASSWORD
-              GH_TOKEN:
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Release.Name }}-secret"
-                    key: GH_TOKEN
-              MEMINI_API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: "{{ .Release.Name }}-secret"
-                    key: MEMINI_API_KEY
             probes:
               startup:
                 enabled: true
