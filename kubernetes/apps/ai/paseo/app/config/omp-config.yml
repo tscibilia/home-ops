@@ -1,11 +1,11 @@
-# Generic secret-handling guard for every repo on this host.
+# Generic agent policy for every repo on this host.
+# The secret-guard hook (hooks/pre/secret-guard.ts) owns secret value reads:
+# it hard-denies them and allows the metadata projections in
+# docs/context/secrets.md. These patterns are a cheap second layer for
+# commands that are never safe, so they do not need path parsing.
 # Repo-specific rules belong in <repo>/.omp/config.yml.
 bash:
   patterns:
-    - match: "sqlite3*"
-      approval: deny
-    - match: "* sqlite3*"
-      approval: deny
     - match: "pg_dump*"
       approval: deny
     - match: "pg_restore*"
@@ -18,24 +18,30 @@ bash:
       approval: deny
     - match: "ps eww*"
       approval: deny
-    - match: "cat *.env*"
-      approval: deny
     - match: "cat *.sqlite*"
       approval: deny
     - match: "env"
       approval: deny
-    - match: "psql*"
-      approval: prompt
-    - match: "aws secretsmanager get-secret-value*"
-      approval: prompt
-    - match: "gcloud secrets versions access*"
-      approval: prompt
-    - match: "vault kv get*"
-      approval: prompt
-    - match: "doppler secrets download*"
-      approval: prompt
-    - match: "op item get*"
-      approval: prompt
+    - match: "helm get values*"
+      approval: deny
+    - match: "helm get manifest*"
+      approval: deny
+    - match: "kubectl cp*"
+      approval: deny
+    - match: "kubectl exec*-- env*"
+      approval: deny
+    - match: "kubectl exec*-- printenv*"
+      approval: deny
+    - match: "kubectl exec*-- export*"
+      approval: deny
+    - match: "kubectl exec*-- cat*"
+      approval: deny
+    - match: "kubectl exec*-- sh*"
+      approval: deny
+    - match: "kubectl exec*-- bash*"
+      approval: deny
+    - match: "kubectl exec*-- python*"
+      approval: deny
 # Foreign user-level config sources only. Native OMP discovery is always on
 enabledProviders:
   - opencode
