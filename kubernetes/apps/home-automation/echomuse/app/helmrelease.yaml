@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/wilbowes/echomuse-controller
-              tag: 2.27.0@sha256:85aa57b969081cad554f30dfe83a48d95ceff9f0668680a6f4558e10b1d9b43a
+              tag: 2.27.1@sha256:319cc5cb7dd63dbd3f699a63458ebe293f4853d4cd9d59f2b94457e1162683eb
             env:
               # Pinned to the multus IP: mDNS advertises and Dot registration
               SERVER_IP: 192.168.107.56
