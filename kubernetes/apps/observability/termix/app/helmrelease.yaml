@@ -19,7 +19,7 @@ spec:
           app:
             image:
               repository: ghcr.io/lukegus/termix
-              tag: 26.11.2@sha256:9fe1ff21badf4c85be14fa2129122d87690f9012d3e5a341f46d6bd3b7a8d862
+              tag: 26.11.3@sha256:f5a208e3c570fa5d3ec65dc2ad462eacf96e0d9a7f4f84410e5694f5a388f5ba
             env:
               PORT: &port 8080
               REMOTE_DESKTOP_ENGINE: builtin
