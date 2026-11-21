@@ -36,6 +36,7 @@
     - [Paseo runs in-cluster as the always-on agent host](/docs/adr/0023-paseo-in-cluster-agent-host.md)
     - [Owner-only merge exemption on `home-ops` main](/docs/adr/0024-owner-only-merge-bypass.md)
     - [Paseo receives Talos credentials from a Talos ServiceAccount](/docs/adr/0025-paseo-talos-credentials.md)
+    - [Paseo gets a least-privilege kubeconfig](/docs/adr/0026-paseo-least-privilege-kubeconfig.md)
 
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)

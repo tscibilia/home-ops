@@ -3,12 +3,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./config/kubeconfig-tpl.yaml
   - ./externalsecret.yaml
   - ./helmrelease.yaml
   - ./litellmkey.yaml
   - ./ocirepository.yaml
   - ./pvc.yaml
+  - ./rbac.yaml
   - ./talos-serviceaccount.yaml
 generatorOptions:
   disableNameSuffixHash: true
@@ -20,3 +20,4 @@ configMapGenerator:
       - gitconfig=./config/gitconfig
       - omp-config.yml=./config/omp-config.yml
       - omp-models.yml=./config/omp-models.yml
+      - kubeconfig=./config/kubeconfig.yaml

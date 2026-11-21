@@ -1,8 +1,6 @@
 # Generic secret-handling guard for every repo on this host.
 # Repo-specific rules belong in <repo>/.omp/config.yml.
 tools:
-  approval:
-    eval: prompt
   restrictedFolders:
     - ~/.ssh
     - ~/.aws

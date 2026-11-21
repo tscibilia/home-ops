@@ -1,0 +1,121 @@
+---
+# Least-privilege identity for the paseo agent pod.
+#
+# The agent runs arbitrary code, so the only real secret boundary is the
+# credential it holds. This role can read the cluster and reconcile Flux, but
+# it cannot read Secrets or ConfigMaps: RBAC has no deny rules, so the core
+# group is enumerated instead of wildcarded.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: paseo-agent
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - pods/status
+      - events
+      - nodes
+      - nodes/status
+      - namespaces
+      - services
+      - services/status
+      - endpoints
+      - persistentvolumeclaims
+      - persistentvolumeclaims/status
+      - persistentvolumes
+      - replicationcontrollers
+      - resourcequotas
+      - limitranges
+      - serviceaccounts
+    verbs: ["get", "list", "watch"]
+  # Every API group except the core group. Wildcarding `apiGroups` would
+  # re-include core and therefore Secrets.
+  - apiGroups:
+      - acme.cert-manager.io
+      - actions.github.com
+      - admissionregistration.k8s.io
+      - apiextensions.k8s.io
+      - apiregistration.k8s.io
+      - apps
+      - authentication.k8s.io
+      - authorization.k8s.io
+      - autoscaling
+      - barmancloud.cnpg.io
+      - batch
+      - ceph.rook.io
+      - cert-manager.io
+      - certificates.k8s.io
+      - cilium.io
+      - coordination.k8s.io
+      - csi.ceph.io
+      - discovery.k8s.io
+      - dragonflydb.io
+      - events.k8s.io
+      - external-secrets.io
+      - external.metrics.k8s.io
+      - externaldns.k8s.io
+      - federation.llmkube.dev
+      - flowcontrol.apiserver.k8s.io
+      - fluxcd.controlplane.io
+      - gateway.envoyproxy.io
+      - gateway.networking.k8s.io
+      - gateway.networking.x-k8s.io
+      - generators.external-secrets.io
+      - grafana.integreatly.org
+      - groupsnapshot.storage.k8s.io
+      - helm.toolkit.fluxcd.io
+      - inference.llmkube.dev
+      - k8s.cni.cncf.io
+      - kopiur.home-operations.com
+      - kustomize.toolkit.fluxcd.io
+      - litellm.home-operations.com
+      - metrics.k8s.io
+      - monitoring.coreos.com
+      - monitoring.giantswarm.io
+      - networking.k8s.io
+      - node.k8s.io
+      - notification.toolkit.fluxcd.io
+      - objectbucket.io
+      - observability.giantswarm.io
+      - pocketid.internal
+      - policy
+      - postgresql.cnpg.io
+      - rbac.authorization.k8s.io
+      - resource.k8s.io
+      - scheduling.k8s.io
+      - snapshot.storage.k8s.io
+      - source.toolkit.fluxcd.io
+      - storage.k8s.io
+      - storagemigration.k8s.io
+      - tailscale.com
+      - talos.dev
+      - toolhive.stacklok.com
+      - tuppr.home-operations.com
+      - volsync.backube
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  # Reconcile and suspend/resume from the agent's normal workflows.
+  - apiGroups:
+      - helm.toolkit.fluxcd.io
+      - kustomize.toolkit.fluxcd.io
+      - source.toolkit.fluxcd.io
+      - notification.toolkit.fluxcd.io
+      - image.toolkit.fluxcd.io
+      - fluxcd.controlplane.io
+    resources: ["*"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: paseo-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: paseo-agent
+subjects:
+  - kind: ServiceAccount
+    name: paseo
+    namespace: ai
