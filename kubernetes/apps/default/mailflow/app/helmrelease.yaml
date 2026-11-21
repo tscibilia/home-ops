@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maathimself/mailflow-backend
-              tag: 4.5.0@sha256:804422db559915d429d9c306ed480c9a6e059084d97fdc43818d5c934f18d101
+              tag: 4.5.1@sha256:1376df954db75ccd127d6937c24c1bf7f4183fc4e141f75b66e22c9bd2dc1998
             env:
               NODE_ENV: production
               PORT: &apiPort 3000
@@ -84,7 +84,7 @@ spec:
           app:
             image:
               repository: ghcr.io/maathimself/mailflow-frontend
-              tag: 4.5.0@sha256:6ec7200df64f3d24dc802cddee95b76de8159890f885342955e5dd0c3200baf0
+              tag: 4.5.1@sha256:bda596d18aabb510a3e88d82871e5b709914666c2ee5347e58e2169f2c9ba1c1
             env:
               # Envoy terminates TLS; Caddy serves plain HTTP on 80 behind it.
               TLS_MODE: "off"
