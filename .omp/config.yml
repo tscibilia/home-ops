@@ -1,18 +1,45 @@
-# home-ops-specific OMP rules. Generic secret handling lives in the Paseo
-# deployment's global omp-config.yml.
+# home-ops repo rules. Host-wide policy lives in the Paseo image:
+# ~/.omp/agent/RULES.md and ~/.omp/agent/hooks/pre/secret-guard.ts.
+# Ordered, first match wins; project rules are evaluated before host rules.
 bash:
   patterns:
-    - match: "kubectl get secret*"
-      approval: prompt
-    - match: "kubectl cp*"
-      approval: prompt
-    - match: "kubectl exec*"
-      approval: prompt
+    - match: "git push --force*"
+      approval: deny
+    - match: "git push -f*"
+      approval: deny
     - match: "talosctl read*"
+      approval: deny
+    - match: "kubectl exec*"
+      approval: deny
+    - match: "kubectl cp*"
       approval: deny
     - match: "helm get values*"
       approval: deny
     - match: "helm get manifest*"
       approval: deny
-    - match: "akeyless get-secret-value*"
-      approval: prompt
+    - match: "*get secret *-o yaml*"
+      approval: deny
+    - match: "*get secrets *-o yaml*"
+      approval: deny
+    - match: "*get secret *-o jsonpath*"
+      approval: deny
+    - match: "*get secrets *-o jsonpath*"
+      approval: deny
+    - match: "*get secret *-o go-template*"
+      approval: deny
+    - match: "*get secrets *-o go-template*"
+      approval: deny
+    - match: "git add*"
+      approval: allow
+    - match: "git commit*"
+      approval: allow
+    - match: "git push*"
+      approval: allow
+    - match: "git switch -c*"
+      approval: allow
+    - match: "git checkout -b*"
+      approval: allow
+    - match: "gh pr create*"
+      approval: allow
+    - match: "just *"
+      approval: allow

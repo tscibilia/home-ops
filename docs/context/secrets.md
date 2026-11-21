@@ -11,6 +11,8 @@
 
 **Metadata projection first; never retrieve; redact only inside the producing pipe.** Names, keys, lengths, hashes, timestamps, existence only. Truncation (`head`, `cut`, `sed -n '1p'`) is not redaction. If a value reaches output, say so, stop, rotate at the source.
 
+The Paseo agent host enforces this with a hard-deny hook, not a prompt: the safe commands below pass, value reads return an error the agent must route around, and there is no approval to click. In the pod, RBAC also denies Secret reads ([ADR-0026](../adr/0026-paseo-least-privilege-kubeconfig.md)), so the `kubectl get secret` projections run from a workstation or a temporary elevated kubeconfig. OpenCode denies direct `akeyless get-secret-value`; use `just` or OMP for the value-free akeyless projections.
+
 ### Safe commands
 
 Kubernetes — keys, lengths, hashes; never values:
