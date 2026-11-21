@@ -75,7 +75,7 @@ spec:
               capabilities:
                 drop: ["ALL"]
     defaultPodOptions:
-      automountServiceAccountToken: false
+      automountServiceAccountToken: true
       imagePullSecrets:
         - name: "{{ .Release.Name }}-ghcr-pull"
       securityContext:
@@ -120,11 +120,6 @@ spec:
         sources:
           - configMap:
               name: "{{ .Release.Name }}-configmap"
-          - secret:
-              name: "{{ .Release.Name }}-kubeconfig"
-              items:
-                - key: kubeconfig
-                  path: kubeconfig
           - secret:
               name: "{{ .Release.Name }}-talosconfig"
               items:
