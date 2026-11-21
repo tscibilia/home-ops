@@ -1,13 +1,5 @@
 # Generic secret-handling guard for every repo on this host.
 # Repo-specific rules belong in <repo>/.omp/config.yml.
-tools:
-  restrictedFolders:
-    - ~/.ssh
-    - ~/.aws
-    - ~/.kube
-    - ~/.config/gh
-    - ~/.paseo
-    - /etc/paseo
 bash:
   patterns:
     - match: "sqlite3*"
