@@ -26,9 +26,21 @@ bash:
       approval: deny
     - match: "helm get manifest*"
       approval: deny
-    - match: "kubectl exec*"
-      approval: deny
     - match: "kubectl cp*"
+      approval: deny
+    - match: "kubectl exec*-- env*"
+      approval: deny
+    - match: "kubectl exec*-- printenv*"
+      approval: deny
+    - match: "kubectl exec*-- export*"
+      approval: deny
+    - match: "kubectl exec*-- cat*"
+      approval: deny
+    - match: "kubectl exec*-- sh*"
+      approval: deny
+    - match: "kubectl exec*-- bash*"
+      approval: deny
+    - match: "kubectl exec*-- python*"
       approval: deny
 # Foreign user-level config sources only. Native OMP discovery is always on
 enabledProviders:

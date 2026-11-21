@@ -1,7 +1,8 @@
 # home-ops rules
 
-`AGENTS.md` is authoritative for this repo. These are the rules that matter to
-every harness, including the host-wide ones:
+`AGENTS.md` is authoritative for this repo. The rules below are home-ops
+specific; the generic secret-handling and commit rules ship host-wide in the
+image (`RULES.md`).
 
 - Many deployments store credentials in cleartext in `*/<app>.sqlite` (`settings`
   table). Never dump, copy, or `SELECT` that table; schema and non-credential

@@ -3,15 +3,49 @@
 # Ordered, first match wins; project rules are evaluated before host rules.
 bash:
   patterns:
-    - match: "git push --force*"
+    - match: "git push --force* main*"
       approval: deny
-    - match: "git push -f*"
+    - match: "git push -f* main*"
       approval: deny
-    - match: "talosctl read*"
+    - match: "git push* main* --force*"
       approval: deny
-    - match: "kubectl exec*"
+    - match: "git push* +main*"
+      approval: deny
+    - match: "talosctl*read*kubeconfig*"
+      approval: deny
+    - match: "talosctl*read*cert*"
+      approval: deny
+    - match: "talosctl*read*.key*"
+      approval: deny
+    - match: "talosctl*read*secret*"
+      approval: deny
+    - match: "talosctl*read*talosconfig*"
+      approval: deny
+    - match: "talosctl*read*/var/lib/*"
       approval: deny
     - match: "kubectl cp*"
+      approval: deny
+    - match: "kubectl exec*-- env*"
+      approval: deny
+    - match: "kubectl exec*-- printenv*"
+      approval: deny
+    - match: "kubectl exec*-- export*"
+      approval: deny
+    - match: "kubectl exec*-- cat*"
+      approval: deny
+    - match: "kubectl exec*-- sh*"
+      approval: deny
+    - match: "kubectl exec*-- bash*"
+      approval: deny
+    - match: "kubectl exec*-- python*"
+      approval: deny
+    - match: "kubectl exec*-- *kubeconfig*"
+      approval: deny
+    - match: "kubectl exec*-- *talosconfig*"
+      approval: deny
+    - match: "kubectl exec*-- *signing_key*"
+      approval: deny
+    - match: "kubectl exec*-- */var/run/secrets/*"
       approval: deny
     - match: "helm get values*"
       approval: deny
@@ -29,6 +63,12 @@ bash:
       approval: deny
     - match: "*get secrets *-o go-template*"
       approval: deny
+    - match: "git push --force-with-lease*"
+      approval: allow
+    - match: "git push --force*"
+      approval: allow
+    - match: "git push -f*"
+      approval: allow
     - match: "git add*"
       approval: allow
     - match: "git commit*"
