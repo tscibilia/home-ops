@@ -17,6 +17,7 @@ configMapGenerator:
     files:
       - paseo.json=./config/paseo.json
       - opencode.json=./config/opencode.json
+      - prune-branches.sh=./config/prune-branches.sh
       - gitconfig=./config/gitconfig
       - omp-config.yml=./config/omp-config.yml
       - omp-models.yml=./config/omp-models.yml
