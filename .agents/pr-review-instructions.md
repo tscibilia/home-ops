@@ -22,9 +22,9 @@ If a pattern is explicitly documented as intentional in `AGENTS.md` (or in the c
 
 ### Konflate rendered-diff tools
 
-A Konflate MCP server is configured. Konflate renders Helm charts and Kustomizations into their final Kubernetes manifests, so its rendered diff shows the actual cluster impact of a PR — not just the raw git changes. A rendered-diff summary is usually already injected into the corpus by the konflate evidence provider; use the MCP tools when you need more than the summary provides.
+A Konflate MCP server is configured. Konflate renders Helm charts and Kustomizations into their final Kubernetes manifests, so its rendered diff shows the actual cluster impact of a PR — not just the raw git changes. The rendered diff is not pre-injected; call the MCP tools to get it.
 
-- `mcp__konflate__get_pr_summary` — pass the current PR `number`. Blast radius (added/changed/removed resources), caution lint (data-loss, immutable-field, RBAC, suspend/prune), image changes, render failures. Cheap and high-value; call this first if the evidence section is missing or stale.
+- `mcp__konflate__get_pr_summary` — pass the current PR `number`. Blast radius (added/changed/removed resources), caution lint (data-loss, immutable-field, RBAC, suspend/prune), image changes, render failures. Cheap and high-value; call this first.
 - `mcp__konflate__get_pr_diff` — pass the current PR `number`. The full rendered manifest diff (Kubernetes YAML at PR head vs merge-base). Use it when the raw git diff hides the real change — e.g. a HelmRelease version bump or a one-line `values` change that fans out across many resources.
 
 **Konflate signals in the review:** surface cautions as caveats or blockers by severity; treat render failures as blockers (the manifests may not apply cleanly). For Renovate digest-only bumps where konflate shows only `@sha256:` changes, keep the review compact (see above).

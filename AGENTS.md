@@ -17,6 +17,8 @@ Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-meta
 
 Report concisely — sacrifice grammar for the sake of concision.
 
+**Comments** — two lines maximum. State one non-obvious fact (why, constraint, hazard); never narrate the code, restate a name, record a change, or leave commented-out code. If it needs a third line, fix the code or the abstraction.
+
 **GitHub links** — cross-repo references are Markdown links to `https://redirect.github.com/<owner>/<repo>/issues/<N>` (or `/pull/<N>`), display text `owner/repo#N`. Never bare `github.com` URLs or bare `owner/repo#N`; the latter creates a public `cross-referenced` event in the upstream issue. Same-repo `#N` is fine. See `docs/agents/issue-tracker.md`.
 
 **Skill config:**

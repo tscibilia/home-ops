@@ -31,12 +31,8 @@ jobs:
       && !github.event.pull_request.draft
       && (github.event.action != 'labeled' || github.event.label.name == 'ai-review') }}
     runs-on: ${{ github.event.repository.name }}-runner
-    # Backstop only — must exceed the action's own budgets, or a long review is
-    # killed with nothing published. Worst case is the tool loop (900s) + primary
-    # review (2 attempts × 300s) + fallback (2 attempts × 300s, a fixed budget
-    # the action does not expose) = 2100s (35m), plus checkout and preflight.
-    # Every *_timeout_sec and ai-primary-retries change below has to be re-checked
-    # against this number.
+    # Backstop above the action's own budgets; worst case ≈ tool loop 900s
+    # + 4 × 300s reviews + checkout. Re-check after any timeout change.
     timeout-minutes: 40
     permissions:
       contents: read
@@ -53,12 +49,6 @@ jobs:
             - name: "/ai/litellm"
               output-name: "LITELLM_API_KEY"
               key: "LITELLM_PRREVIEWER_AGENTKEY"
-            - name: "/kubernetes/konflate"
-              output-name: "KONFLATE_TOKEN"
-              key: "KONFLATE_TOKEN"
-            - name: "/kubernetes/cluster-secrets"
-              output-name: "SECRET_DOMAIN"
-              key: "SECRET_DOMAIN"
 
       - name: Checkout PR
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -113,34 +103,22 @@ jobs:
           echo "Preflight OK."
 
       - name: AI PR Review
-        uses: misospace/pr-reviewer-action@0a2d2732f7358e509e6a85e11160eb25cc5b1b80 # v3.8.0
-        env:
-          KONFLATE_MCP_URL: http://konflate.flux-system.svc.cluster.local:8080/mcp
-          KONFLATE_PUBLIC_URL: https://konflate.${{ steps.load-secrets.outputs.SECRET_DOMAIN }}
-          KONFLATE_MCP_TOKEN: ${{ steps.load-secrets.outputs.KONFLATE_TOKEN }}
+        uses: misospace/pr-reviewer-action@25dae600b49c50c18d9b05cc8812943a1f5412ec # v3.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          allow-approve: "true"
           # Exact host match, no subdomain or www fallback. Redirects are
           # re-validated per hop, so a bare domain that 301s to www needs both.
           allowed-source-hosts: github.com,api.github.com,raw.githubusercontent.com,gitlab.com,codeberg.org,registry.terraform.io,artifacthub.io,actualbudget.org,cloudnative-pg.io,postgresql.org,www.postgresql.org,fluxcd.io,docs.cilium.io,rook.io,external-secrets.io,gateway.envoyproxy.io,kubernetes.io,kubernetes-sigs.github.io,talos.dev,www.talos.dev,bjw-s.dev,grafana.com,docs.fluentbit.io,git.erwanleboucher.dev,hub.docker.com
           ai-base-url: http://litellm.ai.svc.cluster.local:4000/v1
           ai-api-format: openai
-          # Recursive's free coding model on OpenRouter (recursive/flint-v1.0:free),
-          # via litellm's flint-v1.0. No client-contract hook: a plain OpenRouter
-          # key is enough. qwen-local below is the fallback.
+          # flint-v1.0 via litellm/OpenRouter; qwen-local is the fallback.
           ai-model: flint-v1.0
           ai-api-key: ${{ steps.load-secrets.outputs.LITELLM_API_KEY }}
           ai-max-tokens: "32768"
           ai-temperature: "0.1"
-          # A healthy review finishes the whole job in 2–15m, so a single call
-          # past 300s is hung, not slow. Retries were starving the fallback:
-          # 3 × 600s alone overran the job timeout and nothing was published.
-          # Total attempt count, not extra attempts on top of one: 2 × 300s = 10m.
-          # v3's default is true (v2's was false). Left off for v2 parity: on, it
-          # blocks the review until all other checks on the head SHA go terminal.
-          # v3 self-excludes its own run, so it cannot wait on itself.
+          # Off for v2 parity; on waits for every other check on the head SHA.
           ci-status-check: "false"
+          # 300s is hung, not slow; attempts are total, so 2 × 300s = 10m.
           ai-primary-retries: "2"
           ai-primary-retry-delay-sec: "5"
           ai-connect-timeout-sec: "15"
@@ -155,7 +133,6 @@ jobs:
           review-verbosity: concise
           ai-response-format: json_schema
           verdict-policy: findings_severity_gated
-          evidence-providers-file: .github/konflate-evidence.json
           inline-findings: "true"
           on-model-failure: fail
           required-check-validation-mode: warn
@@ -165,21 +142,23 @@ jobs:
           system-prompt-file: .agents/pr-review-instructions.md
           system-prompt-mode: append
           tool-mode: native_loop
-          tool-max-requests: "32"
-          tool-max-rounds: "20"
+          tool-max-requests: "40"
           tool-loop-summarize: "true"
           tool-loop-summarize-max-tokens: "512"
           tool-loop-wall-clock-sec: "900"
           tool-turn-timeout-sec: "120"
           tool-corpus-max-bytes: "100000"
           tool-max-tokens-per-turn: "32000"
-          tool-request-timeout-sec: "60"
+          # Litellm MCP gateway takes ~60s to list tools after init
+          # (BerriAI/litellm#50065); 90s leaves headroom.
+          tool-request-timeout-sec: "90"
           tool-max-response-bytes: "32000"
           tool-allowed-gh-api-repos: "*"
           tool-enable-for-forks: "false"
           tool-mcp-servers: "tools=http://litellm.ai.svc.cluster.local:4000/mcp/,konflate=http://konflate.flux-system.svc.cluster.local:8080/mcp"
           tool-mcp-token: ${{ steps.load-secrets.outputs.LITELLM_API_KEY }}
-          tool-mcp-name-prefixes: "github_mcp,searxng_mcp,victoria_logs_mcp,sidero_mcp,context7_mcp,talos_mcp"
-          publish-review-comment: "true"
+          # Only these MCP tools reach the reviewer; grafana/ha/deepwiki stay
+          # available to other clients and are denied here by the read-verb gate.
+          tool-mcp-name-prefixes: "github_mcp,searxng_mcp-searxng_web,searxng_mcp-searxng,searxng_mcp-web_url,victoria_logs_mcp,sidero_mcp,context7_mcp,talos_mcp-talos"
           publish-mode: review_verdict
           validate-required-checks: "auto"

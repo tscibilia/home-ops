@@ -1,10 +1,29 @@
 ---
 apiVersion: litellm.home-operations.com/v1alpha1
+kind: LiteLLMTeam
+metadata:
+  name: pr-reviewer
+spec:
+  proxyRef: litellm
+  teamID: pr-reviewer
+  alias: PR-Reviewer
+  models:
+    - flint-v1.0
+    - qwen-local
+  mcpServers:
+    - searxng_mcp
+    - victoria_logs_mcp
+    - sidero_mcp
+    - context7_mcp
+    - talos_mcp
+---
+apiVersion: litellm.home-operations.com/v1alpha1
 kind: LiteLLMVirtualKey
 metadata:
   name: pr-reviewer
 spec:
   proxyRef: litellm
+  teamID: pr-reviewer
   keyAlias: PR-Reviewer
   secretName: litellm-key-pr-reviewer
   secretKey: api-key
