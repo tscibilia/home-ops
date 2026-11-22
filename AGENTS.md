@@ -121,7 +121,12 @@ Two rules it enforces:
 Either path first: YAML schema-validated, linted, formatted; `just docs generate` if an app or docker stack was added, removed or renamed.
 
 - **Local harness** — shares the user's machine and signing key: hand over a formatted commit message and stop.
-- **Remote harness** — own checkout, credentials and signing key (hermes): commit on a feature branch, push it, open the PR, report the URL.
+- **Remote harness** — own checkout, credentials and signing key (hermes, or Paseo — `PASEO_AGENT_ID` is set): commit on a feature branch, push it, open the PR, report the URL.
+
+Remote harness rules:
+
+- Never `git commit`, `git push`, or open a PR unless asked to. Ask before any destructive or hard-to-reverse action instead of defaulting to it.
+- PR titles follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): `<type>[(scope)][!]: <description>`. Individual commit messages don't have to follow the format, though matching it is fine. Sign off commits: `git commit -s`.
 
 ## Tooling Quirks
 

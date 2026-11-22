@@ -45,6 +45,10 @@ bash:
 # Foreign user-level config sources only. Native OMP discovery is always on
 enabledProviders:
   - opencode
+# Keep OMP on litellm; OPENCODE_API_KEY in the pod env would otherwise surface these
+disabledProviders:
+  - opencode-zen
+  - opencode-go
 symbolPreset: unicode
 modelRoles:
   task: litellm/deepseek-v4-flash
