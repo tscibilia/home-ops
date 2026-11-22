@@ -81,62 +81,9 @@
     }
   },
   "provider": {
-    "litellm": {
-      "name": "LiteLLM",
-      "npm": "@ai-sdk/openai-compatible",
+    "opencode": {
       "options": {
-        "baseURL": "http://litellm.ai.svc.cluster.local:4000/v1",
-        "apiKey": "{env:LITELLM_API_KEY}"
-      },
-      "models": {
-        "qwen-local": {
-          "name": "Local/Qwen3.8-27B",
-          "attachment": true,
-          "reasoning": true,
-          "tool_call": true,
-          "temperature": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": { "context": 180224, "output": 32768 }
-        },
-        "qwen-local-fast": {
-          "name": "Local/Qwen3.8-27B (fast)",
-          "attachment": true,
-          "reasoning": false,
-          "tool_call": true,
-          "temperature": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": { "context": 180224, "output": 32768 }
-        },
-        "deepseek-v4-flash": {
-          "name": "DeepSeek V4 Flash",
-          "attachment": false,
-          "reasoning": true,
-          "tool_call": true,
-          "temperature": true,
-          "modalities": {
-            "input": ["text"],
-            "output": ["text"]
-          },
-          "limit": { "context": 1000000, "output": 384000 }
-        },
-        "deepseek-v4.1-flash": {
-          "name": "DeepSeek V4.1 Flash",
-          "attachment": true,
-          "reasoning": true,
-          "tool_call": true,
-          "temperature": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": { "context": 1000000, "output": 384000 }
-        }
+        "apiKey": "{env:OPENCODE_API_KEY}"
       }
     }
   },
