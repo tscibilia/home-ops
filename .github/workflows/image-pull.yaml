@@ -64,7 +64,7 @@ jobs:
       - name: Setup Mise - Flate
         uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
         with:
-          version: 2026.11.9 # 2026.9.3 error publishing upstream
+          version: 2026.11.10 # 2026.9.3 error publishing upstream
           cache: false
           tool_versions: |
             github:home-operations/flate 0.4.8
@@ -102,7 +102,7 @@ jobs:
       - name: Setup Mise - Talos
         uses: jdx/mise-action@90f833d396d0cc3674b631d2d225e306476c303a # v5.2.10
         with:
-          version: 2026.11.9 # 2026.9.3 error publishing upstream
+          version: 2026.11.10 # 2026.9.3 error publishing upstream
           cache: false
           tool_versions: |
             talosctl latest
