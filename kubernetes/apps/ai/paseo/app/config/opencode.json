@@ -94,7 +94,7 @@
       "enabled": true,
       "headers": {
         "Authorization": "Bearer {env:LITELLM_API_KEY}",
-        "x-mcp-servers": "talos_mcp,konflate_mcp,victoria_logs_mcp,sidero_mcp"
+        "x-mcp-servers": "context7_mcp,searxng_mcp,github_mcp,deepwiki_mcp"
       }
     }
   }

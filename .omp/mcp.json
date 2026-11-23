@@ -1,6 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json",
   "mcpServers": {
+    "litellm-homelab": {
+      "type": "http",
+      "url": "https://litellm.t0m.co/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${LITELLM_API_KEY}",
+        "x-mcp-servers": "context7_mcp,searxng_mcp,github_mcp,deepwiki_mcp,talos_mcp,konflate_mcp,victoria_logs_mcp,sidero_mcp"
+      }
+    },
     "memini": {
       "type": "http",
       "url": "https://memini.t0m.co/mcp",
