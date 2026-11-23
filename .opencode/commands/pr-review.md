@@ -21,7 +21,7 @@ Working tree as of invocation:
 
 !`git status --short; echo "--- diff vs HEAD ---"; git --no-pager diff HEAD --stat | tail -30`
 
-Before you judge anything, read `.agents/pr-review-instructions.md`. It is
+Before you judge anything, read `docs/agents/pr-review-instructions.md`. It is
 authoritative for the severity vocabulary and for when to escalate rather than
 dismiss a finding; this skill only governs how to _gather_ evidence.
 

@@ -11,6 +11,7 @@
 - **Forward-auth apps skip Gatus route monitoring:** Apps using the `auth` component sit behind a tinyauth redirect which breaks health checks. Route monitoring is disabled; service monitoring is enabled instead.
 - **Paseo worktrees get credentials by link:** `.mise.toml` expects `kubeconfig` and `talosconfig` at the checkout root. The `worktree.setup` hook in the tracked `paseo.json` links them from the project clone, falling back to `/etc/paseo`. A checkout without that hook entry reaches neither Kubernetes nor Talos.
 - **Paseo branch maintenance:** `/etc/paseo/prune-branches.sh` (from the `paseo-configmap`) fast-forwards each project's local default branch and deletes local branches already merged upstream; the `branch-maintenance` Paseo schedule runs it daily. It skips branches checked out in a worktree, branches with open PRs, and branch tips younger than 24 h.
+- **Flux state is Git state:** `kubectl edit` is ephemeral and reverted on the next reconcile — always change `git`. Check failures with `mise && kubectl get ks -A | grep -v True`.
 
 Full list by namespace. The source of truth is `kubernetes/apps/`; the list below is rendered from it by `just docs generate` and checked by `just docs test`. Don't hand-edit it — the one exception is the `_(description)_` after an app name, which is hand-written and preserved across regenerations.
 

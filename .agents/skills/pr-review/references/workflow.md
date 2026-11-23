@@ -82,7 +82,7 @@ Omit this section when empty. Severities: blocker, major, minor, info.
 ```
 
 The recommendation table matches the CI reviewer's contract in
-`.agents/pr-review-instructions.md` on purpose — the two paths should be
+`docs/agents/pr-review-instructions.md` on purpose — the two paths should be
 comparable at a glance.
 
 ## When to run fewer phases
