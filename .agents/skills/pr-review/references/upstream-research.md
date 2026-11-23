@@ -1,6 +1,6 @@
 # Upstream research method
 
-> **Read [`.agents/pr-review-instructions.md`](../../../pr-review-instructions.md)
+> **Read [`docs/agents/pr-review-instructions.md`](../../../../docs/agents/pr-review-instructions.md)
 > first — it is authoritative.** That file is the CI reviewer's prompt and the
 > single source of truth for this repo's review judgement: the severity
 > vocabulary, the impact-assessment rules (when to escalate a finding, not only

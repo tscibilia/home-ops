@@ -13,6 +13,7 @@ Three kinds of documentation, split by tense:
 ## Glossary
 
 Use these terms exactly. They are the repo's vocabulary — synonyms drift.
+Refer to the external [Dictionary of AI Coding](https://github.com/mattpocock/dictionary-of-ai-coding/blob/main/README.md) when required and terms are ambiguous.
 
 | Term                                    | Meaning                                                                                                                                                                                                                                                               |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -103,4 +104,4 @@ Read the ADRs touching the area you're about to work in. Don't re-litigate a rec
 
 - **`docs/WORKLOG.md`** — active work, known issues, blocked items. Check before proposing work that may already be underway or known-broken.
 - **`docs/agents/`** — how agents should consume this documentation (`domain.md`), issue-tracker conventions, triage labels.
-- **`MIGRATION.md` files** — long-form migration narratives, referenced from the ADR they belong to. Currently `docker/vps/` (Pangolin→towonel) and `kubernetes/apps/network/envoy-gateway/` (nginx→Envoy, marked historical).
+- **`MIGRATION.md` files** — long-form migration narratives, referenced from the ADR they belong to. Currently `docker/vps/` (i.e. Pangolin→towonel) and `kubernetes/apps/network/envoy-gateway/` (i.e. nginx→Envoy) marked historical.

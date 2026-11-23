@@ -1,145 +1,97 @@
-# AGENTS.md
+# Project Overview
 
-## Project Overview
-
-Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-metal nodes with Rook Ceph.
-**Stack:** Talos Linux → Kubernetes → Flux CD → Helm/Kustomize
-**Server-side rendering:** `flate` (konflate) — replaces `flux-local` for dry-run validation.
+Home-ops monorepo. K8s cluster (Talos + Flux CD + Helm/Kustomize) on 3 bare-metal controlplane nodes with Rook Ceph.
+**Instructions:** This file is the canonical, agent-independent source of repository policy. Essential rules live here directly or linked to another document; do not rely on agent-specific import syntax to load them.
 
 ## Standing Rules
 
 **Karpathy guidelines govern every change** — full text `.agents/skills/karpathy-guidelines/SKILL.md`:
 
-1. **Think before coding** — state assumptions; if unclear, stop and ask; don't pick silently between readings.
-2. **Simplicity first** — minimum code that solves it; nothing speculative.
-3. **Surgical changes** — touch only what you must; no adjacent cleanup; match existing style.
-4. **Goal-driven** — state plan as `[step] → verify: [check]`; every changed line traces to the request.
+1. **Think before coding**: state assumptions; if unclear, stop and ask; don't pick silently between readings.
+2. **Simplicity first**: minimum code that solves it; nothing speculative.
+3. **Surgical changes**: touch only what you must; no adjacent cleanup; match existing style.
+4. **Goal-driven**: state plan as `[step] → verify: [check]`; every changed line traces to the request.
+5. **Report concisely**; sacrifice grammar for the sake of concision.
 
-Report concisely — sacrifice grammar for the sake of concision.
+## Repository map
 
-**Comments** — two lines maximum. State one non-obvious fact (why, constraint, hazard); never narrate the code, restate a name, record a change, or leave commented-out code. If it needs a third line, fix the code or the abstraction.
+- `kubernetes/apps/<namespace>/<app>/`: application Flux Kustomizations, HelmReleases, chart sources, and configuration.
+- `kubernetes/flux/cluster/`: Flux entry point and cluster-wide application patches.
+- `kubernetes/components/`: reusable Kustomize components, including namespaces, CloudNativePG, and backups.
+- `kubernetes/talos/`: Talos templates, node overrides, version declarations, and operational recipes.
+- `kubernetes/bootstrap/`: cluster bootstrap configuration and recipes.
+- `docker/` and `ansible/`: Docker-host applications and host provisioning.
+- `.github/workflows/`: CI and AI PR review; `.renovate/`: dependency-update presets.
+- `.mise.toml`: tool versions and environment; `.justfile` and `mod.just` files: operational commands.
 
-**GitHub links** — cross-repo references are Markdown links to `https://redirect.github.com/<owner>/<repo>/issues/<N>` (or `/pull/<N>`), display text `owner/repo#N`. Never bare `github.com` URLs or bare `owner/repo#N`; the latter creates a public `cross-referenced` event in the upstream issue. Same-repo `#N` is fine. See `docs/agents/issue-tracker.md`.
+## Repository conventions
 
-**Skill config:**
+- This repository manages live infrastructure through GitOps. Flux will reconcile changes under `kubernetes/` soon after merge. Consider rendered resources and deployment impact, not only the source diff.
+- Follow existing neighboring applications rather than assuming a shared-base or multi-cluster overlay layout; each app is a self-contained `app/` directory plus a `ks.yaml` entry point.
+- `metadata.namespace` is intentionally omitted on application HelmReleases and Flux Kustomizations. Namespace kustomizations at `kubernetes/apps/<namespace>/kustomization.yaml` set the namespace of the Flux Kustomizations; each application's Flux Kustomization sets `spec.targetNamespace` for its deployed resources. Do not add redundant namespaces or flag their absence without checking that chain.
+- Prefer immutable `@sha256:` digests for container images. OCI Helm chart sources use `OCIRepository.spec.ref.tag` or a version selector; do not apply the container-image digest convention to chart references.
+- For dependency reviews, verify upstream changes using available read-only release notes, changelogs, source comparisons, or image metadata. Helm chart and container-image reviews require upstream evidence, not only Renovate's description. Report unavailable evidence as unverified; never invent tool results or compatibility claims.
+- When editing YAML, read `docs/agents/sorting-instructions.md` and preserve its Kubernetes and app-template ordering conventions. Avoid unrelated sorting churn, and do not reorder configuration embedded in string fields.
+- Application workloads normally use Flux HelmReleases with `spec.chartRef` pointing to a per-app `OCIRepository` in `ocirepository.yaml`. Follow `.agents/skills/add-app/SKILL.md` for scaffolding; existing raw manifests and operator-managed resources are not automatically violations.
+- Keep component-specific documentation alongside its configuration. Do not copy another home-ops repository's paths, architecture, or operational commands without checking this tree.
+- This repo uses memini for cross-session memory: decisions and their reasons, root causes, conventions, environment quirks. Consult it before work that may have history. One-time setup: `/memini:namespace tscibilia/home-ops` pins the namespace server-side. Harnesses without memini should treat `CONTEXT.md`, `docs/context/` and `docs/adr/` as the authoritative substitute. Memini is a convenience layer, never the only home for a fact.
 
-- **Domain docs** — [`CONTEXT.md`](CONTEXT.md) is the map (glossary, state routing, ADR index). `docs/context/` = state, `docs/adr/` = decisions. See `docs/agents/domain.md`.
-- **Issue tracker** — GitHub Issues on `tscibilia/home-ops`, via `gh`. See `docs/agents/issue-tracker.md`.
-- **Triage labels** — five canonical roles, default label strings. See `docs/agents/triage-labels.md`.
+## Working in this repo
 
-**Skill catalog** — `.agents/skills/`, one `SKILL.md` per directory:
+- The **`main`** branch moves only through a PR reviewed by the human-in-the-loop.
+    1. **Local harness** — shares the user's machine and signing key: hand over a formatted commit message and stop.
+    2. **Remote harness** — own checkout, credentials and signing key (hermes): commit on a feature branch, push it, open the PR, report the URL.
+- PR titles follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): `<type>[(scope)][!]: <description>`. Individual commit messages don't have
+  to follow the format, though matching it is fine. Sign off commits: `git commit -s`.
+- Commit and create PRs with `git` and `gh` directly, not an agent's eval-based commit helper: the helper builds through `commit-tree`, so its commits are unsigned, and this repo's `.omp/config.yml` pre-approves `git` and `gh pr create`. The host-level `~/.omp/agent/RULES.md` states the same rule.
+- **Never** `git commit`, `git push`, or open a PR unless asked to. Ask before any destructive or hard-to-reverse action instead of defaulting to it.
+- After a change, actually run the affected app's test (see "Validation" below) before calling it done, and check `.github/workflows/` for what CI actually enforces beyond that rather than assuming.
+- Cross-repo references are Markdown links to `https://redirect.github.com/<owner>/<repo>/issues/<N>` (or `/pull/<N>`), display text `owner/repo#N`. Never bare `github.com` URLs or bare `owner/repo#N`; the latter creates a public `cross-referenced` event in the upstream issue. Same-repo `#N` is fine. See `docs/agents/issue-tracker.md`.
+- Comments should be used sparingly, and two lines maximum. State one non-obvious fact (why, constraint, hazard); never narrate the code, restate a name, record a change, or leave commented-out code. If it needs a third line, fix the code or the abstraction.
 
-| Skill                 | Use when                                   |
-| --------------------- | ------------------------------------------ |
-| `add-app`             | Adding a new application to the cluster    |
-| `karpathy-guidelines` | Full text of the four standing rules above |
-| `pr-review`           | Reviewing a PR or local diff before merge  |
-
-**Memory** — this repo uses memini (MCP) for cross-session memory: decisions and their reasons, root causes, conventions, environment quirks. Consult it before work that may have history. One-time setup: `/memini:namespace tscibilia/home-ops` pins the namespace server-side. Harnesses without memini should treat `CONTEXT.md`, `docs/context/` and `docs/adr/` as the authoritative substitute — memory is a convenience layer over those, never the only home for a fact.
-
-**Safety tiers:**
+## Operational safety
 
 - **Always:** read-only inspection, local validation, formatting, linting (`flate test all`, `flate build`, `just docs test`).
-- **Ask first:** any git push the Commit Protocol below does not cover, anything that touches the live cluster — `just kube apply-ks`, `just kube sync`, `just kube reconcile-ks`, `just kube reconcile-hr`, `just kube restart-ks`, `just kube restart-hr`, `flux reconcile`, `talos apply` — deleting resources.
-- **Never:** push to `main`, merge a PR, commit secrets, decode, decrypt, unseal, or print any secret value — in Talos, Kubernetes, aKeyless, ESO, SOPS, cloud providers, CI, or any other store — edit existing ADRs in `docs/adr/` — supersede them instead; adding a new ADR is fine.
+- **Never:** push to `main`, merge a PR, commit resolved secrets, commit plaintext credentials, edit existing ADRs in `docs/adr/` — supersede them instead; adding a new ADR is fine.
+- **Never:** decode, decrypt, unseal, or print any secret, credential value, kubeconfigs, or Talos client configuration from Talos, Kubernetes, aKeyless, ESO, SOPS, cloud providers, CI, or any other store. Kubernetes application secrets normally come from External Secrets backed by aKeyless; keep secret values out of inline Helm values and session context. If a value reaches output, say so in the same turn and rotate at the source; never inspect it further (see "Secret Handling" below).
+- Talos templates intentionally contain `ak://` references resolved at runtime through `kubernetes/bootstrap/scripts/akeyless-inject.sh`. Docker-host and Ansible workflows also use aKeyless; follow their existing mechanisms rather than requiring Kubernetes External Secrets outside Kubernetes.
+- Local template rendering might resolve real credentials. Do not include resolved output in logs, responses, or committed files.
+- Treat persistent-volume changes, CloudNativePG bootstrap/recovery and object-store settings, backup policies, resource renames, and Flux `prune`/`suspend` changes as potential data-loss or availability risks. Inspect affected consumers and rendered changes before recommending them.
+- CloudNativePG components live under `kubernetes/components/cnpg/`. Read the existing cluster configuration and `just bootstrap cnpg` recipe before changing bootstrap behavior; do not replace recovery with `initdb` as a generic fix.
+- Repository edits do not authorize live infrastructure changes. Do not apply, reconcile, upgrade, delete, reset, or seed infrastructure unless the user explicitly requests that operation.
+
+## Where To Look
+
+- Start in `docs/context/`: read the file for the area before touching code or debugging a failure — `CONTEXT.md` routes each area to its file, and most files open with `⚠️ Gotchas & Interactions`. Don't grep READMEs. Read the ADRs touching it too; don't re-litigate a recorded decision, supersede it if it's wrong.
+    1. **Domain docs**: [`CONTEXT.md`](CONTEXT.md) is the map (glossary, state routing, ADR index). `docs/context/` = state, `docs/adr/` = decisions. See `docs/agents/domain.md`.
+    2. **Issue tracker**: GitHub Issues on `tscibilia/home-ops`, via `gh`. See [`issue-tracker.md`](docs/agents/issue-tracker.md).
+    3. **Triage labels**: five canonical roles, default label strings. See [`triage-labels.md`](docs/agents/triage-labels.md).
+    4. **PR review**: CI reviewer prompt and judgement rules in [`pr-review-instructions.md`](docs/agents/pr-review-instructions.md); the `pr-review` skill adds the evidence-gathering workflow.
+- For sub-directory specifics not covered by `docs/context/`, read that directory's `README.md`, e.g. `kubernetes/bootstrap/cnpg/README.md`.
+- Skill catalog exists in `.agents/skills/`, enumerated by one `SKILL.md` per directory (Read the matching skill before performing these tasks).
 
 ## Secret Handling
 
-**Agents never read credential values — ever.** Not to debug, not to verify a leak, not to check that a rotation worked, not to "see the shape". A reachable value is not readable. If a value reaches output, say so in the same turn and rotate at the source; never inspect it further.
+- Per store: **metadata projection first; never retrieve; redact only inside the producing pipe.** Truncation (`head`, `cut`) is not redaction. App data and databases are a gate: schema first, columns by name, never `SELECT *`.
+- Safe and forbidden commands per store (Kubernetes, aKeyless, SOPS, Talos, cloud managers, SQLite/Postgres, PVCs, env, logs): [`docs/context/secrets.md`](docs/context/secrets.md).
 
-Per store: **metadata projection first; never retrieve; redact only inside the producing pipe.** Truncation (`head`, `cut`) is not redaction. App data and databases are a gate: schema first, columns by name, never `SELECT *`.
+## Validation
 
-Safe and forbidden commands per store (Kubernetes, aKeyless, SOPS, Talos, cloud managers, SQLite/Postgres, PVCs, env, logs): [`docs/context/secrets.md`](docs/context/secrets.md).
+- Use the repository's mise-managed tools and inspect with `just <module-name>` (available modules: `bootstrap`, `kube`, `talos`, `ansible`, `docs`) to list available commands.
+- Update relevant `docs/context/*` file(s) in the same change. If the change involved a decision — a trade-off with real alternatives that's costly to reverse — add an ADR instead of writing the rationale into a context file.
+- When adding, removing or renaming an app or a docker stack changes a generated section in `docs/*`. Run `just docs generate`. `just docs test` runs both gates — the generated sections and the identifiers — and lefthook runs it pre-commit.
+- For Kubernetes manifest changes: `just kube registry-auth` — one-time per machine; required before the first `flate` run. If `flate` reports `basic credential not found`, that is the cause: the private `ocharted` proxy exempts in-cluster Flux via `auth.bypassNetworks`, not a workstation. Never "fix" it by adding `secretRef` to the OCIRepositories.
+- Then inspect the rendered impact when tools and network access permit:
 
-## Task Runner & Workflow
-
-`just` modules: `bootstrap`, `kube`, `talos`, `ansible`, `docs`. Using `just <module-name>` will list available commands.
-
-**`just kube` (most used):**
-
-- `sync <hr|ks|es|gitrepo|ocirepo> [<ns> <app>]` — force sync resource (or all)
-- `reconcile-ks/reconcile-hr [<ns> <app>]` — reconcile from source (or all)
-- `restart-ks/restart-hr` — suspend/resume failed resources
-- `node-shell <node>`, `snapshot [<ns> <app>]`
-- `apply-ks <ns> <ks>`, `delete-ks <ns> <ks>` — render via `flate` and apply/delete (⚠️ touches live cluster)
-
-**Local validation (no cluster required):**
-
-- `flate test all` — validate all Kustomizations, HelmReleases, sources
-- `flate build all` — render full cluster to YAML
-- `just kube registry-auth` — one-time per machine; required before the first `flate` run (see Troubleshooting)
-
-**Workflow:**
-
-1. New app: follow `.agents/skills/add-app/SKILL.md`
-2. Secrets: aKeyless → `externalsecret.yaml`
-3. Commits and PRs: follow the Commit Protocol below
-4. Docs: update the affected `docs/context/` file(s) in the same change. If the change involved a decision — a trade-off with real alternatives that's costly to reverse — add an ADR instead of writing the rationale into a context file.
-5. Generated docs: adding, removing or renaming an app or a docker stack changes a generated section. Run `just docs generate`. `just docs test` runs both gates — the generated sections and the identifiers — and lefthook runs it pre-commit.
-
-## Architecture & Structure
-
-**Monorepo Layout:**
-
-```text
-CONTEXT.md                    # Map: glossary · state routing · ADR index — read first
-docker/                       # Server configs (vps, clonenas, truenas)
-docs/                         # context/ (state) · adr/ (decisions) · agents/ (skill config) · scripts/ (doc generators) · WORKLOG.md
-kubernetes/
-├── apps/{namespace}/{app}/   # see Apps below
-├── bootstrap/                # cnpg/ patches, kustomize/ secrets template, scripts/
-│   └── helmfile/             # chart sources resolved from app OCIRepositories
-├── components/               # reusable Kustomize components
-├── flux/                     # Flux CD system config
-└── talos/                    # nodes/ overrides; *.yaml.j2 render machineconfig + schematic
+```sh
+flate test all --path ./kubernetes/flux/cluster
+flate diff all --path ./kubernetes/flux/cluster --base origin/main
 ```
 
-_(For sub-directory specifics not covered by `docs/context/`, read that directory's `README.md`, e.g. `kubernetes/bootstrap/cnpg/README.md`.)_
+_These commands may fetch upstream sources. They do not replace checking CRDs, secrets, or runtime behavior omitted from rendered output. For documentation-only changes, targeted reference and whitespace checks are sufficient. Report which checks ran and any validation gaps; do not claim an unavailable render or test passed._
 
-**Apps:** `kubernetes/apps/{namespace}/{app-name}/`
+## Instruction ownership
 
-- `app/` (kustomization, helmrelease, ocirepository, externalsecret)
-- `ks.yaml` (Flux Kustomization entry point: defines `dependsOn`, `substitutions`, `components`)
-
-**Storage Classes:**
-
-- `ceph-ssd` (default) — Rook Ceph, all persistent workloads
-- `openebs-hostpath` — local node storage (CNPG, logs, actions-runner)
-- `nfs-share` — external NFS (csi-driver-nfs) for shared storage; the media library is mounted as a direct `type: nfs` volume, not via a class
-
-## Reference Docs
-
-**Read [`CONTEXT.md`](CONTEXT.md) first.** It is the map: the glossary, the routing table for `docs/context/` (state), and the index of `docs/adr/` (decisions).
-
-Two rules it enforces:
-
-- Read the `docs/context/` file covering the area before touching code — don't grep READMEs.
-- Read the ADRs touching that area too. Don't re-litigate a recorded decision; supersede it if it's wrong.
-
-## Commit Protocol
-
-**`main` moves only through a PR the user reviewed.** Both paths below are review.
-
-Either path first: YAML schema-validated, linted, formatted; `just docs generate` if an app or docker stack was added, removed or renamed.
-
-- **Local harness** — shares the user's machine and signing key: hand over a formatted commit message and stop.
-- **Remote harness** — own checkout, credentials and signing key (hermes, or Paseo — `PASEO_AGENT_ID` is set): commit on a feature branch, push it, open the PR, report the URL.
-
-Remote harness rules:
-
-- Never `git commit`, `git push`, or open a PR unless asked to. Ask before any destructive or hard-to-reverse action instead of defaulting to it.
-- PR titles follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/): `<type>[(scope)][!]: <description>`. Individual commit messages don't have to follow the format, though matching it is fine. Sign off commits: `git commit -s`.
-
-## Tooling Quirks
-
-- **Bash cwd resets per call**: The working directory resets between every invocation. Never assume `cd` persisted — use absolute paths.
-- **Read tracks files by absolute path**: The same file read from the repo root and from a worktree are two different tracked entries. Re-read after switching contexts.
-
-## Troubleshooting
-
-- **Flux/GitOps**: `kubectl edit` is ephemeral; always use `git`. Check failures: `mise && kubectl get ks -A | grep -v True`.
-- **Talos**: No SSH. Use `talosctl`. Edit templates in `kubernetes/talos/`, then `just talos apply-node <node>`.
-- **Cilium**: eBPF replacement for kube-proxy. Use `cilium` CLI for network debugging.
-- **CNPG**: Use `-rw` endpoint for app connections. Check health: `kubectl get cluster -n database`.
-- **Kopiur**: Restore by editing the `Restore` CR's `spec.offset` in the app namespace (0 = latest snapshot).
-- **`flate` fails with `basic credential not found`**: charts served by the private `ocharted` proxy (`oci://ocharted.${SECRET_DOMAIN}/…`) need OCI auth. The OCIRepositories carry no `secretRef` on purpose — ocharted's `auth.bypassNetworks` exempts in-cluster Flux, but a workstation is outside that CIDR. Fix: `just kube registry-auth`, which pulls `/kubernetes/ocharted` from aKeyless into `~/.config/flate/registry.json` (`FLATE_REGISTRY_CONFIG`, set in `.mise.toml`). Not a manifest bug — never "fix" it by editing the OCIRepositories.
+- Keep shared policy in this file, task workflows in `.agents/skills/`, and detailed conditional guidance in `docs/agents/`. Do not duplicate policy in task files.
+- `CLAUDE.md` is an import shim for `AGENTS.md`; `.claude/skills` symlinks `.agents/skills`. Keep agent-specific directories limited to adapters and configuration, not alternative copies of shared guidance.
+- Keep personal model preferences, credentials, permissions, and MCP configuration in user-level configuration, synchronized through dotfiles or another user-configuration mechanism when needed across machines.

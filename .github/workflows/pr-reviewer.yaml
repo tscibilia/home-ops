@@ -139,7 +139,7 @@ jobs:
           # v3 has no CI gate by default in our parity set; see ci-status-check
           rereview-label: ai-review
           skip-if-diff-unchanged: "true"
-          system-prompt-file: .agents/pr-review-instructions.md
+          system-prompt-file: docs/agents/pr-review-instructions.md
           system-prompt-mode: append
           tool-mode: native_loop
           tool-max-requests: "40"

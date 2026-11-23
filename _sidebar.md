@@ -41,6 +41,8 @@
 - **For agents**
     - [Domain Docs](/docs/agents/domain.md)
     - [Issue tracker: GitHub](/docs/agents/issue-tracker.md)
+    - [Home-ops PR review conventions](/docs/agents/pr-review-instructions.md)
+    - [Sorting instructions for all yaml files](/docs/agents/sorting-instructions.md)
     - [Triage Labels](/docs/agents/triage-labels.md)
 
 - [Worklog](/docs/WORKLOG.md)

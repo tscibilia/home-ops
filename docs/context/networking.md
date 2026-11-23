@@ -9,6 +9,7 @@
 - **Tailscale state secrets are not ExternalSecrets:** `ts-ai3090-node-0` and `operator` are written by `tailscaled` and the operator themselves. ESO must never template `_current-profile`, `_profiles`, `_machinekey` or `profile-*` into either — an hourly refresh replays a stale profile, the device re-registers under a new identity, and the pod crash-loops on `invalid key`. Credentials live in separate ESO-managed secrets: `ts-ai3090-node-authkey` for the node, `tailscale-operator-secret` (OAuth) for the operator.
 - **Don't set `TS_DEBUG_MTU` in the ProxyClass:** 1280 is already tailscaled's default TUN MTU, so the override changed nothing and the operator logs a warning that custom Tailscale env vars may break in future releases.
 - **BGP CRDs are feature-gated:** They only install when `bgpControlPlane.enabled: true` in the Helm chart. Enabling it in an existing cluster via Flux causes a dry-run deadlock (the Kustomization validates `networks.yaml` before the HelmRelease upgrades). Fix: `kubectl apply -n kube-system -f kubernetes/apps/kube-system/cilium/app/helmrelease.yaml --server-side --field-manager=kustomize-controller` to break the cycle.
+- **Cilium replaces kube-proxy with eBPF:** use the `cilium` CLI for network debugging; the iptables/kube-proxy paths do not exist.
 
 ## Gateways
 

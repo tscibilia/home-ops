@@ -44,7 +44,7 @@ runs short, write the report you can support and list the rest under "Not found"
 — a phase that reports its own gaps is useful, one that dies mid-fetch is not.
 
 **Judgement rules live in
-[`.agents/pr-review-instructions.md`](../../pr-review-instructions.md).** Read it
+[`docs/agents/pr-review-instructions.md`](../../../docs/agents/pr-review-instructions.md).** Read it
 before reaching a recommendation. It is authoritative for the severity
 vocabulary, for when to escalate a finding rather than dismiss it, and for the
 rule that an unverified upgrade mechanism cannot be approved. This skill governs
