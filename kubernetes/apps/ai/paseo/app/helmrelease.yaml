@@ -21,7 +21,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tscibilia/paseo
-              tag: 0.17.3@sha256:c7a9f10996003cde0475838a799ebf3e0a161e2f01c9425f521a18f4bce1dc73
+              tag: 0.17.3@sha256:16a063824ceb55563e4e73cdb11131d506c60e0e756dfbb3d52e6fa8b0e39a01
             envFrom:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
