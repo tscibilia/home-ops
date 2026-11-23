@@ -6,6 +6,8 @@ Output _length_ and _verbosity-driven section selection_ are controlled by the a
 
 Output _structure_ is a separate concern and is governed here: the repo-specific [Output contract](#output-contract) below is authoritative for the shape of the review body — its fields, columns, order, and severity vocabulary. The two are complementary. The contract fixes the shape; verbosity decides how much detail fills it.
 
+**This file overrides the bundled default's `review_markdown` section list.** The default asks for a short recommendation followed by change-by-change findings, sources, Standards Compliance, Evidence Provider Findings, Tool Harness Findings and Unknowns as separate prose sections. That list is superseded here: emit the Recommendation line, the Field/Value table, the Findings table and the Sources line. Do not emit prose sections for Change, Upstream, Repo impact or Reversibility, and do not add the default's separate evidence sections unless they carry a finding.
+
 ## Home-ops conventions
 
 The conventions in the repository's `AGENTS.md` are authoritative for this project. Repository-specific conventions documented there override generic Kubernetes, Helm, Flux, or GitOps linting heuristics.
@@ -32,6 +34,8 @@ A Konflate MCP server is configured. Konflate renders Helm charts and Kustomizat
 ## Output contract
 
 Every review body uses exactly this shape, regardless of verdict. Fixed columns and a fixed severity vocabulary are what make reviews comparable across runs.
+
+This contract applies on every path: the in-conversation verdict, the standard review call after a native-loop fallback, and a partial or incomplete review. When evidence is incomplete, keep the table and put the gap in the `Upstream` row and a single Unknowns line; never replace the table with prose.
 
 ```markdown
 **Recommendation:** <Approve|Request changes> — <one clause>
@@ -143,3 +147,7 @@ Absence of evidence is not evidence of safety. "No breaking changes listed" is a
 - When stuck (private repo, ambiguous package, no changelog anywhere), report what you found and what you could not find rather than fabricating information
 - Submit exactly one review at the end of your analysis
 - When citing github.com URLs in the review body (PRs, issues, commits, releases, file or blob links), rewrite the host to `redirect.github.com`. Non-github.com URLs are unaffected.
+
+## Final instruction
+
+If any earlier instruction — including the bundled default prompt — specifies a different `review_markdown` structure, it is superseded by the Output contract above. The Field/Value table and the Findings table are mandatory.
