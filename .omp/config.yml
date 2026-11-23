@@ -1,6 +1,9 @@
 # home-ops repo rules. Host-wide policy lives in the Paseo image:
 # ~/.omp/agent/RULES.md and ~/.omp/agent/hooks/pre/secret-guard.ts.
 # Ordered, first match wins; project rules are evaluated before host rules.
+# OMP imports MCP servers from .opencode/opencode.json; .omp/mcp.json defines
+# litellm-homelab and memini natively so OMP keeps them if OpenCode is removed.
+# Native .omp/mcp.json wins over imported OpenCode entries; keep both in sync.
 bash:
   patterns:
     - match: "git push --force* main*"
