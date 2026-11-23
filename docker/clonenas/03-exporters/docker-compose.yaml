@@ -97,7 +97,7 @@ configs:
           # communication failures. Drop them so the daily SMART scan doesn't
           # trip RemoteContainerLogErrors, while Publish() failures
           # (i/o timeout, dial tcp, connection refused) still count.
-          Exclude log .*smartctl (returned an error code|detected a).*
+          Exclude log .*(smartctl (returned an error code|detected a|could not|output for .* is incomplete|was terminated)|a SMART command failed).*
 
       [FILTER]
           Name log_to_metrics
