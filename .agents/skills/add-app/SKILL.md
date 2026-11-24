@@ -117,9 +117,11 @@ exposed; `values.persistence` for PVC, config, or emptyDir mounts.
   Secret or ConfigMap. A sidecar that consumes neither does not need it. When only one input
   matters, the targeted `secret.reloader.stakater.com/reload` or
   `configmap.reloader.stakater.com/reload` is equivalent.
-- Custom probes — `liveness` with a `&probes` anchor and `readiness` aliasing it, `httpGet`
-  on `${GATUS_PATH}` as in `karma`; add `startup` with `failureThreshold: 30` and
-  `periodSeconds: 10`. Share repeated probe blocks with `&probes` and `&probeSpec`.
+- Custom probes — anchor the full `liveness` block with `&probes` and its `spec` with
+  `&probeSpec`; merge `readiness` and `startup` with `<<: *probes` and
+  `<<: *probeSpec`. Put `httpGet` on `${GATUS_PATH}` as in `karma`; add `startup` with
+  `failureThreshold: 30` and `periodSeconds: 10`. Use distinct anchor names
+  (`&dashboardProbes`, `&codeserverProbes`) when one file has multiple controllers.
 - Pod security context: `runAsNonRoot: true`, `runAsUser: 1000`, `runAsGroup: 1000`;
   add `fsGroup: 1000` and `fsGroupChangePolicy: OnRootMismatch` when a PVC is mounted.
 - Container security context: `allowPrivilegeEscalation: false`,
