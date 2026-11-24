@@ -58,6 +58,7 @@ modelRoles:
   plan: litellm/deepseek-v4.1-flash:high
   commit: litellm/qwen-local-fast
   default: litellm/deepseek-v4.1-flash:medium
+  judge: litellm/jev-1
   web: web/searxng
 retry:
   fallbackChains:
