@@ -24,22 +24,22 @@ spec:
       valueFrom:
         secretKeyRef:
           key: AWS_ACCESS_KEY_ID
-          name: dragonfly-secret
+          name: dragonfly-operator-secret
     - name: AWS_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
           key: AWS_SECRET_ACCESS_KEY
-          name: dragonfly-secret
+          name: dragonfly-operator-secret
     - name: AWS_ENDPOINT
       valueFrom:
         secretKeyRef:
           key: AWS_ENDPOINT
-          name: dragonfly-secret
+          name: dragonfly-operator-secret
     - name: AWS_REDIS_BUCKET
       valueFrom:
         secretKeyRef:
           key: AWS_REDIS_BUCKET
-          name: dragonfly-secret
+          name: dragonfly-operator-secret
   image: ghcr.io/dragonflydb/dragonfly:v2.1.0
   labels:
     dragonflydb.io/cluster: *app

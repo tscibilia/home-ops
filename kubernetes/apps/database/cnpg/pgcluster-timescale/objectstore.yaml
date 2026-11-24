@@ -11,10 +11,10 @@ spec:
     endpointURL: https://${AWS_ENDPOINT}
     s3Credentials:
       accessKeyId:
-        name: cnpg-secret
+        name: cnpg-operator-secret
         key: AWS_ACCESS_KEY_ID
       secretAccessKey:
-        name: cnpg-secret
+        name: cnpg-operator-secret
         key: AWS_SECRET_ACCESS_KEY
     data:
       compression: bzip2

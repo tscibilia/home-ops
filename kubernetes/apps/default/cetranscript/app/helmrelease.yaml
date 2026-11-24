@@ -51,7 +51,7 @@ spec:
               PORT: &apiPort 3001
             envFrom:
               - secretRef:
-                  name: "{{ .Release.Name }}-api-secret"
+                  name: "{{ .Release.Name }}-secret"
             resources: &res
               requests:
                 cpu: 10m
@@ -105,6 +105,36 @@ spec:
             env:
               VITE_API_BASE_URL: "https://${CEAPP_DOMAIN}"
               NGINX_API_UPSTREAM: "{{ .Release.Name }}-api:3001"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               <<: *res
             securityContext:
@@ -114,6 +144,7 @@ spec:
       imagePullSecrets:
         - name: cetranscript-ghcr-pull
       securityContext:
+        runAsNonRoot: true
         runAsUser: 65534
         runAsGroup: 65534
         fsGroup: 65534

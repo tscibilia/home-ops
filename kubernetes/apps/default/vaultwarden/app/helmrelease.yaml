@@ -45,10 +45,10 @@ spec:
               SSO_SCOPES: "email profile offline_access"
             envFrom:
               - secretRef:
-                  name: "{{ .Release.Name }}-secrets"
+                  name: "{{ .Release.Name }}-secret"
             probes:
               liveness: &probes
-                enabled: false
+                enabled: true
                 custom: true
                 spec: &probeSpec
                   httpGet:
@@ -63,7 +63,11 @@ spec:
                   <<: *probeSpec
                   periodSeconds: 10
               startup:
-                enabled: false
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 20m

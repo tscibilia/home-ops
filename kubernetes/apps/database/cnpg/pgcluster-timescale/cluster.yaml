@@ -38,7 +38,7 @@ spec:
   #         serverName: *name
 
   superuserSecret:
-    name: cnpg-secret
+    name: cnpg-operator-secret
   enableSuperuserAccess: true
   postgresql:
     parameters:

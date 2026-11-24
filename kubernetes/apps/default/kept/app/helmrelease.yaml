@@ -44,7 +44,7 @@ spec:
                     key: INIT_POSTGRES_SUPER_PASS
             envFrom:
               - secretRef:
-                  name: kept-db
+                  name: kept-secret
           # Kept never migrates on boot; this is the one-shot `kept migrate` the chart runs
           # as a hook. As an initContainer it runs before the server, in the same pod.
           03-migrate:
@@ -60,7 +60,7 @@ spec:
               KEPT_CONFIG_DIR: /data/config
             envFrom:
               - secretRef:
-                  name: kept-db
+                  name: kept-secret
         containers:
           app:
             image: *image
@@ -87,7 +87,7 @@ spec:
               KEPT_OWNER_DATABASE_URL: "postgres://kept_owner:$(KEPT_DB_OWNER_PASSWORD)@${CNPG_NAME}-rw.database.svc.cluster.local:5432/kept?sslmode=disable"
             envFrom:
               - secretRef:
-                  name: kept-db
+                  name: kept-secret
               - secretRef:
                   name: "{{ .Release.Name }}-oidc-secret"
             resources:

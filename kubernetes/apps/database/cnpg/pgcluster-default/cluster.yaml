@@ -17,7 +17,7 @@ spec:
     storageClass: openebs-hostpath
 
   superuserSecret:
-    name: cnpg-secret
+    name: cnpg-operator-secret
   enableSuperuserAccess: true
   postgresql:
     parameters:

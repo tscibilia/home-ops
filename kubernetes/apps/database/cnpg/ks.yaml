@@ -21,7 +21,6 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: database
-  wait: true
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -36,7 +35,7 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: cnpg-secret
+        name: cnpg-operator-secret
       - kind: Secret
         name: cluster-secrets
   prune: true
@@ -45,7 +44,6 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: database
-  wait: false
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -63,7 +61,7 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: cnpg-secret
+        name: cnpg-operator-secret
       - kind: Secret
         name: cluster-secrets
   prune: true
@@ -90,7 +88,7 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: cnpg-secret
+        name: cnpg-operator-secret
       - kind: Secret
         name: cluster-secrets
   prune: true
@@ -117,7 +115,7 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: cnpg-secret
+        name: cnpg-operator-secret
       - kind: Secret
         name: cluster-secrets
   prune: true

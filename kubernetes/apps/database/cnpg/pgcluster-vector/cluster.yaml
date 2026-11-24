@@ -19,7 +19,7 @@ spec:
     storageClass: openebs-hostpath
 
   superuserSecret:
-    name: cnpg-secret
+    name: cnpg-operator-secret
   enableSuperuserAccess: true
   postgresql:
     # vchord is mounted from its own OCI image rather than baked into the
