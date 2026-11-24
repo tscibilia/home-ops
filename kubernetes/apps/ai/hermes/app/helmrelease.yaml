@@ -175,10 +175,10 @@ spec:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             probes:
-              liveness: &probes
+              liveness: &appProbes
                 enabled: true
                 custom: true
-                spec: &probeSpec
+                spec: &appProbeSpec
                   httpGet:
                     path: /health
                     port: *apiPort
@@ -186,14 +186,14 @@ spec:
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness:
-                <<: *probes
+                <<: *appProbes
                 spec:
-                  <<: *probeSpec
+                  <<: *appProbeSpec
                   periodSeconds: 10
               startup:
-                <<: *probes
+                <<: *appProbes
                 spec:
-                  <<: *probeSpec
+                  <<: *appProbeSpec
                   failureThreshold: 30
                   periodSeconds: 10
             resources:
@@ -223,10 +223,10 @@ spec:
                 name: http
                 protocol: TCP
             probes:
-              liveness:
+              liveness: &dashboardProbes
                 enabled: true
                 custom: true
-                spec:
+                spec: &dashboardProbeSpec
                   httpGet:
                     path: /
                     port: *dashPort
@@ -234,22 +234,14 @@ spec:
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness:
-                enabled: true
-                custom: true
+                <<: *dashboardProbes
                 spec:
-                  httpGet:
-                    path: /
-                    port: *dashPort
+                  <<: *dashboardProbeSpec
                   periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 5
               startup:
-                enabled: true
-                custom: true
+                <<: *dashboardProbes
                 spec:
-                  httpGet:
-                    path: /
-                    port: *dashPort
+                  <<: *dashboardProbeSpec
                   failureThreshold: 30
                   periodSeconds: 10
             resources:
@@ -286,10 +278,10 @@ spec:
               #       name: hermes-secret
               #       key: DISCORD_WEBHOOK
             probes:
-              liveness:
+              liveness: &codeserverProbes
                 enabled: true
                 custom: true
-                spec:
+                spec: &codeserverProbeSpec
                   httpGet:
                     path: /healthz
                     port: 12321
@@ -297,22 +289,14 @@ spec:
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness:
-                enabled: true
-                custom: true
+                <<: *codeserverProbes
                 spec:
-                  httpGet:
-                    path: /healthz
-                    port: 12321
+                  <<: *codeserverProbeSpec
                   periodSeconds: 10
-                  timeoutSeconds: 5
-                  failureThreshold: 5
               startup:
-                enabled: true
-                custom: true
+                <<: *codeserverProbes
                 spec:
-                  httpGet:
-                    path: /healthz
-                    port: 12321
+                  <<: *codeserverProbeSpec
                   failureThreshold: 30
                   periodSeconds: 10
             resources:
