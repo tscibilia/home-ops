@@ -1,611 +1,246 @@
 ---
 name: add-app
-description: Scaffold a new Kubernetes app in the home-ops monorepo. Prompts for app name, namespace, helm chart type, and optional features (kopiur, cnpg, auth, zeroscaler, gatus, ESO, configMapGenerator, ingress). Generates all manifests following repo conventions.
+description: >-
+    Use when adding an app to the cluster — "add app X to the cluster", or /add-app.
+    Scaffolds kubernetes/apps/{namespace}/{app}/ (Flux Kustomization + app-template HelmRelease),
+    wires components and secrets from the docs, and verifies the result with flate and docs gates.
 ---
 
-# Add App Skill
+# Add an app
 
-Interactive scaffold for adding a new Flux-managed Kubernetes app to this monorepo.
+Scaffolds one app under `kubernetes/apps/{namespace}/{app}/`: `ks.yaml` plus `app/`.
 
-## Workflow
+**Scope:** app-template apps. A custom OCI chart follows
+[references/features.md](references/features.md) → custom chart and gets no generated values.
+Operator CRs and raw manifests are not this skill — say so and stop.
 
-### Phase 1 — Gather Inputs
+**The repo is the source, not this file.** Stanzas, versions, and flags are read at run
+time. If a source and this skill disagree, the source wins.
 
-Use `AskUserQuestion` to collect the following. Ask up to 4 questions per call, batch logically.
-**Important**: Always ask all batches. Never infer or skip a batch based on arguments passed to the skill — the user must explicitly confirm each choice.
+## Step 1 — Collect the inputs
 
-**Batch 1 — Identity:**
+Stop for any missing mandatory value. Generated YAML contains no `TODO`, no `latest`, and
+no guessed value.
 
-1. **App name** (free text via "Other"): The kebab-case name used for directory, metadata, and YAML anchors. Offer 2-3 common suggestions if the user mentioned an app, otherwise present two placeholder options and let them type via Other.
-2. **Namespace**: Which namespace? Options: `default`, `media`, `home-automation`, `observability`, `network`. Let them type Other for a new one.
+| Input            | Notes                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| app name         | kebab-case; directory, `metadata.name`, and the `&app` anchor                             |
+| namespace        | confirm against the generated inventory                                                   |
+| image repository | upstream image                                                                            |
+| image tag        | `version@sha256:…` preferred; a pinned version is acceptable; `latest` and `main` refused |
+| container port   | the port the app listens on                                                               |
+| exposure         | `envoy-internal`, `envoy-external`, or none                                               |
+| health path      | probes and Gatus; required unless exposure is none                                        |
+| subdomain        | required unless exposure is none; omit `GATUS_SUBDOMAIN` when it equals the app name      |
+| persistence      | yes/no; if yes, capacity (default `5Gi`) and the kopiur pairing in `ks.yaml`              |
+| auth             | none, native OIDC, or forward auth                                                        |
+| config files     | none, mounted config file, or config file rendered with secrets                           |
+| dependencies     | extra `dependsOn` entries, if any                                                         |
 
-**Batch 2 — Helm & Ingress:**
+Unknown app-internal values (env var names, callback path, config body) are gaps, not
+inputs. Report each as `file: key — needs X` in Step 6.
 
-3. **Helm chart type**:
-    - `app-template` (Recommended) — bjw-s app-template (most apps use this)
-    - `Custom chart` — third-party Helm chart (provide OCI URL + chart name)
-4. **Ingress exposure**:
-    - `Internal only` (Recommended) — envoy-internal gateway, LAN access only
-    - `External` — envoy-external gateway, accessible via Cloudflare tunnel
-    - `None` — no HTTP route (headless service, CLI tool, background worker)
+Ask only for missing values, in one form.
 
-**Batch 3 — Features (multi-select, always ask):**
+## Step 2 — Read the sources
 
-5. **Which optional features does this app need?** (multiSelect: true)
-    - `Kopiur backups` — PVC backup/restore via kopiur (needs KOPIUR_CAPACITY)
-    - `CNPG PostgreSQL` — shared PostgreSQL database via cnpg component
-    - `Zeroscaler (truenas)` — native HPA scale to zero when `truenas.internal:2049` is down (default `ZEROSCALER_JOB_NAME=nfs_probe`)
-    - `Zeroscaler (clonenas backup)` — native HPA scale to zero when `clonenas.internal:2049` is down (sets `ZEROSCALER_JOB_NAME=nfs_bkup_probe`)
+| Question                                                          | Source                                |
+| ----------------------------------------------------------------- | ------------------------------------- |
+| Does the namespace exist? Which flags does the app already have?  | `docs/context/apps.md` (generated)    |
+| App or namespace component stanza and substitutions               | `docs/context/components.md`          |
+| Route, native OIDC, forward auth, Gatus                           | `docs/context/networking.md`          |
+| ExternalSecret, generators, seeded CNPG password, OIDC PushSecret | `docs/context/secrets.md`             |
+| Storage class, NFS, CNPG cluster                                  | `docs/context/storage.md`             |
+| Field order                                                       | `docs/agents/sorting-instructions.md` |
+| Vocabulary                                                        | `CONTEXT.md` glossary                 |
+| Shape to copy                                                     | reference app for the branch (below)  |
 
-**Batch 4 — Auth & Config (conditional — only ask if ingress is NOT "None"):**
+### Reference apps
 
-6. **Authentication method**:
-    - `None` — app handles its own auth or no auth needed
-    - `OIDC (native)` (Recommended when supported) — app speaks OIDC itself; gets a `PocketIDOIDCClient` CR + `PushSecret`, no component
-    - `Forward auth` — `components/auth` component (tinyauth), for apps with no OIDC support
+| Branch                              | Reference app                         |
+| ----------------------------------- | ------------------------------------- |
+| base app-template, route, probes    | `kubernetes/apps/observability/karma` |
+| app secrets as env vars             | `kubernetes/apps/media/imagemaid`     |
+| PVC + kopiur backup                 | `kubernetes/apps/default/radicale`    |
+| CNPG, including the seeded password | `kubernetes/apps/media/airwave`       |
+| native OIDC                         | `kubernetes/apps/default/kept`        |
+| forward auth + zeroscaler           | `kubernetes/apps/media/bazarr`        |
+| script files kept byte-exact        | `kubernetes/apps/media/sonarr`        |
+| config file rendered with secrets   | `kubernetes/apps/default/immich`      |
 
-    These are alternatives, never both. There is no internal/external auth split — one `auth` component serves both gateways.
+Copy the shape and delete everything the app does not need — karma's config file,
+`serviceMonitor`, and `runAsUser: 568` are examples, not defaults. The defaults below win
+over any reference app's values.
 
-**Batch 5 — Gatus & Config details (conditional — only ask if ingress is NOT "None"):**
+### Versions — read, never recall
 
-7. **Gatus subdomain**: What subdomain should this app be accessible at?
-    - `Same as app name (Recommended)` — e.g. `{APP_NAME}.domain.com`
-    - Other — let them type a custom/shortened subdomain
+```bash
+# app-template chart tag (repo mode across app-template OCIRepositories)
+for f in kubernetes/apps/*/*/app/ocirepository.yaml; do
+  yq -r 'select(.spec.url == "oci://ghcr.io/bjw-s-labs/helm/app-template") | .spec.ref.tag' "$f"
+done | sort | uniq -c | sort -rn | head -1
 
-8. **Health check path**: What path should be used for liveness probes and Gatus?
-    - `/ (default)` — root path
-    - Other — let them type a custom path (e.g. `/healthz`, `/api/v1/ping`)
-
-9. **Config style** (only if app-template):
-    - `Inline env vars only` (Recommended) — all config via env vars in HelmRelease
-    - `ESO env vars` — ExternalSecret that maps aKeyless keys to env vars injected via envFrom secretRef (no configMap needed)
-    - `ConfigMapGenerator + ESO` — external config file templated with secrets (like immich pattern: configMapGenerator in kustomization.yaml + kustomizeconfig.yaml + ExternalSecret templateFrom)
-
-### Phase 2 — Research Before Generating
-
-Before writing any files, gather the following from the repo:
-
-1. **app-template version**: `grep -h 'tag:' kubernetes/apps/default/homebox/app/ocirepository.yaml`
-2. **postgres-init version** (if CNPG selected): `grep -rh 'postgres-init' kubernetes/apps/ --include='*.yaml' -A1 | grep 'tag:' | head -1`
-3. **Existing secret patterns** (if the user mentioned any shared/external service — e.g. Amazon SES, SMTP, S3, Cloudflare): grep the repo for an existing app known to use that service. For example, if SES/email is requested, check `kubernetes/apps/default/mealie/app/externalsecret.yaml` for the exact aKeyless key names and env var mappings already in use. Use matching key names in the new ExternalSecret — do not invent new names.
-
-### Phase 3 — Generate Manifests
-
-After collecting inputs and completing research, generate all files. Write each file using the Write tool. **Do not return file contents inline.**
-
-#### Directory structure
-
-```
-kubernetes/apps/{namespace}/{app-name}/
-├── ks.yaml
-└── app/
-    ├── kustomization.yaml
-    ├── helmrelease.yaml
-    ├── ocirepository.yaml
-    ├── externalsecret.yaml          # only if app needs secrets
-    ├── pocketidoidcclient.yaml      # only if auth = OIDC (native)
-    └── pushsecret.yaml              # if auth = OIDC (native), and/or if CNPG (seeded password)
-    # If configMapGenerator pattern:
-    └── resources/
-        ├── {app}-config.yaml        # config template
-        └── kustomizeconfig.yaml     # nameReference for ESO templateFrom
+# postgres-init tag (only with CNPG)
+for f in kubernetes/apps/*/*/app/helmrelease.yaml; do
+  yq -r '(.. | select(has("repository"))) | select(.repository == "ghcr.io/home-operations/postgres-init") | .tag' "$f"
+done | sort | uniq -c | sort -rn | head -1
 ```
 
-#### File templates
+## Step 3 — Write the app
 
-Use these exact patterns. All templates use YAML anchors (`&app` / `*app`) per repo convention.
-**No extra blank lines** between YAML sections — keep output compact. The repo uses **2-space** YAML indentation throughout.
+| File                          | When                                               |
+| ----------------------------- | -------------------------------------------------- |
+| `ks.yaml`                     | always                                             |
+| `app/kustomization.yaml`      | always                                             |
+| `app/ocirepository.yaml`      | always                                             |
+| `app/helmrelease.yaml`        | always                                             |
+| `app/externalsecret.yaml`     | the app reads secrets                              |
+| `app/pocketidoidcclient.yaml` | auth is native OIDC                                |
+| `app/pushsecret.yaml`         | native OIDC and/or seeded CNPG password            |
+| `app/resources/`              | config file, script files, or ESO-templated config |
 
----
+**`ks.yaml` carries:** `components` for the selected app components; `dependsOn` on
+`secret-stores` whenever the app reads secrets (except bootstrap apps: `cert-manager`,
+`flux-instance`, `rook-ceph`, `kube-prometheus-stack`), plus `kopiur`, `cnpg-pgcluster-default`, or
+`pocket-id` as selected; `interval: 1h`; `path`; `postBuild.substitute.APP`; `GATUS_PATH` set to the health path;
+`GATUS_SUBDOMAIN` when it differs from the app name; `postBuild.substituteFrom` the
+`cluster-secrets` Secret; `retryInterval: 5m` with CNPG; `healthChecks` and
+`healthCheckExprs` with CNPG; `prune: true`; `sourceRef`; `targetNamespace`.
 
-##### ks.yaml
+**The HelmRelease carries:** `chartRef` to the app's OCIRepository; `interval: 1h`;
+`values.controllers.<name>` with the app container; `values.service`; `values.route` when
+exposed; `values.persistence` for PVC, config, or emptyDir mounts.
 
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-    name: &app { APP_NAME }
-spec:
-    components:
-        - ../../../../components/cnpg # if cnpg selected
-        - ../../../../components/kopiur/backup # if kopiur selected
-        - ../../../../components/auth # if forward auth (both gateways — no internal/external split)
-        - ../../../../components/zeroscaler # if zeroscaler selected (any variant)
-    dependsOn:
-        - name: secret-stores
-          namespace: external-secrets
-        - name: cnpg-pgcluster-default # if cnpg (CNPG_NAME=pgcluster-default)
-          namespace: database
-        - name: kopiur # if kopiur
-          namespace: kopiur-system
-        - name: pocket-id # if auth = OIDC (native)
-          namespace: security
-    interval: 1h
-    retryInterval: 5m # if cnpg
-    path: ./kubernetes/apps/{NAMESPACE}/{APP_NAME}/app
-    postBuild:
-        substitute:
-            APP: *app
-            GATUS_SUBDOMAIN: { SUBDOMAIN } # omit if subdomain == app name
-            CNPG_NAME: &postgresAppName pgcluster-default # if cnpg
-            KOPIUR_CAPACITY: { CAPACITY } # if kopiur
-            ZEROSCALER_JOB_NAME: nfs_bkup_probe # ONLY if Zeroscaler (clonenas backup) variant; omit for truenas default
-        substituteFrom:
-            - kind: Secret
-              name: cluster-secrets
-    healthChecks: # if cnpg
-        - apiVersion: &postgresVersion postgresql.cnpg.io/v1
-          kind: &postgresKind Cluster
-          name: *postgresAppName
-          namespace: database
-    healthCheckExprs: # if cnpg
-        - apiVersion: *postgresVersion
-          kind: *postgresKind
-          failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
-          current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
-    prune: true
-    sourceRef:
-        kind: GitRepository
-        name: flux-system
-        namespace: flux-system
-    targetNamespace: { NAMESPACE }
-    wait: false
+### Defaults (repo mode)
+
+- Controller annotation `reloader.stakater.com/auto: "true"` on every controller that reads a
+  Secret or ConfigMap. A sidecar that consumes neither does not need it. When only one input
+  matters, the targeted `secret.reloader.stakater.com/reload` or
+  `configmap.reloader.stakater.com/reload` is equivalent.
+- Custom probes — `liveness` with a `&probes` anchor and `readiness` aliasing it, `httpGet`
+  on `${GATUS_PATH}` as in `karma`; add `startup` with `failureThreshold: 30` and
+  `periodSeconds: 10`. Share repeated probe blocks with `&probes` and `&probeSpec`.
+- Pod security context: `runAsNonRoot: true`, `runAsUser: 1000`, `runAsGroup: 1000`;
+  add `fsGroup: 1000` and `fsGroupChangePolicy: OnRootMismatch` when a PVC is mounted.
+- Container security context: `allowPrivilegeEscalation: false`,
+  `readOnlyRootFilesystem: true`, `capabilities: { drop: [ALL] }`. Every container needs its
+  own block, sidecars and init containers included; anchor it (`&securityContext`) when they
+  share one.
+- `drop: [ALL]` is the baseline, not a blind default. Verify the image's Dockerfile,
+  entrypoint, and upstream docs before dropping. Entrypoints that chown or drop privileges
+  need `CHOWN`, `SETUID`, `SETGID`, or `DAC_OVERRIDE`; ports below 1024 need
+  `NET_BIND_SERVICE`; device or network integrations may need `NET_ADMIN`, `SYS_RAWIO`, or
+  `privileged`. Keep `drop: [ALL]` and add only the verified capability. If the requirement
+  is not verified upstream, stop and report the gap instead of changing the security context.
+  Never mass-apply a security-context change across apps.
+- Resources: `requests: { cpu: 20m, memory: 128Mi }`, `limits: { memory: 512Mi }`. They are
+  per container, set on sidecars too, and are not anchored.
+- `readOnlyRootFilesystem: true` makes every path the image writes fail unless it is mounted:
+  mount a `tmpfs` emptyDir at each writable path (e.g. `/tmp`). The persistence key is a volume
+  name, not the path. Declaring an emptyDir without mounting it is dead config. Use
+  `medium: Memory` only when scratch must be RAM-backed.
+- 2-space indentation, `&app`/`*app`, and `&port` when the app exposes a port.
+
+Deviate for a documented image requirement or measured need, and say why in the report.
+
+### Do not restate cluster defaults
+
+`kubernetes/flux/cluster/ks.yaml` patches every app Kustomization and HelmRelease with
+`deletionPolicy: WaitForTermination`, plus the HelmRelease `install`, `upgrade`, `rollback`,
+`maxHistory`, and `uninstall` settings. No app file repeats those values; a deliberate
+non-default override is fine, but say why. No app `ks.yaml` carries a `patches:` block.
+
+### Wait
+
+Omit `wait` on a normal app — it defaults to `false`, and explicit `wait: false` is redundant
+boilerplate. Set `wait: true` only when another Kustomization `dependsOn` this one and this
+Kustomization defines no `healthChecks`/`healthCheckExprs`. Flux ignores those checks when
+`wait` is true, so never set both.
+
+### Persistence is a pair
+
+A backed-up volume is two halves: `persistence.<name>.existingClaim: *app` in the
+HelmRelease, and the `kopiur/backup` component in `ks.yaml` with `APP` and
+`KOPIUR_CAPACITY`. The component creates the PVC named `${APP}`; the HelmRelease mounts it.
+One without the other gives an unbacked volume, or a component pointing at a claim that does
+not exist.
+
+### Secrets
+
+- Name the app's env-secret ExternalSecret and its Secret `<app>-secret` (singular), and
+  anchor the name `&name`. Purpose-scoped secrets may use `<app>-<purpose>` — `-config`,
+  `-ghcr-pull`, `-deploykey`; never `<app>-secrets`.
+- Prefer `dataFrom.extract` when the aKeyless item is a JSON object. Use `data` with
+  `remoteRef` for a single non-JSON value, such as a shared credential stored alone. Map the
+  result into the env var names the app expects under `target.template.data`.
+- Consume the Secret with `envFrom.secretRef.name: "{{ .Release.Name }}-secret"`, or
+  `secretKeyRef` for individual keys. Never hand-write a Secret manifest.
+
+### Names
+
+Use `*app` where the `&app` anchor is in the same file. Use `{{ .Release.Name }}` inside
+HelmRelease values for release-derived names — `<name>-secret`, `<name>-configmap`, and the
+route hostname — because Flux renders the release name, not the YAML anchor.
+
+### Rules the context docs do not own
+
+- Hostname: `{{ .Release.Name }}.${SECRET_DOMAIN}` when the subdomain equals the app name;
+  `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}` otherwise.
+- Gatus + forward auth: move monitoring from the route to the service — stanza in
+  `components.md` → `auth`.
+- CNPG password: never create it by hand. The `${APP}-pgpass` ExternalSecret plus
+  `PushSecret` pair seeds it; see `secrets.md` → Seeded CNPG passwords.
+- No Renovate annotations; Renovate discovers images from the repo.
+- No `namespace.yaml`; namespaces already exist.
+
+## Step 4 — Register
+
+- Append `./{app}/ks.yaml` to `kubernetes/apps/{namespace}/kustomization.yaml` under
+  `resources`, in alphabetical position.
+- If the namespace is not in the inventory, stop — creating one is a separate change.
+- Run `just docs generate`, then add `_(description)_` by hand if the app needs one —
+  descriptions survive regeneration (six words max).
+
+## Step 5 — Verify
+
+Run, in order:
+
+```bash
+flate test all
+kustomize build kubernetes/apps/{namespace}/{app}/app
+just docs generate
+just docs test
 ```
 
-**Rules:**
+`flate` needs `just kube registry-auth` once per machine. If it cannot run, report "not
+run" and why. Report exactly which checks ran and their result; a render error fails the
+step, it is not a note.
 
-- Only include `components`, `dependsOn`, `healthChecks`, `healthCheckExprs`, and `postBuild.substitute` entries that are relevant to the selected features.
-- If GATUS_SUBDOMAIN equals the app name, omit it (the HR will use `{{ .Release.Name }}.${SECRET_DOMAIN}`).
-- If GATUS_SUBDOMAIN differs from app name, include it and use `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}` in the HR route.
-- `wait: false` for apps, `wait: true` only for infrastructure dependencies.
-- `retryInterval: 5m` only with the cnpg health check. Without it Flux falls back to `interval`, so a Kustomization failed by a database restart stays failed for a full hour.
+## Step 6 — Report
 
----
+- Files created, and the reference app behind each branch.
+- Gaps as `file: key — needs X`, one line each.
+- Next steps: confirm the image tag, callback path, env mappings, and config body.
 
-##### app/ocirepository.yaml
+## Common mistakes
 
-**App-template:**
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/ocirepository_v1.json
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
-metadata:
-    name: &app { APP_NAME }
-spec:
-    interval: 15m
-    layerSelector:
-        mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
-        operation: copy
-    ref:
-        tag: { CURRENT_APP_TEMPLATE_TAG }
-    url: oci://ghcr.io/bjw-s-labs/helm/app-template
-```
-
-**Custom chart:**
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/source.toolkit.fluxcd.io/ocirepository_v1.json
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
-metadata:
-    name: { APP_NAME }
-spec:
-    interval: 1h
-    layerSelector:
-        mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
-        operation: copy
-    ref:
-        tag: { CHART_VERSION }
-    url: oci://{CHART_OCI_URL}
-```
-
----
-
-##### app/kustomization.yaml
-
-**Standard (no configMapGenerator):**
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.config.k8s.io/kustomization_v1beta1.json
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-    - ./externalsecret.yaml # only if ESO needed
-    - ./helmrelease.yaml
-    - ./ocirepository.yaml
-    - ./pocketidoidcclient.yaml # only if auth = OIDC (native)
-    - ./pushsecret.yaml # if auth = OIDC (native), and/or if CNPG (seeded password)
-```
-
-**With configMapGenerator (immich pattern):**
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.config.k8s.io/component_v1alpha1.json
-apiVersion: kustomize.config.k8s.io/v1alpha1
-kind: Component
-resources:
-  - ./externalsecret.yaml
-  - ./helmrelease.yaml
-  - ./ocirepository.yaml
-configMapGenerator:
-  - name: {APP_NAME}-config-tpl
-    files:
-      - ./resources/{APP_NAME}-config.yaml
-configurations:
-  - ./resources/kustomizeconfig.yaml
-generatorOptions:
-  disableNameSuffixHash: true
-```
-
-**Important:** When using configMapGenerator, the kustomization `kind` changes from `Kustomization` to `Component` and the apiVersion changes to `v1alpha1`.
-
----
-
-##### app/helmrelease.yaml (app-template)
-
-```yaml
----
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
-metadata:
-    name: &app { APP_NAME }
-spec:
-    chartRef:
-        kind: OCIRepository
-        name: *app
-    interval: 1h
-    values:
-        controllers:
-            *app :
-                annotations:
-                    reloader.stakater.com/auto: "true"
-                initContainers: # only if cnpg selected
-                    01-init-db:
-                        image:
-                            repository: ghcr.io/home-operations/postgres-init
-                            tag: { CURRENT_POSTGRES_INIT_TAG }
-                        envFrom:
-                            - secretRef:
-                                  name: "{{ .Release.Name }}-initdb-secret"
-                containers:
-                    app:
-                        image:
-                            repository: { IMAGE_REPO } # TODO: fill in image repository
-                            tag: latest # TODO: replace with pinned tag@sha256 digest
-                        env:
-                            TZ: ${TIMEZONE:-UTC}
-                            # TODO: add app-specific env vars
-                        envFrom:
-                            - secretRef:
-                                  name: "{{ .Release.Name }}-secret"
-                        resources:
-                            requests:
-                                cpu: 20m
-                                memory: 128Mi
-                            limits:
-                                memory: 512Mi
-                        probes:
-                            liveness: &probes
-                                enabled: true
-                                custom: true
-                                spec: &probeSpec
-                                    httpGet:
-                                        path: { HEALTH_PATH }
-                                        port: &port { APP_PORT }
-                                    periodSeconds: 30
-                                    timeoutSeconds: 5
-                                    failureThreshold: 5
-                            readiness:
-                                <<: *probes
-                                spec:
-                                    <<: *probeSpec
-                                    periodSeconds: 10
-                            startup:
-                                enabled: true
-                                spec:
-                                    failureThreshold: 30
-                                    periodSeconds: 10
-                        securityContext:
-                            allowPrivilegeEscalation: false
-                            readOnlyRootFilesystem: true
-                            capabilities: { drop: [ALL] }
-        defaultPodOptions:
-            securityContext:
-                runAsNonRoot: true
-                runAsUser: 1000
-                runAsGroup: 1000
-                fsGroup: 1000
-                fsGroupChangePolicy: OnRootMismatch
-        service:
-            app:
-                controller: *app
-                ports:
-                    http:
-                        port: *port
-        route: # only if ingress is not "None"
-            app:
-                hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
-                # OR if custom subdomain: ["${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}"]
-                parentRefs:
-                    - name: envoy-internal # or envoy-external
-                      namespace: network
-                rules:
-                    - backendRefs:
-                          - identifier: app
-                            port: *port
-        persistence:
-            config: # only if kopiur selected
-                existingClaim: *app
-                globalMounts:
-                    - path: /data # TODO: verify app data directory path
-            tmp:
-                type: emptyDir
-```
-
-**Rules for the HelmRelease:**
-
-- Only include `initContainers` block if CNPG is selected.
-- Only include `envFrom` secretRef if the app has an ExternalSecret (i.e. config style is "ESO env vars", "ConfigMapGenerator + ESO", or any feature that requires secrets like CNPG or OIDC).
-- Only include `route` section if ingress is not "None".
-- Use `envoy-internal` or `envoy-external` based on ingress selection.
-- If GATUS_SUBDOMAIN is custom (differs from app name): use `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}` in hostnames.
-- If GATUS_SUBDOMAIN equals app name: use `{{ .Release.Name }}.${SECRET_DOMAIN}` in hostnames and omit GATUS_SUBDOMAIN from ks.yaml substitute.
-- **Gatus + forward auth**: When the app uses the `auth` component, gatus probes are blocked by the tinyauth redirect. Move the gatus annotation to the **service** (with `enabled: "true"`) and add `gatus.home-operations.com/enabled: "false"` to the **route** annotations. See bazarr for the reference pattern. Native-OIDC apps do not need this — only forward-auth ones.
-- **Gatus without forward auth**: No action needed, envoy handles the annotations.
-- **Image tags**: Leave `{IMAGE_REPO}` and a `TODO` tag as placeholders — the user will fill these in.
-- **Security context**: Default to restrictive (`readOnlyRootFilesystem: true`, drop ALL capabilities). If an app fails to start due to security context, that is follow-up troubleshooting — do not pre-emptively add comments or relaxed settings.
-- **No extra blank lines** between YAML sections.
-
----
-
-##### app/externalsecret.yaml
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/external-secrets.io/externalsecret_v1.json
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: &name {APP_NAME}-secret
-spec:
-  secretStoreRef:
-    kind: ClusterSecretStore
-    name: akeyless-secret-store
-  target:
-    name: *name
-    template:
-      data: {}
-        # TODO: Map aKeyless secret keys to env var names
-  dataFrom:
-    - extract:
-        key: /{AKEYLESS_PATH}   # TODO: aKeyless secret path
-```
-
-**Do NOT add OIDC entries here.** OIDC credentials are generated by pocket-id, not read from aKeyless — see the two files below.
-
-**If CNPG is selected**, template the DB connection vars directly in the app's ExternalSecret (homebox pattern — preferred approach). Add `/database/cnpg-users` to `dataFrom` and map individual vars in `target.template.data`:
-
-```yaml
-target:
-    template:
-        data:
-            # TODO: verify DB env var names per app docs
-            DATABASE_HOST: "${CNPG_NAME:=pgcluster-default}-rw.database.svc.cluster.local"
-            DATABASE_PORT: "5432"
-            DATABASE_NAME: "${APP}"
-            DATABASE_USER: "${APP}"
-            DATABASE_PASSWORD: "{{ .${APP}_postgres_password }}"
-dataFrom:
-    - extract:
-          key: /database/cnpg-users
-```
-
-If the app supports a single connection URI (e.g. gatus `DB_URI`), build it in the template:
-
-```yaml
-DB_URI: "postgres://{{ .${APP}_postgres_password }}@${CNPG_NAME:=pgcluster-default}-rw.database.svc.cluster.local:5432/${APP}?sslmode=disable"
-```
-
-**Also if CNPG is selected — seed the password so there is no manual aKeyless step.** Two more objects, both named `${APP}-pgpass`. Reference: `apps/media/airwave/app/`, and `components/cnpg/README.md` for the full rationale.
-
-Append a second document to `externalsecret.yaml`:
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/external-secrets.io/externalsecret_v1.json
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-    name: &name "${APP}-pgpass"
-spec:
-    # Seeds the CNPG role password so it never has to be created by hand. The
-    # generator is stateless, so refreshInterval "0" is what pins the value.
-    refreshInterval: "0"
-    secretStoreRef:
-        kind: ClusterSecretStore
-        name: akeyless-secret-store
-    target:
-        name: *name
-    dataFrom:
-        - sourceRef:
-              generatorRef:
-                  apiVersion: generators.external-secrets.io/v1alpha1
-                  kind: Password
-                  name: password32
-```
-
-And a `pushsecret.yaml` (add to `kustomization.yaml` resources):
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/external-secrets.io/pushsecret_v1alpha1.json
-apiVersion: external-secrets.io/v1alpha1
-kind: PushSecret
-metadata:
-    name: &name "${APP}-pgpass"
-spec:
-    refreshInterval: 1h
-    # IfNotExists makes aKeyless the source of truth after the first write
-    updatePolicy: IfNotExists
-    secretStoreRefs:
-        - kind: ClusterSecretStore
-          name: akeyless-secret-store
-    selector:
-        secret:
-            name: *name
-    data:
-        - match:
-              secretKey: password
-              remoteRef:
-                  remoteKey: /database/cnpg-users
-                  property: ${APP}_postgres_password
-```
-
-**Rules:**
-
-- `password32` is declared in `components/secrets`, which every namespace applies — reference it by name, never declare a per-app `Password` CR. `password10` and `password64` also exist for other credential lengths.
-- `updatePolicy: IfNotExists` is checked **per property**, not per key, so it still writes even though `/database/cnpg-users` already holds other apps' fields. It is what stops a regenerated password overwriting the stored one.
-- Do not pre-create the aKeyless field — the PushSecret writes it. On the first reconcile the `components/cnpg` ExternalSecrets show `SecretSyncedError` for a few seconds until the push lands; that is expected, not a fault.
-- If the app also uses OIDC, it needs both PushSecret documents — put them in the one `pushsecret.yaml`.
-
-**If shared/external service secrets are requested** (e.g. Amazon SES, SMTP, S3, Cloudflare): use the exact aKeyless key names and env var mappings already established in the repo. Reference was already looked up in Phase 2 research — do not invent new key names.
-
----
-
-##### app/pocketidoidcclient.yaml (only if auth = "OIDC (native)")
-
-The pocket-id operator registers the client and writes the credentials into the Secret named in `spec.secret.name`. Nothing is read from aKeyless.
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/pocketid.internal/pocketidoidcclient_v1alpha1.json
-apiVersion: pocketid.internal/v1alpha1
-kind: PocketIDOIDCClient
-metadata:
-  name: {APP_NAME}
-spec:
-  name: {APP_DISPLAY_NAME}
-  callbackUrls:
-    # TODO: verify the app's real callback path from its docs
-    - "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/api/auth/callback"
-  launchUrl: "https://${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}/"
-  pkceEnabled: false
-  allowedUserGroups:
-    - name: id-admin
-      namespace: security
-    - name: id-home
-      namespace: security
-  secret:
-    enabled: true
-    name: {APP_NAME}-oidc-secret
-    keys:
-      # TODO: rename to the env vars the app actually expects
-      clientID: {APP_UPPER}_OIDC_CLIENT_ID
-      clientSecret: {APP_UPPER}_OIDC_CLIENT_SECRET
-      issuerUrl: {APP_UPPER}_OIDC_ISSUER_URL
-```
-
-**Rules:**
-
-- If `GATUS_SUBDOMAIN` is not set (subdomain == app name), use `{APP_NAME}.${SECRET_DOMAIN}` instead of `${GATUS_SUBDOMAIN}.${SECRET_DOMAIN}`.
-- Available groups (from `apps/security/pocket-id/instance/pocketidusergroup.yaml`): `id-admin`, `id-home`, `id-family`, `id-friends`, `id-users`. Ask the user which apply; default to `id-admin` + `id-home`.
-- The generated Secret is consumed via `envFrom.secretRef` in the HelmRelease, or rendered into a config file via ExternalSecret `templateFrom` (kite pattern).
-- `ks.yaml` must add `dependsOn: {name: pocket-id, namespace: security}`.
-
----
-
-##### app/pushsecret.yaml (only if auth = "OIDC (native)")
-
-Backs the operator-generated credentials up to aKeyless. Note the direction — this **writes** to aKeyless.
-
-```yaml
----
-# yaml-language-server: $schema=https://k8s-schemas.home-operations.com/external-secrets.io/pushsecret_v1alpha1.json
-apiVersion: external-secrets.io/v1alpha1
-kind: PushSecret
-metadata:
-  name: &name {APP_NAME}-oidc-secret
-spec:
-  refreshInterval: 1h
-  secretStoreRefs:
-    - kind: ClusterSecretStore
-      name: akeyless-secret-store
-  selector:
-    secret:
-      name: *name
-  data:
-    - match:
-        secretKey: {APP_UPPER}_OIDC_CLIENT_ID
-        remoteRef:
-          remoteKey: /security/pocket-id-clients
-          property: {APP_UPPER}_OIDC_CLIENT_ID
-    - match:
-        secretKey: {APP_UPPER}_OIDC_CLIENT_SECRET
-        remoteRef:
-          remoteKey: /security/pocket-id-clients
-          property: {APP_UPPER}_OIDC_CLIENT_SECRET
-```
-
-`secretKey` values must match the `spec.secret.keys` names chosen in `pocketidoidcclient.yaml`.
-
----
-
-##### app/resources/kustomizeconfig.yaml (only with configMapGenerator)
-
-```yaml
----
-nameReference:
-    - kind: ConfigMap
-      version: v1
-      fieldSpecs:
-          - path: spec/target/template/templateFrom/configMap/name
-            kind: ExternalSecret
-```
-
----
-
-##### app/resources/{app}-config.yaml (only with configMapGenerator)
-
-Create a placeholder config file with a TODO comment. The user will populate this with the app's actual config. This file supports Go template syntax because it's processed through the ExternalSecret templateFrom mechanism.
-
----
-
-### Phase 4 — Register the App
-
-After generating all manifests:
-
-1. **Add to namespace kustomization**: Append `- ./{APP_NAME}/ks.yaml` to `kubernetes/apps/{NAMESPACE}/kustomization.yaml` under `resources:`. Keep alphabetical order.
-
-    If the user typed a namespace that does not exist yet, that file also needs its `components:` block — `../../components/alerts` and `../../components/secrets` are mandatory in every namespace, plus `../../components/kopiur/secret` if the app uses kopiur. These are namespace components; they never go in `ks.yaml`. See `docs/context/components.md`.
-
-2. **Regenerate the inventory**: Run `just docs generate` so the new app appears in `docs/context/apps.md` with the right `[flags]`. Never hand-edit that list. Add the app's `_(description)_` by hand afterwards if it needs one — descriptions survive regeneration.
-
-3. **Print summary**: List all created files and a short description of what was configured.
-
-4. **Print next steps**:
-    - Add secrets to aKeyless at the `/{namespace}/{app}` path referenced in externalsecret.yaml
-    - If CNPG: nothing to do for the DB password — it is seeded and pushed. Do NOT pre-create the `/database/cnpg-users` field.
-    - If OIDC: confirm the app's real callback path and the env var names it expects, then align `pocketidoidcclient.yaml` keys with `pushsecret.yaml` `secretKey`s. Do NOT pre-create `/security/pocket-id-clients` entries — the PushSecret writes them.
-    - Fill in `{IMAGE_REPO}` and `{IMAGE_TAG}` in helmrelease.yaml
-    - Fill in ExternalSecret template data mappings
-    - If configMapGenerator: populate the config file in resources/
-    - If custom chart: verify the OCI URL and chart version
-
-## Important Notes
-
-- **Never create a namespace.yaml** — namespaces already exist, managed by the namespace kustomization.
-- **app-template version**: Always grep the repo for the current tag before generating (see Phase 2).
-- **postgres-init version**: Always grep the repo for the current tag before generating (see Phase 2).
-- **No Renovate annotations**: Do not add `# renovate:` comments to image tags — Renovate config handles discovery automatically.
-- **YAML anchors**: Always use `name: &app {name}` and reference as `*app` throughout.
-- **Security context**: Default to restrictive (`readOnlyRootFilesystem: true`, drop ALL capabilities). Do not add comments about relaxing these — that is follow-up troubleshooting if needed.
-- **Storage**: Default PVC storage class is `ceph-ssd` (handled by kopiur component defaults). Only override for `openebs-hostpath` or `nfs-share` if needed. There is no `nfs-media` class — media libraries are mounted as direct `type: nfs` volumes.
-- **No extra blank lines**: Keep YAML output compact — no unnecessary blank lines between sections.
+- **Copying a version or tag from this skill or memory** — read the chart and postgres-init
+  versions from the repo (Step 2) and the image tag from upstream.
+- **Restating cluster defaults** — no duplicated `install`/`upgrade`/`rollback`/`maxHistory`/
+  `uninstall` values, no `deletionPolicy`, no `patches:` in an app `ks.yaml`. A deliberate
+  override is not a restatement.
+- **Using volsync** — that component no longer exists; kopiur replaced it.
+- **Adding a PVC without the kopiur block**, or the kopiur block without mounting the claim.
+- **`readOnlyRootFilesystem: true` with an unmounted writable path** — the app crashes on its
+  first write; mount an emptyDir for every path it writes.
+- **Forgetting `reloader.stakater.com/auto`** — a controller that reads a Secret or ConfigMap
+  does not restart when it changes.
+- **Skipping sidecar containers** — each container needs its own securityContext and resources.
+- **Inventing ESO key names or Secret names** — use `<app>-secret` and reuse keys already in
+  the repo for shared services.
+- **Adding `wait: false`, `commonMetadata`, or `timeout`** — boilerplate; omit all three.
+  `wait: true` only for a real dependent gate with no health checks.
+- **Adding a CiliumNetworkPolicy by default** — only when the app needs one.
+- **Skipping the sorting conventions** — `docs/agents/sorting-instructions.md`.
+- **Creating the CNPG password by hand** — the `-pgpass` pair seeds it.
+- **Adding `namespace.yaml`** — namespaces already exist.

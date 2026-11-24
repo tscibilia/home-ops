@@ -8,28 +8,23 @@ description: Scaffold a new app in the home-ops monorepo
 
 Follow the skill above exactly to scaffold: $ARGUMENTS
 
-**Ask all five input batches before generating anything.** The skill is explicit
-that you must never infer or skip a batch from the arguments passed in. Treat
-`$ARGUMENTS` as a starting hint for the app name only, and still confirm it
-along with everything else.
+Treat `$ARGUMENTS` as a hint for the app name only; ask for every mandatory input
+the skill lists that the arguments do not supply.
 
 Namespaces currently in use:
 
 !`ls kubernetes/apps/`
 
-Then work the phases in order:
+Then work the skill's steps in order:
 
-1. **Gather inputs** → verify: all five batches asked and answered, nothing assumed
-2. **Research** → verify: chart and `postgres-init` versions read from the repo as
-   it is now, not from memory
-3. **Generate manifests** → verify: only the components, `dependsOn`,
-   `healthChecks`, and `postBuild.substitute` entries the answers actually call for
-4. **Register the app** → verify: it appears in the namespace kustomization
+1. **Collect the inputs** → verify: every mandatory value supplied, nothing guessed
+2. **Read the sources** → verify: versions and stanzas read from the repo as it is now
+3. **Write the app** → verify: only the components, `dependsOn`, health checks, and
+   substitutions the answers call for
+4. **Register** → verify: the app is in the namespace index and `just docs generate` ran
+5. **Verify** → verify: `flate test all`, `kustomize build`, and `just docs test` are each
+   reported with their own result
+6. **Report** → verify: every gap is listed as `file: key — needs X`
 
-Before handing back:
-
-- `flate test all` passes
-- `just docs generate` has been run — adding an app changes a generated docs
-  section, and `just docs test` gates it pre-commit
-- the affected `docs/context/` file is updated in the same change
-- give me a commit message; **do not commit yourself** (GPG restriction)
+Before handing back, give me a commit message; **do not commit yourself** (GPG
+restriction).

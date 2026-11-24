@@ -7,6 +7,7 @@
 `- [ ] Task name - Started yyyy-mm-dd - brief context`
 
 - [ ] Watch [@LukeEvansTech/weekly-upstream-surveys](https://redirect.github.com/LukeEvansTech/talos-cluster/issues) for home-ops revisions
+- [ ] Extend `just docs test` to check add-app's cited apps and headings - Started 2026-11-23 - the gate skips `.agents/skills/**`, so a renamed or deleted reference app rots silently (see #5088)
 
 ## ⚠️ Known Issues
 
