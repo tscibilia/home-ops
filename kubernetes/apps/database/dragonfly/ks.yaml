@@ -34,7 +34,7 @@ spec:
   postBuild:
     substituteFrom:
       - kind: Secret
-        name: dragonfly-secret
+        name: dragonfly-operator-secret
   prune: true
   sourceRef:
     kind: GitRepository

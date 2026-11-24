@@ -116,16 +116,7 @@ initContainers:
 
 The generated `host` is `{cluster}-rw…`, shared by every app on that cluster — apps read it from the Secret, they never compose it.
 
-The app's Postgres password is not created by the component. Add it to aKeyless first, or the generated Secret comes up empty:
-
-```bash
-export APP=myapp
-PASSWORD=$(openssl rand -base64 30 | tr -dc 'A-Za-z0-9' | head -c 20)
-akeyless update-secret-val \
-  --name cnpg-users \
-  --custom-field "${APP}_postgres_username=${APP}" \
-  --custom-field "${APP}_postgres_password=${PASSWORD}"
-```
+The app's Postgres password is seeded, never created by hand: the `${APP}-pgpass` ExternalSecret plus `PushSecret` pair in the app's `app/` directory, as in `media/airwave`. `secrets.md` → Seeded CNPG passwords owns the mechanism. Do not pre-create the field in aKeyless.
 
 ### auth — tinyauth forward auth
 
