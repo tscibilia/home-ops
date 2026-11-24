@@ -12,6 +12,8 @@ spec:
   values:
     controllers:
       *app :
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -40,9 +42,19 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 10m
+                memory: 64Mi
               limits:
                 memory: 128Mi
             securityContext:

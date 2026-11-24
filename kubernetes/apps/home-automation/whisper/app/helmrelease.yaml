@@ -54,7 +54,7 @@ spec:
       app:
         ports:
           wyoming:
-            port: 10300
+            port: &port 10300
     persistence:
       data:
         existingClaim: "{{ .Release.Name }}"

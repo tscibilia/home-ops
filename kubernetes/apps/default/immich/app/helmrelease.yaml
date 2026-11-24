@@ -63,7 +63,11 @@ spec:
                   <<: *probeSpec
                   periodSeconds: 10
               startup:
-                enabled: false
+                <<: *srvprobes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests: &resReq
                 cpu: 100m
@@ -100,7 +104,14 @@ spec:
                   failureThreshold: 5
               readiness: *wrkprobes
               startup:
-                enabled: false
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *wrkport
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests: *resReq
               limits: *resLim

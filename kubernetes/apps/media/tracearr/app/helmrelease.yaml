@@ -60,7 +60,11 @@ spec:
                   <<: *probeSpec
                   periodSeconds: 10
               startup:
-                enabled: false
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
               capabilities: { drop: ["ALL"] }

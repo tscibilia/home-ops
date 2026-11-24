@@ -66,6 +66,12 @@ spec:
                 "-c",
                 "tail -n+1 -F '/config/Library/Application Support/Plex Media Server/Logs/Plex Media Server.log'",
               ]
+            resources:
+              requests:
+                cpu: 5m
+                memory: 8Mi
+              limits:
+                memory: 16Mi
     defaultPodOptions:
       resourceClaims:
         - name: gpu

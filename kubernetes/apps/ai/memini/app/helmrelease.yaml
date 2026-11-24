@@ -14,6 +14,8 @@ spec:
     controllers:
       main:
         type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
         replicas: 1
         pod:
           securityContext:
@@ -63,6 +65,28 @@ spec:
             envFrom:
               - secretRef:
                   name: *secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /healthz
+                    port: &port 8080
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 25m

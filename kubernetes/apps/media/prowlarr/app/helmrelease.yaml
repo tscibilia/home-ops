@@ -101,5 +101,7 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      tmp:
+      tmpfs:
         type: emptyDir
+        globalMounts:
+          - path: /tmp

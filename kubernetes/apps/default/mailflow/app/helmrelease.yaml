@@ -103,7 +103,7 @@ spec:
                 spec: &probeSpec
                   httpGet:
                     path: /
-                    port: 80
+                    port: &port 80
                   periodSeconds: 30
                   timeoutSeconds: 5
                   failureThreshold: 5
@@ -135,7 +135,7 @@ spec:
         controller: web
         ports:
           http:
-            port: 80
+            port: *port
       api:
         controller: api
         ports:
@@ -150,7 +150,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: web
-                port: 80
+                port: *port
     persistence:
       tmp:
         type: emptyDir
