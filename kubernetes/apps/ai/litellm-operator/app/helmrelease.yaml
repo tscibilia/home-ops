@@ -9,10 +9,7 @@ spec:
     kind: OCIRepository
     name: litellm-operator
   interval: 30m
-  install:
-    crds: CreateReplace
   upgrade:
-    crds: CreateReplace
     remediation:
       retries: 3
   values:
