@@ -68,15 +68,18 @@ providers:
           output: 10.0
           cacheRead: 0.2
           cacheWrite: 0.0
+      # Judgment API, not chat: the typesafe runner posts to
+      # {baseUrl}/v1/systemone and sends model=jev-1 for litellm to route.
+      # The provider baseUrl ends in /v1, so this model overrides it.
       - id: jev-1
-        name: Jev-1.13-Free (system one)
-        api: openai-completions
-        reasoning: true
+        name: Jev-1.14 (System One)
+        api: typesafe
+        baseUrl: http://litellm.ai.svc.cluster.local:4000
         input: [text]
-        contextWindow: 1048560
-        maxTokens: 131072
+        contextWindow: 262144
+        maxTokens: 235929
         cost:
-          input: 0.0
+          input: 0.000000042
           output: 0.0
           cacheRead: 0.0
           cacheWrite: 0.0
