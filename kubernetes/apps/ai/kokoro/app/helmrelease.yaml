@@ -35,6 +35,12 @@ spec:
                 spec:
                   <<: *probeSpec
                   periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 10m

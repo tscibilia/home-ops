@@ -13,6 +13,8 @@ spec:
     controllers:
       *app :
         type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
@@ -35,6 +37,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
+                memory: 16Mi
               limits:
                 memory: 100Mi
         statefulset:
@@ -59,7 +62,7 @@ spec:
         externalTrafficPolicy: Local
         ports:
           mqtt:
-            port: 1883
+            port: &port 1883
     configMaps:
       config:
         data:

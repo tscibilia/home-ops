@@ -17,6 +17,7 @@ spec:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
+            runAsNonRoot: true
             runAsUser: 5050
             runAsGroup: 5050
             fsGroup: 5050
@@ -45,7 +46,7 @@ spec:
                     key: PGADMIN_DEFAULT_PASSWORD
             probes:
               liveness: &probes
-                enabled: false
+                enabled: true
                 custom: true
                 spec:
                   httpGet:
@@ -56,6 +57,16 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
+                  initialDelaySeconds: 240
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 15m

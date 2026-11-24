@@ -21,6 +21,28 @@ spec:
             image:
               repository: ghcr.io/home-operations/esphome
               tag: 2026.11.0@sha256:3395b0c336cd579ac601b59c66dd385609d1efac2bf3258056e43fb9f7956988
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: 6052
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -63,9 +85,40 @@ spec:
               - --port
               - "12321"
               - /config
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 12321
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 12321
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: 12321
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 10m
+                memory: 112Mi
               limits:
                 memory: 512Mi
         pod:
@@ -106,7 +159,7 @@ spec:
           - backendRefs:
               - identifier: app
       *sidecar :
-        hostnames: ["esphome-code.${SECRET_DOMAIN}"]
+        hostnames: ["{{ .Release.Name }}-code.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network

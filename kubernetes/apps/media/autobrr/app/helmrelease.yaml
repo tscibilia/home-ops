@@ -61,6 +61,7 @@ spec:
             resources:
               requests:
                 cpu: 10m
+                memory: 192Mi
               limits:
                 memory: 256Mi
             securityContext:
@@ -95,5 +96,7 @@ spec:
     persistence:
       config:
         existingClaim: *app
-      tmp:
+      tmpfs:
         type: emptyDir
+        globalMounts:
+          - path: /tmp

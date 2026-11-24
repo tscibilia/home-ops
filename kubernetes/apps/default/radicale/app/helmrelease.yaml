@@ -20,6 +20,28 @@ spec:
             image:
               repository: tomsquest/docker-radicale
               tag: 3.9.2.0@sha256:cc586f75ec709d45d15dfbf20e53bab99e85ee5a4d7beafc7bbf852b2f07a2da
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: 5232
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 15m

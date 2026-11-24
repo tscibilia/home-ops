@@ -54,7 +54,14 @@ spec:
                   failureThreshold: 6
               readiness: *probes
               startup:
-                enabled: false
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: ${GATUS_PATH}
+                    port: *port
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 memory: 256Mi

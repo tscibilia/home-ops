@@ -175,10 +175,10 @@ spec:
               - secretRef:
                   name: "{{ .Release.Name }}-secret"
             probes:
-              liveness: &probes
+              liveness: &appProbes
                 enabled: true
                 custom: true
-                spec: &probeSpec
+                spec: &appProbeSpec
                   httpGet:
                     path: /health
                     port: *apiPort
@@ -186,12 +186,16 @@ spec:
                   timeoutSeconds: 5
                   failureThreshold: 5
               readiness:
-                <<: *probes
+                <<: *appProbes
                 spec:
-                  <<: *probeSpec
+                  <<: *appProbeSpec
                   periodSeconds: 10
               startup:
-                enabled: false
+                <<: *appProbes
+                spec:
+                  <<: *appProbeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 100m
@@ -218,6 +222,28 @@ spec:
               - containerPort: &dashPort 9119
                 name: http
                 protocol: TCP
+            probes:
+              liveness: &dashboardProbes
+                enabled: true
+                custom: true
+                spec: &dashboardProbeSpec
+                  httpGet:
+                    path: /
+                    port: *dashPort
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *dashboardProbes
+                spec:
+                  <<: *dashboardProbeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *dashboardProbes
+                spec:
+                  <<: *dashboardProbeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 50m
@@ -251,9 +277,32 @@ spec:
               #     secretKeyRef:
               #       name: hermes-secret
               #       key: DISCORD_WEBHOOK
+            probes:
+              liveness: &codeserverProbes
+                enabled: true
+                custom: true
+                spec: &codeserverProbeSpec
+                  httpGet:
+                    path: /healthz
+                    port: 12321
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *codeserverProbes
+                spec:
+                  <<: *codeserverProbeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *codeserverProbes
+                spec:
+                  <<: *codeserverProbeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             resources:
               requests:
                 cpu: 10m
+                memory: 64Mi
               limits:
                 memory: 1Gi
             securityContext:

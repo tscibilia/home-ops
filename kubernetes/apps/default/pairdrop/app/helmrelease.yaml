@@ -23,6 +23,28 @@ spec:
             env:
               RTC_CONFIG: /app/rtc_config.json
               IPV6_LOCALIZE: "false"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec: &probeSpec
+                  httpGet:
+                    path: /
+                    port: 3000
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  periodSeconds: 10
+              startup:
+                <<: *probes
+                spec:
+                  <<: *probeSpec
+                  failureThreshold: 30
+                  periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
