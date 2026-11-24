@@ -19,13 +19,14 @@ Like ADR-0001, this is a **living record**: the `Status` column changes as indiv
 | `substituteFrom: cluster-secrets` on apps that consume a cluster-wide var                       | Most apps need `${SECRET_DOMAIN}` for their route, so it's the common case — but it is not unconditional. An app referencing no cluster-secrets var doesn't declare it. `${TIMEZONE}` is now rarely needed: `k8tz` injects timezone at admission                                                                | accepted |
 | `kustomize.toolkit.fluxcd.io/substitute: disabled` on generated ConfigMaps                      | Config files legitimately contain `${...}`; without this, Flux mangles them                                                                                                                                                                                                                                     | accepted |
 | `# renovate:` comments only where no manager auto-detects the version                           | The flux/helm-values/kubernetes managers already scan all `.yaml`/`.yml`/`.j2`; redundant comments drift                                                                                                                                                                                                        | accepted |
-| `wait: false` unless the app has multiple sub-Kustomizations                                    | `wait: true` serialises reconciliation for no benefit on single-Kustomization apps                                                                                                                                                                                                                              | accepted |
+| `wait` omitted; `wait: true` only when a dependent exists and no health checks are defined      | `wait` defaults to `false`, so explicit `wait: false` is redundant. Dependents wait on `Ready`, which health checks already determine; `wait: true` ignores `healthChecks`                                                                                                                                      | accepted |
 
 ## ⚠️ Gotchas
 
 - **`dependsOn` uses Kustomization names:** references the Kustomization resource name defined in `ks.yaml`, NOT the HelmRelease name — different objects.
 - **`kubectl edit` is ephemeral:** overwritten by the next Flux reconciliation. All changes go through git.
 - **`apply-ks` touches the live cluster:** `just kube apply-ks` runs server-side apply against the live API without pushing to git — not a dry run; do not run it speculatively.
+- **`wait: true` disables health checks:** Flux ignores `spec.healthChecks` and `healthCheckExprs` when `wait` is true; use one or the other, never both.
 
 ## Local rendering
 
@@ -72,7 +73,6 @@ spec:
         name: flux-system
         namespace: flux-system
     targetNamespace: default
-    wait: false # true only for apps with multiple sub-Kustomizations
 ```
 
 ## Common dependsOn chains
@@ -132,7 +132,8 @@ Some apps split into multiple Kustomizations (e.g. `grafana/operator` + `grafana
 
 - Parent `ks.yaml` is one file with multiple Kustomization resources
 - Child Kustomizations use `dependsOn` to sequence themselves
-- Parent sets `wait: false`
+- Parent and children omit `wait`; set `wait: true` only on a Kustomization that a downstream
+  `dependsOn` and that has no `healthChecks`.
 
 ## Consequences
 
