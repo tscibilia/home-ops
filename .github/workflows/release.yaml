@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Load Secrets
         id: load-secrets
-        uses: akeyless-community/akeyless-github-action@5f299cc482e687930e0cd514d0147ebb36de09f5 # v1.3.0
+        uses: akeyless-community/akeyless-github-action@3ebb060f517c7e229bf3192ed361cac079eefc3c # v1.3.1
         with:
           access-id: ${{ vars.AKEYLESS_ACCESS_ID }}
           access-type: jwt
