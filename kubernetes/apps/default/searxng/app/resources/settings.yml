@@ -79,13 +79,16 @@ engines:
     disabled: true
     weight: 3
   - name: google
-    disabled: false
+    disabled: true # scraper is IP-blocked; google cse is the working path
     weight: 2
   - name: bing
-    disabled: false
+    disabled: true # returns unrelated brand results and outranks google cse
     weight: 2
   - name: wikipedia
     disabled: false
     weight: 1
   - name: brave
     disabled: true # getting 429s, must be disabled
+  - name: google cse
+    disabled: false
+    weight: 3

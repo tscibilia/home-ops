@@ -6,7 +6,7 @@ metadata:
   name: &name qwen-local-assist
 spec:
   # Voice-control for Home Assistant Assist. Uses llama-qwen backend and its
-  # default weights; only the sampler row and the reasoning budget differ.
+  # default weights; only the sampler row and the voice latency budget differ.
   modelName: *name
   params:
     model: openai/Qwen3.8-27B
@@ -21,12 +21,13 @@ spec:
       # expects snake_case, operator only camelCases its own typed fields
       max_parallel_requests: 1
       # Shares the single llama.cpp slot with the other qwen groups. Bound the
-      # queued wait so a busy slot fails the turn instead of holding the Dot.
-      timeout: 45
+      # queued wait so a busy slot fails over instead of holding the Dot.
+      timeout: 15
+      max_tokens: 512
       extra_body:
         # extra_body bypasses the proxy's drop_params, so this reaches llama.cpp intact
         chat_template_kwargs:
-          enable_thinking: true
+          enable_thinking: false
           reasoning_effort: low
         temperature: 1.0
         top_p: 0.95
