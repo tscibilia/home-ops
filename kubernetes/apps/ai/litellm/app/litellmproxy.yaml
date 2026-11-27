@@ -37,10 +37,11 @@ spec:
     num_retries: 2
     timeout: 600
     # max_parallel_requests=1 yields a synthetic 429 when local is busy;
-    # qwen-local-fast's 30s timeout covers the other group's queued request.
+    # per-group timeouts bound the queue: fast 30s, assist 15s.
     fallbacks:
       - qwen-local: [deepseek-v4.1-flash]
       - qwen-local-fast: [deepseek-v4.1-flash]
+      - qwen-local-assist: [deepseek-v4.1-flash]
       - deepseek-v4-flash: [deepseek-v4.1-flash]
       - deepseek-v4.1-flash: [kimi-k3.1]
     # Local 429/timeout means the single slot is saturated; retrying adds latency.
@@ -50,6 +51,10 @@ spec:
         TimeoutErrorRetries: 0
         DefaultRetries: 0
       qwen-local-fast:
+        RateLimitErrorRetries: 0
+        TimeoutErrorRetries: 0
+        DefaultRetries: 0
+      qwen-local-assist:
         RateLimitErrorRetries: 0
         TimeoutErrorRetries: 0
         DefaultRetries: 0
